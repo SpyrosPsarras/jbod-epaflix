@@ -62,6 +62,12 @@ CREATE TABLE IF NOT EXISTS tracked_queries (
     added  timestamptz NOT NULL DEFAULT clock_timestamp(),
     PRIMARY KEY (query, kind, source)
 );
+-- the Build the owner bought; any row stops all Hunts for good (ticket #10)
+CREATE TABLE IF NOT EXISTS purchases (
+    one    boolean PRIMARY KEY DEFAULT true CHECK (one),  -- at most one row: bought once, for good
+    bought timestamptz NOT NULL DEFAULT now(),
+    build  jsonb NOT NULL
+);
 CREATE TABLE IF NOT EXISTS hunts (
     id       bigserial PRIMARY KEY,
     started  timestamptz NOT NULL DEFAULT now(),
@@ -145,6 +151,17 @@ class Store:
     def tracked(self):
         with self._conn() as c:
             return c.execute("SELECT query, kind, source FROM tracked_queries ORDER BY added, query").fetchall()
+
+    def record_purchase(self, build):
+        """True when recorded; False when a Build was already bought."""
+        with self._conn() as c:
+            return c.execute("INSERT INTO purchases (build) VALUES (%s) ON CONFLICT DO NOTHING",
+                             (json.dumps(build),)).rowcount == 1
+
+    def bought(self):
+        """The recorded purchase {bought, build}, or None while hunting."""
+        with self._conn() as c:
+            return c.execute("SELECT bought, build FROM purchases").fetchone()
 
     def route_get(self, lat, lon):
         with self._conn() as c:
