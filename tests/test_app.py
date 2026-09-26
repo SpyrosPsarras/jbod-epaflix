@@ -603,3 +603,69 @@ class FinnCoordinatesAreValidated(unittest.TestCase):
             self.assertEqual(unreadable, {"7": "location", "8": "location"})
         finally:
             pg.cleanup()
+
+
+class BuildsEndToEnd(unittest.TestCase):
+    """Seam 1: recorded-shape Listings produce the expected top Build, and the Ceiling hides the rest."""
+
+    @classmethod
+    def setUpClass(cls):
+        full = "2x 750W PSU. Dell HBA330. 12x 3.5\" caddies. Rails included."
+        # all docs share one place ("X"); Oslo pickups there share one 952 NOK trip
+        machines = [_doc(1, "Dell PowerEdge R730xd 12x LFF", 6000, 59.91, 10.72),    # 6,952, every fact good
+                    _doc(2, "Dell PowerEdge R730xd 12x LFF", 30000, 59.91, 10.72),   # 30,952 + disks > Ceiling
+                    _doc(3, "Dell PowerEdge R730xd 12x LFF", 5000, 59.91, 10.72)]    # caddies not stated
+        descriptions = {"1": full, "2": full, "3": "2x 750W PSU. Dell HBA330. Rails included."}
+        ship = ["shipping_exists", "seller_pays_shipping"]
+        disks = ([_doc(10 + i, 'Seagate Exos X16 16TB 3.5" SATA', 1500 + i, 60.4, 5.5, ship) for i in range(6)]
+                 + [_doc(20 + i, 'Seagate Exos X24 24TB 3.5" SATA', 2600, 60.4, 5.5, ship) for i in range(4)]
+                 # pickup at the Machines' place: 1,450 + trip 952 alone, 1,450 once the trip is driven
+                 + [_doc(30 + i, 'Seagate Exos X16 16TB 3.5" SATA', 1450, 59.91, 10.72) for i in range(5)])
+
+        def blob(docs):
+            return base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
+
+        def fetch(url):
+            if "/search?" in url:
+                q = urllib.parse.parse_qs(url.split("?", 1)[1])
+                docs = machines if q["q"] == ["r730xd"] else disks if q["q"] == ["exos"] else []
+                return f"<script>{blob(docs if q['condition'] == ['3', '4'] else [])}</script>"
+            text = descriptions.get(url.rsplit("/", 1)[1], "")
+            return f'<section data-testid="description"><p>{htmllib.escape(text)}</p></section>'
+
+        cls.pg = _pg()
+        cls.app = App(cls.pg.get_uri(), [FinnSource(fetch=fetch, pause=0)], fx=RATES.__getitem__,
+                      disk_queries={"finn": ["exos"]}, machine_queries=["r730xd"], pause=0, router=fake_router)
+        cls.app.hunt()
+        cls.page = cls.app.page()
+        cls.builds = re.findall(r'data-build="([^"]+)" data-score="([\d.]+)" data-landed="([\d.]+)"', cls.page)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.pg.cleanup()
+
+    def rows(self):
+        return {b: float(landed) for b, _, landed in self.builds}
+
+    def test_top_build_recounts_unknown_caddies_and_shares_the_pickup_trip(self):
+        # Machine 3: 5,000 + trip 952 + caddies (not stated) for 5 disks + 1 boot 600, not the stored 1,200;
+        # disks: 5 x 1,450 picked up on the same trip (7,250) beat shipped 1,500..1,504 (7,510) and 4 x 24 TB
+        build, score, landed = self.builds[0]
+        self.assertEqual(build, "3")
+        self.assertAlmostEqual(float(landed), 5952 + 600 + 7250, places=2)
+        self.assertAlmostEqual(float(score), (5952 + 600 + 7250) / 41.47, delta=1)
+        self.assertIn("caddies (not stated) 600", self.page)
+        self.assertIn("5 &times; 16 TB", self.page)
+
+    def test_machine_with_every_fact_good_gets_no_caddy_penalty(self):
+        self.assertAlmostEqual(self.rows()["1"], 6952 + 7250, places=2)
+
+    def test_ceiling_hides_the_expensive_machine(self):
+        self.assertEqual(sorted(self.rows()), ["1", "3"])
+
+    def test_details_link_every_listing_and_sort_by_any_column(self):
+        for fid in (3, 30, 31, 32, 33, 34):
+            self.assertIn(f"https://www.finn.no/recommerce/forsale/item/{fid}", self.page)
+        for col in ("score", "landed", "usable", "machine", "disks", "sources"):
+            self.assertIn(f'href="/?sort={col}"', self.page)
+            self.assertIn('data-build="1"', self.app.page(sort=col))
