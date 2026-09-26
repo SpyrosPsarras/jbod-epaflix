@@ -4,6 +4,8 @@ import json
 import psycopg
 from psycopg.rows import dict_row
 
+from .config import GONE_DAYS
+
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS listings (
     source       text NOT NULL,
@@ -36,6 +38,16 @@ ALTER TABLE listings ADD COLUMN IF NOT EXISTS location text;
 ALTER TABLE listings ADD COLUMN IF NOT EXISTS lat double precision;
 ALTER TABLE listings ADD COLUMN IF NOT EXISTS lon double precision;
 ALTER TABLE listings ADD COLUMN IF NOT EXISTS pickup_only boolean NOT NULL DEFAULT false;
+-- one row per Listing per Hunt that saw it (ticket #9)
+CREATE TABLE IF NOT EXISTS price_observations (
+    source    text NOT NULL,
+    source_id text NOT NULL,
+    hunt_id   bigint NOT NULL,
+    price     numeric NOT NULL,
+    currency  text NOT NULL,
+    seen_at   timestamptz NOT NULL DEFAULT now(),
+    PRIMARY KEY (source, source_id, hunt_id)
+);
 CREATE TABLE IF NOT EXISTS hunts (
     id       bigserial PRIMARY KEY,
     started  timestamptz NOT NULL DEFAULT now(),
@@ -63,6 +75,25 @@ WITH fresh AS (
 """
 
 
+# Ranked rows: fresh Listings plus Gone Listings (missed by their Source's latest successful Hunt) for
+# GONE_DAYS days; `prev_price` is the Source price at the Hunt before the latest one that saw the Listing.
+# ponytail: the window scans every observation per page load (~100k rows/month, fine for one user for months);
+# if the page slows, fetch the previous price per shown Listing with LATERAL ... OFFSET 1 LIMIT 1 or prune old rows
+_RANKED = _FRESH + f""",
+prev AS (
+    SELECT source, source_id, price AS prev_price
+    FROM (SELECT source, source_id, price,
+                 row_number() OVER (PARTITION BY source, source_id ORDER BY hunt_id DESC) AS rn
+          FROM price_observations) o
+    WHERE rn = 2
+)
+"""
+_RANKED_WHERE = f"""
+    qualifies AND landed_nok IS NOT NULL
+    AND (last_seen >= f.since OR last_seen > now() - interval '{int(GONE_DAYS)} days')
+"""
+
+
 class Store:
     def __init__(self, uri):
         self.uri = uri
@@ -84,8 +115,13 @@ class Store:
             c.execute("UPDATE hunts SET finished = now(), ok = %s, detail = %s WHERE id = %s",
                       (ok, json.dumps(detail), hunt_id))
 
-    def save_listing(self, listing, kind, facts, missing, qualifies, capacity_tb, landed):
+    def save_listing(self, listing, kind, facts, missing, qualifies, capacity_tb, landed, hunt_id):
         with self._conn() as c:
+            c.execute("""
+                INSERT INTO price_observations (source, source_id, hunt_id, price, currency)
+                VALUES (%s, %s, %s, %s, %s)
+                ON CONFLICT (source, source_id, hunt_id) DO UPDATE SET price = EXCLUDED.price
+            """, (listing.source, listing.source_id, hunt_id, listing.price, listing.currency))
             c.execute("""
                 INSERT INTO listings (source, source_id, kind, title, url, price, currency, shipping,
                                       condition, seller, facts, missing, qualifies, capacity_tb, landed_nok,
@@ -126,21 +162,25 @@ class Store:
 
     def best_disks(self, limit=100):
         with self._conn() as c:
-            return c.execute(_FRESH + """
-                SELECT l.source, source_id, title, url, capacity_tb, condition, landed_nok, location, pickup_only,
-                       round(landed_nok / capacity_tb, 2) AS nok_per_tb
+            return c.execute(_RANKED + f"""
+                SELECT l.source, l.source_id, title, url, capacity_tb, condition, landed_nok, location, pickup_only,
+                       round(landed_nok / capacity_tb, 2) AS nok_per_tb, l.price, l.currency, p.prev_price,
+                       l.last_seen < f.since AS gone, l.last_seen
                 FROM listings l JOIN fresh f ON f.source = l.source
-                WHERE kind = 'disk' AND qualifies AND landed_nok IS NOT NULL AND last_seen >= f.since
-                ORDER BY nok_per_tb, landed_nok LIMIT %s
+                LEFT JOIN prev p ON p.source = l.source AND p.source_id = l.source_id
+                WHERE kind = 'disk' AND {_RANKED_WHERE}
+                ORDER BY gone, nok_per_tb, landed_nok LIMIT %s
             """, (limit,)).fetchall()
 
     def best_machines(self, limit=50):
         with self._conn() as c:
-            return c.execute(_FRESH + """
-                SELECT l.source, source_id, title, url, facts, landed_nok, location, pickup_only
+            return c.execute(_RANKED + f"""
+                SELECT l.source, l.source_id, title, url, facts, landed_nok, location, pickup_only,
+                       l.price, l.currency, p.prev_price, l.last_seen < f.since AS gone, l.last_seen
                 FROM listings l JOIN fresh f ON f.source = l.source
-                WHERE kind = 'machine' AND qualifies AND landed_nok IS NOT NULL AND last_seen >= f.since
-                ORDER BY landed_nok LIMIT %s
+                LEFT JOIN prev p ON p.source = l.source AND p.source_id = l.source_id
+                WHERE kind = 'machine' AND {_RANKED_WHERE}
+                ORDER BY gone, landed_nok LIMIT %s
             """, (limit,)).fetchall()
 
     def unreadable(self, limit=200):

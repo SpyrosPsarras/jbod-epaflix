@@ -35,6 +35,19 @@ def _where(row):
     return _e(row["source"]) + (" &middot; pickup " + _e(row["location"]) if row["pickup_only"] else "")
 
 
+def _row_state(row):
+    """(class/data attributes, price-drop or gone note) for one ranked row."""
+    if row["gone"]:
+        return (' class="gone" data-gone="1"',
+                f' <span class="note">gone, last seen {row["last_seen"]:%Y-%m-%d}, last seller price {float(row["price"]):,.0f} '
+                f'{_e(row["currency"])}</span>')
+    prev, now = row["prev_price"], row["price"]
+    if prev is not None and now < prev:
+        return (' data-drop="1"', f' <span class="drop" title="seller price dropped">&darr; seller price was {float(prev):,.0f} '
+                                  f'{_e(row["currency"])}</span>')
+    return "", ""
+
+
 def _yes_no(value):
     return {True: "yes", False: "no"}.get(value, "?")
 
@@ -114,7 +127,7 @@ class App:
                     work += [(q, "machine") for q in self.machine_queries]
                 for query, kind in work:
                     for listing in source.search(query, details=kind == "machine"):
-                        counts[kind] += self._record(source, listing, kind)
+                        counts[kind] += self._record(source, listing, kind, hunt_id)
                     time.sleep(self.pause)
                 detail[source.name] = {"ok": True, **counts}
             except Exception as exc:  # a Source fault must not end the Hunt
@@ -124,7 +137,7 @@ class App:
         self.store.finish_hunt(hunt_id, ok, detail)
         log.info("hunt %s done ok=%s %s", hunt_id, ok, detail)
 
-    def _record(self, source, listing, kind):
+    def _record(self, source, listing, kind, hunt_id):
         if kind == "disk":
             facts = read_disk(listing.title, listing.condition)
         else:
@@ -141,29 +154,29 @@ class App:
             facts_json = asdict(facts)
             capacity = facts.capacity_tb if kind == "disk" else None
             qualifies = facts.qualifies and landed is not None
-        self.store.save_listing(listing, kind, facts_json, missing, qualifies, capacity, landed)
+        self.store.save_listing(listing, kind, facts_json, missing, qualifies, capacity, landed, hunt_id)
         return 1
 
     def page(self, notice=None):
         last = self.store.last_hunt()
         disks, machines, unreadable = self.store.best_disks(), self.store.best_machines(), self.store.unreadable()
         disk_rows = "".join(
-            '<tr data-listing="{id}" data-nok-per-tb="{npt:.2f}"><td><a href="{url}">{title}</a></td>'
+            '<tr data-listing="{id}" data-nok-per-tb="{npt:.2f}"{attrs}><td><a href="{url}">{title}</a>{note}</td>'
             '<td>{cap:g} TB</td><td>{cond}</td><td>{where}</td><td>{landed:,.0f}</td><td>{npt:,.0f}</td></tr>'.format(
                 id=_e(r["source_id"]), npt=float(r["nok_per_tb"]), url=_e(_safe_url(r["url"])), title=_e(r["title"]),
                 cap=float(r["capacity_tb"]), cond=_e(CONDITION_LABEL.get(r["condition"], r["condition"] or "?")),
-                where=_where(r), landed=float(r["landed_nok"]))
-            for r in disks)
+                where=_where(r), landed=float(r["landed_nok"]), attrs=state[0], note=state[1])
+            for r in disks for state in [_row_state(r)])
         machine_rows = "".join(
-            '<tr data-machine="{id}" data-landed="{landed:.2f}"><td><a href="{url}">{title}</a></td><td>{model}</td>'
+            '<tr data-machine="{id}" data-landed="{landed:.2f}"{attrs}><td><a href="{url}">{title}</a>{note}</td><td>{model}</td>'
             '<td>{gen}th</td><td>{bays}</td><td>{ram}</td><td>{psu}</td><td>{caddies}</td><td>{ctrl}</td>'
             '<td>{rails}</td><td>{where}</td><td>{landed:,.0f}</td></tr>'.format(
                 id=_e(r["source_id"]), landed=float(r["landed_nok"]), url=_e(_safe_url(r["url"])), title=_e(r["title"]),
                 model=_e(f["model"]), gen=_e(f["generation"]), bays=_e(f["bays_35"]),
                 ram=_e(f"{f['ram_gb']} GB" if f["ram_gb"] else "?"), psu=_e(f["psu_count"] or "?"),
                 caddies=_e("?" if f["caddies_35"] is None else f["caddies_35"]), ctrl=_e(f["controller"] or "?"),
-                rails=_yes_no(f["rails"]), where=_where(r))
-            for r in machines for f in [r["facts"]])
+                rails=_yes_no(f["rails"]), where=_where(r), attrs=state[0], note=state[1])
+            for r in machines for f in [r["facts"]] for state in [_row_state(r)])
         unreadable_rows = "".join(
             '<tr data-unreadable="{id}" data-missing="{missing}"><td>{kind}</td><td>{src}</td>'
             '<td><a href="{url}">{title}</a></td><td>{labels}</td></tr>'.format(
@@ -189,7 +202,8 @@ class App:
 <style>body{{font-family:sans-serif;margin:2em}}table{{border-collapse:collapse;margin-bottom:2em}}
 td,th{{padding:4px 10px;border-bottom:1px solid #ddd;text-align:left}}
 .fault{{background:#fde8e8;border-left:4px solid #c62828;padding:8px 12px}}
-.notice{{background:#e8f0fd;border-left:4px solid #1565c0;padding:8px 12px}}</style></head><body>
+.notice{{background:#e8f0fd;border-left:4px solid #1565c0;padding:8px 12px}}
+tr.gone{{color:#999}} tr.gone a{{color:#999}} .note{{font-size:85%}} .drop{{color:#2e7d32;font-weight:bold}}</style></head><body>
 <h1>Deal Finder</h1>{banner}{note}{running}
 <p>Last Hunt: {_when(last["finished"] if last else None)}{took}. Hunts run every {HUNT_INTERVAL_S // 3600} hours.
 <form method="post" action="/hunt" style="display:inline"><button>Hunt now</button></form></p>

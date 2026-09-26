@@ -17,6 +17,7 @@ import pgserver
 
 from dealfinder.app import App, next_hunt_delay
 from dealfinder.costs import DailyFx
+from dealfinder.rules import Unreadable, read_disk
 from dealfinder.sources import EbaySource, FinnSource
 
 FIXTURES = pathlib.Path(__file__).parent / "fixtures"
@@ -424,3 +425,47 @@ class EbayMalformedItem(unittest.TestCase):
                 return {"access_token": "t", "expires_in": 7200}
             return {"itemSummaries": ["not-an-item", FIXTURE["exos 16tb"]["itemSummaries"][0]]}
         self.assertEqual(len(EbaySource("id", "secret", fetch=fetch).search("q")), 1)
+
+
+class PriceHistoryAndGone(unittest.TestCase):
+    """A price drop gets an arrow; a vanished Listing is greyed out as Gone, then hidden after 7 days."""
+
+    def test_drop_gone_and_expiry(self):
+        pg = _pg()
+        try:
+            items = [it for v in FIXTURE.values() for it in v["itemSummaries"]
+                     if (f := read_disk(it["title"], "used")) and not isinstance(f, Unreadable) and f.qualifies
+                     and it.get("conditionId") == "3000" and it.get("shippingOptions")]
+            stays, drops, leaves = items[0], json.loads(json.dumps(items[1])), items[2]
+            state = {"items": [stays, drops, leaves]}
+
+            def fetch(url, headers=None, data=None):
+                if "oauth2/token" in url:
+                    return {"access_token": "t", "expires_in": 7200}
+                return {"itemSummaries": state["items"]}
+            app = App(pg.get_uri(), [EbaySource("id", "secret", fetch=fetch)], fx=RATES.__getitem__,
+                      disk_queries={"ebay_uk": ["q"]}, pause=0)
+            app.hunt()
+            old_price = float(drops["price"]["value"])
+            drops["price"]["value"] = f"{old_price - 20:.2f}"
+            state["items"] = [stays, drops]  # `leaves` sold
+            app.hunt()
+
+            page = app.page()
+            row = lambda it: re.search(r'<tr data-listing="%s"[^>]*>.*?</tr>' % re.escape(htmllib.escape(it["itemId"])), page, re.S)
+            self.assertIn('data-drop="1"', row(drops).group(0))
+            self.assertIn(f"seller price was {old_price:,.0f} GBP", row(drops).group(0))
+            self.assertNotIn('data-drop="1"', row(stays).group(0))
+            self.assertIn('data-gone="1"', row(leaves).group(0))
+            self.assertIn("last seller price", row(leaves).group(0))
+            # Gone rows sort after live ones
+            order = [m for m in re.findall(r'<tr data-listing="([^"]+)"', page)]
+            self.assertEqual(order[-1], htmllib.escape(leaves["itemId"]))
+
+            with app.store._conn() as c:
+                self.assertEqual(c.execute("SELECT count(*) AS n FROM price_observations").fetchone()["n"], 5)
+                c.execute("UPDATE listings SET last_seen = now() - interval '8 days' WHERE source_id = %s",
+                          (leaves["itemId"],))
+            self.assertNotIn(htmllib.escape(leaves["itemId"]), app.page())  # hidden after 7 days
+        finally:
+            pg.cleanup()
