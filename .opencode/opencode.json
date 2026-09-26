@@ -1,0 +1,21 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "finn": {
+      "type": "local",
+      "command": ["npx", "-y", "github:viktorfa/finn_mcp"],
+      "enabled": true
+    },
+    "ebay": {
+      "type": "local",
+      "command": ["sh", "/home/spyros/jbod-epaflix/.opencode/ebay-mcp.sh"],
+      "enabled": true,
+      "environment": {
+        "EBAY_MCP_TOOLS": "browse",
+        "EBAY_READ_ONLY": "true",
+        "EBAY_ENVIRONMENT": "production",
+        "EBAY_MARKETPLACE_ID": "EBAY_GB"
+      }
+    }
+  }
+}
