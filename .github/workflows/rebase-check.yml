@@ -1,0 +1,40 @@
+# A PR branch must be rebased on its base, not have the base merged in.
+#
+# Half of the rule. The other half is the branch protection setting "Require
+# branches to be up to date before merging" on main, which GitHub checks at
+# merge time. "Up to date" also accepts a branch that merged main in; this job
+# rejects that, so rebasing is the only way through.
+#
+# Fork PRs run this too (unlike ci.yml). It is a required check, so skipping
+# forks would leave it pending forever. It only reads git history.
+name: rebase-check
+
+on:
+  pull_request:
+    # edited: re-run when the PR is retargeted to another base branch.
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+
+jobs:
+  no-merge-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Reject merge commits in the PR branch
+        env:
+          BASE: origin/${{ github.base_ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          merges="$(git rev-list --merges "$BASE..$HEAD_SHA")"
+          if [ -n "$merges" ]; then
+            echo "::error::PR contains merge commits. Rebase on $BASE instead of merging it in:"
+            echo "$merges"
+            exit 1
+          fi
+          echo "No merge commits between $BASE and $HEAD_SHA."
