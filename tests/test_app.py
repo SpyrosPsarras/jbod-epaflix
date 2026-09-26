@@ -1,10 +1,13 @@
 """Seam 1: drive the app from outside with a fake Source network layer and a real Postgres."""
+import base64
+import html as htmllib
 import json
 import pathlib
 import re
 import tempfile
 import threading
 import unittest
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -12,10 +15,14 @@ import pgserver
 
 from dealfinder.app import App
 from dealfinder.costs import DailyFx
-from dealfinder.sources import EbaySource
+from dealfinder.sources import EbaySource, FinnSource
 
-FIXTURE = json.loads((pathlib.Path(__file__).parent / "fixtures" / "ebay_disk_search.json").read_text())
-RATES = {"GBP": 12.59, "USD": 9.43, "EUR": 11.0}
+FIXTURES = pathlib.Path(__file__).parent / "fixtures"
+FIXTURE = json.loads((FIXTURES / "ebay_disk_search.json").read_text())
+FINN = json.loads((FIXTURES / "finn.json").read_text())
+FINN_DISK_QUERIES = ["exos 16tb", "ultrastar 16tb"]
+FINN_MACHINE_QUERIES = ["r730xd", "r730", "r740", "r720xd", "dl380 gen9", "supermicro server"]
+RATES = {"NOK": 1.0, "GBP": 12.59, "USD": 9.43, "EUR": 11.0}
 
 # a qualifying Listing carrying hostile text, to prove the page escapes Source data
 HOSTILE = {"itemSummaries": [{
@@ -35,12 +42,25 @@ def fake_fetch(url, headers=None, data=None):
     return HOSTILE if q == "hostile" else FIXTURE.get(q, {"itemSummaries": []})
 
 
+def fake_finn_fetch(url):
+    """Replays recorded finn.no data in the same shape the real pages carry it."""
+    if "/search?" in url:
+        docs = FINN["search"].get(url.split("?", 1)[1], [])
+        blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
+        return f"<html><script>{blob}</script></html>"
+    item = FINN["items"][url.rstrip("/").rsplit("/", 1)[1]]
+    paragraphs = "".join(f"<p>{htmllib.escape(line)}</p>" for line in (item["description"] or "").split("\n"))
+    return f'<section data-testid="description"><div class="whitespace-pre-wrap">{paragraphs}</div></section>'
+
+
 class HuntToPage(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.pg = pgserver.get_server(tempfile.mkdtemp(), cleanup_mode="stop")
-        source = EbaySource("id", "secret", fetch=fake_fetch)
-        cls.app = App(cls.pg.get_uri(), [source], fx=RATES.__getitem__, queries=[*FIXTURE, "hostile"], pause=0)
+        sources = [EbaySource("id", "secret", fetch=fake_fetch), FinnSource(fetch=fake_finn_fetch, pause=0)]
+        cls.app = App(cls.pg.get_uri(), sources, fx=RATES.__getitem__,
+                      disk_queries={"ebay_uk": [*FIXTURE, "hostile"], "finn": FINN_DISK_QUERIES},
+                      machine_queries=FINN_MACHINE_QUERIES, pause=0)
         cls.server = cls.app.make_server("127.0.0.1", 0)
         threading.Thread(target=cls.server.serve_forever, daemon=True).start()
         cls.base = "http://127.0.0.1:%d" % cls.server.server_address[1]
@@ -59,6 +79,14 @@ class HuntToPage(unittest.TestCase):
         status, html = self.get("/")
         self.assertEqual(status, 200)
         return [(i, float(n)) for i, n in re.findall(r'data-listing="([^"]+)" data-nok-per-tb="([\d.]+)"', html)]
+
+    def machines(self):
+        _, html = self.get("/")
+        return [(i, float(n)) for i, n in re.findall(r'data-machine="([^"]+)" data-landed="([\d.]+)"', html)]
+
+    def unreadable(self):
+        _, html = self.get("/")
+        return dict(re.findall(r'data-unreadable="([^"]+)" data-missing="([^"]*)"', html))
 
     def all_listings(self):
         return [it for v in FIXTURE.values() for it in v["itemSummaries"]]
@@ -92,10 +120,40 @@ class HuntToPage(unittest.TestCase):
     def test_metrics_count_qualified_and_unreadable(self):
         status, text = self.get("/metrics")
         self.assertEqual(status, 200)
-        qualified = re.search(r'dealfinder_listings\{source="ebay_uk",state="qualified"\} (\d+)', text)
+        qualified = re.search(r'dealfinder_listings\{source="ebay_uk",kind="disk",state="qualified"\} (\d+)', text)
         self.assertIsNotNone(qualified, text)
         self.assertGreater(int(qualified.group(1)), 5)
         self.assertIn("dealfinder_hunt_last_success_timestamp_seconds", text)
+
+
+    def test_finn_machines_that_fit_the_rules_are_ranked_by_price(self):
+        machines = self.machines()
+        shown = {i for i, _ in machines}
+        for fid in ("468970308", "473386139", "475664047"):  # Trondheim R730xd, Oslo R730xd, Nedenes R730
+            self.assertIn(fid, shown)
+        prices = [p for _, p in machines]
+        self.assertEqual(prices, sorted(prices))
+
+    def test_finn_machines_that_break_the_rules_are_not_ranked(self):
+        shown = {i for i, _ in self.machines()}
+        for fid in ("469749680",   # R720xd, 12th Gen
+                    "426464076",   # R730 with a 2.5" backplane
+                    "219121915",   # R730xd 24x 2.5"
+                    "468742286",   # riser board for R740
+                    "468806731"):  # Scania R730 toy truck
+            self.assertNotIn(fid, shown)
+
+    def test_unreadable_machines_are_listed_with_the_missing_facts(self):
+        unreadable = self.unreadable()
+        self.assertEqual(unreadable.get("476154464"), "bays_35")  # R740, "8x2TB SAS" of unknown size
+        self.assertEqual(unreadable.get("455107692"), "bays_35")  # DL380 Gen9, never says LFF or SFF
+        self.assertNotIn("468742286", unreadable)  # parts are not machines, so never "could not read"
+
+    def test_finn_prices_carry_no_import_vat(self):
+        _, html = self.get("/")
+        for fid, landed in self.machines():
+            doc = next(d for docs in FINN["search"].values() for d in docs if str(d["id"]) == fid)
+            self.assertAlmostEqual(landed, float(doc["price"]["amount"]), places=2)
 
 
 class DailyExchangeRate(unittest.TestCase):
@@ -108,3 +166,34 @@ class DailyExchangeRate(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FinnSourceRobustness(unittest.TestCase):
+    """One bad doc or one dead item page must not cost the rest of the finn.no Listings."""
+
+    def test_malformed_doc_and_dead_item_page_are_skipped(self):
+        docs = [
+            "not-a-dict",
+            {"id": 1, "heading": "Dell PowerEdge R730xd 12x LFF", "trade_type": "Til salgs", "price": {"amount": 5000},
+             "coordinates": [63.4, 10.4], "canonical_url": "https://www.finn.no/recommerce/forsale/item/1"},
+            {"id": 2, "heading": "Dell PowerEdge R730 8-Bay LFF", "trade_type": "Til salgs", "price": {"amount": 9000},
+             "canonical_url": "file:///etc/passwd"},
+            {"id": 3, "heading": "Dell PowerEdge R730xd 12x LFF", "trade_type": "Til salgs", "price": {"amount": 7000},
+             "canonical_url": "https://www.finn.no/recommerce/forsale/item/3"},
+        ]
+        blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
+        fetched = []
+
+        def fetch(url):
+            fetched.append(url)
+            if "/search?" in url:
+                return f"<script>{blob}</script>"
+            if url.endswith("/3"):
+                raise urllib.error.HTTPError(url, 404, "gone", {}, None)
+            return '<section data-testid="description"><p>12x 3.5" LFF</p></section>'
+
+        listings = {l.source_id: l for l in FinnSource(fetch=fetch, pause=0).search("r730", details=True)}
+        self.assertEqual(sorted(listings), ["2", "3"])            # the string and the list-coordinates doc are skipped
+        self.assertIsNone(listings["2"].description)              # a non-finn URL is never fetched
+        self.assertIsNone(listings["3"].description)              # a dead page leaves the description empty
+        self.assertFalse(any(u.startswith("file:") for u in fetched))

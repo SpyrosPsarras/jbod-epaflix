@@ -389,5 +389,75 @@
    "qualifies": false
   },
   "condition": "new"
+ },
+ {
+  "note": "riflescope named Exos is not a disk (live finn)",
+  "title": "Schmidt & Bender Exos 3-21×50 kikkertsikte",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "backpack named Exos is not a disk (live finn)",
+  "title": "Osprey Exos 38 Ryggsekk – L (20-23in) – ny",
+  "condition": "new",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "Exosens shoes are not a disk (live finn)",
+  "title": "Nike Air Max Exosens joggesko str 40,5 oransje/sort",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "GB sizes are read and rejected (live finn)",
+  "title": "Seagate Exos 600GB 2,5\" harddisk",
+  "condition": "used",
+  "expect": {
+   "capacity_tb": 0.6,
+   "form_factor": "2.5",
+   "qualifies": false
+  }
+ },
+ {
+  "note": "small lot is rejected, not unreadable (live finn)",
+  "title": "2 stk Exos X16 12TB SATA disker",
+  "condition": "used",
+  "expect": {
+   "capacity_tb": 12,
+   "qualifies": false
+  }
+ },
+ {
+  "note": "2TB with unknown class is rejected, not unreadable (live finn)",
+  "title": "Toshiba 2TB HDD",
+  "condition": "used",
+  "expect": {
+   "capacity_tb": 2,
+   "qualifies": false
+  }
+ },
+ {
+  "note": "several small capacities are rejected (live finn)",
+  "title": "Harddisker 4TB / 10TB / 12TB –  Seagate Exos/Barracuda, HGST",
+  "condition": "used",
+  "expect": {
+   "capacity_tb": 12,
+   "qualifies": false
+  }
+ },
+ {
+  "note": "2.5 inch drive of unknown size is rejected, not unreadable (live finn)",
+  "title": "Toshiba 2,5\" IDE harddisk 1443MB",
+  "condition": "used",
+  "expect": {
+   "form_factor": "2.5",
+   "qualifies": false
+  }
  }
 ]
