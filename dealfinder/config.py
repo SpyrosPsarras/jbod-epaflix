@@ -14,6 +14,13 @@ FINN_SHIPPING_NOK = 400
 PENALTY_NOK = {"single_psu": 500, "caddy": 100, "raid_only": 500, "no_rails": 400}
 ROUTE_FALLBACK = (1.3, 75)  # router down: straight-line km x 1.3 at 75 km/h (shown as an estimate)
 
+# Builds (ticket #6)
+TARGET_TIB = 40          # usable RAIDZ2 capacity a Build must reach
+POOL_OVERHEAD = 0.05     # ZFS metadata and slop taken off raw RAIDZ2 capacity
+CEILING_NOK = 35_000     # Builds above this Landed cost are hidden
+MIN_BUILD_DISKS = 4      # smallest RAIDZ2 layout considered
+BOOT_BAYS = 1            # one 3.5" bay kept for the boot SSD
+
 GONE_DAYS = 7          # a Gone Listing stays visible, greyed out, this many days
 HUNT_INTERVAL_S = 6 * 3600  # a Hunt every 6 hours, counted from the last Hunt in the database
 

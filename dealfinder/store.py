@@ -200,6 +200,17 @@ class Store:
                 ORDER BY gone, landed_nok LIMIT %s
             """, (limit,)).fetchall()
 
+    def build_parts(self):
+        """Live (not Gone) qualified Machines and Disks, the inputs of the Build optimizer."""
+        with self._conn() as c:
+            rows = c.execute(_FRESH + """
+                SELECT l.source, source_id, kind, title, url, facts, capacity_tb, landed_nok, location,
+                       pickup_only, costs
+                FROM listings l JOIN fresh f ON f.source = l.source
+                WHERE qualifies AND landed_nok IS NOT NULL AND last_seen >= f.since
+            """).fetchall()
+        return [r for r in rows if r["kind"] == "machine"], [r for r in rows if r["kind"] == "disk"]
+
     def unreadable(self, limit=200):
         with self._conn() as c:
             return c.execute(_FRESH + """

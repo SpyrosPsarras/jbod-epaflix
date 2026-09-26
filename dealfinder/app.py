@@ -8,8 +8,9 @@ import urllib.parse
 from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-from .config import (DISK_QUERIES, HUNT_INTERVAL_S, MACHINE_QUERIES, PICKUP_MAX_MINUTES, PICKUP_NOK_PER_KM,
-                     SOURCE_PAUSE_S)
+from .config import (CEILING_NOK, DISK_QUERIES, HUNT_INTERVAL_S, MACHINE_QUERIES, PICKUP_MAX_MINUTES,
+                     PICKUP_NOK_PER_KM, SOURCE_PAUSE_S, TARGET_TIB)
+from .builds import rank_builds
 from .costs import OsrmRouter, cost_breakdown, machine_penalties
 from .rules import Unreadable, read_disk, read_machine
 from .store import Store
@@ -42,9 +43,13 @@ def _where(row):
     return _e(row["source"]) + (" &middot; pickup " + _e(row["location"]) + drive if row["pickup_only"] else "")
 
 
-def _breakdown(row):
-    """'price + part + ...' under a Landed cost; the whole cost is visible, not just the total."""
+def _breakdown(row, penalties=None):
+    """'price + part + ...' under a Landed cost; the whole cost is visible, not just the total.
+
+    `penalties` replaces the stored ones, for a Machine whose caddy Penalty a Build recounted.
+    """
     c = row.get("costs") or {}
+    c = {**c, "penalties": penalties} if c and penalties is not None else c
     parts = [f"{c.get('price', 0):,.0f}"]
     parts += [f"{COST_LABEL[k]} {c[k]:,.0f}" for k in ("shipping", "shipping_estimate", "pickup_trip", "vat") if c.get(k)]
     parts += [f"{COST_LABEL.get(k, k)} {v:,.0f}" for k, v in (c.get("penalties") or {}).items()]
@@ -62,6 +67,37 @@ def _row_state(row):
         return (' data-drop="1"', f' <span class="drop" title="seller price dropped">&darr; seller price was {float(prev):,.0f} '
                                   f'{_e(row["currency"])}</span>')
     return "", ""
+
+
+BUILD_SORT = {  # column -> (header, key); every column sortable, server-side, no JavaScript
+    "score": ("Score (NOK/TiB)", lambda b: b.score),
+    "landed": ("Landed NOK", lambda b: b.landed_nok),
+    "usable": ("Usable TiB", lambda b: -b.usable_tib),
+    "machine": ("Machine", lambda b: b.machine["title"].lower()),
+    "disks": ("Disks", lambda b: (len(b.disks), b.capacity_tb)),
+    "sources": ("Sources", lambda b: ",".join(sorted({b.machine["source"], *(d["source"] for d in b.disks)}))),
+}
+
+
+def _link(row):
+    return f'<a href="{_e(_safe_url(row["url"]))}">{_e(row["title"])}</a>'
+
+
+def _build_rows(builds, sort):
+    rows = []
+    for b in sorted(builds, key=BUILD_SORT[sort][1]):
+        m = b.machine
+        sources = ", ".join(sorted({m["source"], *(d["source"] for d in b.disks)}))
+        items = [f"<li>Machine {_link(m)}: {b.parts['machine']:,.0f} NOK{_breakdown(m, b.parts['machine_penalties'])}</li>"]
+        items += [f"<li>Disk {_link(d)}: {float(d['landed_nok']):,.0f} NOK{_breakdown(d)}</li>" for d in b.disks]
+        rows.append(
+            f'<tr data-build="{_e(m["source_id"])}" data-score="{b.score:.2f}" data-landed="{b.landed_nok:.2f}">'
+            f"<td>{b.score:,.0f}</td><td>{b.landed_nok:,.0f}</td><td>{b.usable_tib:.1f}</td>"
+            f"<td>{_link(m)}</td><td>{len(b.disks)} &times; {b.capacity_tb:g} TB</td><td>{_e(sources)}</td>"
+            f"<td><details><summary>show</summary><ul>{''.join(items)}</ul>"
+            f"<p>Total {b.landed_nok:,.0f} NOK = Machine {b.parts['machine']:,.0f} + Disks {b.parts['disks']:,.0f}"
+            f" (a shared pickup place is driven once)</p></details></td></tr>")
+    return "".join(rows)
 
 
 def _yes_no(value):
@@ -178,7 +214,10 @@ class App:
         self.store.save_listing(listing, kind, facts_json, missing, qualifies, capacity, landed, hunt_id, costs)
         return 1
 
-    def page(self, notice=None):
+    def page(self, notice=None, sort="score"):
+        sort = sort if sort in BUILD_SORT else "score"
+        builds = rank_builds(*self.store.build_parts())
+        build_head = "".join(f'<th><a href="/?sort={k}">{_e(label)}</a></th>' for k, (label, _) in BUILD_SORT.items())
         last = self.store.last_hunt()
         disks, machines, unreadable = self.store.best_disks(), self.store.best_machines(), self.store.unreadable()
         disk_rows = "".join(
@@ -230,6 +269,9 @@ tr.gone{{color:#999}} tr.gone a{{color:#999}} .note{{font-size:85%}} .drop{{colo
 <form method="post" action="/hunt" style="display:inline"><button>Hunt now</button></form></p>
 <p>{per_source}</p>
 <p>Landed cost = price + shipping or pickup trip from Sandefjord ({PICKUP_NOK_PER_KM} NOK/km, max {PICKUP_MAX_MINUTES} min one way) + import VAT + Penalties (unknown PSU, caddies, controller or rails are charged).</p>
+<h2>Builds</h2><p>One Machine plus same-size Disks reaching {TARGET_TIB} TiB usable in RAIDZ2; the cheapest per
+Machine, Builds over {CEILING_NOK:,} NOK hidden. Lower Score is better.</p>
+<table><tr>{build_head}<th>Details</th></tr>{_build_rows(builds, sort)}</table>
 <h2>Best Disks</h2><table><tr><th>Disk</th><th>Capacity</th><th>Condition</th><th>Where</th>
 <th>Landed NOK</th><th>NOK per TB</th></tr>{disk_rows}</table>
 <h2>Best Machines</h2><table><tr><th>Machine</th><th>Model</th><th>Gen</th><th>3.5" bays</th><th>RAM</th>
@@ -277,8 +319,9 @@ tr.gone{{color:#999}} tr.gone a{{color:#999}} .note{{font-size:85%}} .drop{{colo
 
             def do_GET(self):
                 url = urllib.parse.urlsplit(self.path)
-                notice = urllib.parse.parse_qs(url.query).get("hunt", [None])[0]
-                routes = {"/": ("text/html; charset=utf-8", lambda: app.page(notice)),
+                query = urllib.parse.parse_qs(url.query)
+                notice, sort = query.get("hunt", [None])[0], query.get("sort", ["score"])[0]
+                routes = {"/": ("text/html; charset=utf-8", lambda: app.page(notice, sort)),
                           "/metrics": ("text/plain; version=0.0.4", app.metrics),
                           "/healthz": ("text/plain", lambda: "ok\n")}
                 if url.path not in routes:
