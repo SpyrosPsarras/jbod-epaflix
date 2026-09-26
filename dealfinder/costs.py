@@ -68,7 +68,8 @@ def cost_breakdown(listing, fx, foreign, router, penalties=None):
         if minutes <= PICKUP_MAX_MINUTES:
             trip = round(2 * km * PICKUP_NOK_PER_KM, 2)
     if listing.shipping is not None:
-        parts["shipping"] = round(listing.shipping * fx(listing.shipping_currency or listing.currency), 2)
+        parts["shipping_estimate" if listing.shipping_estimated else "shipping"] = round(
+            listing.shipping * fx(listing.shipping_currency or listing.currency), 2)
     elif foreign:
         problem = "shipping"
     elif listing.pickup_only:
@@ -82,7 +83,7 @@ def cost_breakdown(listing, fx, foreign, router, penalties=None):
         parts["pickup_trip" if trip is not None and trip < FINN_SHIPPING_NOK else "shipping_estimate"] = (
             trip if trip is not None and trip < FINN_SHIPPING_NOK else FINN_SHIPPING_NOK)
     if foreign:
-        parts["vat"] = round((parts["price"] + parts.get("shipping", 0)) * VAT, 2)
+        parts["vat"] = round((parts["price"] + parts.get("shipping", 0) + parts.get("shipping_estimate", 0)) * VAT, 2)
     money = ("price", "shipping", "shipping_estimate", "pickup_trip", "vat")
     parts["penalties"] = dict(penalties or {})
     if listing.risk:  # a share of the money paid to that seller

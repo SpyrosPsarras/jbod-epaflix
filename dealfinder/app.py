@@ -23,7 +23,7 @@ FACT_LABEL = {"capacity": "capacity", "form_factor": "3.5\" or 2.5\"", "disk_cla
               "condition": "condition", "quantity": "single-unit price", "shipping": "shipping to Norway",
               "generation": "generation", "bays_35": "3.5\" bay count",
               "price": "price (make an offer)", "location": "pickup place"}
-COST_LABEL = {"shipping": "shipping", "shipping_estimate": "Fiks ferdig (est.)", "pickup_trip": "pickup trip",
+COST_LABEL = {"shipping": "shipping", "shipping_estimate": "shipping (est.)", "pickup_trip": "pickup trip",
               "vat": "VAT", "single_psu": "2nd PSU", "caddies": "caddies", "raid_only": "HBA", "no_rails": "rails",
               "psu_unknown": "2nd PSU (not stated)", "caddies_unknown": "caddies (not stated)",
               "controller_unknown": "HBA (controller not stated)", "rails_unknown": "rails (not stated)",
@@ -82,8 +82,13 @@ BUILD_SORT = {  # column -> (header, key); every column sortable, server-side, n
 }
 
 
+def _risk_tag(row):
+    """A visible tag on every High-risk Listing (AliExpress)."""
+    return ' <b class="risk">High-risk</b>' if "high_risk" in ((row.get("costs") or {}).get("penalties") or {}) else ""
+
+
 def _link(row):
-    return f'<a href="{_e(_safe_url(row["url"]))}">{_e(row["title"])}</a>'
+    return f'<a href="{_e(_safe_url(row["url"]))}">{_e(row["title"])}</a>{_risk_tag(row)}'
 
 
 def _bought_html(bought):
@@ -323,11 +328,12 @@ class App:
         last = self.store.last_hunt()
         disks, machines, unreadable = self.store.best_disks(), self.store.best_machines(), self.store.unreadable()
         disk_rows = "".join(
-            '<tr data-listing="{id}" data-nok-per-tb="{npt:.2f}"{attrs}><td><a href="{url}">{title}</a>{note}</td>'
+            '<tr data-listing="{id}" data-nok-per-tb="{npt:.2f}"{attrs}><td><a href="{url}">{title}</a>{risk}{note}</td>'
             '<td>{cap:g} TB</td><td>{cond}</td><td>{where}</td><td>{landed:,.0f}</td><td>{npt:,.0f}</td></tr>'.format(
                 id=_e(r["source_id"]), npt=float(r["nok_per_tb"]), url=_e(_safe_url(r["url"])), title=_e(r["title"]),
                 cap=float(r["capacity_tb"]), cond=_e(CONDITION_LABEL.get(r["condition"], r["condition"] or "?")),
-                where=_where(r), landed=float(r["landed_nok"]), attrs=state[0], note=state[1] + _breakdown(r))
+                where=_where(r), landed=float(r["landed_nok"]), attrs=state[0], note=state[1] + _breakdown(r),
+                risk=_risk_tag(r))
             for r in disks for state in [_row_state(r)])
         machine_rows = "".join(
             '<tr data-machine="{id}" data-landed="{landed:.2f}"{attrs}><td><a href="{url}">{title}</a>{note}</td><td>{model}</td>'
@@ -374,7 +380,7 @@ class App:
 td,th{{padding:4px 10px;border-bottom:1px solid #ddd;text-align:left}}
 .fault{{background:#fde8e8;border-left:4px solid #c62828;padding:8px 12px}}
 .notice{{background:#e8f0fd;border-left:4px solid #1565c0;padding:8px 12px}}
-.bought{{background:#e8f5e9;border-left:4px solid #2e7d32;padding:8px 12px}} tr.gone{{color:#999}} tr.gone a{{color:#999}} .note{{font-size:85%}} .drop{{color:#2e7d32;font-weight:bold}}</style></head><body>
+.risk{{color:#c62828}} .bought{{background:#e8f5e9;border-left:4px solid #2e7d32;padding:8px 12px}} tr.gone{{color:#999}} tr.gone a{{color:#999}} .note{{font-size:85%}} .drop{{color:#2e7d32;font-weight:bold}}</style></head><body>
 <h1>Deal Finder</h1>{banner}{note}{running}
 <p>Last Hunt: {_when(last["finished"] if last else None)}{took}. Hunts run every {HUNT_INTERVAL_S // 3600} hours.
 {"" if bought else '<form method="post" action="/hunt" style="display:inline"><button>Hunt now</button></form>'}</p>
@@ -385,7 +391,8 @@ maxlength="{MAX_QUERY_CHARS}"> <select name="kind"><option value="disk">Disks</o
 </select> <button>Search every Source now</button></form>
 <details><summary>{len(tracked)} Tracked queries run by every Hunt</summary>
 <p><b>Disks:</b> {tracked_list["disk"]}</p><p><b>Machines:</b> {tracked_list["machine"]}</p></details>
-<p>Landed cost = price + shipping or pickup trip from Sandefjord ({PICKUP_NOK_PER_KM} NOK/km, max {PICKUP_MAX_MINUTES} min one way) + import VAT + Penalties (unknown PSU, caddies, controller or rails are charged).</p>
+<p>Landed cost = price + shipping or pickup trip from Sandefjord ({PICKUP_NOK_PER_KM} NOK/km, max {PICKUP_MAX_MINUTES} min one way) + import VAT + Penalties (unknown PSU, caddies, controller or rails are charged).
+AliExpress Disks are High-risk (+20%); their shipping is an estimate and their condition is new unless the title says otherwise.</p>
 <h2>Builds</h2><p>One Machine plus same-size Disks reaching {TARGET_TIB} TiB usable in RAIDZ2; the cheapest per
 Machine, Builds over {CEILING_NOK:,} NOK hidden. Lower Score is better.</p>
 <table><tr>{build_head}<th></th><th>Details</th></tr>{_build_rows(builds, sort, bought is None)}</table>

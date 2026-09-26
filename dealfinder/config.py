@@ -44,12 +44,16 @@ DISK_QUERIES = {
         "ironwolf pro 16tb", "wd red pro 16tb",
     ],
     "finn": ["exos", "ultrastar", "ironwolf pro", "wd red pro", "toshiba", "14tb", "16tb", "18tb", "20tb"],
+    "aliexpress": ["exos 16tb", "exos 18tb", "exos 20tb", "ultrastar 18tb", "toshiba mg09 18tb"],
 }
+# AliExpress (ticket #12): the Affiliate API's product search publishes no freight price, so Disks carry this
+# visible estimate for tracked shipping to Norway
+ALIEXPRESS_SHIPPING_NOK = 150
 
 MACHINE_QUERIES = [
     "r730xd", "r740xd", "r730", "r740", "r540",
     "dl380 gen9", "dl380 gen10", "supermicro server", "supermicro 12 bay",
 ]
-# DISK_QUERIES and MACHINE_QUERIES are only the starting Tracked queries, copied into the database on first
-# start; after that the page's Track button adds more (ticket #8)
+# DISK_QUERIES and MACHINE_QUERIES are only the starting Tracked queries, copied into the database for each
+# (kind, Source) group that has none yet; after that the page's Track button adds more (tickets #8, #12)
 MAX_QUERY_CHARS = 80

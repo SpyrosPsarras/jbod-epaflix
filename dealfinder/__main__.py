@@ -6,7 +6,7 @@ import threading
 
 from .app import App
 from .costs import DailyFx
-from .sources import EbaySource, FinnSource
+from .sources import AliExpressSource, EbaySource, FinnSource
 
 
 def main():
@@ -17,6 +17,9 @@ def main():
     else:
         logging.warning("EBAY_CLIENT_ID/EBAY_CLIENT_SECRET not set: eBay UK Source disabled")
     sources.append(FinnSource())
+    # without Affiliate API keys it reports a Source fault every Hunt, on purpose (ticket #12)
+    sources.append(AliExpressSource(os.environ.get("ALIEXPRESS_APP_KEY"), os.environ.get("ALIEXPRESS_APP_SECRET"),
+                                    os.environ.get("ALIEXPRESS_TRACKING_ID")))
     app = App(os.environ["DATABASE_URL"], sources, fx=DailyFx())
     if sys.argv[1:] == ["hunt"]:
         app.hunt()
