@@ -4,7 +4,7 @@ import json
 import psycopg
 from psycopg.rows import dict_row
 
-from .config import GONE_DAYS
+from .config import GONE_DAYS, HISTORY_WEEKS
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS listings (
@@ -75,6 +75,13 @@ CREATE TABLE IF NOT EXISTS hunts (
     ok       boolean,
     detail   jsonb
 );
+-- price history (#13): each observation's Landed cost (NULL unless the Listing qualified) and each Hunt's best
+-- Build; recorded from this version on, earlier observations have the seller price only
+ALTER TABLE price_observations ADD COLUMN IF NOT EXISTS landed_nok numeric;
+-- what the Listing was when observed, so a later retitle or disqualification does not move old prices
+ALTER TABLE price_observations ADD COLUMN IF NOT EXISTS capacity_tb numeric;
+ALTER TABLE price_observations ADD COLUMN IF NOT EXISTS model text;
+ALTER TABLE hunts ADD COLUMN IF NOT EXISTS best_build jsonb;
 """
 
 
@@ -154,6 +161,42 @@ class Store:
         with self._conn() as c:
             return c.execute("SELECT query, kind, source FROM tracked_queries ORDER BY added, query").fetchall()
 
+    def set_best_build(self, hunt_id, best):
+        with self._conn() as c:
+            c.execute("UPDATE hunts SET best_build = %s WHERE id = %s", (json.dumps(best), hunt_id))
+
+    def history(self):
+        """Weekly lowest and median Landed cost of qualifying Listings over HISTORY_WEEKS weeks, each Listing
+        counted once per week at its lowest price: (disk rows per capacity and Source, in NOK per TB;
+        Machine rows per model and Source, in NOK; best Build per week)."""
+        since = f"now() - interval '{int(HISTORY_WEEKS)} weeks'"
+        def weekly(key, value):  # each Listing once per week, at its lowest price, grouped by `key`
+            return c.execute(f"""
+                SELECT week, key, source, count(*) AS n, min(v)::float AS low,
+                       percentile_cont(0.5) WITHIN GROUP (ORDER BY v) AS median
+                FROM (SELECT date_trunc('week', seen_at)::date AS week, {key} AS key, source, source_id,
+                             min({value}) AS v
+                      FROM price_observations
+                      WHERE {key} IS NOT NULL AND landed_nok IS NOT NULL AND seen_at > {since}
+                      GROUP BY 1, 2, 3, 4) w
+                GROUP BY 1, 2, 3
+            """).fetchall()
+        with self._conn() as c:
+            disks = weekly("capacity_tb::float", "landed_nok / capacity_tb")
+            machines = weekly("model", "landed_nok")
+            builds = c.execute(f"""
+                SELECT DISTINCT ON (week) date_trunc('week', started)::date AS week, best_build
+                FROM hunts WHERE best_build IS NOT NULL AND started > {since}
+                ORDER BY week, (best_build->>'score')::float
+            """).fetchall()
+        return disks, machines, builds
+
+    def latest_best_build(self):
+        with self._conn() as c:
+            row = c.execute("SELECT best_build FROM hunts WHERE best_build IS NOT NULL "
+                            "ORDER BY id DESC LIMIT 1").fetchone()
+            return row["best_build"] if row else None
+
     def record_purchase(self, build):
         """True when recorded; False when a Build was already bought."""
         with self._conn() as c:
@@ -177,10 +220,14 @@ class Store:
     def save_listing(self, listing, kind, facts, missing, qualifies, capacity_tb, landed, hunt_id, costs=None):
         with self._conn() as c:
             c.execute("""
-                INSERT INTO price_observations (source, source_id, hunt_id, price, currency)
-                VALUES (%s, %s, %s, %s, %s)
-                ON CONFLICT (source, source_id, hunt_id) DO UPDATE SET price = EXCLUDED.price
-            """, (listing.source, listing.source_id, hunt_id, listing.price, listing.currency))
+                INSERT INTO price_observations (source, source_id, hunt_id, price, currency, landed_nok,
+                                                capacity_tb, model)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (source, source_id, hunt_id) DO UPDATE SET price = EXCLUDED.price,
+                    landed_nok = EXCLUDED.landed_nok, capacity_tb = EXCLUDED.capacity_tb, model = EXCLUDED.model
+            """, (listing.source, listing.source_id, hunt_id, listing.price, listing.currency,
+                  *((landed, capacity_tb, (facts or {}).get("model") if kind == "machine" else None)
+                    if qualifies else (None, None, None))))
             c.execute("""
                 INSERT INTO listings (source, source_id, kind, title, url, price, currency, shipping,
                                       condition, seller, facts, missing, qualifies, capacity_tb, landed_nok,

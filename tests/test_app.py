@@ -995,3 +995,74 @@ class AliExpressHighRisk(unittest.TestCase):
             self.assertEqual(got, {("exos", "disk", "finn"), ("r730xd", "machine", ""), ("x20", "disk", "aliexpress")})
         finally:
             pg.cleanup()
+
+
+class PriceHistory(unittest.TestCase):
+    """Seam 1: two Hunts a week apart; the history page shows each week's lowest/median and the change."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.disk_price = 1500
+        full = "2x 750W PSU. Dell HBA330. 12x 3.5\" caddies. Rails included."
+        ship = ["shipping_exists", "seller_pays_shipping"]
+
+        def fetch(url):
+            if "/search?" in url:
+                q = urllib.parse.parse_qs(url.split("?", 1)[1])
+                disks = [_doc(10 + i, 'Seagate Exos X16 16TB 3.5" SATA', cls.disk_price + 100 * i, 60.4, 5.5, ship)
+                         for i in range(5)]
+                machines = [_doc(1, "Dell PowerEdge R730xd 12x LFF", 6000, 59.91, 10.72)]
+                docs = (machines if q["q"] == ["r730xd"] else disks) if q["condition"] == ["3", "4"] else []
+                blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
+                return f"<script>{blob}</script>"
+            return f'<section data-testid="description"><p>{htmllib.escape(full)}</p></section>'
+
+        cls.pg = _pg()
+        cls.app = App(cls.pg.get_uri(), [FinnSource(fetch=fetch, pause=0)], fx=RATES.__getitem__,
+                      disk_queries={"finn": ["exos"]}, machine_queries=["r730xd"], pause=0, router=fake_router)
+        cls.app.hunt()
+        import psycopg
+        with psycopg.connect(cls.pg.get_uri(), autocommit=True) as c:  # make Hunt 1 a week old
+            c.execute("UPDATE price_observations SET seen_at = seen_at - interval '7 days'")
+            c.execute("UPDATE hunts SET started = started - interval '7 days'")
+        cls.disk_price = 1200  # every seller drops the price by 300 NOK
+        cls.app.hunt()
+        cls.page = cls.app.history_page()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.pg.cleanup()
+
+    def cells(self, key):
+        row = re.search(rf'<tr data-history="{re.escape(key)}">(.*?)</tr>', self.page).group(1)
+        return re.findall(r"<td>([\d,]+) / ([\d,]+) <small>\((\d+)\)</small></td>", row), row
+
+    def test_disk_weeks_show_lowest_median_and_change(self):
+        (old, new), row = self.cells("16 TB|finn")
+        # 5 disks, 1,500..1,900 NOK, then 1,200..1,600; free shipping, finn has no VAT; per TB = / 16
+        self.assertEqual(old, (f"{1500 / 16:,.0f}", f"{1700 / 16:,.0f}", "5"))
+        self.assertEqual(new, (f"{1200 / 16:,.0f}", f"{1400 / 16:,.0f}", "5"))
+        self.assertIn(f"{(1400 / 1700 - 1) * 100:+.0f}%", row)
+
+    def test_machine_model_row_and_best_build_per_week(self):
+        (old, new), _ = self.cells("R730xd|finn")
+        self.assertEqual(old[0], "6,952")                         # 6,000 + pickup trip 952
+        self.assertEqual(len(re.findall("data-best-week=", self.page)), 2)
+        self.assertIn(f"{(6952 + 1200 + 1300 + 1400 + 1500 + 1600) / 41.47:,.0f}", self.page)  # this week's Score
+        metrics = self.app.metrics()
+        self.assertRegex(metrics, r"dealfinder_best_build_score 336\.\d+")  # 13,952 / 41.47 TiB
+        self.assertIn("dealfinder_best_build_landed_nok 13952", metrics)
+
+    def test_a_listing_that_stops_qualifying_keeps_its_history(self):
+        import psycopg
+        with psycopg.connect(self.pg.get_uri(), autocommit=True) as c:  # e.g. now "make an offer"
+            c.execute("UPDATE listings SET qualifies = false, capacity_tb = NULL, facts = NULL WHERE source_id = '10'")
+        page = self.app.history_page()  # rendered after the change; used to raise on a NULL capacity
+        row = re.search(r'<tr data-history="16 TB\|finn">(.*?)</tr>', page).group(1)
+        self.assertEqual(re.findall(r"<small>\((\d+)\)</small>", row), ["5", "5"])
+        self.assertNotIn('data-history="None', page)
+
+    def test_every_page_is_dark(self):
+        for html in (self.page, self.app.page(), self.app.search_page("exos", "disk")):
+            self.assertIn('<meta name="color-scheme" content="dark">', html)
+            self.assertIn("background:#121212", html)
