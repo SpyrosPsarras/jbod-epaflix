@@ -54,6 +54,14 @@ CREATE TABLE IF NOT EXISTS price_observations (
     seen_at   timestamptz NOT NULL DEFAULT now(),
     PRIMARY KEY (source, source_id, hunt_id)
 );
+-- queries every Hunt runs; source '' = every Source (ticket #8)
+CREATE TABLE IF NOT EXISTS tracked_queries (
+    query  text NOT NULL,
+    kind   text NOT NULL,
+    source text NOT NULL DEFAULT '',
+    added  timestamptz NOT NULL DEFAULT clock_timestamp(),
+    PRIMARY KEY (query, kind, source)
+);
 CREATE TABLE IF NOT EXISTS hunts (
     id       bigserial PRIMARY KEY,
     started  timestamptz NOT NULL DEFAULT now(),
@@ -120,6 +128,23 @@ class Store:
         with self._conn() as c:
             c.execute("UPDATE hunts SET finished = now(), ok = %s, detail = %s WHERE id = %s",
                       (ok, json.dumps(detail), hunt_id))
+
+    def seed_tracked(self, rows):
+        """Insert the starting Tracked queries (query, kind, source) when there are none yet (first start)."""
+        with self._conn() as c, c.transaction():
+            if c.execute("SELECT 1 FROM tracked_queries LIMIT 1").fetchone() is None:
+                for row in rows:
+                    c.execute("INSERT INTO tracked_queries (query, kind, source) VALUES (%s, %s, %s) "
+                              "ON CONFLICT DO NOTHING", row)
+
+    def track(self, query, kind):
+        with self._conn() as c:
+            c.execute("INSERT INTO tracked_queries (query, kind) VALUES (%s, %s) ON CONFLICT DO NOTHING",
+                      (query, kind))
+
+    def tracked(self):
+        with self._conn() as c:
+            return c.execute("SELECT query, kind, source FROM tracked_queries ORDER BY added, query").fetchall()
 
     def route_get(self, lat, lon):
         with self._conn() as c:

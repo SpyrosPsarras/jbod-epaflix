@@ -2,14 +2,15 @@
 import datetime
 import html
 import logging
+import re
 import threading
 import time
 import urllib.parse
 from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-from .config import (CEILING_NOK, DISK_QUERIES, HUNT_INTERVAL_S, MACHINE_QUERIES, PICKUP_MAX_MINUTES,
-                     PICKUP_NOK_PER_KM, SOURCE_PAUSE_S, TARGET_TIB)
+from .config import (CEILING_NOK, DISK_QUERIES, HUNT_INTERVAL_S, MACHINE_QUERIES, MAX_QUERY_CHARS,
+                     PICKUP_MAX_MINUTES, PICKUP_NOK_PER_KM, SOURCE_PAUSE_S, TARGET_TIB)
 from .builds import rank_builds
 from .costs import OsrmRouter, cost_breakdown, machine_penalties
 from .rules import Unreadable, read_disk, read_machine
@@ -102,6 +103,12 @@ def _build_rows(builds, sort):
     return "".join(rows)
 
 
+def clean_query(query, kind):
+    """(query, kind) as typed by the owner, normalised; None when unusable."""
+    query = " ".join((query or "").replace("\x00", " ").lower().split())[:MAX_QUERY_CHARS]
+    return (query, kind) if query and kind in ("disk", "machine") else None
+
+
 def _yes_no(value):
     return {True: "yes", False: "no"}.get(value, "?")
 
@@ -135,8 +142,9 @@ class App:
         self.store.migrate()
         self.router = router or OsrmRouter(self.store)
         self.sources, self.fx, self.pause = sources, fx, pause
-        self.disk_queries = disk_queries or DISK_QUERIES
-        self.machine_queries = machine_queries or MACHINE_QUERIES
+        disk_queries, machine_queries = disk_queries or DISK_QUERIES, machine_queries or MACHINE_QUERIES
+        self.store.seed_tracked([(q, "disk", src) for src, qs in disk_queries.items() for q in qs]
+                                + [(q, "machine", "") for q in machine_queries])
         self._hunt_lock = threading.Lock()  # one Hunt at a time, scheduled or by hand
 
     def start_hunt(self):
@@ -174,13 +182,12 @@ class App:
     def hunt(self):
         """One pass over every Source. A failing Source is recorded and does not stop the others."""
         hunt_id = self.store.start_hunt()
-        detail, ok = {}, True
+        detail, ok, tracked = {}, True, self.store.tracked()
         for source in self.sources:
             counts = {"disk": 0, "machine": 0}
             try:
-                work = [(q, "disk") for q in self.disk_queries.get(source.name, [])]
-                if source.supports_machines:
-                    work += [(q, "machine") for q in self.machine_queries]
+                work = [(r["query"], r["kind"]) for r in tracked if r["source"] in ("", source.name)
+                        and (r["kind"] == "disk" or source.supports_machines)]
                 for query, kind in work:
                     for listing in source.search(query, details=kind == "machine"):
                         counts[kind] += self._record(source, listing, kind, hunt_id)
@@ -193,28 +200,85 @@ class App:
         self.store.finish_hunt(hunt_id, ok, detail)
         log.info("hunt %s done ok=%s %s", hunt_id, ok, detail)
 
-    def _record(self, source, listing, kind, hunt_id):
+    def _score(self, source, listing, kind):
+        """The rules' verdict on one Listing: None when it is not a Disk/Machine at all, else a dict with
+        facts, missing, qualifies, capacity_tb, landed_nok and costs. Hunts save it; Search only shows it."""
         if kind == "disk":
             facts = read_disk(listing.title, listing.condition)
         else:
             facts = read_machine(listing.title, listing.description, listing.condition)
         if facts is None:
-            return 0
+            return None
         if listing.price <= 0:  # "make an offer": no price to rank
             facts = Unreadable((facts.missing if isinstance(facts, Unreadable) else []) + ["price"])
         if isinstance(facts, Unreadable):
-            self.store.save_listing(listing, kind, None, facts.missing, False, None, None, hunt_id)
-            return 1
+            return {"facts": None, "missing": facts.missing, "qualifies": False, "capacity_tb": None,
+                    "landed_nok": None, "costs": None}
         facts_json = asdict(facts)
         penalties = machine_penalties(facts_json) if kind == "machine" and facts.bays_35 is not None else None
         costs, problem = cost_breakdown(listing, self.fx, source.foreign, self.router, penalties)
         # unknown shipping or place is a missing fact; a pickup beyond the limit is a disqualifier (rejected)
-        missing = [problem] if problem in ("shipping", "location") else []
         landed = None if problem else costs["total"]
-        qualifies = facts.qualifies and landed is not None
-        capacity = facts.capacity_tb if kind == "disk" else None
-        self.store.save_listing(listing, kind, facts_json, missing, qualifies, capacity, landed, hunt_id, costs)
+        return {"facts": facts_json, "missing": [problem] if problem in ("shipping", "location") else [],
+                "qualifies": facts.qualifies and landed is not None, "landed_nok": landed, "costs": costs,
+                "capacity_tb": facts.capacity_tb if kind == "disk" else None}
+
+    def _record(self, source, listing, kind, hunt_id):
+        s = self._score(source, listing, kind)
+        if s is None:
+            return 0
+        self.store.save_listing(listing, kind, s["facts"], s["missing"], s["qualifies"], s["capacity_tb"],
+                                s["landed_nok"], hunt_id, s["costs"])
         return 1
+
+    def search(self, query, kind):
+        """Run one query on every Source now and score the results; nothing is saved.
+        Returns (rows, faults): rows are dicts of the Listing fields plus the score, best first."""
+        rows, faults = [], []
+        for source in self.sources:
+            if kind == "machine" and not source.supports_machines:
+                continue
+            try:
+                for listing in source.search(query, details=kind == "machine"):
+                    s = self._score(source, listing, kind)
+                    if s is not None:
+                        rows.append({**asdict(listing), **s})
+            except Exception as exc:  # one failing Source must not hide the others' results
+                log.exception("search on %s failed", source.name)
+                faults.append((source.name, str(exc)[:200]))
+
+        def rank(r):
+            per = r["landed_nok"] / r["capacity_tb"] if r["landed_nok"] and r["capacity_tb"] else r["landed_nok"]
+            return (not r["qualifies"], r["landed_nok"] is None, per or 0)
+        return sorted(rows, key=rank), faults
+
+    def search_page(self, query, kind):
+        rows, faults = self.search(query, kind)
+        body = []
+        for r in rows:
+            if r["qualifies"]:
+                verdict = "Qualifies"
+            elif r["missing"]:
+                verdict = "Could not read: " + ", ".join(FACT_LABEL.get(m, m) for m in r["missing"])
+            else:
+                verdict = "Rejected by the rules"
+            landed, cap = r["landed_nok"], r["capacity_tb"]
+            body.append(
+                f'<tr data-result="{_e(r["source_id"])}" data-qualifies="{int(r["qualifies"])}"><td>{_e(r["source"])}</td>'
+                f'<td><a href="{_e(_safe_url(r["url"]))}">{_e(r["title"])}</a>{_breakdown(r)}</td><td>{_e(verdict)}</td>'
+                f'<td>{"" if landed is None else f"{landed:,.0f}"}</td>'
+                f'<td>{f"{landed / cap:,.0f}" if landed and cap else ""}</td></tr>')
+        body = "".join(body)
+        fault = "".join(f'<p class="fault" data-fault="{_e(n)}">Source fault: <b>{_e(n)}</b> {_e(m)}</p>' for n, m in faults)
+        return f"""<!doctype html><html><head><meta charset="utf-8"><title>Search: {_e(query)}</title>
+<style>body{{font-family:sans-serif;margin:2em}}td,th{{padding:4px 10px;border-bottom:1px solid #ddd;text-align:left}}
+.fault{{background:#fde8e8;border-left:4px solid #c62828;padding:8px 12px}}</style></head><body>
+<p><a href="/">&larr; Deal Finder</a></p><h1>Search: {_e(query)} ({_e(kind)}s)</h1>{fault}
+<form method="post" action="/track"><input type="hidden" name="q" value="{_e(query)}">
+<input type="hidden" name="kind" value="{_e(kind)}"><button>Track this query</button> (every Hunt will run it)</form>
+<p>{len(rows)} results, {sum(r["qualifies"] for r in rows)} qualify. Scored with the same rules as a Hunt; nothing is saved.</p>
+<table><tr><th>Source</th><th>Listing</th><th>Verdict</th><th>Landed NOK</th><th>NOK per TB</th></tr>{body}</table>
+</body></html>"""
 
     def page(self, notice=None, sort="score"):
         sort = sort if sort in BUILD_SORT else "score"
@@ -254,7 +318,13 @@ class App:
                if name in success else "It has no Listings yet.</p>")
             for name, reason in faults)
         notices = {"started": "Hunt started. Refresh in a few minutes.",
-                   "busy": "A Hunt is already running; this request was ignored."}
+                   "busy": "A Hunt is already running; this request was ignored.",
+                   "tracked": "Query tracked. Every Hunt runs it from now on."}
+        tracked = self.store.tracked()
+        tracked_list = {kind: " &middot; ".join(
+            f'<span data-tracked="{_e(kind)}:{_e(r["query"])}">{_e(r["query"])}'
+            + (f' <small>({_e(r["source"])} only)</small>' if r["source"] else "") + "</span>"
+            for r in tracked if r["kind"] == kind) for kind in ("disk", "machine")}
         note = f'<p class="notice" data-notice="{_e(notice)}">{_e(notices[notice])}</p>' if notice in notices else ""
         running = '<p class="notice">A Hunt is running now.</p>' if self.hunt_running() else ""
         took = f" (took {(last['finished'] - last['started']).total_seconds():.0f} s)" if last else ""
@@ -270,6 +340,11 @@ tr.gone{{color:#999}} tr.gone a{{color:#999}} .note{{font-size:85%}} .drop{{colo
 <p>Last Hunt: {_when(last["finished"] if last else None)}{took}. Hunts run every {HUNT_INTERVAL_S // 3600} hours.
 <form method="post" action="/hunt" style="display:inline"><button>Hunt now</button></form></p>
 <p>{per_source}</p>
+<form method="get" action="/search"><input name="q" size="30" placeholder="e.g. exos x20 or r740xd" required
+maxlength="{MAX_QUERY_CHARS}"> <select name="kind"><option value="disk">Disks</option><option value="machine">Machines</option>
+</select> <button>Search every Source now</button></form>
+<details><summary>{len(tracked)} Tracked queries run by every Hunt</summary>
+<p><b>Disks:</b> {tracked_list["disk"]}</p><p><b>Machines:</b> {tracked_list["machine"]}</p></details>
 <p>Landed cost = price + shipping or pickup trip from Sandefjord ({PICKUP_NOK_PER_KM} NOK/km, max {PICKUP_MAX_MINUTES} min one way) + import VAT + Penalties (unknown PSU, caddies, controller or rails are charged).</p>
 <h2>Builds</h2><p>One Machine plus same-size Disks reaching {TARGET_TIB} TiB usable in RAIDZ2; the cheapest per
 Machine, Builds over {CEILING_NOK:,} NOK hidden. Lower Score is better.</p>
@@ -310,20 +385,41 @@ Machine, Builds over {CEILING_NOK:,} NOK hidden. Lower Score is better.</p>
         app = self
 
         class Handler(BaseHTTPRequestHandler):
-            def do_POST(self):
-                if urllib.parse.urlsplit(self.path).path != "/hunt":
-                    self.send_error(404)
-                    return
+            def _redirect(self, location):
                 self.send_response(303)
-                self.send_header("Location", "/?hunt=" + ("started" if app.start_hunt() else "busy"))
+                self.send_header("Location", location)
                 self.send_header("Content-Length", "0")
                 self.end_headers()
+
+            def do_POST(self):
+                path = urllib.parse.urlsplit(self.path).path
+                if path == "/hunt":
+                    self._redirect("/?hunt=" + ("started" if app.start_hunt() else "busy"))
+                elif path == "/track":
+                    size = self.headers.get("Content-Length") or "0"
+                    if not re.fullmatch(r"[0-9]{1,4}", size) or int(size) > 4096:  # rejects -1 (reads to EOF), "²"
+                        self.send_error(400, "form too large or no length")
+                        return
+                    form = urllib.parse.parse_qs(self.rfile.read(int(size)).decode("utf-8", "replace"))
+                    picked = clean_query(form.get("q", [""])[0], form.get("kind", [""])[0])
+                    if picked is None:
+                        self.send_error(400, "query and kind (disk or machine) required")
+                        return
+                    app.store.track(*picked)
+                    self._redirect("/?hunt=tracked")
+                else:
+                    self.send_error(404)
 
             def do_GET(self):
                 url = urllib.parse.urlsplit(self.path)
                 query = urllib.parse.parse_qs(url.query)
                 notice, sort = query.get("hunt", [None])[0], query.get("sort", ["score"])[0]
+                picked = clean_query(query.get("q", [""])[0], query.get("kind", [""])[0])
+                if url.path == "/search" and picked is None:
+                    self.send_error(400, "query and kind (disk or machine) required")
+                    return
                 routes = {"/": ("text/html; charset=utf-8", lambda: app.page(notice, sort)),
+                          "/search": ("text/html; charset=utf-8", lambda: app.search_page(*picked)),
                           "/metrics": ("text/plain; version=0.0.4", app.metrics),
                           "/healthz": ("text/plain", lambda: "ok\n")}
                 if url.path not in routes:

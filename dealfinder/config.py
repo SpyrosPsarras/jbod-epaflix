@@ -48,5 +48,8 @@ DISK_QUERIES = {
 
 MACHINE_QUERIES = [
     "r730xd", "r740xd", "r730", "r740", "r540",
-    "dl380 gen9", "dl380 gen10", "supermicro server",
+    "dl380 gen9", "dl380 gen10", "supermicro server", "supermicro 12 bay",
 ]
+# DISK_QUERIES and MACHINE_QUERIES are only the starting Tracked queries, copied into the database on first
+# start; after that the page's Track button adds more (ticket #8)
+MAX_QUERY_CHARS = 80
