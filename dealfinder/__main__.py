@@ -2,6 +2,7 @@
 import logging
 import os
 import sys
+import threading
 
 from .app import App
 from .costs import DailyFx
@@ -21,7 +22,7 @@ def main():
         app.hunt()
         return
     server = app.make_server("0.0.0.0", int(os.environ.get("PORT", "8080")))
-    app.hunt_in_background()
+    threading.Thread(target=app.run_scheduler, name="scheduler", daemon=True).start()
     logging.info("serving on %s", server.server_address)
     server.serve_forever()
 

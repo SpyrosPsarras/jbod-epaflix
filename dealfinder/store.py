@@ -46,6 +46,23 @@ CREATE TABLE IF NOT EXISTS hunts (
 """
 
 
+# A Source's successful Hunt: it finished ok and found Listings. The one definition used by both the page
+# tables (_FRESH) and the per-Source "last successful Hunt" line, so a failing or empty Source keeps showing
+# the Listings from its last good Hunt, and the banner says so (ticket #7).
+_SOURCE_OK = """
+    h.finished IS NOT NULL AND (s.value->>'ok')::boolean
+    AND coalesce((s.value->>'disk')::int, 0) + coalesce((s.value->>'machine')::int, 0) > 0
+"""
+_FRESH = f"""
+WITH fresh AS (
+    SELECT s.key AS source, max(h.started) AS since
+    FROM hunts h, jsonb_each(h.detail) s
+    WHERE {_SOURCE_OK}
+    GROUP BY 1
+)
+"""
+
+
 class Store:
     def __init__(self, uri):
         self.uri = uri
@@ -87,44 +104,62 @@ class Store:
                   json.dumps(facts) if facts is not None else None, missing, qualifies, capacity_tb, landed,
                   listing.description, listing.location, listing.lat, listing.lon, listing.pickup_only))
 
-    def last_ok_hunt(self):
+    def last_hunt(self):
+        """The latest finished Hunt, successful or not."""
         with self._conn() as c:
-            return c.execute("SELECT id, started, finished FROM hunts WHERE ok ORDER BY id DESC LIMIT 1").fetchone()
+            return c.execute("""SELECT id, started, finished, ok, detail FROM hunts
+                                WHERE finished IS NOT NULL ORDER BY id DESC LIMIT 1""").fetchone()
 
-    def best_disks(self, since, limit=100):
+    def last_started(self):
         with self._conn() as c:
-            return c.execute("""
-                SELECT source, source_id, title, url, capacity_tb, condition, landed_nok, location, pickup_only,
+            row = c.execute("SELECT max(started) AS started FROM hunts").fetchone()
+            return row["started"]
+
+    def source_last_success(self):
+        """{source: finish time of its last successful Hunt that found Listings}."""
+        with self._conn() as c:
+            return {r["source"]: r["finished"] for r in c.execute(f"""
+                SELECT s.key AS source, max(h.finished) AS finished
+                FROM hunts h, jsonb_each(h.detail) s
+                WHERE {_SOURCE_OK}
+                GROUP BY 1""")}
+
+    def best_disks(self, limit=100):
+        with self._conn() as c:
+            return c.execute(_FRESH + """
+                SELECT l.source, source_id, title, url, capacity_tb, condition, landed_nok, location, pickup_only,
                        round(landed_nok / capacity_tb, 2) AS nok_per_tb
-                FROM listings
-                WHERE kind = 'disk' AND qualifies AND landed_nok IS NOT NULL AND last_seen >= %s
+                FROM listings l JOIN fresh f ON f.source = l.source
+                WHERE kind = 'disk' AND qualifies AND landed_nok IS NOT NULL AND last_seen >= f.since
                 ORDER BY nok_per_tb, landed_nok LIMIT %s
-            """, (since, limit)).fetchall()
+            """, (limit,)).fetchall()
 
-    def best_machines(self, since, limit=50):
+    def best_machines(self, limit=50):
         with self._conn() as c:
-            return c.execute("""
-                SELECT source, source_id, title, url, facts, landed_nok, location, pickup_only
-                FROM listings
-                WHERE kind = 'machine' AND qualifies AND landed_nok IS NOT NULL AND last_seen >= %s
+            return c.execute(_FRESH + """
+                SELECT l.source, source_id, title, url, facts, landed_nok, location, pickup_only
+                FROM listings l JOIN fresh f ON f.source = l.source
+                WHERE kind = 'machine' AND qualifies AND landed_nok IS NOT NULL AND last_seen >= f.since
                 ORDER BY landed_nok LIMIT %s
-            """, (since, limit)).fetchall()
+            """, (limit,)).fetchall()
 
-    def unreadable(self, since, limit=200):
+    def unreadable(self, limit=200):
         with self._conn() as c:
-            return c.execute("""
-                SELECT source, source_id, kind, title, url, missing
-                FROM listings WHERE cardinality(missing) > 0 AND last_seen >= %s
-                ORDER BY kind DESC, source, title LIMIT %s
-            """, (since, limit)).fetchall()
+            return c.execute(_FRESH + """
+                SELECT l.source, source_id, kind, title, url, missing
+                FROM listings l JOIN fresh f ON f.source = l.source
+                WHERE cardinality(missing) > 0 AND last_seen >= f.since
+                ORDER BY kind DESC, l.source, title LIMIT %s
+            """, (limit,)).fetchall()
 
-    def counts(self, since):
+    def counts(self):
         with self._conn() as c:
-            return c.execute("""
-                SELECT source, kind,
+            return c.execute(_FRESH + """
+                SELECT l.source, kind,
                        CASE WHEN qualifies THEN 'qualified'
                             WHEN cardinality(missing) > 0 THEN 'unreadable'
                             ELSE 'rejected' END AS state,
                        count(*) AS n
-                FROM listings WHERE last_seen >= %s GROUP BY 1, 2, 3
-            """, (since,)).fetchall()
+                FROM listings l JOIN fresh f ON f.source = l.source
+                WHERE last_seen >= f.since GROUP BY 1, 2, 3
+            """).fetchall()

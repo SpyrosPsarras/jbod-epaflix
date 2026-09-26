@@ -1,6 +1,8 @@
 """Seam 1: drive the app from outside with a fake Source network layer and a real Postgres."""
 import base64
+import datetime
 import html as htmllib
+import http.client
 import json
 import pathlib
 import re
@@ -13,7 +15,7 @@ import urllib.request
 
 import pgserver
 
-from dealfinder.app import App
+from dealfinder.app import App, next_hunt_delay
 from dealfinder.costs import DailyFx
 from dealfinder.sources import EbaySource, FinnSource
 
@@ -69,6 +71,7 @@ class HuntToPage(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.server.shutdown()
+        cls.server.server_close()
         cls.pg.cleanup()
 
     def get(self, path):
@@ -123,7 +126,9 @@ class HuntToPage(unittest.TestCase):
         qualified = re.search(r'dealfinder_listings\{source="ebay_uk",kind="disk",state="qualified"\} (\d+)', text)
         self.assertIsNotNone(qualified, text)
         self.assertGreater(int(qualified.group(1)), 5)
-        self.assertIn("dealfinder_hunt_last_success_timestamp_seconds", text)
+        self.assertIn('dealfinder_source_last_success_timestamp_seconds{source="ebay_uk"}', text)
+        self.assertIn("dealfinder_hunt_duration_seconds", text)
+        self.assertRegex(text, r"dealfinder_hunt_last_success_timestamp_seconds [1-9][\d.]+")
 
 
     def test_finn_machines_that_fit_the_rules_are_ranked_by_price(self):
@@ -197,3 +202,225 @@ class FinnSourceRobustness(unittest.TestCase):
         self.assertIsNone(listings["2"].description)              # a non-finn URL is never fetched
         self.assertIsNone(listings["3"].description)              # a dead page leaves the description empty
         self.assertFalse(any(u.startswith("file:") for u in fetched))
+
+
+class _BrokenSource:
+    name, foreign, supports_machines = "broken", False, False
+
+    def search(self, query, details=False):
+        raise RuntimeError("upstream page changed")
+
+
+class _EmptySource:
+    name, foreign, supports_machines = "empty", False, False
+
+    def search(self, query, details=False):
+        return []
+
+
+class _GatedSource(_EmptySource):
+    """Holds a Hunt open until the test releases the gate."""
+    name = "gated"
+
+    def __init__(self):
+        self.gate = threading.Event()
+
+    def search(self, query, details=False):
+        self.gate.wait(30)
+        return []
+
+
+def _pg():
+    return pgserver.get_server(tempfile.mkdtemp(), cleanup_mode="stop")
+
+
+class SourceFaults(unittest.TestCase):
+    """A failing or empty Source raises the banner while the other Sources still rank."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pg = _pg()
+        sources = [EbaySource("id", "secret", fetch=fake_fetch), _BrokenSource(), _EmptySource()]
+        cls.app = App(cls.pg.get_uri(), sources, fx=RATES.__getitem__,
+                      disk_queries={"ebay_uk": list(FIXTURE), "broken": ["x"], "empty": ["x"]}, pause=0)
+        cls.app.hunt()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.pg.cleanup()
+
+    def test_banner_names_the_failing_and_the_empty_source(self):
+        page = self.app.page()
+        self.assertRegex(page, r'data-fault="broken">Source fault: <b>broken</b> failed: upstream page changed')
+        self.assertRegex(page, r'data-fault="empty">Source fault: <b>empty</b> returned no Listings[^<]*It has no Listings yet')
+        self.assertNotIn('data-fault="ebay_uk"', page)
+
+    def test_healthy_source_still_ranks(self):
+        self.assertGreater(len(re.findall(r'data-listing="[^"]+" data-nok-per-tb=', self.app.page())), 5)
+
+    def test_hunt_records_start_end_and_per_source_result(self):
+        last = self.app.store.last_hunt()
+        self.assertLess(last["started"], last["finished"])
+        self.assertEqual(sorted(last["detail"]), ["broken", "ebay_uk", "empty"])
+        self.assertFalse(last["detail"]["broken"]["ok"])
+        self.assertTrue(last["detail"]["ebay_uk"]["ok"])
+        self.assertGreater(last["detail"]["ebay_uk"]["disk"], 5)
+
+    def test_metrics_show_source_faults_and_counts(self):
+        text = self.app.metrics()
+        self.assertIn('dealfinder_source_up{source="broken"} 0', text)
+        self.assertIn('dealfinder_source_up{source="empty"} 0', text)
+        self.assertIn('dealfinder_source_up{source="ebay_uk"} 1', text)
+        self.assertRegex(text, r'dealfinder_source_listings\{source="ebay_uk"\} [1-9]\d*')
+        self.assertRegex(text, r"dealfinder_hunt_duration_seconds [\d.]+")
+
+
+class HuntNowAndLock(unittest.TestCase):
+    """'Hunt now' starts a Hunt; a second request while it runs is ignored with a message."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pg = _pg()
+        cls.source = _GatedSource()
+        cls.app = App(cls.pg.get_uri(), [cls.source], fx=RATES.__getitem__, disk_queries={"gated": ["x"]}, pause=0)
+        cls.server = cls.app.make_server("127.0.0.1", 0)
+        threading.Thread(target=cls.server.serve_forever, daemon=True).start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.source.gate.set()
+        cls.server.shutdown()
+        cls.server.server_close()
+        cls.pg.cleanup()
+
+    def post_hunt(self):
+        conn = http.client.HTTPConnection("127.0.0.1", self.server.server_address[1])
+        try:
+            conn.request("POST", "/hunt")
+            resp = conn.getresponse()
+            return resp.status, resp.getheader("Location")
+        finally:
+            conn.close()
+
+    def test_second_request_is_ignored_while_a_hunt_runs(self):
+        self.assertEqual(self.post_hunt(), (303, "/?hunt=started"))
+        self.assertTrue(self.app.hunt_running())
+        self.assertEqual(self.post_hunt(), (303, "/?hunt=busy"))
+        with urllib.request.urlopen("http://127.0.0.1:%d/?hunt=busy" % self.server.server_address[1]) as r:
+            page = r.read().decode()
+        self.assertIn('data-notice="busy"', page)
+        self.assertIn("A Hunt is running now.", page)
+        self.source.gate.set()
+        for _ in range(100):
+            if not self.app.hunt_running():
+                break
+            threading.Event().wait(0.05)
+        self.assertFalse(self.app.hunt_running())
+        self.assertEqual(sorted(self.app.store.last_hunt()["detail"]), ["gated"])  # exactly one Hunt ran
+        with self.app.store._conn() as c:
+            self.assertEqual(len(c.execute("SELECT id FROM hunts").fetchall()), 1)
+
+
+class Scheduler(unittest.TestCase):
+    def test_next_hunt_is_due_one_interval_after_the_last(self):
+        now = datetime.datetime(2026, 9, 26, 12, 0, tzinfo=datetime.timezone.utc)
+        self.assertEqual(next_hunt_delay(None, now, 6 * 3600), 0)
+        self.assertEqual(next_hunt_delay(now - datetime.timedelta(hours=7), now, 6 * 3600), 0)
+        self.assertEqual(next_hunt_delay(now - datetime.timedelta(hours=2), now, 6 * 3600), 4 * 3600)
+
+    def test_scheduler_starts_a_hunt_when_none_has_run(self):
+        pg = _pg()
+        try:
+            app = App(pg.get_uri(), [_EmptySource()], fx=RATES.__getitem__, disk_queries={"empty": ["x"]}, pause=0)
+            stop = threading.Event()
+            worker = threading.Thread(target=app.run_scheduler, args=(stop,), daemon=True)
+            worker.start()
+            for _ in range(100):
+                if app.store.last_hunt():
+                    break
+                threading.Event().wait(0.05)
+            stop.set()
+            worker.join(5)
+            self.assertIsNotNone(app.store.last_hunt())
+            self.assertFalse(worker.is_alive())
+        finally:
+            pg.cleanup()
+
+
+class SchedulerSurvivesStoreErrors(unittest.TestCase):
+    def test_scheduler_keeps_running_when_the_store_fails(self):
+        pg = _pg()
+        try:
+            app = App(pg.get_uri(), [_EmptySource()], fx=RATES.__getitem__, disk_queries={"empty": ["x"]}, pause=0)
+            calls = []
+
+            def flaky():
+                calls.append(1)
+                raise OSError("postgres failover")
+            app.store.last_started = flaky
+            stop = threading.Event()
+            worker = threading.Thread(target=app.run_scheduler, args=(stop,), kwargs={"retry": 0.05}, daemon=True)
+            worker.start()
+            for _ in range(100):
+                if len(calls) >= 3:
+                    break
+                threading.Event().wait(0.05)
+            self.assertTrue(worker.is_alive())   # survived the failures...
+            self.assertGreaterEqual(len(calls), 3)  # ...and kept retrying
+            stop.set()
+            worker.join(5)
+        finally:
+            pg.cleanup()
+
+
+class CrashedHuntReleasesTheLock(unittest.TestCase):
+    def test_lock_is_released_after_a_crash(self):
+        pg = _pg()
+        try:
+            app = App(pg.get_uri(), [], fx=RATES.__getitem__, pause=0)
+            app.hunt = lambda: 1 / 0
+            self.assertTrue(app.start_hunt())
+            for _ in range(100):
+                if not app.hunt_running():
+                    break
+                threading.Event().wait(0.05)
+            self.assertFalse(app.hunt_running())
+            self.assertTrue(app.start_hunt())  # the next Hunt can start
+        finally:
+            pg.cleanup()
+
+
+class EmptySourceKeepsItsLastGoodListings(unittest.TestCase):
+    """An empty Hunt from a Source keeps that Source's earlier Listings, as the banner says."""
+
+    def test_banner_text_matches_what_is_shown(self):
+        pg = _pg()
+        try:
+            state = {"items": FIXTURE}
+
+            def fetch(url, headers=None, data=None):
+                if "oauth2/token" in url:
+                    return {"access_token": "t", "expires_in": 7200}
+                q = urllib.parse.parse_qs(urllib.parse.urlparse(url).query)["q"][0]
+                return state["items"].get(q, {"itemSummaries": []})
+            app = App(pg.get_uri(), [EbaySource("id", "secret", fetch=fetch)], fx=RATES.__getitem__,
+                      disk_queries={"ebay_uk": list(FIXTURE)}, pause=0)
+            app.hunt()
+            before = len(re.findall("data-listing=", app.page()))
+            state["items"] = {}  # the Source now returns nothing
+            app.hunt()
+            page = app.page()
+            self.assertIn('data-fault="ebay_uk"', page)
+            self.assertEqual(len(re.findall("data-listing=", page)), before)
+            self.assertGreater(before, 5)
+        finally:
+            pg.cleanup()
+
+
+class EbayMalformedItem(unittest.TestCase):
+    def test_non_dict_item_is_skipped(self):
+        def fetch(url, headers=None, data=None):
+            if "oauth2/token" in url:
+                return {"access_token": "t", "expires_in": 7200}
+            return {"itemSummaries": ["not-an-item", FIXTURE["exos 16tb"]["itemSummaries"][0]]}
+        self.assertEqual(len(EbaySource("id", "secret", fetch=fetch).search("q")), 1)

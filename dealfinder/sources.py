@@ -199,8 +199,8 @@ class EbaySource:
         for it in r.get("itemSummaries", []):
             try:
                 listings.append(self._listing(it))
-            except (KeyError, TypeError, ValueError):  # one malformed item must not drop the whole Source
-                log.warning("skipping malformed eBay item %s", it.get("itemId"))
+            except (AttributeError, KeyError, TypeError, ValueError):  # one malformed item must not drop the Source
+                log.warning("skipping malformed eBay item %s", it.get("itemId") if isinstance(it, dict) else it)
         return listings
 
     def _listing(self, it):
