@@ -387,5 +387,18 @@
    "qualifies": false,
    "generation": 11
   }
+ },
+ {
+  "note": "'12x LFF' must not make '1x 750W' read as 2 PSUs (synthetic, found by the end-to-end test)",
+  "title": "Dell PowerEdge R730xd 12x LFF",
+  "description": "1x 750W PSU. PERC H710 RAID. 4x 3.5\" caddies. Rails følger ikke med.",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "psu_count": 1,
+   "caddies_35": 4,
+   "controller": "raid",
+   "rails": false
+  }
  }
 ]

@@ -2,6 +2,7 @@
 import base64
 import json
 import logging
+import math
 import re
 import time
 import urllib.parse
@@ -78,6 +79,43 @@ class _DescriptionText(HTMLParser):
         return re.sub(r"\n\s*\n+", "\n", "".join(self.parts)).strip()
 
 
+# sellers often promise shipping only in the text, not in finn's shipping flags
+_FREE_SHIPPING = re.compile(r"\b(free\s+shipping|gratis\s+frakt|fri\s+frakt|frakt\s+inkludert|inkl\.?\s+frakt)\b", re.I)
+_SHIPS = re.compile(r"\b(kan\s+(evt\.?\s+|også\s+)?sendes|sendes\s+mot|frakt\s+kan|sender\s+gjerne|can\s+ship)\b", re.I)
+
+
+_NEGATION = re.compile(r"\b(ikke|not|no|nei|uten|without|dessverre)\b|\?", re.I)
+
+
+# ponytail: crude 20-character window; "Gratis frakt, ikke henting" reads as negated. That errs to the safe side
+# (charged a pickup trip or hidden), never to a fake bargain.
+def _affirmed(rx, text):
+    """True when `rx` matches without a negation just before or after it ("ikke gratis frakt", "frakt kan ikke")."""
+    for m in rx.finditer(text):
+        around = text[max(0, m.start() - 20):m.start()] + " " + text[m.end():m.end() + 20]
+        if not _NEGATION.search(around):
+            return True
+    return False
+
+
+def _shipping_from_text(listing):
+    """Free or offered shipping stated in the description overrides a pickup-only reading of finn's flags."""
+    text = listing.description or ""
+    if _affirmed(_FREE_SHIPPING, text):
+        listing.shipping, listing.pickup_only = 0.0, False
+    elif listing.pickup_only and _affirmed(_SHIPS, text):
+        listing.pickup_only = False  # shipping offered, price unknown: costed at the Fiks ferdig estimate
+
+
+def _coordinate(value, limit):
+    """A finite float within +-limit, else None (finn data is untrusted)."""
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    return number if math.isfinite(number) and abs(number) <= limit else None
+
+
 class FinnSource:
     """finn.no Torget: the search page embeds its results as base64 JSON; item pages carry the full description.
 
@@ -110,6 +148,7 @@ class FinnSource:
         if details:
             for listing in listings:
                 listing.description = self._description(listing.url)
+                _shipping_from_text(listing)
         return listings
 
     def _description(self, url):
@@ -144,13 +183,14 @@ class FinnSource:
         if doc.get("trade_type") != "Til salgs" or not doc.get("price"):
             return None  # giveaways and wanted-ads have no price to rank
         flags, coords = set(doc.get("flags") or []), doc.get("coordinates") or {}
+        lat, lon = _coordinate(coords.get("lat"), 90), _coordinate(coords.get("lon"), 180)
         return Listing(
             source=self.name, source_id=str(doc["id"]), title=doc["heading"],
             url=doc.get("canonical_url") or f"https://www.finn.no/recommerce/forsale/item/{doc['id']}",
             price=float(doc["price"]["amount"]), currency=doc["price"].get("currency_code") or "NOK",
             shipping=0.0 if "seller_pays_shipping" in flags else None, shipping_currency="NOK",
             condition=condition, seller=None,
-            location=doc.get("location"), lat=coords.get("lat"), lon=coords.get("lon"),
+            location=doc.get("location"), lat=lat if lon is not None else None, lon=lon if lat is not None else None,
             pickup_only="shipping_exists" not in flags,
         )
 

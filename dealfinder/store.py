@@ -38,6 +38,12 @@ ALTER TABLE listings ADD COLUMN IF NOT EXISTS location text;
 ALTER TABLE listings ADD COLUMN IF NOT EXISTS lat double precision;
 ALTER TABLE listings ADD COLUMN IF NOT EXISTS lon double precision;
 ALTER TABLE listings ADD COLUMN IF NOT EXISTS pickup_only boolean NOT NULL DEFAULT false;
+ALTER TABLE listings ADD COLUMN IF NOT EXISTS costs jsonb;
+-- road km/minutes from home per rounded location (ticket #5)
+CREATE TABLE IF NOT EXISTS routes (
+    lat numeric NOT NULL, lon numeric NOT NULL, km numeric NOT NULL, minutes numeric NOT NULL,
+    PRIMARY KEY (lat, lon)
+);
 -- one row per Listing per Hunt that saw it (ticket #9)
 CREATE TABLE IF NOT EXISTS price_observations (
     source    text NOT NULL,
@@ -115,7 +121,16 @@ class Store:
             c.execute("UPDATE hunts SET finished = now(), ok = %s, detail = %s WHERE id = %s",
                       (ok, json.dumps(detail), hunt_id))
 
-    def save_listing(self, listing, kind, facts, missing, qualifies, capacity_tb, landed, hunt_id):
+    def route_get(self, lat, lon):
+        with self._conn() as c:
+            row = c.execute("SELECT km, minutes FROM routes WHERE lat = %s AND lon = %s", (lat, lon)).fetchone()
+            return (float(row["km"]), float(row["minutes"])) if row else None
+
+    def route_put(self, lat, lon, km, minutes):
+        with self._conn() as c:
+            c.execute("INSERT INTO routes VALUES (%s, %s, %s, %s) ON CONFLICT DO NOTHING", (lat, lon, km, minutes))
+
+    def save_listing(self, listing, kind, facts, missing, qualifies, capacity_tb, landed, hunt_id, costs=None):
         with self._conn() as c:
             c.execute("""
                 INSERT INTO price_observations (source, source_id, hunt_id, price, currency)
@@ -125,8 +140,8 @@ class Store:
             c.execute("""
                 INSERT INTO listings (source, source_id, kind, title, url, price, currency, shipping,
                                       condition, seller, facts, missing, qualifies, capacity_tb, landed_nok,
-                                      description, location, lat, lon, pickup_only)
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                                      description, location, lat, lon, pickup_only, costs)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                 ON CONFLICT (source, source_id) DO UPDATE SET
                     title = EXCLUDED.title, url = EXCLUDED.url, price = EXCLUDED.price,
                     currency = EXCLUDED.currency, shipping = EXCLUDED.shipping,
@@ -134,11 +149,13 @@ class Store:
                     missing = EXCLUDED.missing, qualifies = EXCLUDED.qualifies,
                     capacity_tb = EXCLUDED.capacity_tb, landed_nok = EXCLUDED.landed_nok,
                     description = EXCLUDED.description, location = EXCLUDED.location, lat = EXCLUDED.lat,
-                    lon = EXCLUDED.lon, pickup_only = EXCLUDED.pickup_only, last_seen = now()
+                    lon = EXCLUDED.lon, pickup_only = EXCLUDED.pickup_only, costs = EXCLUDED.costs,
+                    last_seen = now()
             """, (listing.source, listing.source_id, kind, listing.title, listing.url, listing.price,
                   listing.currency, listing.shipping, listing.condition, listing.seller,
                   json.dumps(facts) if facts is not None else None, missing, qualifies, capacity_tb, landed,
-                  listing.description, listing.location, listing.lat, listing.lon, listing.pickup_only))
+                  listing.description, listing.location, listing.lat, listing.lon, listing.pickup_only,
+                  json.dumps(costs) if costs is not None else None))
 
     def last_hunt(self):
         """The latest finished Hunt, successful or not."""
@@ -164,7 +181,7 @@ class Store:
         with self._conn() as c:
             return c.execute(_RANKED + f"""
                 SELECT l.source, l.source_id, title, url, capacity_tb, condition, landed_nok, location, pickup_only,
-                       round(landed_nok / capacity_tb, 2) AS nok_per_tb, l.price, l.currency, p.prev_price,
+                       round(landed_nok / capacity_tb, 2) AS nok_per_tb, l.price, l.currency, p.prev_price, l.costs,
                        l.last_seen < f.since AS gone, l.last_seen
                 FROM listings l JOIN fresh f ON f.source = l.source
                 LEFT JOIN prev p ON p.source = l.source AND p.source_id = l.source_id
@@ -175,7 +192,7 @@ class Store:
     def best_machines(self, limit=50):
         with self._conn() as c:
             return c.execute(_RANKED + f"""
-                SELECT l.source, l.source_id, title, url, facts, landed_nok, location, pickup_only,
+                SELECT l.source, l.source_id, title, url, facts, landed_nok, location, pickup_only, l.costs,
                        l.price, l.currency, p.prev_price, l.last_seen < f.since AS gone, l.last_seen
                 FROM listings l JOIN fresh f ON f.source = l.source
                 LEFT JOIN prev p ON p.source = l.source AND p.source_id = l.source_id
