@@ -293,7 +293,7 @@ class EbaySource:
             except (OSError, http.client.HTTPException, ValueError, AttributeError) as exc:  # one dead item must not end the Source
                 log.warning("eBay item %s unavailable: %s", listing.source_id, exc)
                 return None
-        return self._descriptions[listing.source_id] or None
+        return self._descriptions.get(listing.source_id) or None  # .get: a Search may clear() it meanwhile
 
     def _listing(self, it):
         ship = ((it.get("shippingOptions") or [{}])[0]).get("shippingCost") or {}

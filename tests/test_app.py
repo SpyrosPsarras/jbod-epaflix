@@ -731,3 +731,85 @@ class EbayMachinesAndWeakSellers(unittest.TestCase):
     def test_item_text_fetched_only_when_the_title_does_not_rule_the_machine_out(self):
         fetched = [u.rsplit("/", 1)[1] for u in self.calls if "/item/" in u]
         self.assertEqual(sorted(fetched), ["1", "2", "5"])
+
+
+class SearchAndTrack(unittest.TestCase):
+    """Seam 1: Search every Source now, Track the query, and the next Hunt runs it."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.queries = []
+        x20 = {"itemSummaries": [_ebay_item("v1|x20|0", 'Seagate Exos X20 20TB 3.5" SATA enterprise HDD', 250, 10)]}
+
+        def ebay(url, headers=None, data=None):
+            if "oauth2/token" in url:
+                return {"access_token": "t", "expires_in": 7200}
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(url).query)["q"][0]
+            cls.queries.append(("ebay_uk", q))
+            return x20 if q == "exos x20" else {"itemSummaries": []}
+
+        def finn(url):
+            q = urllib.parse.parse_qs(url.split("?", 1)[1])
+            cls.queries.append(("finn", q["q"][0]))
+            docs = [_doc(99, 'Seagate Exos X20 20TB 3.5"', 3000, 59.9, 10.7, ["shipping_exists", "seller_pays_shipping"])]
+            docs = docs if q["q"] == ["exos x20"] and q["condition"] == ["3", "4"] else []
+            blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
+            return f"<script>{blob}</script>"
+
+        cls.pg = _pg()
+        cls.sources = [EbaySource("id", "secret", fetch=ebay), FinnSource(fetch=finn, pause=0)]
+        cls.app = App(cls.pg.get_uri(), cls.sources, fx=RATES.__getitem__, pause=0, router=fake_router)  # config seed
+        cls.server = cls.app.make_server("127.0.0.1", 0)
+        threading.Thread(target=cls.server.serve_forever, daemon=True).start()
+        cls.base = "http://127.0.0.1:%d" % cls.server.server_address[1]
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.server.shutdown()
+        cls.server.server_close()
+        cls.pg.cleanup()
+
+    def test_search_track_then_hunt(self):
+        with urllib.request.urlopen(self.base + "/search?q=Exos+X20&kind=disk") as r:
+            page = r.read().decode()
+        results = dict(re.findall(r'data-result="([^"]+)" data-qualifies="(\d)"', page))
+        self.assertEqual(results, {"v1|x20|0": "1", "99": "1"})  # both Sources, scored now
+        self.assertEqual(self.app.store.last_hunt(), None)       # a Search is not a Hunt and saves nothing
+
+        req = urllib.request.Request(self.base + "/track", data=b"q=Exos+X20&kind=disk", method="POST")
+        with urllib.request.urlopen(req) as r:
+            self.assertIn('data-tracked="disk:exos x20"', r.read().decode())
+
+        self.queries.clear()
+        self.app.hunt()
+        self.assertIn(("ebay_uk", "exos x20"), self.queries)
+        self.assertIn(("finn", "exos x20"), self.queries)
+        shown = set(re.findall(r'data-listing="([^"]+)"', self.app.page()))
+        self.assertTrue({"v1|x20|0", "99"} <= shown)
+
+    def test_starting_set_is_seeded_once(self):
+        tracked = {(r["query"], r["kind"]) for r in self.app.store.tracked()}
+        for q in ("r730xd", "r740xd", "r730", "r740", "dl380 gen9", "dl380 gen10", "supermicro 12 bay"):
+            self.assertIn((q, "machine"), tracked)
+        for q in ("exos 14tb", "exos 16tb", "exos 18tb", "exos 20tb"):
+            self.assertIn((q, "disk"), tracked)
+        before = len(self.app.store.tracked())
+        App(self.pg.get_uri(), self.sources, fx=RATES.__getitem__, disk_queries={"finn": ["other"]}, pause=0,
+            router=fake_router)  # a restart must not re-seed
+        self.assertEqual(len(self.app.store.tracked()), before)
+
+    def test_bad_input_is_rejected(self):
+        for path in ("/search?q=&kind=disk", "/search?q=x&kind=car"):
+            with self.assertRaises(urllib.error.HTTPError) as err:
+                urllib.request.urlopen(self.base + path)
+            self.assertEqual(err.exception.code, 400)
+        for length in (b"-1", b"abc", b"5000", "\xb2".encode("latin-1"), "\u0663".encode()):  # raw header bytes
+            conn = http.client.HTTPConnection(*self.server.server_address[:2], timeout=5)
+            conn.putrequest("POST", "/track")
+            conn.putheader("Content-Length", length)
+            conn.endheaders()
+            self.assertEqual(conn.getresponse().status, 400, length)
+            conn.close()
+        req = urllib.request.Request(self.base + "/track", data=b"q=a%00b&kind=disk", method="POST")
+        with urllib.request.urlopen(req) as r:
+            self.assertIn('data-tracked="disk:a b"', r.read().decode())
