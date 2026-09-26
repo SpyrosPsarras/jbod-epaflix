@@ -1,12 +1,14 @@
 """The Deal Finder app: runs Hunts and serves the page and /metrics."""
+import datetime
 import html
 import logging
 import threading
 import time
+import urllib.parse
 from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-from .config import DISK_QUERIES, MACHINE_QUERIES, SOURCE_PAUSE_S
+from .config import DISK_QUERIES, HUNT_INTERVAL_S, MACHINE_QUERIES, SOURCE_PAUSE_S
 from .costs import landed_nok
 from .rules import Unreadable, read_disk, read_machine
 from .store import Store
@@ -37,6 +39,28 @@ def _yes_no(value):
     return {True: "yes", False: "no"}.get(value, "?")
 
 
+def _when(ts):
+    return ts.strftime("%Y-%m-%d %H:%M UTC") if ts else "never"
+
+
+def next_hunt_delay(last_started, now, interval=HUNT_INTERVAL_S):
+    """Seconds until the next scheduled Hunt: due one interval after the last one started, now if overdue."""
+    if last_started is None:
+        return 0.0
+    return max(0.0, (last_started - now).total_seconds() + interval)
+
+
+def source_faults(detail):
+    """(source, reason) for every Source that failed or found no Listings in one Hunt's detail."""
+    faults = []
+    for name, result in sorted((detail or {}).items()):
+        if not result.get("ok"):
+            faults.append((name, "failed: " + (result.get("error") or "unknown error")))
+        elif not (result.get("disk", 0) + result.get("machine", 0)):
+            faults.append((name, "returned no Listings for any Tracked query"))
+    return faults
+
+
 class App:
     def __init__(self, db_uri, sources, fx, disk_queries=None, machine_queries=None, pause=SOURCE_PAUSE_S):
         self.store = Store(db_uri)
@@ -44,6 +68,39 @@ class App:
         self.sources, self.fx, self.pause = sources, fx, pause
         self.disk_queries = disk_queries or DISK_QUERIES
         self.machine_queries = machine_queries or MACHINE_QUERIES
+        self._hunt_lock = threading.Lock()  # one Hunt at a time, scheduled or by hand
+
+    def start_hunt(self):
+        """Start a Hunt in the background. False when one is already running."""
+        if not self._hunt_lock.acquire(blocking=False):
+            return False
+
+        def run():
+            try:
+                self.hunt()
+            except Exception:  # a crashed Hunt must not kill the scheduler or leave the lock held
+                log.exception("hunt crashed")
+            finally:
+                self._hunt_lock.release()
+
+        threading.Thread(target=run, name="hunt", daemon=True).start()
+        return True
+
+    def hunt_running(self):
+        return self._hunt_lock.locked()
+
+    def run_scheduler(self, stop=None, interval=HUNT_INTERVAL_S, retry=60):
+        """Start a Hunt whenever one is due, forever (or until `stop` is set)."""
+        stop = stop or threading.Event()
+        while not stop.is_set():
+            try:
+                now = datetime.datetime.now(datetime.timezone.utc)
+                if stop.wait(next_hunt_delay(self.store.last_started(), now, interval)):
+                    break
+                self.start_hunt()
+            except Exception:  # e.g. Postgres failover: the scheduler must outlive it, or Hunts stop silently
+                log.exception("scheduler pass failed; retrying")
+            stop.wait(retry)  # let the Hunt record its start before the next delay is computed
 
     def hunt(self):
         """One pass over every Source. A failing Source is recorded and does not stop the others."""
@@ -87,12 +144,9 @@ class App:
         self.store.save_listing(listing, kind, facts_json, missing, qualifies, capacity, landed)
         return 1
 
-    def page(self):
-        last = self.store.last_ok_hunt()
-        since = last["started"] if last else None
-        disks = self.store.best_disks(since) if last else []
-        machines = self.store.best_machines(since) if last else []
-        unreadable = self.store.unreadable(since) if last else []
+    def page(self, notice=None):
+        last = self.store.last_hunt()
+        disks, machines, unreadable = self.store.best_disks(), self.store.best_machines(), self.store.unreadable()
         disk_rows = "".join(
             '<tr data-listing="{id}" data-nok-per-tb="{npt:.2f}"><td><a href="{url}">{title}</a></td>'
             '<td>{cap:g} TB</td><td>{cond}</td><td>{where}</td><td>{landed:,.0f}</td><td>{npt:,.0f}</td></tr>'.format(
@@ -117,11 +171,30 @@ class App:
                 url=_e(_safe_url(r["url"])), title=_e(r["title"]),
                 labels=_e(", ".join(FACT_LABEL.get(m, m) for m in r["missing"])))
             for r in unreadable)
-        when = last["finished"].strftime("%Y-%m-%d %H:%M UTC") if last else "never"
+        faults = source_faults(last["detail"]) if last else []
+        success = self.store.source_last_success()
+        banner = "".join(
+            f'<p class="fault" data-fault="{_e(name)}">Source fault: <b>{_e(name)}</b> {_e(reason)}. '
+            + (f"Its Listings below are from its last successful Hunt ({_when(success[name])}).</p>"
+               if name in success else "It has no Listings yet.</p>")
+            for name, reason in faults)
+        notices = {"started": "Hunt started. Refresh in a few minutes.",
+                   "busy": "A Hunt is already running; this request was ignored."}
+        note = f'<p class="notice" data-notice="{_e(notice)}">{_e(notices[notice])}</p>' if notice in notices else ""
+        running = '<p class="notice">A Hunt is running now.</p>' if self.hunt_running() else ""
+        took = f" (took {(last['finished'] - last['started']).total_seconds():.0f} s)" if last else ""
+        per_source = " &middot; ".join(f"{_e(s.name)}: last successful Hunt {_when(success.get(s.name))}"
+                                       for s in self.sources)
         return f"""<!doctype html><html><head><meta charset="utf-8"><title>Deal Finder</title>
 <style>body{{font-family:sans-serif;margin:2em}}table{{border-collapse:collapse;margin-bottom:2em}}
-td,th{{padding:4px 10px;border-bottom:1px solid #ddd;text-align:left}}</style></head><body>
-<h1>Deal Finder</h1><p>Last Hunt: {when}. Pickup trips and Penalties are not priced in yet.</p>
+td,th{{padding:4px 10px;border-bottom:1px solid #ddd;text-align:left}}
+.fault{{background:#fde8e8;border-left:4px solid #c62828;padding:8px 12px}}
+.notice{{background:#e8f0fd;border-left:4px solid #1565c0;padding:8px 12px}}</style></head><body>
+<h1>Deal Finder</h1>{banner}{note}{running}
+<p>Last Hunt: {_when(last["finished"] if last else None)}{took}. Hunts run every {HUNT_INTERVAL_S // 3600} hours.
+<form method="post" action="/hunt" style="display:inline"><button>Hunt now</button></form></p>
+<p>{per_source}</p>
+<p>Pickup trips and Penalties are not priced in yet.</p>
 <h2>Best Disks</h2><table><tr><th>Disk</th><th>Capacity</th><th>Condition</th><th>Where</th>
 <th>Landed NOK</th><th>NOK per TB</th></tr>{disk_rows}</table>
 <h2>Best Machines</h2><table><tr><th>Machine</th><th>Model</th><th>Gen</th><th>3.5" bays</th><th>RAM</th>
@@ -130,26 +203,53 @@ td,th{{padding:4px 10px;border-bottom:1px solid #ddd;text-align:left}}</style></
 </body></html>"""
 
     def metrics(self):
-        last = self.store.last_ok_hunt()
+        last = self.store.last_hunt()
+        detail = (last or {}).get("detail") or {}
+        success = self.store.source_last_success()
         lines = ["# TYPE dealfinder_listings gauge"]
-        for r in (self.store.counts(last["started"]) if last else []):
+        for r in self.store.counts():
             lines.append(f'dealfinder_listings{{source="{r["source"]}",kind="{r["kind"]}",state="{r["state"]}"}} {r["n"]}')
-        lines.append("# TYPE dealfinder_hunt_last_success_timestamp_seconds gauge")
-        lines.append(f"dealfinder_hunt_last_success_timestamp_seconds {last['finished'].timestamp() if last else 0}")
+        lines.append("# TYPE dealfinder_hunt_duration_seconds gauge")
+        lines.append(f"dealfinder_hunt_duration_seconds {(last['finished'] - last['started']).total_seconds() if last else 0}")
+        lines.append("# TYPE dealfinder_hunt_last_success_timestamp_seconds gauge")  # kept from ticket #2
+        ok = max((t for t in success.values() if t), default=None)
+        lines.append(f"dealfinder_hunt_last_success_timestamp_seconds {ok.timestamp() if ok else 0}")
+        lines.append("# TYPE dealfinder_hunt_running gauge")
+        lines.append(f"dealfinder_hunt_running {int(self.hunt_running())}")
+        faulty = {name for name, _ in source_faults(detail)}
+        lines += ["# TYPE dealfinder_source_up gauge", "# TYPE dealfinder_source_listings gauge",
+                  "# TYPE dealfinder_source_last_success_timestamp_seconds gauge"]
+        for s in self.sources:
+            result = detail.get(s.name, {})
+            lines.append(f'dealfinder_source_up{{source="{s.name}"}} {int(s.name in detail and s.name not in faulty)}')
+            lines.append(f'dealfinder_source_listings{{source="{s.name}"}} {result.get("disk", 0) + result.get("machine", 0)}')
+            ts = success.get(s.name)
+            lines.append(f'dealfinder_source_last_success_timestamp_seconds{{source="{s.name}"}} {ts.timestamp() if ts else 0}')
         return "\n".join(lines) + "\n"
 
     def make_server(self, host, port):
         app = self
 
         class Handler(BaseHTTPRequestHandler):
-            def do_GET(self):
-                routes = {"/": ("text/html; charset=utf-8", app.page),
-                          "/metrics": ("text/plain; version=0.0.4", app.metrics),
-                          "/healthz": ("text/plain", lambda: "ok\n")}
-                if self.path not in routes:
+            def do_POST(self):
+                if urllib.parse.urlsplit(self.path).path != "/hunt":
                     self.send_error(404)
                     return
-                ctype, render = routes[self.path]
+                self.send_response(303)
+                self.send_header("Location", "/?hunt=" + ("started" if app.start_hunt() else "busy"))
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+
+            def do_GET(self):
+                url = urllib.parse.urlsplit(self.path)
+                notice = urllib.parse.parse_qs(url.query).get("hunt", [None])[0]
+                routes = {"/": ("text/html; charset=utf-8", lambda: app.page(notice)),
+                          "/metrics": ("text/plain; version=0.0.4", app.metrics),
+                          "/healthz": ("text/plain", lambda: "ok\n")}
+                if url.path not in routes:
+                    self.send_error(404)
+                    return
+                ctype, render = routes[url.path]
                 data = render().encode()
                 self.send_response(200)
                 self.send_header("Content-Type", ctype)
@@ -161,6 +261,3 @@ td,th{{padding:4px 10px;border-bottom:1px solid #ddd;text-align:left}}</style></
                 log.debug(fmt, *args)
 
         return ThreadingHTTPServer((host, port), Handler)
-
-    def hunt_in_background(self):
-        threading.Thread(target=self.hunt, name="hunt", daemon=True).start()
