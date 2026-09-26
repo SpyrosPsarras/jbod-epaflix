@@ -1,5 +1,6 @@
 """Source adapters: a query in, Listings out. Each adapter normalises its Source's quirks (condition codes)."""
 import base64
+import http.client
 import json
 import logging
 import math
@@ -10,7 +11,8 @@ import urllib.request
 from dataclasses import dataclass
 from html.parser import HTMLParser
 
-from .config import EBAY_PRICE_GBP, SOURCE_PAUSE_S
+from .config import EBAY_MACHINE_CATEGORY, EBAY_MACHINE_PRICE_GBP, EBAY_PRICE_GBP, SOURCE_PAUSE_S, WEAK_SELLER
+from .rules import Unreadable, read_machine
 
 log = logging.getLogger("dealfinder.sources")
 
@@ -34,6 +36,7 @@ class Listing:
     lat: float | None = None
     lon: float | None = None
     pickup_only: bool = False
+    risk: str | None = None  # a config.RISK key the Source attaches (weak or unrated seller, High-risk)
 
 
 def _get(url, headers=None, data=None):
@@ -50,6 +53,21 @@ def http_json(url, headers=None, data=None):
 def http_text(url):
     with _get(url) as r:
         return r.read().decode("utf-8", "replace")
+
+
+class _PlainText(HTMLParser):
+    """All text of an HTML fragment (an eBay item description)."""
+
+    def __init__(self):
+        super().__init__()
+        self.parts = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag in ("p", "br", "li", "div", "tr"):
+            self.parts.append("\n")
+
+    def handle_data(self, data):
+        self.parts.append(data)
 
 
 class _DescriptionText(HTMLParser):
@@ -159,7 +177,7 @@ class FinnSource:
         try:
             parser = _DescriptionText()
             parser.feed(self._fetch(url))
-        except OSError as exc:  # urllib's HTTPError and URLError are OSErrors
+        except (OSError, http.client.HTTPException) as exc:  # HTTPError/URLError are OSErrors; IncompleteRead is not
             log.warning("finn item page %s unavailable: %s", url, exc)
             return None
         return parser.text() or None
@@ -209,14 +227,16 @@ class EbaySource:
 
     name = "ebay_uk"
     foreign = True
-    supports_machines = False  # eBay UK Machines arrive with ticket #11
+    supports_machines = True
     _token_url = "https://api.ebay.com/identity/v1/oauth2/token"
     _search_url = "https://api.ebay.com/buy/browse/v1/item_summary/search"
+    _item_url = "https://api.ebay.com/buy/browse/v1/item/"
 
     def __init__(self, client_id, client_secret, fetch=http_json):
         self._basic = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
         self._fetch = fetch
         self._token, self._token_expiry = None, 0.0
+        self._descriptions = {}  # itemId -> text; one Listing shows up under several Machine queries
 
     def _auth(self):
         if time.time() > self._token_expiry - 60:
@@ -226,25 +246,63 @@ class EbaySource:
             self._token, self._token_expiry = r["access_token"], time.time() + int(r.get("expires_in", 7200))
         return self._token
 
+    def _headers(self):
+        return {"Authorization": "Bearer " + self._auth(), "X-EBAY-C-MARKETPLACE-ID": "EBAY_GB",
+                "X-EBAY-C-ENDUSERCTX": "contextualLocation=country%3DNO"}  # shipping costs quoted to Norway
+
     def search(self, query, details=False):
-        low, high = EBAY_PRICE_GBP
-        qs = urllib.parse.urlencode({
-            "q": query, "sort": "price", "limit": "100",
-            "filter": f"buyingOptions:{{FIXED_PRICE}},deliveryCountry:NO,price:[{low}..{high}],priceCurrency:GBP"})
-        r = self._fetch(f"{self._search_url}?{qs}", {
-            "Authorization": "Bearer " + self._auth(),
-            "X-EBAY-C-MARKETPLACE-ID": "EBAY_GB",
-            "X-EBAY-C-ENDUSERCTX": "contextualLocation=country%3DNO"})
+        """`details` = a Machine search: Computer Servers only, item text fetched for the rules."""
+        low, high = EBAY_MACHINE_PRICE_GBP if details else EBAY_PRICE_GBP
+        params = {"q": query, "sort": "price", "limit": "100",
+                  "filter": f"buyingOptions:{{FIXED_PRICE}},deliveryCountry:NO,price:[{low}..{high}],priceCurrency:GBP"}
+        if details:
+            params["category_ids"] = EBAY_MACHINE_CATEGORY
+        r = self._fetch(f"{self._search_url}?{urllib.parse.urlencode(params)}", self._headers())
         listings = []
         for it in r.get("itemSummaries", []):
             try:
-                listings.append(self._listing(it))
+                listing = self._listing(it)
             except (AttributeError, KeyError, TypeError, ValueError):  # one malformed item must not drop the Source
                 log.warning("skipping malformed eBay item %s", it.get("itemId") if isinstance(it, dict) else it)
+                continue
+            if details and listing.shipping is None:
+                continue  # a Machine with no freight price to Norway cannot be bought from here: excluded
+            if details:
+                listing.description = self._description(listing)
+            listings.append(listing)
         return listings
+
+    def _description(self, listing):
+        """Item text for a Machine the title alone does not settle; None when the title already rules it out.
+
+        ponytail: title-first saves the 5,000-call daily Browse quota; a title that rules a Machine out
+        (24x 2.5", 12th Gen) is trusted over its description.
+        """
+        facts = read_machine(listing.title, None, listing.condition)
+        if facts is None or (not isinstance(facts, Unreadable) and not facts.qualifies):
+            return None
+        if listing.source_id not in self._descriptions:
+            if len(self._descriptions) > 5000:  # ponytail: crude bound; texts are refetched after a reset
+                self._descriptions.clear()
+            try:
+                item = self._fetch(self._item_url + urllib.parse.quote(listing.source_id), self._headers())
+                parser = _PlainText()
+                parser.feed(item.get("description") or "")
+                text = re.sub(r"\n\s*\n+", "\n", "".join(parser.parts)).strip()
+                self._descriptions[listing.source_id] = "\n".join(filter(None, (item.get("shortDescription"), text)))
+            except (OSError, http.client.HTTPException, ValueError, AttributeError) as exc:  # one dead item must not end the Source
+                log.warning("eBay item %s unavailable: %s", listing.source_id, exc)
+                return None
+        return self._descriptions[listing.source_id] or None
 
     def _listing(self, it):
         ship = ((it.get("shippingOptions") or [{}])[0]).get("shippingCost") or {}
+        seller = it.get("seller") or {}
+        try:
+            pct, ratings = float(seller["feedbackPercentage"]), int(seller["feedbackScore"])
+            risk = "weak_seller" if pct < WEAK_SELLER[0] or ratings < WEAK_SELLER[1] else None
+        except (KeyError, TypeError, ValueError):
+            risk = "seller_unknown"  # an unknown rating is charged like a weak one
         return Listing(
             source=self.name, source_id=it["itemId"], title=it["title"],
             url=it.get("itemWebUrl", "").split("?")[0],
@@ -252,5 +310,5 @@ class EbaySource:
             shipping=float(ship["value"]) if "value" in ship else None,
             shipping_currency=ship.get("currency"),
             condition=_EBAY_CONDITION.get(it.get("conditionId")),
-            seller=(it.get("seller") or {}).get("username"),
+            seller=seller.get("username"), risk=risk,
         )

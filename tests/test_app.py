@@ -669,3 +669,65 @@ class BuildsEndToEnd(unittest.TestCase):
         for col in ("score", "landed", "usable", "machine", "disks", "sources"):
             self.assertIn(f'href="/?sort={col}"', self.page)
             self.assertIn('data-build="1"', self.app.page(sort=col))
+
+
+def _ebay_item(iid, title, price, ship, pct="99.8", score=5000):
+    it = {"itemId": iid, "title": title, "price": {"value": str(price), "currency": "GBP"}, "conditionId": "3000",
+          "itemWebUrl": f"https://www.ebay.co.uk/itm/{iid}", "seller": {"username": "s", "feedbackPercentage": pct,
+                                                                         "feedbackScore": score}}
+    if ship is not None:
+        it["shippingOptions"] = [{"shippingCost": {"value": str(ship), "currency": "GBP"}}]
+    return it
+
+
+class EbayMachinesAndWeakSellers(unittest.TestCase):
+    """Seam 1: eBay UK Machines are read by the same rules; weak sellers pay +10%; no freight to Norway = excluded."""
+
+    TEXT = "<p>2x 750W PSU</p><p>Dell HBA330</p><p>12x 3.5\" caddies</p><p>Rails included</p>"
+
+    @classmethod
+    def setUpClass(cls):
+        items = [_ebay_item("1", 'Dell PowerEdge R730xd 12x 3.5" LFF', 400, 80),                    # strong seller
+                 _ebay_item("2", 'Dell PowerEdge R730xd 12x 3.5" LFF', 380, 80, pct="97.5"),        # weak: < 98%
+                 _ebay_item("3", 'Dell PowerEdge R730xd 12x 3.5" LFF', 300, None),                  # no freight to NO
+                 _ebay_item("4", 'Dell PowerEdge R730xd 24x 2.5" SFF', 200, 80),                    # ruled out by title
+                 _ebay_item("5", 'Dell PowerEdge R730xd 12x 3.5" LFF', 390, 80, score=49)]           # weak: < 50 ratings
+        cls.calls = []
+
+        def fetch(url, headers=None, data=None):
+            cls.calls.append(url)
+            if "oauth2/token" in url:
+                return {"access_token": "t", "expires_in": 7200}
+            if "/item/" in url:
+                return {"description": cls.TEXT}
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(url).query)
+            return {"itemSummaries": items if q.get("category_ids") == ["11211"] else []}
+
+        cls.pg = _pg()
+        cls.app = App(cls.pg.get_uri(), [EbaySource("id", "secret", fetch=fetch)], fx=RATES.__getitem__,
+                      disk_queries={"ebay_uk": []}, machine_queries=["r730xd"], pause=0, router=fake_router)
+        cls.app.hunt()
+        cls.page = cls.app.page()
+        cls.rows = {i: float(p) for i, p in re.findall(r'data-machine="([^"]+)" data-landed="([\d.]+)"', cls.page)}
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.pg.cleanup()
+
+    def test_strong_seller_machine_pays_freight_and_vat_and_no_penalty(self):
+        # description says 2 PSUs, HBA330, 12 caddies, rails: every Penalty fact read from the eBay item text
+        self.assertAlmostEqual(self.rows["1"], (400 + 80) * RATES["GBP"] * 1.25, places=1)
+
+    def test_weak_seller_pays_ten_percent(self):
+        base = (380 + 80) * RATES["GBP"] * 1.25
+        self.assertAlmostEqual(self.rows["2"], base * 1.10, places=1)
+        self.assertAlmostEqual(self.rows["5"], (390 + 80) * RATES["GBP"] * 1.25 * 1.10, places=1)
+        self.assertIn("weak seller +10%", self.page)
+
+    def test_machine_without_shipping_to_norway_is_excluded(self):
+        self.assertNotIn("3", self.rows)
+        self.assertNotIn('data-unreadable="3"', self.page)
+
+    def test_item_text_fetched_only_when_the_title_does_not_rule_the_machine_out(self):
+        fetched = [u.rsplit("/", 1)[1] for u in self.calls if "/item/" in u]
+        self.assertEqual(sorted(fetched), ["1", "2", "5"])
