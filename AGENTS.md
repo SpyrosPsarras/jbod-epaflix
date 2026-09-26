@@ -12,6 +12,10 @@ You are creating automations to help me find the best for value items to create 
 - ebay.uk
 - finn.no
 
+## Git workflow
+
+- `main` is protected, so every change goes through a PR from a branch rebased on `origin/main` and merges with a merge commit (`gh pr merge --merge`). GitHub refuses a PR that is behind `main` or has `main` merged into it (required checks `test` and `no-merge-commits`, strict up-to-date mode).
+
 ## Infrastructure
 
 - The owner has a full 20U rack with many units left open. Rack-space is not a constraint for any build in this repo; noise and power budgeting should still be stated per candidate.
