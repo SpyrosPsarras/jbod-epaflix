@@ -1,0 +1,4 @@
+*
+!pyproject.toml
+!dealfinder/
+dealfinder/__pycache__

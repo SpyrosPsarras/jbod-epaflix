@@ -1,0 +1,2935 @@
+{
+ "exos 16tb": {
+  "total": 368,
+  "itemSummaries": [
+   {
+    "itemId": "v1|117428946750|0",
+    "title": "Seagate Exos X16 16TB  (7200RPM, 3.5\", SATA III, 256MB Cache)  Read description",
+    "price": {
+     "value": "78.70",
+     "currency": "GBP"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "20.63",
+       "currency": "GBP"
+      }
+     }
+    ],
+    "condition": "For parts or not working",
+    "conditionId": "7000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/117428946750?_skw=exos+16tb&hash=item1b574f873e:g:rnAAAeSwM05qtRSF",
+    "seller": {
+     "username": "nieksiukas",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 311
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|800713278608|0",
+    "title": "ST16000NM002G Seagate Exos X16 16TB 3.5 7.2K RPM SAS SAS 512e/4Kn 256MB HDD",
+    "price": {
+     "value": "82.28",
+     "currency": "GBP",
+     "convertedFromValue": "109.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "44.54",
+       "currency": "GBP",
+       "convertedFromValue": "59.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "For parts or not working",
+    "conditionId": "7000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/800713278608?_skw=exos+16tb&hash=itemba6e3b0490:g:lXIAAeSwmEBqtjb0",
+    "seller": {
+     "username": "allserverparts",
+     "feedbackPercentage": "99.9",
+     "feedbackScore": 3298
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|800703740830|0",
+    "title": "Seagate 16TB Exos X16 ST16000NM001G SATA 6Gb/s 256MB 7200RPM 3.5\" FAULTY",
+    "price": {
+     "value": "103.19",
+     "currency": "GBP",
+     "convertedFromValue": "120.00",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "30.10",
+       "currency": "GBP",
+       "convertedFromValue": "35.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Als Ersatzteil / defekt",
+    "conditionId": "7000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/800703740830?_skw=exos+16tb&hash=itemba6da97b9e:g:2egAAeSwMStqs5sU",
+    "seller": {
+     "username": "www-maxnet24-de",
+     "feedbackPercentage": "99.3",
+     "feedbackScore": 5014
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|168043447861|0",
+    "title": "Seagate Exos X18 (7200RPM, 3.5\", SATA III, 256MB Cache) 16TB Internal Enterprise",
+    "price": {
+     "value": "125.50",
+     "currency": "GBP"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "23.98",
+       "currency": "GBP"
+      }
+     }
+    ],
+    "condition": "For parts or not working",
+    "conditionId": "7000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/168043447861?_skw=exos+16tb&hash=item27202b8635:g:vR8AAeSwIOtpU845",
+    "seller": {
+     "username": "postersfromtheedge",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 1082
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|389864597004|0",
+    "title": "ST16000NM001G SEAGATE EXOS X16 16TB 7.2K SATA-6GBPS 256MB 512E/4KN 3.5IN ENT HDD",
+    "price": {
+     "value": "117.01",
+     "currency": "GBP",
+     "convertedFromValue": "155.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "44.54",
+       "currency": "GBP",
+       "convertedFromValue": "59.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "For parts or not working",
+    "conditionId": "7000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/389864597004?_skw=exos+16tb&hash=item5ac5bda60c:g:jEQAAeSweJZp1wb8",
+    "seller": {
+     "username": "allserverparts",
+     "feedbackPercentage": "99.9",
+     "feedbackScore": 3298
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|403661614058|0",
+    "title": "Seagate EXOS 1.2TB ST1200MM0129 10000RPM 256MB SAS-3 7mm 16GB / MLC NAND 2.5\"",
+    "price": {
+     "value": "132.41",
+     "currency": "GBP",
+     "convertedFromValue": "153.99",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "30.10",
+       "currency": "GBP",
+       "convertedFromValue": "35.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu: Sonstige (siehe Artikelbeschreibung)",
+    "conditionId": "1500",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/403661614058?_skw=exos+16tb&hash=item5dfc1b6bea:g:5vsAAOSwe3Fmensv",
+    "seller": {
+     "username": "deoptimus",
+     "feedbackPercentage": "99.3",
+     "feedbackScore": 37283
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|186746020109|0",
+    "title": "Seagate ST6000NM0014 Internal 3.5 inch Exos X16 6TB SAS HDD 7.2K 12GB",
+    "price": {
+     "value": "131.86",
+     "currency": "GBP",
+     "convertedFromValue": "153.34",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "51.46",
+       "currency": "GBP",
+       "convertedFromValue": "59.85",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu: Sonstige (siehe Artikelbeschreibung)",
+    "conditionId": "1500",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/186746020109?_skw=exos+16tb&hash=item2b7aee210d:g:AjEAAOSwd95nGpQe",
+    "seller": {
+     "username": "technodeals1",
+     "feedbackPercentage": "99.8",
+     "feedbackScore": 12256
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|336362465199|0",
+    "title": "Seagate Exos X16 ST10000NM001G 7.2K 10TB SATA 6Gbps 3.5\" 256MB Cache Hard Drive",
+    "price": {
+     "value": "295.80",
+     "currency": "GBP",
+     "convertedFromValue": "344.00",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.85",
+       "currency": "GBP",
+       "convertedFromValue": "0.99",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/336362465199?_skw=exos+16tb&hash=item4e50c3e7af:g:PDYAAeSwfnBpTzgm",
+    "seller": {
+     "username": "auto-sie-parts-33",
+     "feedbackPercentage": "98.9",
+     "feedbackScore": 365
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|317210199134|0",
+    "title": " Seagate Exos X16 ST10000NM001G 10TB 7.2K SATA 6Gbps 3.5\" 256MB Cache Hard Drive",
+    "price": {
+     "value": "296.65",
+     "currency": "GBP",
+     "convertedFromValue": "344.99",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/317210199134?_skw=exos+16tb&hash=item49db33845e:g:aCkAAeSwefVorGs7",
+    "seller": {
+     "username": "yjlxmb",
+     "feedbackPercentage": "99.1",
+     "feedbackScore": 709
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|395044418247|0",
+    "title": " Seagate ST10000NM001G Exos X16 10TB 7.2K SATA 6Gbps 3.5\" 256MB Cache Hard Drive",
+    "price": {
+     "value": "309.21",
+     "currency": "GBP",
+     "convertedFromValue": "359.59",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/395044418247?_skw=exos+16tb&hash=item5bfa7b72c7:g:~UkAAOSwxKhlb1kY",
+    "seller": {
+     "username": "youjiali",
+     "feedbackPercentage": "98.8",
+     "feedbackScore": 1374
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|336712897851|0",
+    "title": "Seagate EXOS X16 12TB 7200RPM SATA 6Gb/s 256MB Cache 3.5\" HDD ST12000NM001G-",
+    "price": {
+     "value": "320.74",
+     "currency": "GBP",
+     "convertedFromValue": "373.00",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/336712897851?_skw=exos+16tb&hash=item4e65a7153b:g:UREAAeSwSGdqjA3i",
+    "seller": {
+     "username": "auto-sie-parts-33",
+     "feedbackPercentage": "98.9",
+     "feedbackScore": 365
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|406616796587|0",
+    "title": "Seagate Exos X16 ST10000NM001G 10TB 7.2K SATA 6Gbps 3.5\" 256MB Cache Hard Drive",
+    "price": {
+     "value": "322.46",
+     "currency": "GBP",
+     "convertedFromValue": "375.00",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/406616796587?_skw=exos+16tb&hash=item5eac3fedab:g:LK8AAeSwzcNpbjb8",
+    "seller": {
+     "username": "sunyang920",
+     "feedbackPercentage": "99.4",
+     "feedbackScore": 766
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|336712931311|0",
+    "title": "Seagate ST14000NM001G Exos X16 14TB 14TB HDD SATA 6Gb 3.5\" Internal Hard Drive",
+    "price": {
+     "value": "331.06",
+     "currency": "GBP",
+     "convertedFromValue": "385.00",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/336712931311?_skw=exos+16tb&hash=item4e65a797ef:g:wCsAAeSw69pqjA2M",
+    "seller": {
+     "username": "auto-sie-parts-33",
+     "feedbackPercentage": "98.9",
+     "feedbackScore": 365
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|406400970292|0",
+    "title": "Seagate Exos ST14000NM001G X16 14TB SATA 6Gb/s 7200RPM 3.5\" Enterprise HDD",
+    "price": {
+     "value": "339.66",
+     "currency": "GBP",
+     "convertedFromValue": "395.00",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/406400970292?_skw=exos+16tb&hash=item5e9f62ae34:g:H-UAAeSw5q1pHexq",
+    "seller": {
+     "username": "sunyang920",
+     "feedbackPercentage": "99.4",
+     "feedbackScore": 766
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|187246693854|0",
+    "title": "Seagate 12TB Exos X16 512E SAS HDD ST12000NM002G",
+    "price": {
+     "value": "292.91",
+     "currency": "GBP",
+     "convertedFromValue": "340.64",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "51.36",
+       "currency": "GBP",
+       "convertedFromValue": "59.73",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Gebraucht",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/187246693854?_skw=exos+16tb&hash=item2b98c5cdde:g:W7YAAOSw9NNnvOv3",
+    "seller": {
+     "username": "technodeals1",
+     "feedbackPercentage": "99.8",
+     "feedbackScore": 12256
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|117215385398|0",
+    "title": "Seagate St12000Nm002G Exos X16 12Tb 3.5 12Gb/s Sas 256Mb Hard Drive 512E/4KN HDD",
+    "price": {
+     "value": "303.66",
+     "currency": "GBP",
+     "convertedFromValue": "353.14",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "44.31",
+       "currency": "GBP",
+       "convertedFromValue": "51.53",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Gebraucht",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/117215385398?_skw=exos+16tb&hash=item1b4a94d736:g:V9QAAOSwm2hoL27V",
+    "seller": {
+     "username": "servers_are_us",
+     "feedbackPercentage": "99.1",
+     "feedbackScore": 4367
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|407124168509|0",
+    "title": "ST12000NM001G Suitable for Seagate 12TB Exos X16 512E 3.5\" SATA 6Gb/s HDD",
+    "price": {
+     "value": "361.15",
+     "currency": "GBP",
+     "convertedFromValue": "420.00",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/407124168509?_skw=exos+16tb&hash=item5eca7dcf3d:g:LFcAAOSwwU9nPuGM",
+    "seller": {
+     "username": "panda_6680",
+     "feedbackPercentage": "99.2",
+     "feedbackScore": 344
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|318622870379|0",
+    "title": "ST16000NM001G Fits For Seagate 16TB 256MB 7200rpm 3.5\"SATA 6Gb s Enterprise HDD",
+    "price": {
+     "value": "362.23",
+     "currency": "GBP",
+     "convertedFromValue": "479.84",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/318622870379?_skw=exos+16tb&hash=item4a2f672b6b:g:GDAAAeSwPFVqYatL",
+    "seller": {
+     "username": "welding-assembly",
+     "feedbackPercentage": "99.5",
+     "feedbackScore": 1212
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|407121473254|0",
+    "title": "Suitable for Seagate Exos X16 14TB SATA 6Gb/s 3.5\" HDD (ST14000NM001G)",
+    "price": {
+     "value": "369.75",
+     "currency": "GBP",
+     "convertedFromValue": "430.00",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/407121473254?_skw=exos+16tb&hash=item5eca54aee6:g:v1YAAOSwMbJnPuvz",
+    "seller": {
+     "username": "panda_6680",
+     "feedbackPercentage": "99.2",
+     "feedbackScore": 344
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|128074166480|0",
+    "title": "Seagate Exos ST14000NM001G X16 14TB SATA 6Gb/s 7200RPM 3.5\" Enterprise HDD",
+    "price": {
+     "value": "337.94",
+     "currency": "GBP",
+     "convertedFromValue": "393.00",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "34.40",
+       "currency": "GBP",
+       "convertedFromValue": "40.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/128074166480?_skw=exos+16tb&hash=item1dd1d0b0d0:g:H-UAAeSw5q1pHexq",
+    "seller": {
+     "username": "uu66854",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 75
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|128074166589|0",
+    "title": "Seagate Exos ST14000NM001G X16 14TB SATA 6Gb/s 7200RPM 3.5\" Enterprise HDD",
+    "price": {
+     "value": "338.80",
+     "currency": "GBP",
+     "convertedFromValue": "394.00",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "34.40",
+       "currency": "GBP",
+       "convertedFromValue": "40.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/128074166589?_skw=exos+16tb&hash=item1dd1d0b13d:g:H-UAAeSw5q1pHexq",
+    "seller": {
+     "username": "wangyuan29",
+     "feedbackPercentage": "99.8",
+     "feedbackScore": 3239
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|117427854231|0",
+    "title": "Seagate Exos X18 (7200RPM, 3.5-inch, SATA III, Standard Format) 16TB used",
+    "price": {
+     "value": "353.50",
+     "currency": "GBP"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "27.61",
+       "currency": "GBP"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/117427854231?_skw=exos+16tb&hash=item1b573edb97:g:8-gAAeSwiKpqtERg",
+    "seller": {
+     "username": "nieksiukas",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 311
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|117427879936|0",
+    "title": "Seagate Exos X18 (7200RPM, 3.5-inch, SATA III,) 16TB good working",
+    "price": {
+     "value": "353.50",
+     "currency": "GBP"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "27.61",
+       "currency": "GBP"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/117427879936?_skw=exos+16tb&hash=item1b573f4000:g:8-gAAeSwiKpqtERg",
+    "seller": {
+     "username": "nieksiukas",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 311
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|315323874118|0",
+    "title": "NEW Seagate Exos ST14000NM001G X16 14TB SATA 6Gb/s 7200RPM 3.5\" Enterprise HDD",
+    "price": {
+     "value": "400.36",
+     "currency": "GBP",
+     "convertedFromValue": "465.59",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/315323874118?_skw=exos+16tb&hash=item496ac47b46:g:3v0AAOSwYm5mK81F",
+    "seller": {
+     "username": "yjlxmb",
+     "feedbackPercentage": "99.1",
+     "feedbackScore": 709
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|117427841698|0",
+    "title": "Seagate Exos X16 (7200RPM, 3.5\", SATA III, 256MB Cache) 16TB very low usage",
+    "price": {
+     "value": "373.90",
+     "currency": "GBP"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "28.30",
+       "currency": "GBP"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/117427841698?_skw=exos+16tb&hash=item1b573eaaa2:g:D3IAAeSwbKtqtEDs",
+    "seller": {
+     "username": "nieksiukas",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 311
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   }
+  ]
+ },
+ "ultrastar 18tb": {
+  "total": 70,
+  "itemSummaries": [
+   {
+    "itemId": "v1|398411393069|0",
+    "title": "WUH721818AL5204 WD Ultrastar DC HC550 18TB SAS 12Gb/s 512MB 3.5in HDD - Parts",
+    "price": {
+     "value": "105.68",
+     "currency": "GBP",
+     "convertedFromValue": "140.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "33.97",
+       "currency": "GBP",
+       "convertedFromValue": "45.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "For parts or not working",
+    "conditionId": "7000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/398411393069?_skw=ultrastar+18tb&hash=item5cc32b682d:g:krEAAeSwr9Jqrsxh",
+    "seller": {
+     "username": "few_r_24",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 4
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "AUCTION"
+    ]
+   },
+   {
+    "itemId": "v1|398411416187|0",
+    "title": "WUH721818AL5204 WD Ultrastar DC HC550 18TB SAS 12Gb/s 512MB 3.5in HDD - Parts",
+    "price": {
+     "value": "117.01",
+     "currency": "GBP",
+     "convertedFromValue": "155.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "33.97",
+       "currency": "GBP",
+       "convertedFromValue": "45.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "For parts or not working",
+    "conditionId": "7000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/398411416187?_skw=ultrastar+18tb&hash=item5cc32bc27b:g:krEAAeSwr9Jqrsxh",
+    "seller": {
+     "username": "few_r_24",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 4
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|188830980045|0",
+    "title": "Western Digital Ultrastar DC HC550 18TB SATA HDD WUH721818ALN604 ",
+    "price": {
+     "value": "368.89",
+     "currency": "GBP",
+     "convertedFromValue": "429.00",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "38.70",
+       "currency": "GBP",
+       "convertedFromValue": "45.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Gebraucht",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/188830980045?_skw=ultrastar+18tb&hash=item2bf73417cd:g:0PcAAeSwaGNqitbM",
+    "seller": {
+     "username": "bringin2012",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 15366
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|204564599106|0",
+    "title": "WD WUH721818ALE6L4 18TB SATA Ultrastar DC HC550 3.5\" LFF Enterprise Hard Drive",
+    "price": {
+     "value": "413.68",
+     "currency": "GBP",
+     "convertedFromValue": "548.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/204564599106?_skw=ultrastar+18tb&hash=item2fa1001142:g:~NUAAOSwaTtll94~",
+    "seller": {
+     "username": "hk2023_8",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 254
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|276186182413|0",
+    "title": "WD Ultrastar DC HC550 18TB SATA 3.5\" Enterprise HDD WUH721818ALE6L4 0F38467 HDD",
+    "price": {
+     "value": "413.68",
+     "currency": "GBP",
+     "convertedFromValue": "548.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/276186182413?_skw=ultrastar+18tb&hash=item404dfab30d:g:CB0AAOSwXaVll9zg",
+    "seller": {
+     "username": "eastdigitalhk",
+     "feedbackPercentage": "98.8",
+     "feedbackScore": 4088
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|307159816283|0",
+    "title": "Western Digital Ultrastar  - DATA CENTER  - DC HC555  18TB 7.2K !",
+    "price": {
+     "value": "384.50",
+     "currency": "GBP",
+     "convertedFromValue": "509.35",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "30.48",
+       "currency": "GBP",
+       "convertedFromValue": "40.38",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/307159816283?_skw=ultrastar+18tb&hash=item478426d85b:g:Q58AAeSwqlBqmPI4",
+    "seller": {
+     "username": "corbintech",
+     "feedbackPercentage": "96.5",
+     "feedbackScore": 800
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|188915427134|0",
+    "title": "WD Ultrastar DC HC550 WUH721818AL4206 18TB SAS 12G 4Kn 7200RPM HDD 0F38314",
+    "price": {
+     "value": "376.69",
+     "currency": "GBP",
+     "convertedFromValue": "499.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "44.54",
+       "currency": "GBP",
+       "convertedFromValue": "59.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/188915427134?_skw=ultrastar+18tb&hash=item2bfc3ca73e:g:LqYAAeSw6i5qo4sz",
+    "seller": {
+     "username": "cloud_storage_corp",
+     "feedbackPercentage": "99.9",
+     "feedbackScore": 26359
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|820145123223|0",
+    "title": "WD Ultrastar DC HC550 18TB HDD SATA 3.5\" Enterprise WUH721818ALE6L4 0F38467",
+    "price": {
+     "value": "400.08",
+     "currency": "GBP",
+     "convertedFromValue": "529.98",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "30.20",
+       "currency": "GBP",
+       "convertedFromValue": "40.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/820145123223?_skw=ultrastar+18tb&hash=itembef4756f97:g:gKYAAeSw7k9qrikj",
+    "seller": {
+     "username": "ppsprinterpartsseller",
+     "feedbackPercentage": "99.9",
+     "feedbackScore": 1103
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|278120939653|0",
+    "title": "WD Ultrastar DC HC550 18TB SATA 3.5\" Enterprise HDD WUH721818ALE6L4 0F38459 HDD",
+    "price": {
+     "value": "430.29",
+     "currency": "GBP",
+     "convertedFromValue": "570.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "Open box",
+    "conditionId": "1500",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/278120939653?_skw=ultrastar+18tb&hash=item40c14cc085:g:IlsAAeSw53VqO7KF",
+    "seller": {
+     "username": "eastdigitalhk",
+     "feedbackPercentage": "98.8",
+     "feedbackScore": 4088
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|206406979090|0",
+    "title": "WD Ultrastar DC HC550 18TB 7.2K SAS 12Gbs 512MB 3.5\" HDD WUH721818AL5204 0F38353",
+    "price": {
+     "value": "399.34",
+     "currency": "GBP",
+     "convertedFromValue": "529.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "44.54",
+       "currency": "GBP",
+       "convertedFromValue": "59.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/206406979090?_skw=ultrastar+18tb&hash=item300ed08e12:g:ZgoAAeSw5V9qUK5H",
+    "seller": {
+     "username": "cloud_storage_corp",
+     "feedbackPercentage": "99.9",
+     "feedbackScore": 26359
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|398316162817|0",
+    "title": "Western Digital Ultrastar DC HC550 18TB SAS HDD – P/N 0F28253",
+    "price": {
+     "value": "369.75",
+     "currency": "GBP",
+     "convertedFromValue": "429.99",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "77.39",
+       "currency": "GBP",
+       "convertedFromValue": "90.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Opgeknapt door de verkoper",
+    "conditionId": "2500",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/398316162817?_skw=ultrastar+18tb&hash=item5cbd7e4f01:g:6doAAeSwq2Jqiwl0",
+    "seller": {
+     "username": "datadestroy",
+     "feedbackPercentage": "99.1",
+     "feedbackScore": 140
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|377499680344|0",
+    "title": "WD Ultrastar DC HC550 18TB SATA 3.5\" Enterprise HDD WUH721818ALE6L4 0F38459 HDD",
+    "price": {
+     "value": "436.74",
+     "currency": "GBP",
+     "convertedFromValue": "578.55",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "11.32",
+       "currency": "GBP",
+       "convertedFromValue": "15.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "Open box",
+    "conditionId": "1500",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/377499680344?_skw=ultrastar+18tb&hash=item57e4bbfe58:g:13MAAeSwLpRqO7KI",
+    "seller": {
+     "username": "yeqinh-y",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 39
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|198647780704|0",
+    "title": "WD WUH721818ALE6L4 18TB SATA Ultrastar DC HC550 3.5\" LFF Enterprise Hard Drive",
+    "price": {
+     "value": "479.89",
+     "currency": "GBP",
+     "convertedFromValue": "635.71",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/198647780704?_skw=ultrastar+18tb&hash=item2e40549560:g:~NUAAOSwaTtll94~",
+    "seller": {
+     "username": "autocore-66",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 103
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|227400722503|0",
+    "title": "WD Ultrastar DC HC550 18TB 7.2K SATA 6Gb/s 512MB 3.5\" HDD WUH721818ALE6L4",
+    "price": {
+     "value": "481.62",
+     "currency": "GBP",
+     "convertedFromValue": "638.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/227400722503?_skw=ultrastar+18tb&hash=item34f223a847:g:Vh8AAeSwcW9qOks5",
+    "seller": {
+     "username": "laiman2020",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 303
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|227399553311|0",
+    "title": "WD WUH721818ALE6L4 18TB SATA Ultrastar DC HC550 3.5\" LFF Hard Drive",
+    "price": {
+     "value": "484.64",
+     "currency": "GBP",
+     "convertedFromValue": "642.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/227399553311?_skw=ultrastar+18tb&hash=item34f211d11f:g:KXsAAeSwQKZqOSsb",
+    "seller": {
+     "username": "laiman2020",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 303
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|407194128034|0",
+    "title": "WD WUH721818ALE6L4 18TB SATA Ultrastar DC HC550 3.5\" LFF Enterprise Hard Drive",
+    "price": {
+     "value": "484.93",
+     "currency": "GBP",
+     "convertedFromValue": "642.39",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/407194128034?_skw=ultrastar+18tb&hash=item5ecea94ea2:g:~NUAAOSwaTtll94~",
+    "seller": {
+     "username": "ywyj111",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 230
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|318790957394|0",
+    "title": "WD WUH721818ALE6L4 18TB SATA Ultrastar DC HC550 3.5\" LFF Enterprise Hard Drive",
+    "price": {
+     "value": "486.15",
+     "currency": "GBP",
+     "convertedFromValue": "644.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/318790957394?_skw=ultrastar+18tb&hash=item4a396bf952:g:~NUAAOSwaTtll94~",
+    "seller": {
+     "username": "coom11112",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 453
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|206535231735|0",
+    "title": "WD WUH721818ALE6L4 18TB SATA Ultrastar DC HC550 3.5\" LFF Enterprise Hard Drive",
+    "price": {
+     "value": "486.45",
+     "currency": "GBP",
+     "convertedFromValue": "644.40",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/206535231735?_skw=ultrastar+18tb&hash=item30167588f7:g:~NUAAOSwaTtll94~",
+    "seller": {
+     "username": "industrial011",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 32
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|267751755250|0",
+    "title": "WD WUH721818ALE6L4 18TB SATA Ultrastar DC HC550 3.5\" LFF Enterprise",
+    "price": {
+     "value": "486.90",
+     "currency": "GBP",
+     "convertedFromValue": "645.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/267751755250?_skw=ultrastar+18tb&hash=item3e573f8df2:g:~NUAAOSwaTtll94~",
+    "seller": {
+     "username": "plcdealer2018",
+     "feedbackPercentage": "91.1",
+     "feedbackScore": 234
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|147411917929|0",
+    "title": "WD WUH721818ALE6L4 18TB SATA Ultrastar DC HC550 3.5\" LFF Enterprise Hard Drive",
+    "price": {
+     "value": "490.68",
+     "currency": "GBP",
+     "convertedFromValue": "650.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/147411917929?_skw=ultrastar+18tb&hash=item22526f5c69:g:~NUAAOSwaTtll94~",
+    "seller": {
+     "username": "industrial-controller",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 86
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|128018454960|0",
+    "title": "WD WUH721818ALE6L4 18TB SATA Ultrastar DC HC550 3.5\" LFF Enterprise Hard Drive",
+    "price": {
+     "value": "490.68",
+     "currency": "GBP",
+     "convertedFromValue": "650.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/128018454960?_skw=ultrastar+18tb&hash=item1dce7e99b0:g:ke8AAOSwWV5ll95D",
+    "seller": {
+     "username": "smart-technology",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 85
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|206508195043|0",
+    "title": "WD WUH721818ALE6L4 18TB SATA Ultrastar DC HC550 3.5\" LFF Enterprise Hard Drive",
+    "price": {
+     "value": "492.75",
+     "currency": "GBP",
+     "convertedFromValue": "652.74",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/206508195043?_skw=ultrastar+18tb&hash=item3014d8fce3:g:~NUAAOSwaTtll94~",
+    "seller": {
+     "username": "kkayodow",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 17
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|158221446254|0",
+    "title": "WD WUH721818ALE6L4 18TB SATA Ultrastar DC HC550 3.5\" LFF Enterprise Hard Drive",
+    "price": {
+     "value": "485.51",
+     "currency": "GBP",
+     "convertedFromValue": "643.15",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "13.59",
+       "currency": "GBP",
+       "convertedFromValue": "18.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/158221446254?_skw=ultrastar+18tb&hash=item24d6bbac6e:g:~NUAAOSwaTtll94~",
+    "seller": {
+     "username": "jiete_62",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 11
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|136876199997|0",
+    "title": "WD WUH721818ALE6L4 18TB SATA Ultrastar DC HC550 3.5\" LFF Enterprise Hard Drive",
+    "price": {
+     "value": "486.90",
+     "currency": "GBP",
+     "convertedFromValue": "645.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "15.10",
+       "currency": "GBP",
+       "convertedFromValue": "20.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/136876199997?_skw=ultrastar+18tb&hash=item1fde75103d:g:~NUAAOSwaTtll94~",
+    "seller": {
+     "username": "plc-part",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 119
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|236931614153|0",
+    "title": "WD WUH721818ALE6L4 18TB SATA Ultrastar DC HC550 3.5\" LFF Enterprise Hard Drive *",
+    "price": {
+     "value": "421.36",
+     "currency": "GBP"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "84.52",
+       "currency": "GBP"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/236931614153?_skw=ultrastar+18tb&hash=item372a3985c9:g:Z58AAeSwgPtqUoHl",
+    "seller": {
+     "username": "shanghaif26prosperous",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 78
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   }
+  ]
+ },
+ "toshiba mg08 16tb": {
+  "total": 38,
+  "itemSummaries": [
+   {
+    "itemId": "v1|147517746769|0",
+    "title": "Toshiba 16TB Hard Drive HDD MG08ACA16TE - Faulty",
+    "price": {
+     "value": "162.52",
+     "currency": "GBP",
+     "convertedFromValue": "189.00",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "21.50",
+       "currency": "GBP",
+       "convertedFromValue": "25.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Als Ersatzteil / defekt",
+    "conditionId": "7000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/147517746769?_skw=toshiba+mg08+16tb&hash=item2258be2e51:g:1s8AAeSwGFpqhw-S",
+    "seller": {
+     "username": "zerografity",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 2375
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|287605426459|0",
+    "title": "MG08ACA16TE Toshiba 16TB SATA 3.5\" 7200RPM 6Gb/s 512MB Internal Hard Drive",
+    "price": {
+     "value": "324.39",
+     "currency": "GBP",
+     "convertedFromValue": "429.72",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/287605426459?_skw=toshiba+mg08+16tb&hash=item42f69e891b:g:xjEAAOSwm8xnXB~G",
+    "seller": {
+     "username": "judy886",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 1
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|277651702201|0",
+    "title": "MG08ACA16TE Toshiba 16TB SATA 3.5\" 7200RPM 6Gb/s 512MB Internal Hard Drive",
+    "price": {
+     "value": "326.87",
+     "currency": "GBP",
+     "convertedFromValue": "433.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/277651702201?_skw=toshiba+mg08+16tb&hash=item40a554c1b9:g:xjEAAOSwm8xnXB~G",
+    "seller": {
+     "username": "eastdigitalhk",
+     "feedbackPercentage": "98.8",
+     "feedbackScore": 4088
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|307148176588|0",
+    "title": "Toshiba Enterprise 16TB HDD, SATA 3, 3.5\" Internal Hard Drive (MG08ACA16TE)",
+    "price": {
+     "value": "322.90",
+     "currency": "GBP"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "26.58",
+       "currency": "GBP"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/307148176588?_skw=toshiba+mg08+16tb&hash=item4783753ccc:g:7soAAeSwRHNqjy5d",
+    "seller": {
+     "username": "maznaz2000",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 321
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|358788624903|0",
+    "title": "MG08ACA16TE FOR Toshiba 16TB SATA 3.5\" 7200RPM 6Gb/s 512MB Internal Hard Drive",
+    "price": {
+     "value": "369.12",
+     "currency": "GBP",
+     "convertedFromValue": "488.97",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/358788624903?_skw=toshiba+mg08+16tb&hash=item538977f207:g:vHoAAeSwKs5qVD6k",
+    "seller": {
+     "username": "ppsprinterpartsseller",
+     "feedbackPercentage": "99.9",
+     "feedbackScore": 1103
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|405952406190|0",
+    "title": "Compatible MG08ACA16TE Toshiba 512MB 16TB 6Gb/s 7200RPM 3.5 SATA Internal HDD",
+    "price": {
+     "value": "365.90",
+     "currency": "GBP",
+     "convertedFromValue": "484.71",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "22.65",
+       "currency": "GBP",
+       "convertedFromValue": "30.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/405952406190?_skw=toshiba+mg08+16tb&hash=item5e84a622ae:g:~yEAAOSwXBdnE9LL",
+    "seller": {
+     "username": "vogia-lsq-02",
+     "feedbackPercentage": "99.3",
+     "feedbackScore": 307
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|800474905984|0",
+    "title": "Toshiba 16TB SATA 3.5\" 6G Hard Drive MG08ACA16TE | 1 Year Warranty",
+    "price": {
+     "value": "399.98",
+     "currency": "GBP",
+     "convertedFromValue": "465.15",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "17.20",
+       "currency": "GBP",
+       "convertedFromValue": "20.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Occasion",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/800474905984?_skw=toshiba+mg08+16tb&hash=itemba6005bd80:g:v84AAeSwKTRqdbfa",
+    "seller": {
+     "username": "etb-technologies",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 10493
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|287510170039|0",
+    "title": "Toshiba 16TB SATA 3.5\" 6G Hard Drive MG08ACA16TE | 1 Year Warranty",
+    "price": {
+     "value": "399.98",
+     "currency": "GBP",
+     "convertedFromValue": "465.15",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "17.20",
+       "currency": "GBP",
+       "convertedFromValue": "20.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Gebraucht",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/287510170039?_skw=toshiba+mg08+16tb&hash=item42f0f109b7:g:h8wAAeSw~wRqfgwB",
+    "seller": {
+     "username": "etb-technologies",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 10493
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|187540889494|0",
+    "title": "Toshiba MG08SCA16TE 3.5 inch 16TB, Internal Desktop Drive",
+    "price": {
+     "value": "371.40",
+     "currency": "GBP",
+     "convertedFromValue": "492.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "49.07",
+       "currency": "GBP",
+       "convertedFromValue": "65.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/187540889494?_skw=toshiba+mg08+16tb&hash=item2baa4edf96:g:bj4AAeSwnYZozF4a",
+    "seller": {
+     "username": "technodeals1",
+     "feedbackPercentage": "99.8",
+     "feedbackScore": 12256
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|389315665742|0",
+    "title": "Toshiba MG08SCA16TE 3.5 inch 16TB, Internal Desktop Drive",
+    "price": {
+     "value": "388.66",
+     "currency": "GBP",
+     "convertedFromValue": "451.99",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "49.25",
+       "currency": "GBP",
+       "convertedFromValue": "57.27",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/389315665742?_skw=toshiba+mg08+16tb&hash=item5aa5059f4e:g:bj4AAeSwnYZozF4a",
+    "seller": {
+     "username": "technodeals1",
+     "feedbackPercentage": "99.8",
+     "feedbackScore": 12256
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|187797708940|0",
+    "title": "Toshiba MG08SCA16TE 8.9cm 16TB, Internal Desktop Drive",
+    "price": {
+     "value": "388.66",
+     "currency": "GBP",
+     "convertedFromValue": "451.99",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "49.25",
+       "currency": "GBP",
+       "convertedFromValue": "57.27",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Gebraucht",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/187797708940?_skw=toshiba+mg08+16tb&hash=item2bb99da08c:g:bj4AAeSwnYZozF4a",
+    "seller": {
+     "username": "technodeals1",
+     "feedbackPercentage": "99.8",
+     "feedbackScore": 12256
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|389316643288|0",
+    "title": "Toshiba MG08SCA16TE 3.5-Inch 16TB, Internal Desktop Disk",
+    "price": {
+     "value": "388.66",
+     "currency": "GBP",
+     "convertedFromValue": "451.99",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "49.25",
+       "currency": "GBP",
+       "convertedFromValue": "57.27",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Usato",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/389316643288?_skw=toshiba+mg08+16tb&hash=item5aa51489d8:g:bj4AAeSwnYZozF4a",
+    "seller": {
+     "username": "technodeals1",
+     "feedbackPercentage": "99.8",
+     "feedbackScore": 12256
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|197914296477|0",
+    "title": "Toshiba MG08SCA16TE 3.5-Inch Internal 16TB Desktop Hard Drive",
+    "price": {
+     "value": "388.66",
+     "currency": "GBP",
+     "convertedFromValue": "451.99",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "49.25",
+       "currency": "GBP",
+       "convertedFromValue": "57.27",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Usado",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/197914296477?_skw=toshiba+mg08+16tb&hash=item2e149c809d:g:bj4AAeSwnYZozF4a",
+    "seller": {
+     "username": "technodeals1",
+     "feedbackPercentage": "99.8",
+     "feedbackScore": 12256
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|187796962602|0",
+    "title": "Toshiba MG08SCA16TE 3.5 inch 16TB, Internal Desktop Drive",
+    "price": {
+     "value": "387.55",
+     "currency": "GBP",
+     "convertedFromValue": "731.01",
+     "convertedFromCurrency": "AUD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "51.62",
+       "currency": "GBP",
+       "convertedFromValue": "97.36",
+       "convertedFromCurrency": "AUD"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/187796962602?_skw=toshiba+mg08+16tb&hash=item2bb9923d2a:g:bj4AAeSwnYZozF4a",
+    "seller": {
+     "username": "technodeals1",
+     "feedbackPercentage": "99.8",
+     "feedbackScore": 12256
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|187796962570|0",
+    "title": "Toshiba MG08SCA16TE 3.5 inch 16TB, Internal Desktop Drive",
+    "price": {
+     "value": "390.26",
+     "currency": "GBP"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "49.60",
+       "currency": "GBP"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/187796962570?_skw=toshiba+mg08+16tb&hash=item2bb9923d0a:g:bj4AAeSwnYZozF4a",
+    "seller": {
+     "username": "technodeals1",
+     "feedbackPercentage": "99.8",
+     "feedbackScore": 12256
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|800421441912|0",
+    "title": "Toshiba 16TB SATA 3.5\" 6G Hard Drive MG08ACA16TE | 1 Year Warranty",
+    "price": {
+     "value": "399.40",
+     "currency": "GBP",
+     "convertedFromValue": "529.08",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "43.78",
+       "currency": "GBP",
+       "convertedFromValue": "58.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/800421441912?_skw=toshiba+mg08+16tb&hash=itemba5cd5f178:g:MqEAAeSw7EhqaIwE",
+    "seller": {
+     "username": "etb-technologies",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 10493
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|820120653012|0",
+    "title": "Toshiba MG08 MG08ACA16TE 16TB 7.2K RPM 3.5\" SATA 6Gb/s 512e Enterprise HDD",
+    "price": {
+     "value": "443.32",
+     "currency": "GBP",
+     "convertedFromValue": "587.27",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/820120653012?_skw=toshiba+mg08+16tb&hash=itembef3000cd4:g:9qEAAeSw2MBqpOcu",
+    "seller": {
+     "username": "yj168168",
+     "feedbackPercentage": "99.3",
+     "feedbackScore": 151
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|407213169279|0",
+    "title": "Toshiba MG08 MG08ACA16TE 16TB 7.2K RPM 3.5\" SATA 6Gb/s 512e Enterprise HDD",
+    "price": {
+     "value": "448.03",
+     "currency": "GBP",
+     "convertedFromValue": "593.51",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/407213169279?_skw=toshiba+mg08+16tb&hash=item5ecfcbda7f:g:9qEAAeSw2MBqpOcu",
+    "seller": {
+     "username": "ywyj111",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 230
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|287595457257|0",
+    "title": "Toshiba MG08 MG08ACA16TE 16TB 7.2K RPM 3.5\" SATA 6Gb/s 512e Enterprise HDD",
+    "price": {
+     "value": "440.66",
+     "currency": "GBP",
+     "convertedFromValue": "583.74",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "7.55",
+       "currency": "GBP",
+       "convertedFromValue": "10.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/287595457257?_skw=toshiba+mg08+16tb&hash=item42f6066ae9:g:9qEAAeSw2MBqpOcu",
+    "seller": {
+     "username": "judy886",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 1
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|227517900540|0",
+    "title": "Toshiba MG08 MG08ACA16TE 16TB 7.2K RPM 3.5\" SATA 6Gb/s 512e Enterprise HDD",
+    "price": {
+     "value": "449.16",
+     "currency": "GBP",
+     "convertedFromValue": "595.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/227517900540?_skw=toshiba+mg08+16tb&hash=item34f91fa6fc:g:9qEAAeSw2MBqpOcu",
+    "seller": {
+     "username": "laiman2020",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 303
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|188467366657|0",
+    "title": "Toshiba MG08ACA16TE 16 TB SATA III 3.5 in Drive",
+    "price": {
+     "value": "301.19",
+     "currency": "GBP",
+     "convertedFromValue": "398.99",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "CALCULATED",
+      "shippingCost": {
+       "value": "188.72",
+       "currency": "GBP",
+       "convertedFromValue": "250.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/188467366657?_skw=toshiba+mg08+16tb&hash=item2be187cb01:g:75UAAeSwkFdqqDws",
+    "seller": {
+     "username": "harddrivesonly",
+     "feedbackPercentage": "99.8",
+     "feedbackScore": 41395
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|800246042622|0",
+    "title": "Toshiba 16TB SATA 3.5\" 6G Hard Drive MG08ACA16TE | 1 Year Warranty",
+    "price": {
+     "value": "480.00",
+     "currency": "GBP"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "28.00",
+       "currency": "GBP"
+      }
+     }
+    ],
+    "condition": "Excellent - Refurbished",
+    "conditionId": "2010",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/800246042622?_skw=toshiba+mg08+16tb&hash=itemba52618ffe:g:BUkAAeSwX5NqPk6K",
+    "seller": {
+     "username": "etb-technologies",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 10493
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|357930500493|0",
+    "title": "Toshiba MG08ACA16TE 16TB SATA *DNP",
+    "price": {
+     "value": "513.32",
+     "currency": "GBP",
+     "convertedFromValue": "680.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/357930500493?_skw=toshiba+mg08+16tb&hash=item535652018d:g:--4AAeSwzxVpIAMG",
+    "seller": {
+     "username": "xiaoxiaol",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 138
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|197913735420|0",
+    "title": "Toshiba MG08SCA16TE 3.5 inch 16TB, Internal Desktop Drive",
+    "price": {
+     "value": "481.02",
+     "currency": "GBP",
+     "convertedFromValue": "901.13",
+     "convertedFromCurrency": "CAD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "49.27",
+       "currency": "GBP",
+       "convertedFromValue": "92.31",
+       "convertedFromCurrency": "CAD"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/197913735420?_skw=toshiba+mg08+16tb&hash=item2e1493f0fc:g:bj4AAeSwnYZozF4a",
+    "seller": {
+     "username": "technodeals1",
+     "feedbackPercentage": "99.8",
+     "feedbackScore": 12256
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|317713299058|0",
+    "title": "For Lenovo MG08ACA16TE 16TB Helium 3.5\" 512MB SATA Hard Drive",
+    "price": {
+     "value": "528.42",
+     "currency": "GBP",
+     "convertedFromValue": "700.00",
+     "convertedFromCurrency": "USD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "30.20",
+       "currency": "GBP",
+       "convertedFromValue": "40.00",
+       "convertedFromCurrency": "USD"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/317713299058?_skw=toshiba+mg08+16tb&hash=item49f9303672:g:qkgAAOSwfhVkDvUu",
+    "seller": {
+     "username": "001parts",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 1141
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   }
+  ]
+ },
+ "wd elements 16tb": {
+  "total": 16,
+  "itemSummaries": [
+   {
+    "itemId": "v1|146813816587|0",
+    "title": "2x BRAKE DISCS 610.3714.20 FOR VOLVO V60/Cross/Country/Van S60/II XC70 V70 2.4L",
+    "price": {
+     "value": "111.40",
+     "currency": "GBP",
+     "convertedFromValue": "129.55",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/146813816587?_skw=wd+elements+16tb&hash=item222ec90f0b:g:jYkAAeSwLGBqFZmw",
+    "seller": {
+     "username": "elartcom_autoteile",
+     "feedbackPercentage": "99.7",
+     "feedbackScore": 9560
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|136532300687|0",
+    "title": "2x BRAKE DISCS 24.0128-0162.1 FOR VOLVO V60/Cross/Country/Van S60/II XC70/VAN  ",
+    "price": {
+     "value": "174.76",
+     "currency": "GBP",
+     "convertedFromValue": "203.23",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/136532300687?_skw=wd+elements+16tb&hash=item1fc9f5938f:g:c4QAAeSwfwZqGumT",
+    "seller": {
+     "username": "elartcom_autoteile",
+     "feedbackPercentage": "99.7",
+     "feedbackScore": 9560
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|146862437327|0",
+    "title": "2x BRAKE DISCS 24.0328-0162.1 FOR VOLVO V60/Cross/Country/Van S60/II XC70/VAN  ",
+    "price": {
+     "value": "210.60",
+     "currency": "GBP",
+     "convertedFromValue": "244.91",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "0.00",
+       "currency": "GBP",
+       "convertedFromValue": "0.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/146862437327?_skw=wd+elements+16tb&hash=item2231aef3cf:g:NRkAAeSwx6BqGZr6",
+    "seller": {
+     "username": "elartcom_autoteile",
+     "feedbackPercentage": "99.7",
+     "feedbackScore": 9560
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|298564146731|0",
+    "title": "WD Elements 16TB USB 3.0 Desktop External Hard Drive",
+    "price": {
+     "value": "418.63",
+     "currency": "GBP",
+     "convertedFromValue": "789.64",
+     "convertedFromCurrency": "AUD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "84.29",
+       "currency": "GBP",
+       "convertedFromValue": "158.99",
+       "convertedFromCurrency": "AUD"
+      }
+     }
+    ],
+    "condition": "Used",
+    "conditionId": "3000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/298564146731?_skw=wd+elements+16tb&hash=item4583cf562b:g:yo8AAeSwiX5qdGtj",
+    "seller": {
+     "username": "melissasbears",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 345
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|398407392853|0",
+    "title": "WD WDBWLG0160HBK WD Elements Desktop HDD 3.5\" 16000 WDBWLG0160HBK-EESN",
+    "price": {
+     "value": "510.73",
+     "currency": "GBP",
+     "convertedFromValue": "593.95",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "23.22",
+       "currency": "GBP",
+       "convertedFromValue": "27.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Nuovo",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/398407392853?_skw=wd+elements+16tb&hash=item5cc2ee5e55:g:RggAAeSwJ4ZqtO1r",
+    "seller": {
+     "username": "eeeshop",
+     "feedbackPercentage": "99.9",
+     "feedbackScore": 29182
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|287526026487|0",
+    "title": "WD Elements Desktop Storage 16TB (Desktop Storage USB 3.0 Compatible, Extra",
+    "price": {
+     "value": "593.65",
+     "currency": "GBP",
+     "convertedFromValue": "651.38",
+     "convertedFromCurrency": "CHF"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "1.81",
+       "currency": "GBP",
+       "convertedFromValue": "1.99",
+       "convertedFromCurrency": "CHF"
+      }
+     }
+    ],
+    "condition": "Neu",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/287526026487?_skw=wd+elements+16tb&hash=item42f1e2fcf7:g:iA8AAeSwn1Jqf-7e",
+    "seller": {
+     "username": "rarewaves-outlet",
+     "feedbackPercentage": "98.6",
+     "feedbackScore": 1696971
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|188911474350|0",
+    "title": "WD Elements desktop storage 16 TB (desktop storage USB 3.0 compatible, additiona",
+    "price": {
+     "value": "629.25",
+     "currency": "GBP",
+     "convertedFromValue": "731.78",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "1.71",
+       "currency": "GBP",
+       "convertedFromValue": "1.99",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/188911474350?_skw=wd+elements+16tb&hash=item2bfc0056ae:g:wu0AAeSwnz9qokO7",
+    "seller": {
+     "username": "rarewaves-europe",
+     "feedbackPercentage": "98.1",
+     "feedbackScore": 276431
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|146888214810|0",
+    "title": "WD Elements WDBWLG0160HBK-EESN 16TB 2.0/3.2 Gen 1 (3.1 1) Black ~D~",
+    "price": {
+     "value": "594.19",
+     "currency": "GBP",
+     "convertedFromValue": "691.00",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "47.29",
+       "currency": "GBP",
+       "convertedFromValue": "55.00",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/146888214810?_skw=wd+elements+16tb&hash=item223338491a:g:w50AAeSwCMlqsSH2",
+    "seller": {
+     "username": "ersazza",
+     "feedbackPercentage": "99.9",
+     "feedbackScore": 5115
+    },
+    "buyingOptions": [
+     "FIXED_PRICE",
+     "BEST_OFFER"
+    ]
+   },
+   {
+    "itemId": "v1|820016509416|0",
+    "title": "WD Elements Desktop Storage 16TB (Desktop Storage USB 3.0 Compatible, Extra",
+    "price": {
+     "value": "655.50",
+     "currency": "GBP",
+     "convertedFromValue": "762.31",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "1.71",
+       "currency": "GBP",
+       "convertedFromValue": "1.99",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/820016509416?_skw=wd+elements+16tb&hash=itembeeccaf1e8:g:1-4AAeSw8rhqg8fG",
+    "seller": {
+     "username": "rarewaves-outlet",
+     "feedbackPercentage": "98.6",
+     "feedbackScore": 1696971
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|188915741242|0",
+    "title": "WD Elements 16TB Desktop Storage (USB 3.0 Compatible Desktop Storage, Add",
+    "price": {
+     "value": "670.85",
+     "currency": "GBP",
+     "convertedFromValue": "780.16",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "1.71",
+       "currency": "GBP",
+       "convertedFromValue": "1.99",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neuf",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/188915741242?_skw=wd+elements+16tb&hash=item2bfc41723a:g:i1wAAeSwmXNqo7df",
+    "seller": {
+     "username": "rarewaves-europe",
+     "feedbackPercentage": "98.1",
+     "feedbackScore": 276431
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|407162642307|0",
+    "title": "Western Digital WD Elements Desktop 16TB USB 3.0 External Hard Drive / WDBBKG016",
+    "price": {
+     "value": "667.67",
+     "currency": "GBP",
+     "convertedFromValue": "1259.38",
+     "convertedFromCurrency": "AUD"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "7.28",
+       "currency": "GBP",
+       "convertedFromValue": "13.73",
+       "convertedFromCurrency": "AUD"
+      }
+     }
+    ],
+    "condition": "Brand New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/407162642307?_skw=wd+elements+16tb&hash=item5eccc8df83:g:2Z8AAeSwjhxqtlvg",
+    "seller": {
+     "username": "kobaryo-y0",
+     "feedbackPercentage": "100.0",
+     "feedbackScore": 123
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|198577390945|0",
+    "title": "WD 16TB Elements Desktop HDD USB 3.0 16TB Desktop HDD",
+    "price": {
+     "value": "694.81",
+     "currency": "GBP",
+     "convertedFromValue": "808.02",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "1.71",
+       "currency": "GBP",
+       "convertedFromValue": "1.99",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Nuovo",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/198577390945?_skw=wd+elements+16tb&hash=item2e3c228561:g:ODcAAeSwrBFqgwnn",
+    "seller": {
+     "username": "rarewaves-europe",
+     "feedbackPercentage": "98.1",
+     "feedbackScore": 276431
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|188929407987|0",
+    "title": "WD Elements 16TB External Desktop HDD, USB 3.0 Compatibility, Plug",
+    "price": {
+     "value": "697.11",
+     "currency": "GBP",
+     "convertedFromValue": "810.69",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "1.71",
+       "currency": "GBP",
+       "convertedFromValue": "1.99",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Nuevo",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/188929407987?_skw=wd+elements+16tb&hash=item2bfd11fbf3:g:SJYAAeSwmXNqp-Di",
+    "seller": {
+     "username": "rarewaves-europe",
+     "feedbackPercentage": "98.1",
+     "feedbackScore": 276431
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|287532856654|0",
+    "title": "WD Elements desktop storage 16 TB (desktop storage USB 3.0 compatible, additiona",
+    "price": {
+     "value": "735.91",
+     "currency": "GBP"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "1.99",
+       "currency": "GBP"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/287532856654?_skw=wd+elements+16tb&hash=item42f24b354e:g:P~wAAeSw7RNqhJt1",
+    "seller": {
+     "username": "rarewaves-outlet",
+     "feedbackPercentage": "98.6",
+     "feedbackScore": 1696971
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|137409172345|0",
+    "title": "WD Elements Externe USB 3.0 Festplatte 16TB WDBWLG0160HBK-EESN",
+    "price": {
+     "value": "712.99",
+     "currency": "GBP",
+     "convertedFromValue": "829.16",
+     "convertedFromCurrency": "EUR"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "39.67",
+       "currency": "GBP",
+       "convertedFromValue": "46.13",
+       "convertedFromCurrency": "EUR"
+      }
+     }
+    ],
+    "condition": "Neu",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/137409172345?_skw=wd+elements+16tb&hash=item1ffe399379:g:gqAAAeSwHQVqLFY2",
+    "seller": {
+     "username": "pcarena-bristol",
+     "feedbackPercentage": "98.1",
+     "feedbackScore": 509920
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   },
+   {
+    "itemId": "v1|366474969214|0",
+    "title": "WD Elements USB 3.0 External Hard Drive - 16TB - WDBWLG0160HBK-EESN",
+    "price": {
+     "value": "736.79",
+     "currency": "GBP"
+    },
+    "shippingOptions": [
+     {
+      "shippingCostType": "FIXED",
+      "shippingCost": {
+       "value": "45.99",
+       "currency": "GBP"
+      }
+     }
+    ],
+    "condition": "New",
+    "conditionId": "1000",
+    "itemWebUrl": "https://www.ebay.co.uk/itm/366474969214?_skw=wd+elements+16tb&hash=item55539c407e:g:gqAAAeSwHQVqLFY2",
+    "seller": {
+     "username": "pcarena-bristol",
+     "feedbackPercentage": "98.1",
+     "feedbackScore": 509920
+    },
+    "buyingOptions": [
+     "FIXED_PRICE"
+    ]
+   }
+  ]
+ }
+}

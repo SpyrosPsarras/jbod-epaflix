@@ -1,0 +1,393 @@
+[
+ {
+  "note": "for parts via conditionId",
+  "title": "Seagate Exos X16 16TB  (7200RPM, 3.5\", SATA III, 256MB Cache)  Read description",
+  "expect": {
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "disk_class": "enterprise",
+   "working": false,
+   "qualifies": false
+  },
+  "condition": "for_parts"
+ },
+ {
+  "note": "faulty in title, localized condition",
+  "title": "Seagate 16TB Exos X16 ST16000NM001G SATA 6Gb/s 256MB 7200RPM 3.5\" FAULTY",
+  "expect": {
+   "capacity_tb": 16,
+   "working": false,
+   "qualifies": false
+  },
+  "condition": "for_parts"
+ },
+ {
+  "note": "parts in title",
+  "title": "WUH721818AL5204 WD Ultrastar DC HC550 18TB SAS 12Gb/s 512MB 3.5in HDD - Parts",
+  "expect": {
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "disk_class": "enterprise",
+   "working": false,
+   "qualifies": false
+  },
+  "condition": "for_parts"
+ },
+ {
+  "note": "faulty toshiba",
+  "title": "Toshiba 16TB Hard Drive HDD MG08ACA16TE - Faulty",
+  "expect": {
+   "capacity_tb": 16,
+   "working": false,
+   "qualifies": false
+  },
+  "condition": "for_parts"
+ },
+ {
+  "note": "working used Ultrastar 16TB (live eBay)",
+  "title": "WD Ultrastar DC HC550 WUH721816ALE6L4 16TB 7.2K SATA 3.5\" Enterprise HDD",
+  "condition": "used",
+  "expect": {
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "disk_class": "enterprise",
+   "working": true,
+   "qualifies": true
+  }
+ },
+ {
+  "note": "Ultrastar 16TB with 3.5 inch spelled out (live eBay)",
+  "title": "Western Digital Ultrastar DC HC550 16TB, 7200 RPM, 3.5 inch Internal Hard Drive",
+  "condition": "used",
+  "expect": {
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "disk_class": "enterprise",
+   "qualifies": true
+  }
+ },
+ {
+  "note": "seller-refurbished Ultrastar 16TB (live eBay)",
+  "title": "Western Digital Ultrastar DC HC550 16TB SATA HDD 3.5\" - P/N  0F38462",
+  "condition": "refurbished",
+  "expect": {
+   "capacity_tb": 16,
+   "qualifies": true
+  }
+ },
+ {
+  "note": "white-label shucked drive names no family (live eBay)",
+  "title": "Western Digital WD160EDGZ  16 TB SATA Hard Drive 7200rpm -Used-Good/100% Health",
+  "condition": "used",
+  "expect": {
+   "unreadable": [
+    "disk_class",
+    "form_factor"
+   ]
+  }
+ },
+ {
+  "note": "unknown Source condition code is unreadable",
+  "title": "Seagate Exos X16 16TB 3.5\" SATA enterprise HDD",
+  "condition": "mint",
+  "expect": {
+   "unreadable": [
+    "condition"
+   ]
+  }
+ },
+ {
+  "note": "working used exos x18",
+  "title": "Seagate Exos X18 (7200RPM, 3.5-inch, SATA III, Standard Format) 16TB used",
+  "expect": {
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "disk_class": "enterprise",
+   "working": true,
+   "qualifies": true
+  },
+  "condition": "used"
+ },
+ {
+  "note": "working used exos x16",
+  "title": "Seagate Exos X16 (7200RPM, 3.5\", SATA III, 256MB Cache) 16TB very low usage",
+  "expect": {
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "disk_class": "enterprise",
+   "working": true,
+   "qualifies": true
+  },
+  "condition": "used"
+ },
+ {
+  "note": "no 3.5 stated, known family",
+  "title": "WD Ultrastar DC HC550 WUH721818AL4206 18TB SAS 12G 4Kn 7200RPM HDD 0F38314",
+  "expect": {
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "disk_class": "enterprise",
+   "working": true,
+   "qualifies": true
+  },
+  "condition": "used"
+ },
+ {
+  "note": "no 3.5 stated, HC555",
+  "title": "Western Digital Ultrastar  - DATA CENTER  - DC HC555  18TB 7.2K !",
+  "expect": {
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "disk_class": "enterprise",
+   "working": true,
+   "qualifies": true
+  },
+  "condition": "new"
+ },
+ {
+  "note": "space before TB",
+  "title": "Toshiba MG08ACA16TE 16 TB SATA III 3.5 in Drive",
+  "expect": {
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "disk_class": "enterprise",
+   "working": true,
+   "qualifies": true
+  },
+  "condition": "used"
+ },
+ {
+  "note": "enterprise model mislabelled desktop by seller",
+  "title": "Toshiba MG08SCA16TE 3.5 inch 16TB, Internal Desktop Drive",
+  "expect": {
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "disk_class": "enterprise",
+   "working": true,
+   "qualifies": true
+  },
+  "condition": "used"
+ },
+ {
+  "note": "metric 8.9cm form factor",
+  "title": "Toshiba MG08SCA16TE 8.9cm 16TB, Internal Desktop Drive",
+  "expect": {
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "qualifies": true
+  },
+  "condition": "used"
+ },
+ {
+  "note": "duplicated capacity is fine",
+  "title": "Seagate ST14000NM001G Exos X16 14TB 14TB HDD SATA 6Gb 3.5\" Internal Hard Drive",
+  "expect": {
+   "capacity_tb": 14,
+   "qualifies": true
+  },
+  "condition": "new"
+ },
+ {
+  "note": "below 14TB",
+  "title": "Seagate EXOS X16 12TB 7200RPM SATA 6Gb/s 256MB Cache 3.5\" HDD ST12000NM001G-",
+  "expect": {
+   "capacity_tb": 12,
+   "qualifies": false
+  },
+  "condition": "new"
+ },
+ {
+  "note": "2.5 inch exos",
+  "title": "Seagate EXOS 1.2TB ST1200MM0129 10000RPM 256MB SAS-3 7mm 16GB / MLC NAND 2.5\"",
+  "expect": {
+   "capacity_tb": 1.2,
+   "form_factor": "2.5",
+   "qualifies": false
+  },
+  "condition": "new"
+ },
+ {
+  "note": "compatible means not genuine",
+  "title": "Compatible MG08ACA16TE Toshiba 512MB 16TB 6Gb/s 7200RPM 3.5 SATA Internal HDD",
+  "expect": {
+   "capacity_tb": 16,
+   "genuine": false,
+   "qualifies": false
+  },
+  "condition": "used"
+ },
+ {
+  "note": "suitable for means not genuine",
+  "title": "ST12000NM001G Suitable for Seagate 12TB Exos X16 512E 3.5\" SATA 6Gb/s HDD",
+  "expect": {
+   "genuine": false,
+   "qualifies": false
+  },
+  "condition": "new"
+ },
+ {
+  "note": "fits for means not genuine",
+  "title": "ST16000NM001G Fits For Seagate 16TB 256MB 7200rpm 3.5\"SATA 6Gb s Enterprise HDD",
+  "expect": {
+   "capacity_tb": 16,
+   "genuine": false,
+   "qualifies": false
+  },
+  "condition": "used"
+ },
+ {
+  "note": "for its own maker means relabelled (live eBay)",
+  "title": "MG08ACA16TE FOR Toshiba 16TB SATA 3.5\" 7200RPM 6Gb/s 512MB Internal Hard Drive",
+  "expect": {
+   "capacity_tb": 16,
+   "genuine": false,
+   "qualifies": false
+  },
+  "condition": "used"
+ },
+ {
+  "note": "FOR Seagate prefix means relabelled (live eBay)",
+  "title": "FOR Seagate IronWolf Pro ST14000NT001 14TB 7.2K SATA 6Gbps 3.5\"NAS Hard Drive",
+  "expect": {
+   "genuine": false,
+   "qualifies": false
+  },
+  "condition": "new"
+ },
+ {
+  "note": "OEM for Lenovo stays genuine",
+  "title": "For Lenovo MG08ACA16TE 16TB Helium 3.5\" 512MB SATA Hard Drive",
+  "expect": {
+   "capacity_tb": 16,
+   "genuine": true,
+   "qualifies": true
+  },
+  "condition": "used"
+ },
+ {
+  "note": "usb external",
+  "title": "WD Elements 16TB USB 3.0 Desktop External Hard Drive",
+  "expect": {
+   "capacity_tb": 16,
+   "disk_class": "external",
+   "qualifies": false
+  },
+  "condition": "used"
+ },
+ {
+  "note": "external without TB word",
+  "title": "WD Elements Externe USB 3.0 Festplatte 16TB WDBWLG0160HBK-EESN",
+  "expect": {
+   "disk_class": "external",
+   "qualifies": false
+  },
+  "condition": "new"
+ },
+ {
+  "note": "not a disk at all",
+  "title": "2x BRAKE DISCS 610.3714.20 FOR VOLVO V60/Cross/Country/Van S60/II XC70 V70 2.4L",
+  "expect": {
+   "ignored": true
+  },
+  "condition": "new"
+ },
+ {
+  "note": "PCB controller board is not a disk (live eBay false positive)",
+  "title": "204406200 REV A PCB Controller for Seagate Exos X24 20TB ST20000NM002H",
+  "expect": {
+   "ignored": true
+  },
+  "condition": "used"
+ },
+ {
+  "note": "caddy for is an accessory",
+  "title": "Caddy for Dell PowerEdge R730xd 3.5\" LFF tray fits 16TB HDD",
+  "expect": {
+   "ignored": true
+  },
+  "condition": "new"
+ },
+ {
+  "note": "disk sold with a tray is still a disk",
+  "title": "Dell 16TB 7.2K SAS 12G 3.5\" Enterprise HDD with tray Seagate Exos X16",
+  "expect": {
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "disk_class": "enterprise",
+   "qualifies": true
+  },
+  "condition": "used"
+ },
+ {
+  "note": "no capacity",
+  "title": "Seagate Exos enterprise hard drive 3.5\" SATA 7200rpm",
+  "expect": {
+   "unreadable": [
+    "capacity"
+   ]
+  },
+  "condition": "used"
+ },
+ {
+  "note": "conflicting capacities",
+  "title": "Seagate Exos X16 10TB 12TB 14TB 16TB 3.5\" SATA enterprise HDD",
+  "expect": {
+   "unreadable": [
+    "capacity"
+   ]
+  },
+  "condition": "used"
+ },
+ {
+  "note": "unknown class and no form factor",
+  "title": "16TB hard drive tested working",
+  "expect": {
+   "unreadable": [
+    "form_factor",
+    "disk_class"
+   ]
+  },
+  "condition": "used"
+ },
+ {
+  "note": "missing condition from source",
+  "title": "Seagate Exos X16 16TB 3.5\" SATA enterprise HDD",
+  "expect": {
+   "unreadable": [
+    "condition"
+   ]
+  },
+  "condition": null
+ },
+ {
+  "note": "multi-pack price is not per disk",
+  "title": "Lot of 4x Seagate Exos X16 16TB 3.5\" SATA enterprise HDD",
+  "expect": {
+   "unreadable": [
+    "quantity"
+   ]
+  },
+  "condition": "used"
+ },
+ {
+  "note": "nas class qualifies",
+  "title": "Seagate IronWolf 16TB NAS 3.5\" SATA internal hard drive ST16000VN001",
+  "expect": {
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "disk_class": "nas",
+   "qualifies": true
+  },
+  "condition": "used"
+ },
+ {
+  "note": "desktop class rejected",
+  "title": "Seagate BarraCuda 16TB 3.5\" SATA desktop hard drive",
+  "expect": {
+   "capacity_tb": 16,
+   "disk_class": "desktop",
+   "qualifies": false
+  },
+  "condition": "new"
+ }
+]

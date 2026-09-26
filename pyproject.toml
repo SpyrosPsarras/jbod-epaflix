@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "deal-finder"
+version = "0.1.0"
+description = "Ranks the best-value storage Build for epaflix"
+requires-python = ">=3.11"
+dependencies = ["psycopg[binary]>=3.2"]
+
+[project.optional-dependencies]
+test = ["pgserver>=0.1"]
+
+[tool.setuptools]
+packages = ["dealfinder"]
