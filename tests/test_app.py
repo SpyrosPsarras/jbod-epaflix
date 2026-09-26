@@ -813,3 +813,72 @@ class SearchAndTrack(unittest.TestCase):
         req = urllib.request.Request(self.base + "/track", data=b"q=a%00b&kind=disk", method="POST")
         with urllib.request.urlopen(req) as r:
             self.assertIn('data-tracked="disk:a b"', r.read().decode())
+
+
+class MarkAsBought(unittest.TestCase):
+    """Seam 1: Mark as bought records the Build and its Listings, and no Hunt calls a Source again."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.calls = []
+        full = "2x 750W PSU. Dell HBA330. 12x 3.5\" caddies. Rails included."
+        ship = ["shipping_exists", "seller_pays_shipping"]
+        machines = [_doc(1, "Dell PowerEdge R730xd 12x LFF", 6000, 59.91, 10.72)]
+        disks = [_doc(10 + i, 'Seagate Exos X16 16TB 3.5" SATA', 1500 + i, 60.4, 5.5, ship) for i in range(5)]
+
+        def fetch(url):
+            cls.calls.append(url)
+            if "/search?" in url:
+                q = urllib.parse.parse_qs(url.split("?", 1)[1])
+                docs = (machines if q["q"] == ["r730xd"] else disks) if q["condition"] == ["3", "4"] else []
+                blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
+                return f"<script>{blob}</script>"
+            return f'<section data-testid="description"><p>{htmllib.escape(full)}</p></section>'
+
+        cls.pg = _pg()
+        cls.app = App(cls.pg.get_uri(), [FinnSource(fetch=fetch, pause=0)], fx=RATES.__getitem__,
+                      disk_queries={"finn": ["exos"]}, machine_queries=["r730xd"], pause=0, router=fake_router)
+        cls.server = cls.app.make_server("127.0.0.1", 0)
+        threading.Thread(target=cls.server.serve_forever, daemon=True).start()
+        cls.base = "http://127.0.0.1:%d" % cls.server.server_address[1]
+        cls.app.hunt()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.server.shutdown()
+        cls.server.server_close()
+        cls.pg.cleanup()
+
+    def post(self, path, body=b""):
+        with urllib.request.urlopen(urllib.request.Request(self.base + path, data=body, method="POST")) as r:
+            return r.url, r.read().decode()
+
+    def test_mark_as_bought_then_no_hunt_calls_a_source(self):
+        self.assertIn('action="/buy"', self.app.page())
+        self.assertIn("?hunt=gone", self.post("/buy", b"machine=finn%7C999")[0])  # not a shown Build: nothing kept
+        self.assertIsNone(self.app.store.bought())
+
+        url, page = self.post("/buy", b"machine=finn%7C1")
+        self.assertIn("?hunt=bought", url)
+        build = self.app.store.bought()["build"]
+        self.assertEqual(build["machine"]["source_id"], "1")
+        self.assertEqual(sorted(d["source_id"] for d in build["disks"]), ["10", "11", "12", "13", "14"])
+        self.assertAlmostEqual(build["landed_nok"], 6952 + 7510, places=2)
+        self.assertIn('data-bought="1"', page)                    # the page shows the bought Build...
+        self.assertIn("https://www.finn.no/recommerce/forsale/item/14", page)
+        self.assertNotIn('action="/buy"', page)                    # ...and offers no more buttons
+        self.assertNotIn('action="/hunt"', page)
+
+        self.calls.clear()
+        stop = threading.Event()
+        scheduler = threading.Thread(target=self.app.run_scheduler, kwargs={"stop": stop, "interval": 0, "retry": 0.05})
+        scheduler.start()                                          # a scheduled Hunt is due at once
+        threading.Event().wait(0.5)
+        stop.set()
+        scheduler.join(5)
+        self.assertIn("?hunt=bought", self.post("/hunt")[0])      # Hunt now does nothing
+        self.app.hunt()                                            # nor does a direct Hunt
+        self.assertEqual(self.calls, [])
+        self.assertIn("dealfinder_bought 1", self.app.metrics())
+        self.assertFalse(self.app.mark_bought("finn|1"))           # bought once, for good
+        self.assertFalse(self.app.store.record_purchase({"x": 1}))  # the table itself refuses a second row

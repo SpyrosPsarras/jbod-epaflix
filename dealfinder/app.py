@@ -86,7 +86,19 @@ def _link(row):
     return f'<a href="{_e(_safe_url(row["url"]))}">{_e(row["title"])}</a>'
 
 
-def _build_rows(builds, sort):
+def _bought_html(bought):
+    if not bought:
+        return ""
+    b = bought["build"]
+    links = "".join(f'<li>{_e(p["source"])}: <a href="{_e(_safe_url(p["url"]))}">{_e(p["title"])}</a> '
+                    f'{p["landed_nok"]:,.0f} NOK</li>' for p in [b["machine"], *b["disks"]])
+    return (f'<div class="bought" data-bought="{_e(b["machine"]["source_id"])}"><h2>Bought {_when(bought["bought"])}</h2>'
+            f'<p>{_e(b["machine"]["title"])} + {len(b["disks"])} &times; {b["capacity_tb"]:g} TB: '
+            f'{b["landed_nok"]:,.0f} NOK, {b["usable_tib"]} TiB usable, Score {b["score"]:,.0f}. '
+            f'Hunting has stopped for good.</p><ul>{links}</ul></div>')
+
+
+def _build_rows(builds, sort, can_buy=True):
     rows = []
     for b in sorted(builds, key=BUILD_SORT[sort][1]):
         m = b.machine
@@ -97,7 +109,10 @@ def _build_rows(builds, sort):
             f'<tr data-build="{_e(m["source_id"])}" data-score="{b.score:.2f}" data-landed="{b.landed_nok:.2f}">'
             f"<td>{b.score:,.0f}</td><td>{b.landed_nok:,.0f}</td><td>{b.usable_tib:.1f}</td>"
             f"<td>{_link(m)}</td><td>{len(b.disks)} &times; {b.capacity_tb:g} TB</td><td>{_e(sources)}</td>"
-            f"<td><details><summary>show</summary><ul>{''.join(items)}</ul>"
+            + (f'<td><form method="post" action="/buy" onsubmit="return confirm(\'Record this Build as bought and stop '
+               f'hunting for good?\')"><input type="hidden" name="machine" value="{_e(m["source"])}|{_e(m["source_id"])}">'
+               f'<button>Mark as bought</button></form></td>' if can_buy else "<td></td>")
+            + f"<td><details><summary>show</summary><ul>{''.join(items)}</ul>"
             f"<p>Total {b.landed_nok:,.0f} NOK = Machine {b.parts['machine']:,.0f} + Disks {b.parts['disks']:,.0f}"
             f" (a shared pickup place is driven once)</p></details></td></tr>")
     return "".join(rows)
@@ -148,8 +163,8 @@ class App:
         self._hunt_lock = threading.Lock()  # one Hunt at a time, scheduled or by hand
 
     def start_hunt(self):
-        """Start a Hunt in the background. False when one is already running."""
-        if not self._hunt_lock.acquire(blocking=False):
+        """Start a Hunt in the background. False when one is already running or the Build is bought."""
+        if self.store.bought() or not self._hunt_lock.acquire(blocking=False):
             return False
 
         def run():
@@ -181,9 +196,14 @@ class App:
 
     def hunt(self):
         """One pass over every Source. A failing Source is recorded and does not stop the others."""
+        if self.store.bought():  # checked here too, so no path (scheduler, Hunt now, CLI) calls a Source again
+            log.info("Build bought: hunting has stopped")
+            return
         hunt_id = self.store.start_hunt()
         detail, ok, tracked = {}, True, self.store.tracked()
         for source in self.sources:
+            if self.store.bought():  # bought while this Hunt runs: stop before the next Source
+                break
             counts = {"disk": 0, "machine": 0}
             try:
                 work = [(r["query"], r["kind"]) for r in tracked if r["source"] in ("", source.name)
@@ -230,6 +250,22 @@ class App:
         self.store.save_listing(listing, kind, s["facts"], s["missing"], s["qualifies"], s["capacity_tb"],
                                 s["landed_nok"], hunt_id, s["costs"])
         return 1
+
+    def mark_bought(self, machine_key):
+        """Record the current Build for one Machine ("source|source_id") as bought. False when it is not shown."""
+        for b in rank_builds(*self.store.build_parts()):
+            if f'{b.machine["source"]}|{b.machine["source_id"]}' == machine_key:
+                def part(row):
+                    return {k: row.get(k) for k in ("source", "source_id", "title", "url", "location")} | {
+                        "landed_nok": float(row["landed_nok"])}
+                if not self.store.record_purchase({
+                        "machine": part(b.machine), "disks": [part(d) for d in b.disks], "capacity_tb": b.capacity_tb,
+                        "usable_tib": round(b.usable_tib, 2), "landed_nok": b.landed_nok, "score": round(b.score, 2)}):
+                    return False
+                log.info("Build bought: %s, %s x %g TB, %.0f NOK", b.machine["title"], len(b.disks), b.capacity_tb,
+                         b.landed_nok)
+                return True
+        return False
 
     def search(self, query, kind):
         """Run one query on every Source now and score the results; nothing is saved.
@@ -319,7 +355,10 @@ class App:
             for name, reason in faults)
         notices = {"started": "Hunt started. Refresh in a few minutes.",
                    "busy": "A Hunt is already running; this request was ignored.",
-                   "tracked": "Query tracked. Every Hunt runs it from now on."}
+                   "tracked": "Query tracked. Every Hunt runs it from now on.",
+                   "bought": "This Build is bought; hunting has stopped for good.",
+                   "gone": "That Build is no longer shown; nothing was recorded."}
+        bought = self.store.bought()
         tracked = self.store.tracked()
         tracked_list = {kind: " &middot; ".join(
             f'<span data-tracked="{_e(kind)}:{_e(r["query"])}">{_e(r["query"])}'
@@ -335,10 +374,11 @@ class App:
 td,th{{padding:4px 10px;border-bottom:1px solid #ddd;text-align:left}}
 .fault{{background:#fde8e8;border-left:4px solid #c62828;padding:8px 12px}}
 .notice{{background:#e8f0fd;border-left:4px solid #1565c0;padding:8px 12px}}
-tr.gone{{color:#999}} tr.gone a{{color:#999}} .note{{font-size:85%}} .drop{{color:#2e7d32;font-weight:bold}}</style></head><body>
+.bought{{background:#e8f5e9;border-left:4px solid #2e7d32;padding:8px 12px}} tr.gone{{color:#999}} tr.gone a{{color:#999}} .note{{font-size:85%}} .drop{{color:#2e7d32;font-weight:bold}}</style></head><body>
 <h1>Deal Finder</h1>{banner}{note}{running}
 <p>Last Hunt: {_when(last["finished"] if last else None)}{took}. Hunts run every {HUNT_INTERVAL_S // 3600} hours.
-<form method="post" action="/hunt" style="display:inline"><button>Hunt now</button></form></p>
+{"" if bought else '<form method="post" action="/hunt" style="display:inline"><button>Hunt now</button></form>'}</p>
+{_bought_html(bought)}
 <p>{per_source}</p>
 <form method="get" action="/search"><input name="q" size="30" placeholder="e.g. exos x20 or r740xd" required
 maxlength="{MAX_QUERY_CHARS}"> <select name="kind"><option value="disk">Disks</option><option value="machine">Machines</option>
@@ -348,7 +388,7 @@ maxlength="{MAX_QUERY_CHARS}"> <select name="kind"><option value="disk">Disks</o
 <p>Landed cost = price + shipping or pickup trip from Sandefjord ({PICKUP_NOK_PER_KM} NOK/km, max {PICKUP_MAX_MINUTES} min one way) + import VAT + Penalties (unknown PSU, caddies, controller or rails are charged).</p>
 <h2>Builds</h2><p>One Machine plus same-size Disks reaching {TARGET_TIB} TiB usable in RAIDZ2; the cheapest per
 Machine, Builds over {CEILING_NOK:,} NOK hidden. Lower Score is better.</p>
-<table><tr>{build_head}<th>Details</th></tr>{_build_rows(builds, sort)}</table>
+<table><tr>{build_head}<th></th><th>Details</th></tr>{_build_rows(builds, sort, bought is None)}</table>
 <h2>Best Disks</h2><table><tr><th>Disk</th><th>Capacity</th><th>Condition</th><th>Where</th>
 <th>Landed NOK</th><th>NOK per TB</th></tr>{disk_rows}</table>
 <h2>Best Machines</h2><table><tr><th>Machine</th><th>Model</th><th>Gen</th><th>3.5" bays</th><th>RAM</th>
@@ -368,6 +408,8 @@ Machine, Builds over {CEILING_NOK:,} NOK hidden. Lower Score is better.</p>
         lines.append("# TYPE dealfinder_hunt_last_success_timestamp_seconds gauge")  # kept from ticket #2
         ok = max((t for t in success.values() if t), default=None)
         lines.append(f"dealfinder_hunt_last_success_timestamp_seconds {ok.timestamp() if ok else 0}")
+        lines.append("# TYPE dealfinder_bought gauge")  # 1 once a Build is bought and hunting has stopped
+        lines.append(f"dealfinder_bought {int(self.store.bought() is not None)}")
         lines.append("# TYPE dealfinder_hunt_running gauge")
         lines.append(f"dealfinder_hunt_running {int(self.hunt_running())}")
         faulty = {name for name, _ in source_faults(detail)}
@@ -394,13 +436,17 @@ Machine, Builds over {CEILING_NOK:,} NOK hidden. Lower Score is better.</p>
             def do_POST(self):
                 path = urllib.parse.urlsplit(self.path).path
                 if path == "/hunt":
-                    self._redirect("/?hunt=" + ("started" if app.start_hunt() else "busy"))
-                elif path == "/track":
+                    started = app.start_hunt()
+                    self._redirect("/?hunt=" + ("started" if started else "bought" if app.store.bought() else "busy"))
+                elif path in ("/track", "/buy"):
                     size = self.headers.get("Content-Length") or "0"
                     if not re.fullmatch(r"[0-9]{1,4}", size) or int(size) > 4096:  # rejects -1 (reads to EOF), "²"
                         self.send_error(400, "form too large or no length")
                         return
                     form = urllib.parse.parse_qs(self.rfile.read(int(size)).decode("utf-8", "replace"))
+                    if path == "/buy":
+                        self._redirect("/?hunt=" + ("bought" if app.mark_bought(form.get("machine", [""])[0]) else "gone"))
+                        return
                     picked = clean_query(form.get("q", [""])[0], form.get("kind", [""])[0])
                     if picked is None:
                         self.send_error(400, "query and kind (disk or machine) required")
