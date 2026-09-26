@@ -25,7 +25,9 @@ FACT_LABEL = {"capacity": "capacity", "form_factor": "3.5\" or 2.5\"", "disk_cla
 COST_LABEL = {"shipping": "shipping", "shipping_estimate": "Fiks ferdig (est.)", "pickup_trip": "pickup trip",
               "vat": "VAT", "single_psu": "2nd PSU", "caddies": "caddies", "raid_only": "HBA", "no_rails": "rails",
               "psu_unknown": "2nd PSU (not stated)", "caddies_unknown": "caddies (not stated)",
-              "controller_unknown": "HBA (controller not stated)", "rails_unknown": "rails (not stated)"}
+              "controller_unknown": "HBA (controller not stated)", "rails_unknown": "rails (not stated)",
+              "weak_seller": "weak seller +10%", "seller_unknown": "seller rating not stated +10%",
+              "high_risk": "High-risk +20%"}
 
 
 def _safe_url(url):

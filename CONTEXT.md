@@ -55,7 +55,7 @@ _Avoid_: Risky listing, untrusted listing
 ### How it is ranked
 
 **Landed cost**:
-The full NOK price of a Listing at the owner's door: price, shipping to Norway, 25% import VAT when the Source is abroad, and the Pickup trip cost when the Listing is pickup-only, plus Penalties.
+The full NOK price of a Listing at the owner's door: price, shipping to Norway (an eBay Machine with no freight quote to Norway is excluded), 25% import VAT when the Source is abroad, and the Pickup trip cost when the Listing is pickup-only, plus Penalties.
 _Avoid_: Price, total
 
 **Usable TiB**:
@@ -63,7 +63,7 @@ Capacity of the Build's RAIDZ2 pool: (disk count − 2) × disk size in TiB, min
 _Avoid_: Capacity, space
 
 **Penalty**:
-NOK added to a Build's Landed cost for a known weakness: the real cost to fix it (single PSU +500, per missing caddy +100, RAID-only controller +500, no rails +400) or a risk surcharge (weak eBay seller +10%, High-risk Listing +20%).
+NOK added to a Build's Landed cost for a known weakness: the real cost to fix it (single PSU +500, per missing caddy +100, RAID-only controller +500, no rails +400) or a risk surcharge on the money paid to that seller (weak eBay seller under 98% positive or under 50 ratings +10%, an unstated rating counts as weak; High-risk Listing +20%).
 _Avoid_: Deduction, malus
 
 **Score**:

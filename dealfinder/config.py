@@ -12,6 +12,9 @@ PICKUP_MAX_MINUTES = 120           # one way; farther pickup-only Listings are h
 # finn.no search results do not publish the Fiks ferdig price; estimate for a heavy parcel
 FINN_SHIPPING_NOK = 400
 PENALTY_NOK = {"single_psu": 500, "caddy": 100, "raid_only": 500, "no_rails": 400}
+# risk Penalties: a share of the Listing's price + shipping or pickup trip + VAT (ticket #11, #12)
+RISK = {"weak_seller": 0.10, "seller_unknown": 0.10, "high_risk": 0.20}
+WEAK_SELLER = (98.0, 50)  # eBay seller under 98% positive or under 50 ratings is weak
 ROUTE_FALLBACK = (1.3, 75)  # router down: straight-line km x 1.3 at 75 km/h (shown as an estimate)
 
 # Builds (ticket #6)
@@ -27,6 +30,9 @@ HUNT_INTERVAL_S = 6 * 3600  # a Hunt every 6 hours, counted from the last Hunt i
 # eBay sorts by price and returns 100 results per query; the floor skips £1-£29 parts and
 # accessories so those 100 slots go to real disks. Visible here on purpose, not hidden in the adapter.
 EBAY_PRICE_GBP = (30, 2000)
+# eBay Machines: category 11211 "Computer Servers" keeps rails, PSUs and other parts out of the 100 slots
+EBAY_MACHINE_PRICE_GBP = (100, 2500)
+EBAY_MACHINE_CATEGORY = "11211"
 
 # per Source: eBay returns only the 100 cheapest per query, so its queries name a capacity; finn.no search is
 # token based ("16tb" misses "16 tb") and small, so family words find more there

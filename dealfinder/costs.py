@@ -3,7 +3,7 @@ import datetime
 import math
 import threading
 
-from .config import (FINN_SHIPPING_NOK, HOME_LAT_LON, PENALTY_NOK, PICKUP_MAX_MINUTES, PICKUP_NOK_PER_KM,
+from .config import (FINN_SHIPPING_NOK, HOME_LAT_LON, PENALTY_NOK, PICKUP_MAX_MINUTES, PICKUP_NOK_PER_KM, RISK,
                      ROUTE_FALLBACK, VAT)
 from .sources import http_json
 
@@ -83,8 +83,10 @@ def cost_breakdown(listing, fx, foreign, router, penalties=None):
             trip if trip is not None and trip < FINN_SHIPPING_NOK else FINN_SHIPPING_NOK)
     if foreign:
         parts["vat"] = round((parts["price"] + parts.get("shipping", 0)) * VAT, 2)
-    parts["penalties"] = penalties or {}
     money = ("price", "shipping", "shipping_estimate", "pickup_trip", "vat")
+    parts["penalties"] = dict(penalties or {})
+    if listing.risk:  # a share of the money paid to that seller
+        parts["penalties"][listing.risk] = round(RISK[listing.risk] * sum(parts.get(k, 0) for k in money), 2)
     parts["total"] = round(sum(parts.get(k, 0) for k in money) + sum(parts["penalties"].values()), 2)
     return parts, problem
 
