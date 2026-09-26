@@ -45,6 +45,15 @@ def fake_fetch(url, headers=None, data=None):
     return HOSTILE if q == "hostile" else FIXTURE.get(q, {"itemSummaries": []})
 
 
+def fake_router(lat, lon):
+    """Road km/minutes from Sandefjord, recorded from OSRM for the fixture places."""
+    if lat > 62:
+        return 609.0, 547.0   # Trondheim area
+    if lat < 58.5:
+        return 215.0, 185.0   # Kristiansand
+    return 119.0, 96.0        # Oslo area
+
+
 def fake_finn_fetch(url):
     """Replays recorded finn.no data in the same shape the real pages carry it."""
     if "/search?" in url:
@@ -63,7 +72,7 @@ class HuntToPage(unittest.TestCase):
         sources = [EbaySource("id", "secret", fetch=fake_fetch), FinnSource(fetch=fake_finn_fetch, pause=0)]
         cls.app = App(cls.pg.get_uri(), sources, fx=RATES.__getitem__,
                       disk_queries={"ebay_uk": [*FIXTURE, "hostile"], "finn": FINN_DISK_QUERIES},
-                      machine_queries=FINN_MACHINE_QUERIES, pause=0)
+                      machine_queries=FINN_MACHINE_QUERIES, pause=0, router=fake_router)
         cls.server = cls.app.make_server("127.0.0.1", 0)
         threading.Thread(target=cls.server.serve_forever, daemon=True).start()
         cls.base = "http://127.0.0.1:%d" % cls.server.server_address[1]
@@ -135,14 +144,17 @@ class HuntToPage(unittest.TestCase):
     def test_finn_machines_that_fit_the_rules_are_ranked_by_price(self):
         machines = self.machines()
         shown = {i for i, _ in machines}
-        for fid in ("468970308", "473386139", "475664047"):  # Trondheim R730xd, Oslo R730xd, Nedenes R730
+        for fid in ("473386139",   # Oslo R730xd, pickup 96 min
+                    "475664047"):  # Kristiansand R730, pickup-only by flags but "Free Shipping" in the text
             self.assertIn(fid, shown)
         prices = [p for _, p in machines]
         self.assertEqual(prices, sorted(prices))
 
     def test_finn_machines_that_break_the_rules_are_not_ranked(self):
         shown = {i for i, _ in self.machines()}
-        for fid in ("469749680",   # R720xd, 12th Gen
+        for fid in ("468970308",   # Trondheim R730xd: pickup-only, 547 min away, hidden
+                    "474398976",   # Saksvik R730XD: pickup-only, far, hidden
+                    "469749680",   # R720xd, 12th Gen
                     "426464076",   # R730 with a 2.5" backplane
                     "219121915",   # R730xd 24x 2.5"
                     "468742286",   # riser board for R740
@@ -155,11 +167,18 @@ class HuntToPage(unittest.TestCase):
         self.assertEqual(unreadable.get("455107692"), "bays_35")  # DL380 Gen9, never says LFF or SFF
         self.assertNotIn("468742286", unreadable)  # parts are not machines, so never "could not read"
 
-    def test_finn_prices_carry_no_import_vat(self):
+    def test_machine_landed_cost_adds_trip_and_every_penalty_without_vat(self):
+        rows = dict(self.machines())
+        # Oslo R730xd, 5,000 NOK: pickup 2 x 119 km x 4 = 952; single PSU 500; 12 bays, 0 caddies 1,200;
+        # PERC H730 counts as HBA-capable (0); rails not stated 400. No VAT on a finn.no Listing.
+        self.assertAlmostEqual(rows["473386139"], 5000 + 952 + 500 + 1200 + 400, places=2)
+        # Kristiansand R730, 12,000 NOK: free shipping (0), 2 PSUs, 8 bays no caddies stated 800,
+        # controller not stated 500 (unknown is charged), rails not stated 400.
+        self.assertAlmostEqual(rows["475664047"], 12000 + 800 + 500 + 400, places=2)
         _, html = self.get("/")
-        for fid, landed in self.machines():
-            doc = next(d for docs in FINN["search"].values() for d in docs if str(d["id"]) == fid)
-            self.assertAlmostEqual(landed, float(doc["price"]["amount"]), places=2)
+        self.assertIn("pickup trip 952", html)
+        self.assertIn("rails (not stated) 400", html)
+        self.assertIn("pickup Oslo (96 min)", html)
 
 
 class DailyExchangeRate(unittest.TestCase):
@@ -467,5 +486,120 @@ class PriceHistoryAndGone(unittest.TestCase):
                 c.execute("UPDATE listings SET last_seen = now() - interval '8 days' WHERE source_id = %s",
                           (leaves["itemId"],))
             self.assertNotIn(htmllib.escape(leaves["itemId"]), app.page())  # hidden after 7 days
+        finally:
+            pg.cleanup()
+
+
+class PenaltiesAndRouting(unittest.TestCase):
+    def test_machine_with_every_penalty(self):
+        from dealfinder.costs import machine_penalties
+        facts = {"bays_35": 12, "caddies_35": 4, "psu_count": 1, "controller": "raid", "rails": False}
+        self.assertEqual(machine_penalties(facts),
+                         {"single_psu": 500, "caddies": 800, "raid_only": 500, "no_rails": 400})
+        unknown = {"bays_35": 8, "caddies_35": None, "psu_count": None, "controller": None, "rails": None}
+        self.assertEqual(machine_penalties(unknown), {"psu_unknown": 500, "caddies_unknown": 800,
+                                                      "controller_unknown": 500, "rails_unknown": 400})
+        clean = {"bays_35": 12, "caddies_35": 12, "psu_count": 2, "controller": "hba", "rails": True}
+        self.assertEqual(machine_penalties(clean), {})
+
+    def test_router_caches_osrm_and_falls_back_when_it_is_down(self):
+        from dealfinder.costs import OsrmRouter
+        pg = _pg()
+        try:
+            app = App(pg.get_uri(), [], fx=RATES.__getitem__, pause=0, router=lambda lat, lon: (0, 0))
+            calls = []
+
+            def osrm(url, headers=None, data=None):
+                calls.append(url)
+                return {"routes": [{"distance": 119000, "duration": 5760}]}
+            router = OsrmRouter(app.store, fetch=osrm)
+            self.assertEqual(router(59.9127, 10.7207), (119.0, 96.0))
+            self.assertEqual(router(59.9127, 10.7207), (119.0, 96.0))
+            self.assertEqual(len(calls), 1)  # second call served from the cache
+
+            def down(url, headers=None, data=None):
+                return {"routes": None}  # malformed reply, not just a network error
+            km, minutes = OsrmRouter(app.store, fetch=down)(63.442, 10.43669)  # Trondheim, not cached
+            self.assertGreater(km, 400)
+            self.assertGreater(minutes, 120)  # still hidden as too far, no crash
+        finally:
+            pg.cleanup()
+
+
+
+def _finn_app(docs, descriptions, router=fake_router):
+    """An App over a fake finn.no that serves `docs` for every search and `descriptions` for item pages."""
+    blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
+
+    def fetch(url):
+        if "/search?" in url:
+            return f"<script>{blob}</script>"
+        text = descriptions[url.rsplit("/", 1)[1]]
+        return f'<section data-testid="description"><p>{htmllib.escape(text)}</p></section>'
+    pg = _pg()
+    app = App(pg.get_uri(), [FinnSource(fetch=fetch, pause=0)], fx=RATES.__getitem__, disk_queries={"finn": []},
+              machine_queries=["r730xd"], pause=0, router=router)
+    return pg, app
+
+
+def _doc(fid, heading, price, lat, lon, flags=()):
+    return {"id": fid, "heading": heading, "trade_type": "Til salgs", "price": {"amount": price},
+            "coordinates": {"lat": lat, "lon": lon}, "flags": list(flags), "location": "X",
+            "canonical_url": f"https://www.finn.no/recommerce/forsale/item/{fid}"}
+
+
+class PickupAndPenaltiesEndToEnd(unittest.TestCase):
+    """Seam 1: a near pickup with every Penalty, far pickups hidden even when the text negates shipping."""
+
+    @classmethod
+    def setUpClass(cls):
+        docs = [
+            _doc(1, "Dell PowerEdge R730xd 12x LFF", 6000, 59.91, 10.72),   # Oslo, 96 min
+            _doc(2, "Dell PowerEdge R730xd 12x LFF", 3000, 63.44, 10.43),   # Trondheim, 547 min
+            _doc(3, "Dell PowerEdge R730xd 12x LFF", 3100, 63.44, 10.43),
+            _doc(4, "Dell PowerEdge R730xd 12x LFF", 3200, 63.44, 10.43),
+            _doc(5, "Dell PowerEdge R730xd 12x LFF", 3300, 63.44, 10.43),
+        ]
+        descriptions = {
+            "1": "1x 750W PSU. PERC H710 RAID. 4x 3.5\" caddies. Rails følger ikke med.",
+            "2": "Kun henting. Frakt kan ikke tilbys.",
+            "3": "Ikke gratis frakt, hentes i Trondheim.",
+            "4": "Fri frakt? Nei.",
+            "5": "Gratis frakt i hele Norge.",                             # far, but ships free: shown
+        }
+        cls.pg, cls.app = _finn_app(docs, descriptions)
+        cls.app.hunt()
+        cls.rows = {i: p for i, p in re.findall(r'data-machine="([^"]+)" data-landed="([\d.]+)"', cls.app.page())}
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.pg.cleanup()
+
+    def test_near_pickup_with_every_penalty(self):
+        # 6,000 + trip 2 x 119 x 4 = 952 + PSU 500 + 8 missing caddies 800 + RAID-only 500 + no rails 400
+        self.assertAlmostEqual(float(self.rows["1"]), 6000 + 952 + 500 + 800 + 500 + 400, places=2)
+        page = self.app.page()
+        for part in ("pickup trip 952", "2nd PSU 500", "caddies 800", "HBA 500", "rails 400"):
+            self.assertIn(part, page)
+
+    def test_far_pickups_are_hidden_even_with_negated_shipping_words(self):
+        for fid in ("2", "3", "4"):
+            self.assertNotIn(fid, self.rows)
+
+    def test_far_seller_with_free_shipping_is_shown_at_its_price(self):
+        # 3,300, free shipping, 12 caddies not stated 1,200, PSU / controller / rails not stated 500 + 500 + 400
+        self.assertAlmostEqual(float(self.rows["5"]), 3300 + 1200 + 500 + 500 + 400, places=2)
+
+
+class FinnCoordinatesAreValidated(unittest.TestCase):
+    def test_bad_coordinates_become_unknown_place(self):
+        docs = [_doc(7, "Dell PowerEdge R730xd 12x LFF", 5000, "abc", 10.7),
+                _doc(8, "Dell PowerEdge R730xd 12x LFF", 5000, float("nan"), 10.7)]
+        pg, app = _finn_app(docs, {"7": "", "8": ""})
+        try:
+            app.hunt()
+            self.assertTrue(app.store.last_hunt()["detail"]["finn"]["ok"])  # the Source did not abort
+            unreadable = dict(re.findall(r'data-unreadable="([^"]+)" data-missing="([^"]*)"', app.page()))
+            self.assertEqual(unreadable, {"7": "location", "8": "location"})
         finally:
             pg.cleanup()

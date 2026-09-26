@@ -1,22 +1,92 @@
-"""Landed cost in NOK and the daily exchange rate."""
+"""Landed cost in NOK, Pickup trips, Penalties and the daily exchange rate."""
 import datetime
+import math
 import threading
 
-from .config import VAT
+from .config import (FINN_SHIPPING_NOK, HOME_LAT_LON, PENALTY_NOK, PICKUP_MAX_MINUTES, PICKUP_NOK_PER_KM,
+                     ROUTE_FALLBACK, VAT)
 from .sources import http_json
 
 
-def landed_nok(listing, fx, foreign):
-    """Price plus shipping to Norway in NOK, with import VAT for foreign Sources.
+class OsrmRouter:
+    """Road km and minutes from home, via the public OSRM router, cached per location in the store."""
 
-    None when a foreign Listing's shipping is unknown. A domestic Listing with unknown shipping (pickup or
-    finn "Fiks ferdig") counts at its price until Pickup trips arrive (ticket #5).
+    def __init__(self, store, fetch=http_json):
+        self._store, self._fetch = store, fetch
+
+    def __call__(self, lat, lon):
+        key = (round(lat, 3), round(lon, 3))
+        cached = self._store.route_get(*key)
+        if cached:
+            return cached
+        home_lat, home_lon = HOME_LAT_LON
+        try:
+            r = self._fetch(f"https://router.project-osrm.org/route/v1/driving/"
+                            f"{home_lon},{home_lat};{key[1]},{key[0]}?overview=false")["routes"][0]
+            km, minutes = r["distance"] / 1000, r["duration"] / 60
+        except Exception:  # any router failure (network, HTTP, bad JSON) falls back; it must not end the Source
+            # ponytail: straight line x factor at a fixed speed, not cached so the next Hunt retries OSRM
+            factor, kmh = ROUTE_FALLBACK
+            km = _great_circle_km(home_lat, home_lon, *key) * factor
+            return round(km, 1), round(km / kmh * 60, 1)
+        self._store.route_put(*key, round(km, 1), round(minutes, 1))
+        return round(km, 1), round(minutes, 1)
+
+
+def _great_circle_km(lat1, lon1, lat2, lon2):
+    p1, p2, dl = math.radians(lat1), math.radians(lat2), math.radians(lon2 - lon1)
+    return 6371 * math.acos(min(1, math.sin(p1) * math.sin(p2) + math.cos(p1) * math.cos(p2) * math.cos(dl)))
+
+
+def machine_penalties(facts):
+    """Penalty NOK per weakness, keyed so the page can tell a stated weakness from an unknown one.
+
+    An unknown fact is charged like a missing one, so omitting it never pays. The caddy Penalty counts every
+    empty 3.5" bay; the Build optimizer (#6) recounts it for a Build as max(0, disks + 1 boot - caddies) x 100.
     """
-    if listing.shipping is None and foreign:
-        return None
-    shipping = listing.shipping or 0.0
-    total = listing.price * fx(listing.currency) + shipping * fx(listing.shipping_currency or listing.currency)
-    return round(total * (1 + VAT) if foreign else total, 2)
+    missing_caddies = max(0, facts["bays_35"] - (facts["caddies_35"] or 0))
+    penalties = {
+        ("single_psu" if facts["psu_count"] == 1 else "psu_unknown"):
+            PENALTY_NOK["single_psu"] if (facts["psu_count"] or 1) < 2 else 0,
+        ("caddies" if facts["caddies_35"] is not None else "caddies_unknown"): PENALTY_NOK["caddy"] * missing_caddies,
+        ("raid_only" if facts["controller"] == "raid" else "controller_unknown"):
+            PENALTY_NOK["raid_only"] if facts["controller"] != "hba" else 0,
+        ("no_rails" if facts["rails"] is False else "rails_unknown"):
+            PENALTY_NOK["no_rails"] if facts["rails"] is not True else 0,
+    }
+    return {k: v for k, v in penalties.items() if v}
+
+
+def cost_breakdown(listing, fx, foreign, router, penalties=None):
+    """(breakdown, problem). breakdown holds each NOK part and `total`; problem is None, "shipping" (unknown
+    for a foreign Source), "location" (pickup-only without a place) or "too_far" (over the pickup limit)."""
+    parts = {"price": round(listing.price * fx(listing.currency), 2)}
+    problem, trip = None, None
+    if not foreign and listing.lat is not None and listing.lon is not None:
+        km, minutes = router(listing.lat, listing.lon)
+        parts["pickup_km"], parts["pickup_minutes"] = km, minutes
+        if minutes <= PICKUP_MAX_MINUTES:
+            trip = round(2 * km * PICKUP_NOK_PER_KM, 2)
+    if listing.shipping is not None:
+        parts["shipping"] = round(listing.shipping * fx(listing.shipping_currency or listing.currency), 2)
+    elif foreign:
+        problem = "shipping"
+    elif listing.pickup_only:
+        if "pickup_minutes" not in parts:
+            problem = "location"
+        elif trip is None:
+            problem = "too_far"
+        else:
+            parts["pickup_trip"] = trip
+    else:  # finn with Fiks ferdig: its price is not published, so the cheaper of a near pickup or the estimate
+        parts["pickup_trip" if trip is not None and trip < FINN_SHIPPING_NOK else "shipping_estimate"] = (
+            trip if trip is not None and trip < FINN_SHIPPING_NOK else FINN_SHIPPING_NOK)
+    if foreign:
+        parts["vat"] = round((parts["price"] + parts.get("shipping", 0)) * VAT, 2)
+    parts["penalties"] = penalties or {}
+    money = ("price", "shipping", "shipping_estimate", "pickup_trip", "vat")
+    parts["total"] = round(sum(parts.get(k, 0) for k in money) + sum(parts["penalties"].values()), 2)
+    return parts, problem
 
 
 class DailyFx:

@@ -8,8 +8,9 @@ import urllib.parse
 from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-from .config import DISK_QUERIES, HUNT_INTERVAL_S, MACHINE_QUERIES, SOURCE_PAUSE_S
-from .costs import landed_nok
+from .config import (DISK_QUERIES, HUNT_INTERVAL_S, MACHINE_QUERIES, PICKUP_MAX_MINUTES, PICKUP_NOK_PER_KM,
+                     SOURCE_PAUSE_S)
+from .costs import OsrmRouter, cost_breakdown, machine_penalties
 from .rules import Unreadable, read_disk, read_machine
 from .store import Store
 
@@ -19,7 +20,11 @@ CONDITION_LABEL = {"new": "New", "refurbished": "Refurbished", "used": "Used", "
 FACT_LABEL = {"capacity": "capacity", "form_factor": "3.5\" or 2.5\"", "disk_class": "Disk class",
               "condition": "condition", "quantity": "single-unit price", "shipping": "shipping to Norway",
               "generation": "generation", "bays_35": "3.5\" bay count",
-              "price": "price (make an offer)"}
+              "price": "price (make an offer)", "location": "pickup place"}
+COST_LABEL = {"shipping": "shipping", "shipping_estimate": "Fiks ferdig (est.)", "pickup_trip": "pickup trip",
+              "vat": "VAT", "single_psu": "2nd PSU", "caddies": "caddies", "raid_only": "HBA", "no_rails": "rails",
+              "psu_unknown": "2nd PSU (not stated)", "caddies_unknown": "caddies (not stated)",
+              "controller_unknown": "HBA (controller not stated)", "rails_unknown": "rails (not stated)"}
 
 
 def _safe_url(url):
@@ -32,7 +37,18 @@ def _e(value):
 
 
 def _where(row):
-    return _e(row["source"]) + (" &middot; pickup " + _e(row["location"]) if row["pickup_only"] else "")
+    minutes = (row.get("costs") or {}).get("pickup_minutes")
+    drive = f" ({minutes:.0f} min)" if minutes is not None else ""
+    return _e(row["source"]) + (" &middot; pickup " + _e(row["location"]) + drive if row["pickup_only"] else "")
+
+
+def _breakdown(row):
+    """'price + part + ...' under a Landed cost; the whole cost is visible, not just the total."""
+    c = row.get("costs") or {}
+    parts = [f"{c.get('price', 0):,.0f}"]
+    parts += [f"{COST_LABEL[k]} {c[k]:,.0f}" for k in ("shipping", "shipping_estimate", "pickup_trip", "vat") if c.get(k)]
+    parts += [f"{COST_LABEL.get(k, k)} {v:,.0f}" for k, v in (c.get("penalties") or {}).items()]
+    return '<br><small class="costs">' + _e(" + ".join(parts)) + "</small>" if c else ""
 
 
 def _row_state(row):
@@ -75,9 +91,11 @@ def source_faults(detail):
 
 
 class App:
-    def __init__(self, db_uri, sources, fx, disk_queries=None, machine_queries=None, pause=SOURCE_PAUSE_S):
+    def __init__(self, db_uri, sources, fx, disk_queries=None, machine_queries=None, pause=SOURCE_PAUSE_S,
+                 router=None):
         self.store = Store(db_uri)
         self.store.migrate()
+        self.router = router or OsrmRouter(self.store)
         self.sources, self.fx, self.pause = sources, fx, pause
         self.disk_queries = disk_queries or DISK_QUERIES
         self.machine_queries = machine_queries or MACHINE_QUERIES
@@ -146,15 +164,18 @@ class App:
             return 0
         if listing.price <= 0:  # "make an offer": no price to rank
             facts = Unreadable((facts.missing if isinstance(facts, Unreadable) else []) + ["price"])
-        landed = landed_nok(listing, self.fx, source.foreign)
         if isinstance(facts, Unreadable):
-            missing, facts_json, qualifies, capacity = facts.missing, None, False, None
-        else:
-            missing = [] if landed is not None else ["shipping"]
-            facts_json = asdict(facts)
-            capacity = facts.capacity_tb if kind == "disk" else None
-            qualifies = facts.qualifies and landed is not None
-        self.store.save_listing(listing, kind, facts_json, missing, qualifies, capacity, landed, hunt_id)
+            self.store.save_listing(listing, kind, None, facts.missing, False, None, None, hunt_id)
+            return 1
+        facts_json = asdict(facts)
+        penalties = machine_penalties(facts_json) if kind == "machine" and facts.bays_35 is not None else None
+        costs, problem = cost_breakdown(listing, self.fx, source.foreign, self.router, penalties)
+        # unknown shipping or place is a missing fact; a pickup beyond the limit is a disqualifier (rejected)
+        missing = [problem] if problem in ("shipping", "location") else []
+        landed = None if problem else costs["total"]
+        qualifies = facts.qualifies and landed is not None
+        capacity = facts.capacity_tb if kind == "disk" else None
+        self.store.save_listing(listing, kind, facts_json, missing, qualifies, capacity, landed, hunt_id, costs)
         return 1
 
     def page(self, notice=None):
@@ -165,7 +186,7 @@ class App:
             '<td>{cap:g} TB</td><td>{cond}</td><td>{where}</td><td>{landed:,.0f}</td><td>{npt:,.0f}</td></tr>'.format(
                 id=_e(r["source_id"]), npt=float(r["nok_per_tb"]), url=_e(_safe_url(r["url"])), title=_e(r["title"]),
                 cap=float(r["capacity_tb"]), cond=_e(CONDITION_LABEL.get(r["condition"], r["condition"] or "?")),
-                where=_where(r), landed=float(r["landed_nok"]), attrs=state[0], note=state[1])
+                where=_where(r), landed=float(r["landed_nok"]), attrs=state[0], note=state[1] + _breakdown(r))
             for r in disks for state in [_row_state(r)])
         machine_rows = "".join(
             '<tr data-machine="{id}" data-landed="{landed:.2f}"{attrs}><td><a href="{url}">{title}</a>{note}</td><td>{model}</td>'
@@ -175,7 +196,7 @@ class App:
                 model=_e(f["model"]), gen=_e(f["generation"]), bays=_e(f["bays_35"]),
                 ram=_e(f"{f['ram_gb']} GB" if f["ram_gb"] else "?"), psu=_e(f["psu_count"] or "?"),
                 caddies=_e("?" if f["caddies_35"] is None else f["caddies_35"]), ctrl=_e(f["controller"] or "?"),
-                rails=_yes_no(f["rails"]), where=_where(r), attrs=state[0], note=state[1])
+                rails=_yes_no(f["rails"]), where=_where(r), attrs=state[0], note=state[1] + _breakdown(r))
             for r in machines for f in [r["facts"]] for state in [_row_state(r)])
         unreadable_rows = "".join(
             '<tr data-unreadable="{id}" data-missing="{missing}"><td>{kind}</td><td>{src}</td>'
@@ -208,7 +229,7 @@ tr.gone{{color:#999}} tr.gone a{{color:#999}} .note{{font-size:85%}} .drop{{colo
 <p>Last Hunt: {_when(last["finished"] if last else None)}{took}. Hunts run every {HUNT_INTERVAL_S // 3600} hours.
 <form method="post" action="/hunt" style="display:inline"><button>Hunt now</button></form></p>
 <p>{per_source}</p>
-<p>Pickup trips and Penalties are not priced in yet.</p>
+<p>Landed cost = price + shipping or pickup trip from Sandefjord ({PICKUP_NOK_PER_KM} NOK/km, max {PICKUP_MAX_MINUTES} min one way) + import VAT + Penalties (unknown PSU, caddies, controller or rails are charged).</p>
 <h2>Best Disks</h2><table><tr><th>Disk</th><th>Capacity</th><th>Condition</th><th>Where</th>
 <th>Landed NOK</th><th>NOK per TB</th></tr>{disk_rows}</table>
 <h2>Best Machines</h2><table><tr><th>Machine</th><th>Model</th><th>Gen</th><th>3.5" bays</th><th>RAM</th>

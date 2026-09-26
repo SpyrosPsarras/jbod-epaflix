@@ -5,6 +5,15 @@ MIN_DISK_TB = 14    # smallest Disk that qualifies
 MIN_MACHINE_GEN = 13   # owner's Dell decoder: anything before 13th Gen is e-waste
 MIN_MACHINE_BAYS = 8   # 3.5" bays a Machine needs
 SOURCE_PAUSE_S = 1.0   # polite gap between requests to one Source
+# Pickup trips and Penalties (ticket #5)
+HOME_LAT_LON = (59.1312, 10.2166)  # Sandefjord
+PICKUP_NOK_PER_KM = 4              # fuel, tolls, wear; round trip
+PICKUP_MAX_MINUTES = 120           # one way; farther pickup-only Listings are hidden
+# finn.no search results do not publish the Fiks ferdig price; estimate for a heavy parcel
+FINN_SHIPPING_NOK = 400
+PENALTY_NOK = {"single_psu": 500, "caddy": 100, "raid_only": 500, "no_rails": 400}
+ROUTE_FALLBACK = (1.3, 75)  # router down: straight-line km x 1.3 at 75 km/h (shown as an estimate)
+
 GONE_DAYS = 7          # a Gone Listing stays visible, greyed out, this many days
 HUNT_INTERVAL_S = 6 * 3600  # a Hunt every 6 hours, counted from the last Hunt in the database
 

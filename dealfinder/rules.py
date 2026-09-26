@@ -147,7 +147,7 @@ _SFF_CHASSIS = re.compile(r"\bsff\b|2[.,]5\s?[\"”']?\s?(?:sas\s+)?(?:backplane
 
 _RAM_TOTAL = re.compile(r"(\d{2,4})\s?gb\b\s*(?:ddr\d|ram|ecc|minne|memory|rdimm|micron|total)", re.I)
 _RAM_PRODUCT = re.compile(r"(\d{1,2})\s?[x×*]\s?(\d{1,3})\s?gb\b(?=[^\n]{0,25}(?:ddr|ram|dimm|ecc|minne|memory|brikker|pc[34]))", re.I)
-_PSU_COUNT = re.compile(r"(\d)\s?[x×*]\s?(?:\S+\s+){0,2}?\d{3,4}\s?w\b|(\d)\s?[x×*]?\s?psu\b", re.I)
+_PSU_COUNT = re.compile(r"(?<![\w.,])(\d)\s?[x×*]\s?(?:\S+\s+){0,2}?\d{3,4}\s?w\b|(?<![\w.,])(\d)\s?[x×*]?\s?psu\b", re.I)
 _PSU_TWO = re.compile(r"dual\s+psu|redundant\w*\s+(psu|power|strøm)|doble\s+strøm|2\s+strømforsyninger", re.I)
 _PSU_ONE = re.compile(r"single\s+psu|\b1\s+psu\b", re.I)
 _CADDY_NONE = re.compile(
