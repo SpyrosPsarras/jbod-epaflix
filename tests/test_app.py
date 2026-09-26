@@ -1,6 +1,7 @@
 """Seam 1: drive the app from outside with a fake Source network layer and a real Postgres."""
 import base64
 import datetime
+import hashlib
 import html as htmllib
 import http.client
 import json
@@ -18,7 +19,7 @@ import pgserver
 from dealfinder.app import App, next_hunt_delay
 from dealfinder.costs import DailyFx
 from dealfinder.rules import Unreadable, read_disk
-from dealfinder.sources import EbaySource, FinnSource
+from dealfinder.sources import AliExpressSource, EbaySource, FinnSource
 
 FIXTURES = pathlib.Path(__file__).parent / "fixtures"
 FIXTURE = json.loads((FIXTURES / "ebay_disk_search.json").read_text())
@@ -882,3 +883,115 @@ class MarkAsBought(unittest.TestCase):
         self.assertIn("dealfinder_bought 1", self.app.metrics())
         self.assertFalse(self.app.mark_bought("finn|1"))           # bought once, for good
         self.assertFalse(self.app.store.record_purchase({"x": 1}))  # the table itself refuses a second row
+
+
+def _ali_response(products):
+    return {"aliexpress_affiliate_product_query_response": {"resp_result": {
+        "resp_code": 200, "resp_msg": "Call succeeds",
+        "result": {"current_record_count": len(products), "products": {"product": products}}}}}
+
+
+class AliExpressHighRisk(unittest.TestCase):
+    """Seam 1: without keys AliExpress is a Source fault and the rest run; with keys its Disks are High-risk."""
+
+    FULL = "2x 750W PSU. Dell HBA330. 12x 3.5\" caddies. Rails included."
+
+    def _finn(self):
+        def fetch(url):
+            if "/search?" in url:
+                q = urllib.parse.parse_qs(url.split("?", 1)[1])
+                docs = [_doc(1, "Dell PowerEdge R730xd 12x LFF", 6000, 59.91, 10.72)] \
+                    if q["q"] == ["r730xd"] and q["condition"] == ["3", "4"] else []
+                blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
+                return f"<script>{blob}</script>"
+            return f'<section data-testid="description"><p>{htmllib.escape(self.FULL)}</p></section>'
+        return FinnSource(fetch=fetch, pause=0)
+
+    def test_no_keys_is_a_source_fault_and_other_sources_run(self):
+        pg = _pg()
+        try:
+            app = App(pg.get_uri(), [AliExpressSource(), self._finn()], fx=RATES.__getitem__,
+                      disk_queries={"aliexpress": ["exos 16tb"]}, machine_queries=["r730xd"], pause=0,
+                      router=fake_router)
+            app.hunt()
+            detail = app.store.last_hunt()["detail"]
+            self.assertFalse(detail["aliexpress"]["ok"])
+            self.assertIn("ALIEXPRESS_APP_KEY", detail["aliexpress"]["error"])
+            self.assertEqual(detail["finn"], {"ok": True, "disk": 0, "machine": 1})
+            page = app.page()
+            self.assertIn('data-fault="aliexpress"', page)
+            self.assertIn('data-machine="1"', page)
+        finally:
+            pg.cleanup()
+
+    def test_high_risk_disk_in_a_build(self):
+        calls = []
+
+        def ali(url, headers=None, data=None):
+            calls.append(urllib.parse.parse_qs(urllib.parse.urlparse(url).query))
+            return _ali_response([{"product_id": 1005000 + i, "product_title": 'Seagate Exos X16 16TB 3.5" SATA HDD',
+                                   "target_sale_price": "100.00", "target_sale_price_currency": "EUR",
+                                   "product_detail_url": f"https://www.aliexpress.com/item/{1005000 + i}.html",
+                                   "promotion_link": "https://s.click.aliexpress.com/x", "shop_id": 7}
+                                  for i in range(5)])
+        pg = _pg()
+        try:
+            app = App(pg.get_uri(), [AliExpressSource("key", "secret", fetch=ali), self._finn()], fx=RATES.__getitem__,
+                      disk_queries={"aliexpress": ["exos 16tb"]}, machine_queries=["r730xd"], pause=0,
+                      router=fake_router)
+            app.hunt()
+            q = calls[0]
+            self.assertEqual((q["method"], q["ship_to_country"], q["keywords"]),
+                             (["aliexpress.affiliate.product.query"], ["NO"], ["exos 16tb"]))
+            sign = q.pop("sign")[0]
+            text = "secret" + "".join(f"{k}{v[0]}" for k, v in sorted(q.items())) + "secret"
+            self.assertEqual(sign, hashlib.md5(text.encode()).hexdigest().upper())
+            page = app.page()
+            # one disk: (100 EUR x 11 + shipping est. 150) x 1.25 VAT = 1,562.50, + High-risk 20% = 1,875
+            disk = (100 * RATES["EUR"] + 150) * 1.25 * 1.20
+            build = dict(re.findall(r'data-build="([^"]+)" data-score="[\d.]+" data-landed="([\d.]+)"', page))
+            self.assertAlmostEqual(float(build["1"]), 6952 + 5 * disk, places=1)
+            details = page.split('data-build="1"', 1)[1].split("</tr>", 1)[0]
+            self.assertEqual(details.count('class="risk">High-risk'), 5)   # every AliExpress Disk is tagged
+            self.assertIn("High-risk +20%", details)
+            self.assertIn("shipping (est.) 150", details)
+        finally:
+            pg.cleanup()
+
+    def test_empty_result_is_not_a_fault_and_later_queries_still_run(self):
+        seen = []
+
+        def ali(url, headers=None, data=None):
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(url).query)["keywords"][0]
+            seen.append(q)
+            if q == "nothing":
+                return {"aliexpress_affiliate_product_query_response": {"resp_result": {
+                    "resp_code": 405, "resp_msg": "The result is empty"}}}
+            return _ali_response([{"product_id": 9, "product_title": 'Seagate Exos X18 18TB 3.5" SATA HDD',
+                                   "target_sale_price": "150.00", "target_sale_price_currency": "EUR",
+                                   "product_detail_url": "https://www.aliexpress.com/item/9.html"}])
+        pg = _pg()
+        try:
+            app = App(pg.get_uri(), [AliExpressSource("key", "secret", fetch=ali)], fx=RATES.__getitem__,
+                      disk_queries={"aliexpress": ["nothing", "exos 18tb"]}, machine_queries=["r730xd"], pause=0,
+                      router=fake_router)
+            app.hunt()
+            self.assertEqual(seen, ["nothing", "exos 18tb"])
+            self.assertEqual(app.store.last_hunt()["detail"]["aliexpress"], {"ok": True, "disk": 1, "machine": 0})
+        finally:
+            pg.cleanup()
+        bad = AliExpressSource("key", "secret", fetch=lambda url: {"aliexpress_affiliate_product_query_response": {
+            "resp_result": {"resp_code": 402, "resp_msg": "Parameter keywords is empty"}}})
+        with self.assertRaises(RuntimeError):  # a real error mentioning "empty" is still a fault
+            bad.search("x")
+
+    def test_a_new_source_gets_its_starting_queries_on_an_already_seeded_database(self):
+        pg = _pg()
+        try:
+            App(pg.get_uri(), [], fx=RATES.__getitem__, disk_queries={"finn": ["exos"]}, machine_queries=["r730xd"])
+            app = App(pg.get_uri(), [], fx=RATES.__getitem__, disk_queries={"finn": ["other"], "aliexpress": ["x20"]},
+                      machine_queries=["r740"])
+            got = {(r["query"], r["kind"], r["source"]) for r in app.store.tracked()}
+            self.assertEqual(got, {("exos", "disk", "finn"), ("r730xd", "machine", ""), ("x20", "disk", "aliexpress")})
+        finally:
+            pg.cleanup()

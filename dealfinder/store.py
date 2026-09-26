@@ -136,12 +136,14 @@ class Store:
                       (ok, json.dumps(detail), hunt_id))
 
     def seed_tracked(self, rows):
-        """Insert the starting Tracked queries (query, kind, source) when there are none yet (first start)."""
+        """Insert the starting Tracked queries (query, kind, source) for each (kind, source) group that has
+        none yet: the first start, and the first start after a new Source is added."""
         with self._conn() as c, c.transaction():
-            if c.execute("SELECT 1 FROM tracked_queries LIMIT 1").fetchone() is None:
-                for row in rows:
+            have = {(r["kind"], r["source"]) for r in c.execute("SELECT DISTINCT kind, source FROM tracked_queries")}
+            for query, kind, source in rows:
+                if (kind, source) not in have:
                     c.execute("INSERT INTO tracked_queries (query, kind, source) VALUES (%s, %s, %s) "
-                              "ON CONFLICT DO NOTHING", row)
+                              "ON CONFLICT DO NOTHING", (query, kind, source))
 
     def track(self, query, kind):
         with self._conn() as c:
