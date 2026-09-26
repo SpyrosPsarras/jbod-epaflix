@@ -7,10 +7,15 @@ from .sources import http_json
 
 
 def landed_nok(listing, fx, foreign):
-    """Price plus shipping to Norway in NOK, with import VAT for foreign Sources. None when shipping is unknown."""
-    if listing.shipping is None:
+    """Price plus shipping to Norway in NOK, with import VAT for foreign Sources.
+
+    None when a foreign Listing's shipping is unknown. A domestic Listing with unknown shipping (pickup or
+    finn "Fiks ferdig") counts at its price until Pickup trips arrive (ticket #5).
+    """
+    if listing.shipping is None and foreign:
         return None
-    total = listing.price * fx(listing.currency) + listing.shipping * fx(listing.shipping_currency or listing.currency)
+    shipping = listing.shipping or 0.0
+    total = listing.price * fx(listing.currency) + shipping * fx(listing.shipping_currency or listing.currency)
     return round(total * (1 + VAT) if foreign else total, 2)
 
 

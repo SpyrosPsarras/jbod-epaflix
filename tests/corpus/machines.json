@@ -1,0 +1,391 @@
+[
+ {
+  "note": "Trondheim R730xd, turnkey (finn 468970308)",
+  "title": "Dell R730xd 12*LFF+2*SFF Server 2*E5-2680v4 128GB RAM H330 iDrac Ent X710 SFP+",
+  "description": "Dell PowerEdge R730xd – 12x 3.5\" LFF (Front) + 2x 2.5\" SFF (Bak) SAS12G/SATA6G – Dual Intel Xeon E5-2680 v4 – 128 GB RAM (2x 64GB DIMMs) – Dell X710/I350 2x 10 GbE BaseX (SFP+) + 2x 1 GbE BaseT (RJ-45) - 2x 240 GB Dell SATA SSD - 2x 2,5\" SFF Dell Caddies - 6x 3,5\" LFF Dell Caddies\nDenne Dell PowerEdge R730xd rackserveren er i meget god kosmetisk tilstand og er fullt utstyrt for krevende arbeidsbelastninger som lagring, virtualisering, databaser, hosting og avanserte bedriftsapplikasjoner.\nSpesifikasjoner:\n* Modell: Dell PowerEdge R730xd (12x 3,5\" LFF + 2x 2,5\" SFF SAS12G/SATA6G)\n* Chassis: 12x 3,5\" LFF (Front) + 2x 2,5\" SFF (Bak) – 6 PCIe-spor (Alle risere inkludert)\n* CPU: 2x Intel Xeon E5-2680 v4\n- 14 Kjerner / 28 Tråder per CPU (Totalt: 28K/56T)\n- 2.40 GHz Base / 3.40 GHz Turbo\n- 35MB Cache – 120W TDP\n* Minne: 128GB DDR4-2400T (2x 64GB DIMMs) – (24 DIMMs - Max: 3TB)\n* Lagring / Disker: 2x Dell 240GB SATA SSD (installert i diskrammer - bak)\n* RAID-kontroller: Dell PERC H330 Mini Mono SAS12G/SATA6G\n* Nettverk: Dell Ethernet 10G 4P X710/I350 rNDC Daughter Card\n- 2x 10 GbE BaseX (SFP+) (Intel X710)\n- 2x 1 GbE BaseT (RJ-45) (Intel I350)\n* Strømforsyning (PSU): 2x Dell 1100W Platinum strømforsyninger\n* Administrasjon (Management): iDRAC 8 Enterprise (fjernstyring aktivert med Enterprise-lisensnøkkel)\n* Frontdeksel (Bezel): Inkludert (Originalt med lås og nøkkel)\n* Skinnepakke: Inkludert (Original Dell 2U skinnepakke)\n* Diskrammer (Caddies): 2x 2,5\" (Installert med disker) + 6x 3,5\" (Ingen disker inkludert i disse)\nTilstand:\n* Visuell stand: Svært god – godt vedlikeholdt\n* Testet: Fullt funksjonell og klar til bruk\nKun henting. Ta gjerne kontakt dersom du har spørsmål eller ønsker mer informasjon.\n---\nDell PowerEdge R730xd – 12x 3.5\" LFF (Front) + 2x 2.5\" SFF (Back) SAS12G/SATA6G – Dual Intel Xeon E5-2680 v4 – 128 GB RAM (2x 64GB DIMMs) – Dell X710/I350 2x 10 GbE BaseX (SFP+) + 2x 1 GbE BaseT (RJ-45) - 2x 240 GB Dell SATA SSD - 2x 2,5\" SFF Dell Caddies - 6x 3,5\" LFF Dell Caddies\nThis Dell PowerEdge R730xd rack server is in very good visual condition and fully equipped for demanding workloads such as storage, virtualisation, databases, hosting, and enterprise applications.\nSpecifications:\n* Model: Dell PowerEdge R730xd (12x 3.5\" LFF + 2x 2.5\" SFF SAS12G/SATA6G) \n* Chassis: 12x 3.5\" LFF (Front) + 2x 2.5\" SFF (Back) – 6 PCIe Slots (All risers Included)\n* CPU: 2x Intel Xeon E5-2680 v4\n- 14 Cores / 28 Threads each (Total: 28C/56T)\n- 2.40 GHz Base / 3.40 GHz Turbo\n- 35MB Cache – 120W TDP\n* Memory: 128GB DDR4-2400T (2x 64GB DIMMs) – (24 DIMMs - Max: 3TB)\n* Drives: 2x Dell 240GB SATA SSDs (installed in caddies - back)\n* RAID Controller: Dell PERC H330 Mini Mono SAS12G/SATA6G\n* Network: Dell Ethernet 10G 4P X710/I350 rNDC Daughter Card\n- 2x 10 GbE BaseX (SFP+) (Intel X710)\n- 2x 1 GbE BaseT (RJ-45) (Intel I350)\n* Power Supplies: 2x Dell 1100W Platinum PSU\n* Management: iDRAC 8 Enterprise (remote management enabled with enterprise license key)\n* Front Bezel: Included (Original with lock and key)\n* Rail Kit: Included (Original Dell 2U Rail Kit)\n* Caddies: 2x 2.5\" (Installed with drives) + 6x 3.5\" (No drives included)\nCondition:\n* Visual: Very Good – well maintained\n* Tested: Fully functional, ready for deployment\nPick-up only. Please do not hesitate to send a message.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "vendor": "dell",
+   "model": "R730xd",
+   "generation": 13,
+   "bays_35": 12,
+   "ram_gb": 128,
+   "psu_count": 2,
+   "caddies_35": 6,
+   "controller": "hba",
+   "rails": true
+  }
+ },
+ {
+  "note": "Oslo R730xd, single PSU, no caddies (finn 473386139)",
+  "title": "Dell R730XD LFF 128GB RAM 2x E5-2650 v3",
+  "description": "Dell R730XD server selges.\n12x LFF + 2x SFF hdd bays\n2x Intel E5-2650v3 CPU (10 core)\n128GB RAM (8x16GB)\nPERC H730 RAID controller\nIntel X520 NIC 2xSFP+, 2x RJ45 Gbit.\n1x 750W PSU\nDisk trays følger ikke med.\nMå hentes i Oslo.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "R730xd",
+   "generation": 13,
+   "bays_35": 12,
+   "ram_gb": 128,
+   "psu_count": 1,
+   "caddies_35": 0,
+   "controller": "hba",
+   "rails": null
+  }
+ },
+ {
+  "note": "R730XD 16x3.5, lid latch 'fungerer ikke' is cosmetic (finn 474398976)",
+  "title": "PowerEdge R730XD - 384GB - 28 cores - 16 x 3.5 + 2 x 2.5",
+  "description": "Selger en kraftig 2U Dell server. Denne er også veldig fleksibel med hele 16 3.5 tommer diskslotter hvorav 4 av dem er montert med 2.5 tommer kit + 2 x 2.5 tommer flex bay på baksiden.\nDet gjør at du har mange muligheter for hvordan du ønsker å sette denne opp. Med disse spesifikasjonene kan den brukes til det meste. Har vært i bruk helt til nå så kan verifisere at den fungere. Vil også demonstrere dette ved evt kjøp.\nDen står pr nå montert med PERC H730 mini raid-controller men den kom opprinnelig med HBA330 som jeg fortsatt har og som du får med så her kan du velge utifra hva du har behov for.\n-Chassis Type: 2U Rack Chassis with up to 12 + 4 Internal 3.5\" Hard Drives and 2 x 2.5\" Flex Bay Hard Drives\n-Processors (CPU): 2 x Intel Xeon E5-2660 v4 (2.0GHz, 35M Cache, 9.60GT/s QPI, Turbo, Hyper-Threading, 14 Cores / 28 Threads, 105W)\n-Memory (RAM): 384 GB Total — 12 x 32GB RDIMM, 2400MT/s, Dual Rank, x4 Data Width (Performance Optimized)\n-Network Daughter Card (RNDC): 1 x Intel Ethernet i350 Quad Port 1GbE\n-PCIe Network Adapter: 1 x Mellanox ConnectX-3 Pro Dual Port 10GbE SFP+ (Full Height)\n-Power Supplies: Dual Hot-Plug Redundant Power Supplies (1+1), 750W\n-Remote Management: iDRAC8 Enterprise (integrated Dell Remote Access Controller, Enterprise license with dedicated port)\n-Security: PowerEdge Server FIPS TPM 2.0 (Trusted Platform Module)\n-Medfølger 1 stk orginal 240GB Enterprise SSD i flex bay.\nKjente feil/mangler:\n- Låsemekanismen på topplokket av serveren fungerer ikke fordi en plastikk-pin har brekt. Derfor får man ikke låst fast lokket, men det sklir på plass. Har ingen betydning for serverens operasjon untatt at man må være klar over det.\n- PERC-kontrolleren har ikke batteri installert. Jeg har derimot kjøpt batteri til den men det er bare ikke montert. Batteriet medfølger.\nMå hentes i Trondheim.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "R730xd",
+   "bays_35": 16,
+   "ram_gb": 384,
+   "controller": "hba",
+   "working": true
+  }
+ },
+ {
+  "note": "R730xd LFF 48TB, count in description (finn 461843162)",
+  "title": "GI BUD! Kraftig Dell PowerEdge R730xd 2U rack server med 48TB og svært mye minne",
+  "description": "Selger en kraftig Dell PowerEdge R730xd LFF 2U rackserver med svært mye minne. Passer godt til Proxmox, VMware, Hyper-V, TrueNAS, Unraid, ZFS, homelab, virtualisering, backup, labmiljø, databaser eller tyngre serveroppgaver.\nDette er LFF-utgaven med 3.5” hot-swap diskplasser.\nSpesifikasjoner:\n* Modell: Dell PowerEdge R730xd LFF\n* CPU: 2x Intel Xeon E5-2680 v4 @ 2.40GHz\n* Kjerner/tråder: 28 kjerner / 56 tråder totalt\n* RAM: 768GB Micron DDR4 ECC 2666 serverminne\n* Disker: 12x 4TB 3.5” disker\n* Rå lagringskapasitet: 48TB\n* Nettverk: 10G NIC\n* Formfaktor: 2U rackserver\n* Diskplasser: 12x 3.5” hot-swap i front\nServeren har ekstremt mye RAM for denne generasjonen og egner seg spesielt godt til mange virtuelle maskiner, ZFS/TrueNAS, store labmiljøer eller minnekrevende tjenester.\nSelges som brukt enterprise-utstyr. Henting foretrekkes, da serveren er tung. Frakt kan eventuelt avtales, men kjøper betaler frakt og risiko/emballasje.\nPris: 65 000 kr\nSeriøse bud vurderes. Skambud besvares ikke.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "R730xd",
+   "bays_35": 12,
+   "ram_gb": 768
+  }
+ },
+ {
+  "note": "Nedenes R730 8-Bay LFF (finn 475664047)",
+  "title": "Dell PowerEdge R730 Server - 2x Intel Xeon E5-2660v3 - 384GB DDR4 - Homelab",
+  "description": "Free Shipping\nI have 2 identical units with the following specs;\nDell PowerEdge R730 (2U)\nCPU: 2x Intel Xeon E5-2660 v3 — 2.6GHz base, up to 4.0GHz Turbo\nMemory: 384GB DDR4 (all micron except one unit has a single Samsung dimm) each unit has 24x16gb\nMemory Speed: 2133 MHz\nNetworking 4x 10GbE (Intel X520) + 4x 1GbE (Intel I350) onboard rNDC, plus 2x 10GbE (Intel X540-T) add-in card — 6x 10GbE + 4x 1GbE total\nPower Supplies 2x 750W \niDRAC Enterprise, Lifecycle Controller\nBoth IDSDM SD cards have been wiped but previously was loaded with Hyper-V, these will need to be reconfigured if you plan to use the same hypervisor.\nThey have the 8-Bay LFF drive configuration but no disks are provided.\nPrice is per a unit, but if you want both we can discuss this.\nPlease feel free to send me a message if you have any questions.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "R730",
+   "generation": 13,
+   "bays_35": 8,
+   "ram_gb": 384,
+   "psu_count": 2
+  }
+ },
+ {
+  "note": "R730xd 24x 2.5 inch only (finn 219121915)",
+  "title": "Dell PowerEdge R730xd 2x 10core Xeon 2,3GHz, 64GB ram, 24x600GB NVIDIA Tesla P4",
+  "description": "Super server med 24stk 2,5\" 600Gb harddisker i front, totalt 20 kjerner prosessor og 64GB ram.\nMedfølger 24x 600Gb SAS 10000RPM 2,5\" disker i caddies, Totalt 21,6Tb lagringsplass.\nSlenger også med 5stk ekstra disker som reserve. \nMaskinen har også et NVIDIA Tesla P4 aksellerator / skjermkort. Perfekt for transkoding av video til Plex media server, eller lette AI modeller.\nOm ønskelig kan LFF Midplane følge med. Dette er en ramme som sitter midt i chassiset som kan huse 4*3,5\" disker. For å ta dette i bruk må du eventuelt kjøpe lavprofil cpu kjølere. \nTillegg for midplane er 1500Kr\nSpesifikasjon:\n2x Intel® Xeon® Processor E5-2650 v3 25M Cache, 2.30 GHz 10C/20T\n4x 16GB RAM, totalt 64GB.\nDell PERC H730P 2GB Minicard RAID kontroller\n2x 750W PSU\n2x 10GbE + 2x 1GbE nettverk (QLogic 57800 2x10Gb BT + 2x1Gb BT Network Daughter Card)\nIdrac 8 Enterprise managment system\nKan sendes i posten om ønskelig. Må i tilfelle sendes i to forsendelser med diskene løst. \nKodeord: Dell, PowerEdge, Freenas, proxmox, unraid, lagringsserver, nas, filserver, server, rack\nSe også min Dell Compellent SC200 diskhylle jeg også selger https://www.finn.no/475313927\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "qualifies": false,
+   "model": "R730xd",
+   "bays_35": 0
+  }
+ },
+ {
+  "note": "Trondheim R730 2.5 backplane (finn 426464076)",
+  "title": "Dell PowerEdge R730",
+  "description": "2U server\n2x Intel Xeon U E5-2620 v3 @ 2.40GHz\n64GB RAM\n2.5\" SAS backplane. Ingen disker følger med.\niDRAC\nKan hentes i Oslo\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "qualifies": false,
+   "model": "R730",
+   "generation": 13,
+   "bays_35": 0
+  }
+ },
+ {
+  "note": "R720xd is 12th Gen (finn 469749680)",
+  "title": "Dell PowerEdge R720xd - 128 GB RAM - 2x Xeon E5 2620 CPU",
+  "description": "Dell r720xd\nRam: 16*8GB PC3L 12800R (128GB)\nDisker: Ingen, men 12x 3.5\" bays\nCPU: 2x Intel Xeon E5-2620 @ 2GHz (2.5GHz turbo) (6 Cores / 12 Threads pr cpu)\nPSU: 2x 750w Platinum 80 plus\nRack rails\nSuper til bruk med f.eks. Proxmox, Talos eller TrueNAS.\nKan leveres med oppgradert minne og systemdisk installert. Ta kontakt for tilbud.\nMulighet for å sende mot at kjøper betaler frakt.\nÅpen for bud ved rask handel\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "qualifies": false,
+   "model": "R720xd",
+   "generation": 12,
+   "bays_35": 12,
+   "psu_count": 2,
+   "rails": true
+  }
+ },
+ {
+  "note": "R740 with 8x2TB of unknown size (finn 476154464)",
+  "title": "Dell PowerEdge R740 – 64 GB ECC RAM / 8×2 TB SAS / H730P / 10GbE",
+  "description": "Selger en kraftig Dell PowerEdge R740 2U rackserver.\nServeren passer godt til hjemmelab, virtualisering, NAS/storage, backup, Proxmox, VMware, testmiljø eller som generell server.\nSpesifikasjoner:\nDell PowerEdge R740, 14. generasjon\n2U rackserver\nIntel Xeon Silver – 1 CPU installert Intel(R) Xeon(R) Silver 4110 CPU @ 2.10GHz\n64 GB DDR4 ECC RDIMM RAM ( 4 x 16 gb brikker)\nPERC H730P RAID-kontroller med 2 GB cache\n8 × 2 TB Toshiba SAS 12 Gbps harddisker\nRAID 5 med 7 disker\n1 × 2 TB disk satt opp som global hot spare\nCa. 12 TB rå kapasitet i RAID-volumet\n10GbE nettverk via Intel X710\n1GbE nettverk via Intel I350\niDRAC Enterprise\nRedundante strømforsyninger\n24 DIMM-spor totalt, så RAM kan enkelt oppgraderes\n2 CPU-sokler totalt, slik at serveren kan oppgraderes med CPU nr. 2\nDiskene er Toshiba SAS-disker produsert i 2019.\nServeren har vært brukt som server og selges som brukt. RAID-kontroller og diskene rapporterer normal status i systemet.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "unreadable": [
+    "bays_35"
+   ]
+  }
+ },
+ {
+  "note": "dealer R730 states 16x 2.5 inch bays (finn 474415716)",
+  "title": "Dell PowerEdge R730 kraftig 2U enterprise-server virtualisering",
+  "description": "Pris: 26 000 kr eks. mva\r\n32 500 kr inkl. mva\r\nLeasing fra ca. 549 kr pr. måned*\r\n? 28 kjerner / 56 tråder\r\n? 192 GB DDR4 ECC RAM\r\n? Enterprise SSD-lagring\r\n? 2 × 10GbE SFP+ , 1 Gb RJ45 nettverksporter\r\n? RAID-kontroller med cache og batteribackup\r\n? 3 års garanti\r\n*Forutsetter kredittgodkjenning. Estimert leasing over 60 måneder. Faktisk månedsbeløp kan variere.\r\nDell PowerEdge R730 er en pålitelig og kraftig 2U enterprise-server som er ideell for virtualisering, filservere, backup, databaser, overvåkingssystemer og andre virksomhetskritiske løsninger. Med to Intel Xeon E5-2690 v4-prosessorer leverer serveren hele 28 kjerner og 56 tråder, noe som gir betydelig regnekraft for krevende arbeidsoppgaver.\r\nDenne konfigurasjonen kombinerer høy ytelse, god utvidelseskapasitet og robust Dell Enterprise-teknologi. Serveren er utstyrt med redundante strømforsyninger, Dell H730P RAID-kontroller med cache og batteribackup, samt høyhastighets 10GbE-nettverk for moderne datasenter- og bedriftsmiljøer.\r\nHøydepunkter\r\nDell PowerEdge R730 2U rackserver\r\n2 × Intel Xeon E5-2690 v4 prosessorer\r\n28 kjerner / 56 tråder totalt\r\n192 GB DDR4 ECC RAM\r\n2 × 400 GB Enterprise SAS SSD\r\nDell H730P RAID-kontroller med 2 GB cache\r\n16 × 2,5\" diskplasser\r\n2 × 10GbE SFP+ , 1 Gb RJ45 nettverksporter\r\nRedundante 1100W Platinum strømforsyninger\r\nFrontbezel med nøkkel inkludert\r\n3 års garanti\r\nVaren er på fjernlager og ytterligere konfig kan legges til.\r\nPerfekt for\r\nProxmox VE, VMware og Hyper-V\r\nFilserver og lagringsløsninger\r\nBackup og katastrofegjenoppretting\r\nDatabaser og ERP-systemer\r\nOvervåknings- og kamerasystemer\r\nHosting og virtuelle servere\r\nSmå og mellomstore datasentre\r\nDell PowerEdge R730 er en velprøvd enterprise-plattform som gir høy ytelse, god energieffektivitet og solid driftssikkerhet. Med 10GbE-nettverk, redundante strømforsyninger og 3 års garanti er dette et svært godt valg for bedrifter som ønsker profesjonell serverinfrastruktur til en konkurransedyktig pris.\nHvordan bestille hos oss\r\nKlikk på  Kjøp i nettbutikk -knappen i denne annonsen for å handle trygt i vår nettbutikk via vår partner Dintero.\r\nDu kan betale med:\r\n• Vipps\r\n• Bankkort / kredittkort\r\n• Delbetaling\r\n• Faktura direkte fra oss\r\nVi sender varen med Posten, eller du kan avtale henting på vårt lager på Heistad i Porsgrunn.\r\nGaranti\r\nAlle våre ordinær produkter har 2 års garanti til privatmarkedet om ikke annet er oppgitt,  14 dagers åpent kjøp på ordinære varer. Gjelder ikke bestillingsvare eller spesialvare. \r\nEgne regler for bedriftsmarkedet.  \r\nIT Garasjen\r\nIT Garasjen er Plan B IT sin nettbutikk for alle som ønsker å kjøpe IT utstyr på nett.\r\nVi samarbeider med noen av de største aktørene innen brukt IT utstyr, og alt vi selger er nøye kvalitetssikret for å sikre god ytelse og lang levetid.\r\nBedriftskunder\r\nFor deg som bedriftskunde tilbyr vi:\r\n• Bedrifts-PC av god kvalitet med garanti\r\n• Servere med god garanti og driftsavale\r\n• Server Hardware spesialist \r\n• Drift og vedlikehold IT\r\n• Det Lilledatasenter\r\n• Datasenter utstyr\r\n• Kjøp av ditt serverutsr\r\nTa kontakt med oss:\r\n   post@planbit.no\r\n   35 96 35 96\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "qualifies": false,
+   "model": "R730",
+   "bays_35": 0
+  }
+ },
+ {
+  "note": "DL380 Gen9 never says LFF or SFF (finn 455107692)",
+  "title": "HP ProLiant DL380 Gen9 - Xeon E5-2620v3, 64gb DDR4 ECC - perfekt til homelab",
+  "description": "Jeg nedskalerer og har for salg en HP ProLiant DL380 Gen9 rackserver.\nStabil enterprise-hardware som fortsatt er veldig kapabel til homelab, virtualisering eller labmiljø.\nFungerer fint med Proxmox, VMware, TrueNAS, Unraid, Linux osv.\nIngen disker eller OS installert. 8 diskcaddies og skruer medfølger.\nSpesifikasjoner:\nHP ProLiant DL380 Gen9\nIntel Xeon E5-2620 v3 (6c/12t)\n64GB DDR4 ECC\n• 8 diskcaddies med skruer\n• Dual PSU\n• Onboard RAID / backplane\n• 4×1Gb NIC\n• iLO management\nTestet, booter og fungerer som den skal.\nEn del i låsen for lokket er knekt (se bilde) og faller ut hvis man er for brå i bevegelsene, men lokket låses som det skal når den ligger på plass. Dette påvirker ikke serverens funksjon ellers.\nPris kan diskuteres noe ved rask og enkel handel. Betaling via Vipps. \nKan hentes på Aker Brygge man-fre 9-15 etter avtale. \nKan evt organisere transport med Oslo Budservice innenfor deres leveringsområde i Stor-Oslo mot forhåndsbetaling etter avtale.\nJeg har ikke emballasje egnet for sending av stor og tung server med Posten/Bring, men jeg kan få tak i mot et tillegg på kr 500 etter kjøp. Levering av emballasje tar ca en uke, så forsendelsen vil da bli tilsvarende forsinket.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "unreadable": [
+    "bays_35"
+   ]
+  }
+ },
+ {
+  "note": "DL380 Gen9 LFF without count (finn 466396535)",
+  "title": "HPE ProLiant DL380 Gen9 LFF Server | E5 v4 | Opp til 768 GB ECC",
+  "description": "Selger deler av hjemmelabben, bestående av HPE ProLiant DL380 Gen9 LFF 2U servere.\nStrømgjerrige og kraftige servere som kun bruker rett i overkant av 35 watt i Proxmox med én CPU, målt ved veggen. Stort potensiale for både tallknusing, lagring og utvidelsesmuligheter. Viftene går på rundt 15% ved lav last og serveren oppleves som stillegående.\n𝗣𝗿𝗼𝘀𝗲𝘀𝘀𝗼𝗿𝗲𝗿:\n- 2 stk. E5 2630 v4 (𝗶𝗻𝗸𝗹𝘂𝗱𝗲𝗿𝘁) 20/40 cores/threads\n- 𝗦𝗼𝗹𝗴𝘁! 2 stk. E5 2630L v4 (+ 690,-) 20/40\n- 𝗦𝗼𝗹𝗴𝘁! 2 stk. E5 2650L v4 (+ 790,-) 28/56\n- 2 stk. E5 2650 v4 (+ 690,-) 24/48\n- 2 stk. E5 2690 v4 & High Performance Heatsink (+ 1490,-) 28/56\n- 𝗦𝗼𝗹𝗴𝘁! 2 stk. E5 2695 v4 & High Performance Heatsink (+ 1590,-) 36/72\n- 2 stk. E5 2673 v4 & High Performance Heatsink (+ 1690,-) 40/80 (tilsvarer 2698 V4)\n- 𝗦𝗼𝗹𝗴𝘁! 2 stk. E5 2696 v4 & High Performance Heatsink (+ 1990,-) 44/88 (tilsvarer 2699 V4)\n𝗠𝗶𝗻𝗻𝗲 (𝗢𝗿𝗶𝗴𝗶𝗻𝗮𝗹𝘁 𝗛𝗣𝗘 𝗦𝗺𝗮𝗿𝘁𝗠𝗲𝗺𝗼𝗿𝘆):\n- 64 GB, 2*32 GB (𝗶𝗻𝗸𝗹𝘂𝗱𝗲𝗿𝘁)\n- 𝗦𝗼𝗹𝗴𝘁! 128 GB, 4*32 GB (+ 3290,-)\n- 𝗦𝗼𝗹𝗴𝘁! 256 GB 8*32 GB (+ 8990,-)\n- 𝗦𝗼𝗹𝗴𝘁! 384 GB 12*32 GB (på forespørsel)\n𝗟𝗮𝗴𝗿𝗶𝗻𝗴:\n- HP Smart Array P840 Controller og HPE 96W Smart Storage Battery (𝗶𝗻𝗸𝗹𝘂𝗱𝗲𝗿𝘁)\n- 2 stk. HPE SATA Enterprise SSD 80GB SATA 6G SFF inkl. 2,5\" caddy, Intel S3510 (𝗶𝗻𝗸𝗹𝘂𝗱𝗲𝗿𝘁)\n- Ekstra HPE SATA Enterprise SSD 80GB SATA 6G SFF inkl. 2,5\" caddy, Intel S3510 (+ 290,-)\n- 𝗦𝗼𝗹𝗴𝘁! HPE 800GB SAS SSD 12G Mixed Use SFF SC inkl. 3,5\" caddy og 2,5\" -> 3,5\" adapter (+ 1690,-/stk.)\n𝗡𝗲𝘁𝘁𝘃𝗲𝗿𝗸:\n- HPE Ethernet 1 Gbit/s 4-port 331i (𝗶𝗻𝗸𝗹𝘂𝗱𝗲𝗿𝘁)\n- HPE Ethernet 10 Gbit/s 2-port 562FLR-T FlexibleLOM, RJ45, Intel X550 chipset (+ 690,-)\n- 𝗦𝗼𝗹𝗴𝘁! HPE Ethernet 10 Gbit/s 2-port 562FLR-SFP+ FlexibleLOM, Intel X710 chipset (+ 690,-)\n- HPE InfiniBand FDR/Ethernet 2-Port 544+QSFP, Mellanox ConnectX-3 Pro, 10/40Gbit/s (+ 290,-)\nTips: Mellanox SX6012, 6018 og 6036 er gode, strømgjerrige infiniband switcher.\n𝗣𝗦𝗨𝘀:\n- 2 stk. HPE 500W Platinum 94 % efficiency (𝗶𝗻𝗸𝗹𝘂𝗱𝗲𝗿𝘁)\n- 𝗦𝗼𝗹𝗴𝘁! 2 stk. HPE 800W Platinum 94 % efficiency (+ 690,-)\n- 𝗦𝗼𝗹𝗴𝘁! 2 stk HPE 800W Titanium 96 % efficiency (+ 790,-)\n- 2 stk HPE 1400W Platinum 94 % efficiency (+ 890,-)\n𝟯,𝟱\" 𝗖𝗮𝗱𝗱𝘆 𝗼𝗴 𝗯𝗹𝗮𝗻𝗸𝘀:\n- HP 3,5\" Disk Caddy (+ 129,-/stk)\n- HP 3,5\" Blank Filler (+ 59,-/stk)\n- 2,5\" til 3,5\" adapter (+ 89,-/stk)\n𝗥𝗮𝗶𝗹𝘀:\n- 𝗦𝗼𝗹𝗴𝘁! HPE Ball Bearing Sliding Rack Rail Kit for ProLiant DL380 Gen9 (+ 790,-)\n𝗙𝗿𝗼𝗻𝘁 𝗕𝗲𝘇𝗲𝗹:\n- HPE Security Front Bezel 2U for ProLiant DL380 Gen9 (+ 590,-)\n𝗖𝗮𝗯𝗹𝗲 𝗔𝗿𝗺 𝗞𝗶𝘁:\n- HPE Rack Cable Arm Kit for ProLiant DL380 Gen9 (+ 490,-)\nUEFI og iLO er oppdatert til siste versjon. iLO Advanced License er aktivert.\nHentes helst. Sending etter avtale. Oppgjør med Fiks Ferdig (gi bud med pris på konfigurasjon), Vipps eller overføring til bankkonto. \nTa kontakt for en hyggelig server-prat!\nhp proxmox vmware vm-ware esxi xen zen citrix virtualisering homelab hjemmelab server pfsense opnsense sophos truenas unraid nas san iscsi openmediavault open media vault omv\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "unreadable": [
+    "bays_35"
+   ]
+  }
+ },
+ {
+  "note": "DL360 G9 (finn 465550885)",
+  "title": "HPe ProLiant DL360 G9 – 512GB DDR4 ECC RAM! | 24 kjerner | 10GbE",
+  "description": "HP ProLiant DL360 G9 – komplett, testet og klar til bruk. Fullpakket med 512 GB ECC-serverminne (16 × 32 GB), som i dagens minnemarked alene er verdt det meste av prisen – her får du i tillegg en komplett, fungerende server.\n⭐ Minnet er stjernen: 512 GB HP SmartMemory (16 × 32 GB 2Rx4 PC4-2133P ECC Registered). Enkeltmoduler av denne typen omsettes nå rundt 800–900 kr/stk på grunn av den pågående RAM-mangelen – regn selv på 16 stk. Modulene er standard DDR4 RDIMM og passer også i andre LGA2011-3-plattformer (Dell R730, Supermicro X10, Lenovo x3650 M5 osv.), så de kan gjenbrukes om du bytter plattform senere.\nSpesifikasjoner:\n2 × Intel Xeon E5-2690v3 2.6 GHz – 12 kjerner / 24 tråder hver (totalt 24 kjerner / 48 tråder), med de store kjøleribbene\n512 GB HP SmartMemory (16 × 32 GB 2Rx4 PC4-2133P ECC)\nSmart Array P440ar RAID-kontroller med batteribackup\n2 × 800W strømforsyning (redundant)\n120 GB SSD (mini-SSD montert på SATA-kontakt på hovedkortet – alle 8 diskbrønner står dermed ledige til eget bruk)\n10GbE 2-port 560FLR-SFP+ mLOM-adapter\n4 × 1GbE RJ45\nHP iLO4 for fjernadministrasjon\nPerfekt til:\nVirtualisering med Proxmox, VMware, Hyper-V – mye RAM = mange VM-er samtidig\nHomelab / selvhosting / lagrings- og databaseoppgaver\nLokal AI / LLM-kjøring på CPU – 512 GB gjør at den kan laste svært store modeller (inkl. store MoE-modeller) som vanlige GPU-er ikke har minne til\nStandalone Linux/Windows-maskin\nTestet og fungerer som den skal. Disker til diskbrønnene selges separat. \nPrisantydning 14 900 kr – ta kontakt ved spørsmål eller bud.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "unreadable": [
+    "bays_35"
+   ]
+  }
+ },
+ {
+  "note": "riser for R740 (finn 468742286)",
+  "title": "Dell Riser Board 0DTTHJ PCIe x16/x8 3.0 for PowerEdge R740 R740XD",
+  "description": "Dell Riser Board 0DTTHJ PCIe x16/x8 3.0 for PowerEdge R740 R740XD\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "DL380 Gen9 fan cage (finn 474841752)",
+  "title": "HPE DL380 Gen9 Fan Cage / viftebrakett + 2 vifter",
+  "description": "Selger original HPE fan cage / viftebrakett til HPE ProLiant DL380 Gen9, inkludert 2 stk hot-plug systemvifter.\n• 6-slot fan cage\n• HPE P/N: 747596-001\n• Spare P/N: 777294-001\n• 2 stk HPE/Nidec hot-plug vifter medfølger\n• Vifte SPS: 777285-001\n• Nidec: V60E12BS2CB5-08T06\nPersonlig overlevering, Fiks Ferdig eller sendes med Posten/HeltHjem etter forhåndsbetaling med Vipps.\nHPE HP ProLiant DL380 Gen9 G9 fan cage viftebrakett fan assembly hot plug 747596-001 777294-001 777285-001\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "heatsink til DL380 (finn 464683222)",
+  "title": "HPE CPU-kjøler / Heatsink til DL380 Gen9 – 747608-001 / 777290-001",
+  "description": "Original HPE CPU-kjøler / heatsink til HPE ProLiant DL380 Gen9.\nStandard heatsink beregnet for prosessorer opptil 105 W TDP.\n• HPE P/N: 747608-001\n• Spare P/N: 777290-001\n• Kompatibilitet: HPE ProLiant DL380 Gen9\n• Standard heatsink / opptil 105 W TDP\n• Fjærbelastede skruer for enkel montering\nPris:\n1 stk: 200 kr\n2 stk eller flere: 150 kr/stk\nPersonlig overlevering, Fiks Ferdig eller sendes med HeltHjem etter forhåndsbetaling med Vipps.\nHPE HP ProLiant DL380 Gen9 G9 heatsink CPU-kjøler 747608-001 777290-001\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "P440ar til DL380 (finn 464683966)",
+  "title": "HPE Smart Array P440ar RAID-kontroller til DL360 / DL380 Gen9",
+  "description": "Pris per stk. Har flere tilgjengelige.\nHPE Smart Array P440ar mezzanine RAID-kontroller til blant annet HPE ProLiant DL360 og DL380 Gen9.\n• 12 Gb/s SAS / 6 Gb/s SATA\n• 2 GB FBWC cache\n• PCIe 3.0 x8\n• RAID- og HBA-modus\n• Kontroller P/N: 749796-001\n• SAS-kabel P/N: 747568-001\nLeveres med tilhørende SAS/SATA-kabel som vist på bildene.\nPersonlig overlevering, Fiks Ferdig eller sendes med Posten/HeltHjem etter forhåndsbetaling med Vipps.\nHPE HP Smart Array P440ar RAID SAS SATA DL360 DL380 Gen9 G9 12G 12Gb 749796-001 747568-001\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "rack rails (finn 476213780)",
+  "title": "3stk - HPE 19\" 2U LFF Rack Rails - DL380 DL385 DL560 Gen8 Gen9 Gen10",
+  "description": "Suitable for: HPE Cloudline CL2800 Gen10 (LFF Version)\n  HPE ProLiant DL380e Gen8 (LFF Version)\n  HPE ProLiant DL380p Gen8 (LFF Version)\n  HPE ProLiant DL380 Gen9 (LFF Version)\n  HPE ProLiant DL380 Gen10 (LFF Version)\n  HPE ProLiant DL385p Gen8 (LFF Version)\n  HPE ProLiant DL385 Gen10 (LFF Version)\n  HPE ProLiant DL560 Gen9 (SFF Version)\n  HPE ProLiant DL560 Gen10 (SFF Version)\n  HPE SimpliVity 380 (LFF Version)\n878413-001 \n733662-B21\nPris per stk.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "32GB RDIMM for DL380 (finn 440873042)",
+  "title": "HPE 32GB DDR4-2400 ECC RDIMM SmartMemory – DL360 / DL380 Gen9",
+  "description": "Selger original HPE 32GB DDR4-2400 ECC Registered SmartMemory.\nTatt ut av HPE ProLiant DL380 Gen9. Passer blant annet DL360/DL380 Gen9 og andre kompatible HPE Gen9-servere.\n• Kapasitet: 32 GB\n• DDR4-2400 / PC4-19200\n• ECC Registered / RDIMM\n• 2Rx4\n• HPE SmartMemory\n• HPE P/N: 809083-091\nPris:\n1–2 stk: 1 990 kr/stk\n2–4 stk: 1 890 kr/stk\n5 stk eller flere: 1 790 kr/stk\nPersonlig overlevering, Fiks Ferdig eller sendes med HeltHjem/Posten etter forhåndsbetaling med Vipps.\nHPE HP ProLiant DL360 DL380 Gen9 G9 32GB DDR4 2400MHz ECC RDIMM Registered SmartMemory PC4-19200 serverminne RAM Proxmox VMware TrueNAS homelab\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "Scania R730 toy truck (finn 468806731)",
+  "title": "Italeri Scania R730 Streamline 1:24 byggesett lastebil",
+  "description": "Italeri Scania R730 Streamline byggesett i skala 1:24 med lastebilmotiv. Esken inneholder deler, dekaler og instruksjonsark for montering.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "Tekno Scania R730 model (finn 477102268)",
+  "title": "Tekno 1:50 Scania R730 Timmerline",
+  "description": "Detaljert samlermodell i skala 1:50 fra Tekno. Modellen pakkes inn i sin originale eske ved salg. Tømmerkloa er reparert etter beste evne med en tynn tråd, den var løs når jeg tok den ut av eske, fungerer greit nå, se bilder. Det mangler et lite gitter nederst til venstre på kufanger. Ellers er det en tøff tømmerbil med henger. Modellen har kun vært utstilt støvfritt. Kan følge med litt tømmer. Selges for kr 2800,- Kan sendes i posten som norgespakke med sporing 140,-\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "LFF blank covers (finn 473577270)",
+  "title": "DELL 3.5\" LFF Blindblende / Blank Cover",
+  "description": "Selger 6x DELL 3.5\" LFF Blindblende / Blank Cover. \nDisse passer til Dell Poweredge (kom ut av en r730xd).\nOBS! Pris er pr. stk\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "SC200 disk shelf (finn 475313927)",
+  "title": "Dell Compellent SC200 diskhylle inkl. LSI kontroller",
+  "description": "Dell Compellent SC200 / PowerVault MD1200 diskhylle selges. \nDenne har plass til 12*3,5\" disker.\nMedfølger LSI 9207-8e SAS HBA kontroller og SAS kabler.\nOm ønskelig kan det medfølge ønsket antall 4Tb disker for 400Kr stk.\nSe også min Dell R730xd som jeg selger https://www.finn.no/219121915\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "Supermicro motherboard (finn 473853084)",
+  "title": "Supermicro MBD-X11DDW-L-0 Hovedkort (Nytt i eske)",
+  "description": "Selger et helt nytt Supermicro MBD-X11DDW-L-0 serverhovedkort. Dette er et kraftig dual-socket hovedkort for Intel Xeon Scalable-prosessorer, perfekt for server, virtualisering, lagring, AI, datasenter eller avanserte hjemmelab-prosjekter.\nHøydepunkter:\nStøtter 2 stk Intel Xeon Scalable CPU-er\nDDR4 ECC Registered-minne\nMange PCIe-utvidelsesmuligheter\nIntegrert IPMI-fjernadministrasjon\nDatasenterkvalitet med høy stabilitet og pålitelighet\nKortet er nytt og ubrukt.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "ML350 Gen9 parts (finn 474360977)",
+  "title": "128 GB DDR4-SK hynix (8×16 GB) + Xeon E5 v3, P440ar RAID, 800W PSU",
+  "description": "Deler fra en HPE ProLiant ML350 Gen9 som demonteres. Alt er testet og fungerer bra.\nSelges både som deler og som komplett server, du velger.\nHele maskinen ferdig montert og i drift: 11 000 kr. Enkeltdeler til prisene under.\n128 GB DDR4-2133 ECC SK hynix (8× 16 GB) \n— 5 250 kr for alle 8 ellers 800 kr per pinne. Registrert ECC-minne til Xeon E5 v3/v4: HPE Gen9, Dell R730, Supermicro X10 m.fl. DDR4 er dyrt om dagen — dette er 128 GB til en brøkdel av nypris. Sendes trygt som Fiks ferdig.\n2× Intel Xeon E5-2650 v3 \n— 700 kr for begge eller 400 kr per stk.\n10 kjerner / 20 tråder hver, 20 kjerner totalt for under en tusenlapp.\nHPE Smart Array P440ar, 2 GB FBWC — 700 kr\n12 Gb/s SAS-kontroller med flash-backed write cache og kondensator. RAID 0/1/5/6/10/50/60. Monteres i HPEs dedikerte kontrollerspor på Gen9.\n2× HPE 800 W hot-swap PSU \n— 800 kr for begge eller 450 kr per stk. Platinum-effektivitet, redundant drift.\n6× HPE 600 GB 10K SAS (EG0600FBVFP) \n— 1 250 kr for alle eller 250 kr per stk. \n3,6 TB rå kapasitet.\n2× Intel DC S3610 200 GB SATA SSD \n— 350 kr per stk\nEnterprise-SSD med strømtapsbeskyttelse og høy TBW. Bygget for 24/7-skriving.\nBarebone — 3 000 kr\nKabinett, hovedkort, backplane med 8 SFF-brønner, vifter og all kabling.\nStartpakke: barebone + begge CPU + P440ar + begge PSU = 4 500 kr. Da mangler du bare RAM og disker.\nHele maskinen komplett = 11 000 kr. Delene til sammen koster over 13 000, kjøper du flere av dem, er hele serveren klart billigst.\nPerfekt til Proxmox, TrueNAS, ESXi, Unraid eller homelab. Kan vises i drift før salg.\nHentes i Stavanger. RAM, CPU, kontroller, PSU og SSD sendes trygt via Fiks ferdig. Kabinettet bør hentes.\nSi fra hvis du vil ha flere deler samlet, så finner vi en pris.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "PERC H730 card (finn 467731561)",
+  "title": "PERC H730 Mini Mono – 12Gb/s SAS RAID‑kontroller (1GB Cache)",
+  "description": "Selger en Dell PERC H730 Mini Mono (1Gb batteri sikret cache) kompatibel med PowerEdge‑servere som R430, R530, R630, R730 m.fl.\nKontrolleren fungerer som den skal og er testet før demontering. Perfekt oppgradering for deg som trenger rask (12Gb/s) og stabil RAID‑ytelse i Dell‑servere. Kortet støtter også såkalte 'HBA' modus.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "Xeon CPUs (finn 473051845)",
+  "title": "Intel Xeon E5-2620 v3 (2 stk) – LGA2011-3, 6-core – server/homelab",
+  "description": "Selger et par (2 stk) Intel Xeon E5-2620 v3 prosessorer, pulled fra en aktiv dual-socket server. Byttes ut kun fordi jeg oppgraderer til nyere Broadwell-CPUer (v4-serien) – ikke på grunn av feil. Har gått stabilt i drift under kontinuerlig last.\nFunker som de skal, testet. Rengjort/vasket av. Selges uten kjøler/pasta – kun CPU-ene.\nSpesifikasjoner (per CPU):\nSokkel: LGA2011-3 (Socket R3)\n6 kjerner / 12 tråder\nGrunnklokke 2,4 GHz, Turbo opp til 3,2 GHz\n15 MB L3 cache\nTDP 85W\nHaswell-EP, støtter DDR4 (quad-channel)\nPasser til dual-socket hovedkort/servere som Dell PowerEdge R630/R730, HP ProLiant DL360/DL380 Gen9, Supermicro X10-serien og lignende. Godt valg til hjemmeserver, NAS, virtualisering (Proxmox, ESXi, Hyper-V), Plex/Jellyfin/Emby-transkoding, rendering og homelab-bruk generelt.\nSelges som et sett – ikke splittes.\nSendes med Fiksferdig, eller møtes lokalt ved behov.\nSøkeord: Xeon, E5-2620 v3, LGA2011-3, Socket R3, Haswell, server-CPU, prosessor, hjemmeserver, homelab, dual socket, Proxmox, ESXi, virtualisering, NAS\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "Supermicro JBOD chassis is not a Machine (synthetic)",
+  "title": "Supermicro SuperServer Rackmonterbar JBOD 4U",
+  "description": "45 x 3.5\" hot-swap bays, SAS2 JBOD",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "Dell VRTX blade chassis is not a Machine (synthetic)",
+  "title": "Dell PowerEdge VRTX – 2× M630 – 384 GB RAM",
+  "description": "25x 2.5\" shared storage",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "AMD 14th Gen is allowed (synthetic)",
+  "title": "Dell PowerEdge R7415 EPYC 7351P 12x LFF 128GB",
+  "description": "",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "R7415",
+   "generation": 14,
+   "amd": true,
+   "bays_35": 12
+  }
+ },
+ {
+  "note": "AMD 11th Gen is rejected (synthetic)",
+  "title": "Dell PowerEdge R815 4x Opteron 12x 3.5\" 256GB",
+  "description": "",
+  "condition": "used",
+  "expect": {
+   "qualifies": false,
+   "generation": 11,
+   "amd": true
+  }
+ },
+ {
+  "note": "faulty Machine is not working (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x LFF - defekt, starter ikke",
+  "description": "Selges som den er.",
+  "condition": "used",
+  "expect": {
+   "qualifies": false,
+   "working": false
+  }
+ },
+ {
+  "note": "unknown condition from the Source (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x LFF 128GB",
+  "description": "",
+  "condition": null,
+  "expect": {
+   "unreadable": [
+    "condition"
+   ]
+  }
+ },
+ {
+  "note": "Supermicro generation from CPU (synthetic)",
+  "title": "Supermicro 2U server 12x 3.5\" 2x E5-2650 v4 128GB ECC",
+  "description": "",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "vendor": "supermicro",
+   "generation": 13,
+   "bays_35": 12
+  }
+ },
+ {
+  "note": "raid-only controller (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x LFF",
+  "description": "PERC H710 RAID kontroller, rails medfølger ikke",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "controller": "raid",
+   "rails": false
+  }
+ },
+ {
+  "note": "Westmere Supermicro is 11th Gen and rejected, not unreadable (live finn)",
+  "title": "Supermicro 1U, 2x Xeon E5620, 64GB, 4x300 SAS, ssd, satadom, Perc H310",
+  "description": "",
+  "condition": "used",
+  "expect": {
+   "qualifies": false,
+   "generation": 11
+  }
+ }
+]

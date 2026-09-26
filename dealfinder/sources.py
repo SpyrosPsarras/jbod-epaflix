@@ -2,12 +2,14 @@
 import base64
 import json
 import logging
+import re
 import time
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
+from html.parser import HTMLParser
 
-from .config import EBAY_PRICE_GBP
+from .config import EBAY_PRICE_GBP, SOURCE_PAUSE_S
 
 log = logging.getLogger("dealfinder.sources")
 
@@ -26,13 +28,131 @@ class Listing:
     shipping_currency: str | None
     condition: str | None   # one of rules.CONDITIONS, None = the Source did not say
     seller: str | None
+    description: str | None = None  # full listing text, fetched only where the rules need it
+    location: str | None = None
+    lat: float | None = None
+    lon: float | None = None
+    pickup_only: bool = False
+
+
+def _get(url, headers=None, data=None):
+    # some APIs (frankfurter) answer 403 to urllib's default User-Agent
+    req = urllib.request.Request(url, data=data, headers={"User-Agent": USER_AGENT, **(headers or {})})
+    return urllib.request.urlopen(req, timeout=30)
 
 
 def http_json(url, headers=None, data=None):
-    # some APIs (frankfurter) answer 403 to urllib's default User-Agent
-    req = urllib.request.Request(url, data=data, headers={"User-Agent": USER_AGENT, **(headers or {})})
-    with urllib.request.urlopen(req, timeout=30) as r:
+    with _get(url, headers, data) as r:
         return json.load(r)
+
+
+def http_text(url):
+    with _get(url) as r:
+        return r.read().decode("utf-8", "replace")
+
+
+class _DescriptionText(HTMLParser):
+    """Text of the element carrying data-testid="description" on a finn.no item page, one line per paragraph."""
+
+    def __init__(self):
+        super().__init__()
+        self.depth, self.parts = 0, []
+
+    def handle_starttag(self, tag, attrs):
+        if self.depth:
+            self.depth += 1
+            if tag in ("p", "br", "li", "div"):
+                self.parts.append("\n")
+        elif ("data-testid", "description") in attrs:
+            self.depth = 1
+
+    def handle_endtag(self, tag):
+        if self.depth:
+            self.depth -= 1
+
+    def handle_data(self, data):
+        if self.depth:
+            self.parts.append(data)
+
+    def text(self):
+        return re.sub(r"\n\s*\n+", "\n", "".join(self.parts)).strip()
+
+
+class FinnSource:
+    """finn.no Torget: the search page embeds its results as base64 JSON; item pages carry the full description.
+
+    Condition comes from finn's own search filter, one request per bucket, so no item page is needed for it.
+    """
+
+    name = "finn"
+    foreign = False
+    supports_machines = True
+    _search_url = "https://www.finn.no/recommerce/forsale/search"
+    _buckets = (("new", ("1", "2")), ("used", ("3", "4")))  # 1 Helt ny, 2 Som ny, 3 Pent brukt, 4 Godt brukt
+
+    def __init__(self, fetch=http_text, pause=SOURCE_PAUSE_S):
+        self._fetch, self._pause = fetch, pause
+
+    def search(self, query, details=False):
+        listings, seen = [], set()
+        for condition, codes in self._buckets:
+            time.sleep(self._pause)
+            qs = urllib.parse.urlencode([("q", query), *(("condition", c) for c in codes)])
+            for doc in self._docs(self._fetch(f"{self._search_url}?{qs}")):
+                try:
+                    listing = self._listing(doc, condition)
+                except (AttributeError, KeyError, TypeError, ValueError):
+                    log.warning("skipping malformed finn doc %s", doc.get("id") if isinstance(doc, dict) else doc)
+                    continue
+                if listing and listing.source_id not in seen:
+                    seen.add(listing.source_id)
+                    listings.append(listing)
+        if details:
+            for listing in listings:
+                listing.description = self._description(listing.url)
+        return listings
+
+    def _description(self, url):
+        """Full text of one item page; None when it cannot be fetched (sold, removed), so one page never ends the Source."""
+        if not url.startswith("https://www.finn.no/"):  # the URL comes from finn's data: fetch finn pages only
+            return None
+        time.sleep(self._pause)
+        try:
+            parser = _DescriptionText()
+            parser.feed(self._fetch(url))
+        except OSError as exc:  # urllib's HTTPError and URLError are OSErrors
+            log.warning("finn item page %s unavailable: %s", url, exc)
+            return None
+        return parser.text() or None
+
+    @staticmethod
+    def _docs(html):
+        for blob in re.findall(r"<script[^>]*>\s*(ey[A-Za-z0-9+/=\s]+?)\s*</script>", html):
+            try:
+                data = json.loads(base64.b64decode(blob))
+            except ValueError:
+                continue
+            for q in (data.get("queries") or []) if isinstance(data, dict) else []:
+                node = q
+                for key in ("state", "data", "docs"):  # any level may be a list or missing
+                    node = node.get(key) if isinstance(node, dict) else None
+                if isinstance(node, list):
+                    return node
+        raise ValueError("finn search page carried no search results")
+
+    def _listing(self, doc, condition):
+        if doc.get("trade_type") != "Til salgs" or not doc.get("price"):
+            return None  # giveaways and wanted-ads have no price to rank
+        flags, coords = set(doc.get("flags") or []), doc.get("coordinates") or {}
+        return Listing(
+            source=self.name, source_id=str(doc["id"]), title=doc["heading"],
+            url=doc.get("canonical_url") or f"https://www.finn.no/recommerce/forsale/item/{doc['id']}",
+            price=float(doc["price"]["amount"]), currency=doc["price"].get("currency_code") or "NOK",
+            shipping=0.0 if "seller_pays_shipping" in flags else None, shipping_currency="NOK",
+            condition=condition, seller=None,
+            location=doc.get("location"), lat=coords.get("lat"), lon=coords.get("lon"),
+            pickup_only="shipping_exists" not in flags,
+        )
 
 
 # eBay conditionId -> normalised condition
@@ -49,6 +169,7 @@ class EbaySource:
 
     name = "ebay_uk"
     foreign = True
+    supports_machines = False  # eBay UK Machines arrive with ticket #11
     _token_url = "https://api.ebay.com/identity/v1/oauth2/token"
     _search_url = "https://api.ebay.com/buy/browse/v1/item_summary/search"
 
@@ -65,7 +186,7 @@ class EbaySource:
             self._token, self._token_expiry = r["access_token"], time.time() + int(r.get("expires_in", 7200))
         return self._token
 
-    def search(self, query):
+    def search(self, query, details=False):
         low, high = EBAY_PRICE_GBP
         qs = urllib.parse.urlencode({
             "q": query, "sort": "price", "limit": "100",

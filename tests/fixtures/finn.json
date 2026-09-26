@@ -1,0 +1,2199 @@
+{
+ "search": {
+  "q=r730xd&condition=1&condition=2": [
+   {
+    "id": "475299403",
+    "heading": "8x MI50 32GB",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/475299403",
+    "price": {
+     "amount": 7000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Oslo",
+    "coordinates": {
+     "lat": 59.91894,
+     "lon": 10.74127,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists"
+    ],
+    "trade_type": "Til salgs"
+   }
+  ],
+  "q=r730xd&condition=3&condition=4": [
+   {
+    "id": "468970308",
+    "heading": "Dell R730xd 12*LFF+2*SFF Server 2*E5-2680v4 128GB RAM H330 iDrac Ent X710 SFP+",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/468970308",
+    "price": {
+     "amount": 13750,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Trondheim",
+    "coordinates": {
+     "lat": 63.442,
+     "lon": 10.43669,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "219121915",
+    "heading": "Dell PowerEdge R730xd 2x 10core Xeon 2,3GHz, 64GB ram, 24x600GB NVIDIA Tesla P4",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/219121915",
+    "price": {
+     "amount": 9500,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Froland",
+    "coordinates": {
+     "lat": 58.5046,
+     "lon": 8.6465,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "474398976",
+    "heading": "PowerEdge R730XD - 384GB - 28 cores - 16 x 3.5 + 2 x 2.5",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/474398976",
+    "price": {
+     "amount": 14500,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Saksvik",
+    "coordinates": {
+     "lat": 63.4369,
+     "lon": 10.5882,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "473386139",
+    "heading": "Dell R730XD LFF 128GB RAM 2x E5-2650 v3",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/473386139",
+    "price": {
+     "amount": 5000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Oslo",
+    "coordinates": {
+     "lat": 59.9127,
+     "lon": 10.7207,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "461843162",
+    "heading": "GI BUD! Kraftig Dell PowerEdge R730xd 2U rack server med 48TB og svært mye minne",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/461843162",
+    "price": {
+     "amount": 0,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Bergen",
+    "coordinates": {
+     "lat": 60.3899,
+     "lon": 5.32282,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "473577270",
+    "heading": "DELL 3.5\" LFF Blindblende / Blank Cover",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/473577270",
+    "price": {
+     "amount": 50,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Jessheim",
+    "coordinates": {
+     "lat": 60.1573,
+     "lon": 11.17631,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "seller_pays_shipping"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "475313927",
+    "heading": "Dell Compellent SC200 diskhylle inkl. LSI kontroller",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/475313927",
+    "price": {
+     "amount": 4000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Froland",
+    "coordinates": {
+     "lat": 58.5046,
+     "lon": 8.6465,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "473059608",
+    "heading": "DELL PowerEdge nvme Controller PCIe x16 Expander - GRATIS FRAKT",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/473059608",
+    "price": {
+     "amount": 649,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Sofiemyr",
+    "coordinates": {
+     "lat": 59.7972,
+     "lon": 10.8171,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "seller_pays_shipping"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "468711532",
+    "heading": "Server RAM DDR4 ECC 512GB – 8x64GB 3200 MHz RDIMM",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/468711532",
+    "price": {
+     "amount": 48000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Frogner",
+    "coordinates": {
+     "lat": 60.02468,
+     "lon": 11.10282,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "469067509",
+    "heading": "Server RAM DDR4 ECC 512GB – 8x64GB 3200 MHz RDIMM HPE",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/469067509",
+    "price": {
+     "amount": 48000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Frogner",
+    "coordinates": {
+     "lat": 60.02468,
+     "lon": 11.10282,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "433000254",
+    "heading": "Dell Server",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/433000254",
+    "price": {
+     "amount": 10000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Kristiansand S",
+    "coordinates": {
+     "lat": 58.12566,
+     "lon": 8.09863,
+     "accuracy": 5
+    },
+    "flags": [
+     "retailer"
+    ],
+    "trade_type": "Til salgs"
+   }
+  ],
+  "q=r730&condition=1&condition=2": [
+   {
+    "id": "468806731",
+    "heading": "Italeri Scania R730 Streamline 1:24 byggesett lastebil",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/468806731",
+    "price": {
+     "amount": 500,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Krokkleiva",
+    "coordinates": {
+     "lat": 60.062,
+     "lon": 10.31051,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "467731561",
+    "heading": "PERC H730 Mini Mono – 12Gb/s SAS RAID‑kontroller (1GB Cache)",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/467731561",
+    "price": {
+     "amount": 499,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Jessheim",
+    "coordinates": {
+     "lat": 60.1573,
+     "lon": 11.17631,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "seller_pays_shipping"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "474360977",
+    "heading": "128 GB DDR4-SK hynix (8×16 GB) + Xeon E5 v3, P440ar RAID, 800W PSU",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/474360977",
+    "price": {
+     "amount": 5250,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Stavanger",
+    "coordinates": {
+     "lat": 58.9947,
+     "lon": 5.67882,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "462624786",
+    "heading": "Server-RAM stort utvalg — DDR3/DDR4 ECC RDIMM/UDIMM 4-32GB",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/462624786",
+    "price": {
+     "amount": 49,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Jessheim",
+    "coordinates": {
+     "lat": 60.13836,
+     "lon": 11.16625,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   }
+  ],
+  "q=r730&condition=3&condition=4": [
+   {
+    "id": "477102268",
+    "heading": "Tekno 1:50 Scania R730 Timmerline",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/477102268",
+    "price": {
+     "amount": 2800,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Eidsberg",
+    "coordinates": {
+     "lat": 59.5134,
+     "lon": 11.30369,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "475664047",
+    "heading": "Dell PowerEdge R730 Server - 2x Intel Xeon E5-2660v3 - 384GB DDR4 - Homelab",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/475664047",
+    "price": {
+     "amount": 12000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Kristiansand S",
+    "coordinates": {
+     "lat": 58.10956,
+     "lon": 7.9734,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "474415716",
+    "heading": "Dell PowerEdge R730 kraftig 2U enterprise-server virtualisering",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/474415716",
+    "price": {
+     "amount": 32500,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Porsgrunn",
+    "coordinates": {
+     "lat": 59.07518,
+     "lon": 9.66909,
+     "accuracy": 9
+    },
+    "flags": [
+     "retailer"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "426464076",
+    "heading": "Dell PowerEdge R730",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/426464076",
+    "price": {
+     "amount": 4500,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Trondheim",
+    "coordinates": {
+     "lat": 63.3966,
+     "lon": 10.36421,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "473059608",
+    "heading": "DELL PowerEdge nvme Controller PCIe x16 Expander - GRATIS FRAKT",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/473059608",
+    "price": {
+     "amount": 649,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Sofiemyr",
+    "coordinates": {
+     "lat": 59.7972,
+     "lon": 10.8171,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "seller_pays_shipping"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "468711532",
+    "heading": "Server RAM DDR4 ECC 512GB – 8x64GB 3200 MHz RDIMM",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/468711532",
+    "price": {
+     "amount": 48000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Frogner",
+    "coordinates": {
+     "lat": 60.02468,
+     "lon": 11.10282,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "473051845",
+    "heading": "Intel Xeon E5-2620 v3 (2 stk) – LGA2011-3, 6-core – server/homelab",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/473051845",
+    "price": {
+     "amount": 200,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Holmestrand",
+    "coordinates": {
+     "lat": 59.48883,
+     "lon": 10.3157,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "469067509",
+    "heading": "Server RAM DDR4 ECC 512GB – 8x64GB 3200 MHz RDIMM HPE",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/469067509",
+    "price": {
+     "amount": 48000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Frogner",
+    "coordinates": {
+     "lat": 60.02468,
+     "lon": 11.10282,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "465550885",
+    "heading": "HPe ProLiant DL360 G9 – 512GB DDR4 ECC RAM! | 24 kjerner | 10GbE",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/465550885",
+    "price": {
+     "amount": 14000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Siggerud",
+    "coordinates": {
+     "lat": 59.7914,
+     "lon": 10.88073,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   }
+  ],
+  "q=r740&condition=1&condition=2": [
+   {
+    "id": "473899005",
+    "heading": "Ny Dell serverbatteri. To stykk",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/473899005",
+    "price": {
+     "amount": 500,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Larvik",
+    "coordinates": {
+     "lat": 59.04145,
+     "lon": 10.08669,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "462624786",
+    "heading": "Server-RAM stort utvalg — DDR3/DDR4 ECC RDIMM/UDIMM 4-32GB",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/462624786",
+    "price": {
+     "amount": 49,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Jessheim",
+    "coordinates": {
+     "lat": 60.13836,
+     "lon": 11.16625,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   }
+  ],
+  "q=r740&condition=3&condition=4": [
+   {
+    "id": "476154464",
+    "heading": "Dell PowerEdge R740 – 64 GB ECC RAM / 8×2 TB SAS / H730P / 10GbE",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/476154464",
+    "price": {
+     "amount": 8500,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Hommersåk",
+    "coordinates": {
+     "lat": 58.9272,
+     "lon": 5.85147,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "468742286",
+    "heading": "Dell Riser Board 0DTTHJ PCIe x16/x8 3.0 for PowerEdge R740 R740XD",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/468742286",
+    "price": {
+     "amount": 700,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Fjellhamar",
+    "coordinates": {
+     "lat": 59.9396,
+     "lon": 10.9843,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "433000254",
+    "heading": "Dell Server",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/433000254",
+    "price": {
+     "amount": 10000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Kristiansand S",
+    "coordinates": {
+     "lat": 58.12566,
+     "lon": 8.09863,
+     "accuracy": 5
+    },
+    "flags": [
+     "retailer"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "468711532",
+    "heading": "Server RAM DDR4 ECC 512GB – 8x64GB 3200 MHz RDIMM",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/468711532",
+    "price": {
+     "amount": 48000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Frogner",
+    "coordinates": {
+     "lat": 60.02468,
+     "lon": 11.10282,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "400139004",
+    "heading": "6 stk Intel Xeon Silver 4110 Prosessor CPU SR3B6 8 kjerner / 16 tråder",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/400139004",
+    "price": {
+     "amount": 100,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Skallestad",
+    "coordinates": {
+     "lat": 59.2053,
+     "lon": 10.44131,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "308226942",
+    "heading": "2 stk Intel Xeon Gold 6148 Prosessor CPU SR3B6 20 kjerner / 40 tråder",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/308226942",
+    "price": {
+     "amount": 650,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Skallestad",
+    "coordinates": {
+     "lat": 59.2053,
+     "lon": 10.44131,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "469067509",
+    "heading": "Server RAM DDR4 ECC 512GB – 8x64GB 3200 MHz RDIMM HPE",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/469067509",
+    "price": {
+     "amount": 48000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Frogner",
+    "coordinates": {
+     "lat": 60.02468,
+     "lon": 11.10282,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   }
+  ],
+  "q=r720xd&condition=1&condition=2": [],
+  "q=r720xd&condition=3&condition=4": [
+   {
+    "id": "469749680",
+    "heading": "Dell PowerEdge R720xd - 128 GB RAM - 2x Xeon E5 2620 CPU",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/469749680",
+    "price": {
+     "amount": 9000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Åkrehamn",
+    "coordinates": {
+     "lat": 59.2595,
+     "lon": 5.19342,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "seller_pays_shipping",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "468970308",
+    "heading": "Dell R730xd 12*LFF+2*SFF Server 2*E5-2680v4 128GB RAM H330 iDrac Ent X710 SFP+",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/468970308",
+    "price": {
+     "amount": 13750,
+     "currency_code": "NOK",
+     "price_unit": "NOK"
+    },
+    "location": "Trondheim",
+    "coordinates": {
+     "lat": 63.44200312664199,
+     "lon": 10.436691692383269
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   }
+  ],
+  "q=dl380+gen9&condition=1&condition=2": [
+   {
+    "id": "440873042",
+    "heading": "HPE 32GB DDR4-2400 ECC RDIMM SmartMemory – DL360 / DL380 Gen9",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/440873042",
+    "price": {
+     "amount": 1990,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Ås",
+    "coordinates": {
+     "lat": 59.67146,
+     "lon": 10.80356,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "474841752",
+    "heading": "HPE DL380 Gen9 Fan Cage / viftebrakett + 2 vifter",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/474841752",
+    "price": {
+     "amount": 490,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Ås",
+    "coordinates": {
+     "lat": 59.67146,
+     "lon": 10.80356,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "464683222",
+    "heading": "HPE CPU-kjøler / Heatsink til DL380 Gen9 – 747608-001 / 777290-001",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/464683222",
+    "price": {
+     "amount": 150,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Ås",
+    "coordinates": {
+     "lat": 59.67146,
+     "lon": 10.80356,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "seller_pays_shipping",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "464683966",
+    "heading": "HPE Smart Array P440ar RAID-kontroller til DL360 / DL380 Gen9",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/464683966",
+    "price": {
+     "amount": 290,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Ås",
+    "coordinates": {
+     "lat": 59.67146,
+     "lon": 10.80356,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "474839795",
+    "heading": "HPE Smart Storage Battery 96W - Gen9/Gen10 - spare P/N 875843-001",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/474839795",
+    "price": {
+     "amount": 199,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Ås",
+    "coordinates": {
+     "lat": 59.67146,
+     "lon": 10.80356,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "seller_pays_shipping",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "453285739",
+    "heading": "HPE ProLiant Gen8 / Gen9 / Gen10 2U Security Bezel m/lås og nøkkel",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/453285739",
+    "price": {
+     "amount": 1000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Klepp stasjon",
+    "coordinates": {
+     "lat": 58.7741,
+     "lon": 5.67382,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "474915483",
+    "heading": "HPE MC96 storage cell batteri 878643-001",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/474915483",
+    "price": {
+     "amount": 100,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Straumsgrend",
+    "coordinates": {
+     "lat": 60.3247,
+     "lon": 5.27314,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "474821356",
+    "heading": "HPE / Intel DC S3510 80GB Enterprise SSD inkl. 2.5\" Smart Carrier (pris per stk)",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/474821356",
+    "price": {
+     "amount": 249,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Ås",
+    "coordinates": {
+     "lat": 59.67146,
+     "lon": 10.80356,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "seller_pays_shipping",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "441389560",
+    "heading": "HP Ethernet 1Gb 4-port 366FLR Adapter (FlexIO)",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/441389560",
+    "price": {
+     "amount": 150,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Ås",
+    "coordinates": {
+     "lat": 59.67146,
+     "lon": 10.80356,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "474840519",
+    "heading": "LOT OF 5 | HPE 544+FLR-QSFP dual mode, 40Gb/s Ethernet, 56Gb/s InfiniBand",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/474840519",
+    "price": {
+     "amount": 790,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Ås",
+    "coordinates": {
+     "lat": 59.67146,
+     "lon": 10.80356,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "seller_pays_shipping",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "475299403",
+    "heading": "8x MI50 32GB",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/475299403",
+    "price": {
+     "amount": 7000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Oslo",
+    "coordinates": {
+     "lat": 59.91894,
+     "lon": 10.74127,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists"
+    ],
+    "trade_type": "Til salgs"
+   }
+  ],
+  "q=dl380+gen9&condition=3&condition=4": [
+   {
+    "id": "466396535",
+    "heading": "HPE ProLiant DL380 Gen9 LFF Server | E5 v4 | Opp til 768 GB ECC",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/466396535",
+    "price": {
+     "amount": 6990,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Ås",
+    "coordinates": {
+     "lat": 59.67146,
+     "lon": 10.80356,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "476213780",
+    "heading": "3stk - HPE 19\" 2U LFF Rack Rails - DL380 DL385 DL560 Gen8 Gen9 Gen10",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/476213780",
+    "price": {
+     "amount": 500,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Hundvåg",
+    "coordinates": {
+     "lat": 58.99664,
+     "lon": 5.73221,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "464685435",
+    "heading": "HPE 1400W Flex Slot Platinum Plus PSU til DL360 / DL380 Gen9 – 720620-B21",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/464685435",
+    "price": {
+     "amount": 690,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Ås",
+    "coordinates": {
+     "lat": 59.67146,
+     "lon": 10.80356,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "seller_pays_shipping",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "474151723",
+    "heading": "HPE 1400W Flex Slot Platinum Plus PSU til DL360 / DL380 Gen9 – 720620-B21",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/474151723",
+    "price": {
+     "amount": 590,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Kvelde",
+    "coordinates": {
+     "lat": 59.1919,
+     "lon": 9.97221,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "441592139",
+    "heading": "1 igjen | HPE 800W Flex Slot Platinum PSU til DL360 / DL380 Gen9",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/441592139",
+    "price": {
+     "amount": 449,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Ås",
+    "coordinates": {
+     "lat": 59.67146,
+     "lon": 10.80356,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "seller_pays_shipping",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "429995564",
+    "heading": "500 W Power Supply for HP Proliant DL360/DL380/ML350 Gen 10/Gen9 Server",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/429995564",
+    "price": {
+     "amount": 600,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Koppang",
+    "coordinates": {
+     "lat": 61.5707,
+     "lon": 11.0555,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "455322579",
+    "heading": "HPE 8-SFF Drive Cage m/ Backplane (777279-001) til DL380 Gen9",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/455322579",
+    "price": {
+     "amount": 1000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Klepp stasjon",
+    "coordinates": {
+     "lat": 58.7741,
+     "lon": 5.67382,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "455107692",
+    "heading": "HP ProLiant DL380 Gen9 - Xeon E5-2620v3, 64gb DDR4 ECC - perfekt til homelab",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/455107692",
+    "price": {
+     "amount": 4500,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Oslo",
+    "coordinates": {
+     "lat": 59.9101,
+     "lon": 10.72441,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "464682213",
+    "heading": "HPE High Performance Heatsink til DL380 Gen9 – 747607-001 / 777291-001",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/464682213",
+    "price": {
+     "amount": 200,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Ås",
+    "coordinates": {
+     "lat": 59.67146,
+     "lon": 10.80356,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "seller_pays_shipping",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "469674224",
+    "heading": "800W Power Supply for HP Proliant DL360/DL380/ML350 Gen9 Server",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/469674224",
+    "price": {
+     "amount": 400,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Koppang",
+    "coordinates": {
+     "lat": 61.5707,
+     "lon": 11.0555,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "469675650",
+    "heading": "HPE Proliant DL380 G9 - 2x E5-2630 V4 2.2GHz - 32GB RAM - Rails",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/469675650",
+    "price": {
+     "amount": 5000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Hundvåg",
+    "coordinates": {
+     "lat": 58.99664,
+     "lon": 5.73221,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "467711954",
+    "heading": "HP 500w server PSU",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/467711954",
+    "price": {
+     "amount": 500,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Stavanger",
+    "coordinates": {
+     "lat": 58.94755,
+     "lon": 5.72042,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "469067509",
+    "heading": "Server RAM DDR4 ECC 512GB – 8x64GB 3200 MHz RDIMM HPE",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/469067509",
+    "price": {
+     "amount": 48000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Frogner",
+    "coordinates": {
+     "lat": 60.02468,
+     "lon": 11.10282,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "469535061",
+    "heading": "HP Server Fan Module",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/469535061",
+    "price": {
+     "amount": 100,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Stavanger",
+    "coordinates": {
+     "lat": 58.94755,
+     "lon": 5.72042,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "468711532",
+    "heading": "Server RAM DDR4 ECC 512GB – 8x64GB 3200 MHz RDIMM",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/468711532",
+    "price": {
+     "amount": 48000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Frogner",
+    "coordinates": {
+     "lat": 60.02468,
+     "lon": 11.10282,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "441642940",
+    "heading": "Ca 20 stk diskrammer til HP G8 G9 G10",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/441642940",
+    "price": {
+     "amount": 100,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Skallestad",
+    "coordinates": {
+     "lat": 59.2053,
+     "lon": 10.44131,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "473051845",
+    "heading": "Intel Xeon E5-2620 v3 (2 stk) – LGA2011-3, 6-core – server/homelab",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/473051845",
+    "price": {
+     "amount": 200,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Holmestrand",
+    "coordinates": {
+     "lat": 59.48883,
+     "lon": 10.3157,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   }
+  ],
+  "q=supermicro+server&condition=1&condition=2": [
+   {
+    "id": "395547992",
+    "heading": "Supermicro CBL-SAST-0568",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/395547992",
+    "price": {
+     "amount": 50,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Stavanger",
+    "coordinates": {
+     "lat": 58.95617,
+     "lon": 5.73319,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "473853084",
+    "heading": "Supermicro MBD-X11DDW-L-0 Hovedkort (Nytt i eske)",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/473853084",
+    "price": {
+     "amount": 6000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Stathelle",
+    "coordinates": {
+     "lat": 59.0454,
+     "lon": 9.6563,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "472273061",
+    "heading": "Supermicro hovedkort med flere CPU- og RAM-plasser",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/472273061",
+    "price": {
+     "amount": 500,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Spikkestad",
+    "coordinates": {
+     "lat": 59.74448,
+     "lon": 10.33659,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "462624786",
+    "heading": "Server-RAM stort utvalg — DDR3/DDR4 ECC RDIMM/UDIMM 4-32GB",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/462624786",
+    "price": {
+     "amount": 49,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Jessheim",
+    "coordinates": {
+     "lat": 60.13836,
+     "lon": 11.16625,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "471457145",
+    "heading": "Server Rack APC NetShelter 4 Post Open Frame Rack - rack - 44U",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/471457145",
+    "price": {
+     "amount": 4500,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Heimdal",
+    "coordinates": {
+     "lat": 63.34986,
+     "lon": 10.36328,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "476946894",
+    "heading": "4x 32GB Samsung DDR3-1866 LRDIMM 4Rx4 (128GB) PC3-14900L M386B4G70DM0-CMA",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/476946894",
+    "price": {
+     "amount": 3850,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Hedalen",
+    "coordinates": {
+     "lat": 60.6039,
+     "lon": 9.74491,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "seller_pays_shipping",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "474360977",
+    "heading": "128 GB DDR4-SK hynix (8×16 GB) + Xeon E5 v3, P440ar RAID, 800W PSU",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/474360977",
+    "price": {
+     "amount": 5250,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Stavanger",
+    "coordinates": {
+     "lat": 58.9947,
+     "lon": 5.67882,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists"
+    ],
+    "trade_type": "Til salgs"
+   }
+  ],
+  "q=supermicro+server&condition=3&condition=4": [
+   {
+    "id": "474449641",
+    "heading": "Supermicro H13SAE-MF Server/Workstation- DDR5 - PCIe 5.0 - USB C",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/474449641",
+    "price": {
+     "amount": 19000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Frogner",
+    "coordinates": {
+     "lat": 60.02468,
+     "lon": 11.10282,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "448993044",
+    "heading": "server hovedkort Supermicro X10SRL-H TMP 2.0",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/448993044",
+    "price": {
+     "amount": 5000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Tiller",
+    "coordinates": {
+     "lat": 63.36234,
+     "lon": 10.39005,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "473390688",
+    "heading": "Supermicro server/workstation – 2x Xeon, 32 GB RAM, GTX 690",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/473390688",
+    "price": {
+     "amount": 4500,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Tananger",
+    "coordinates": {
+     "lat": 58.9562,
+     "lon": 5.59591,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "460978501",
+    "heading": "Supermicro H13SAE-MF Server - PCIe 5.0 - NVIDIA RTX A4000 Ada Gen 20GB VRAM",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/460978501",
+    "price": {
+     "amount": 33000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Frogner",
+    "coordinates": {
+     "lat": 60.02468,
+     "lon": 11.10282,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "476013521",
+    "heading": "Lavstrøms hjemmeserver/NAS – 6 SATA, 6 diskplasser, Supermicro",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/476013521",
+    "price": {
+     "amount": 1000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Fornebu",
+    "coordinates": {
+     "lat": 59.89224,
+     "lon": 10.61885,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "449145935",
+    "heading": "Supermicro 1U, 2x Xeon E5620, 64GB, 4x300 SAS, ssd, satadom, Perc H310",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/449145935",
+    "price": {
+     "amount": 1200,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Krokkleiva",
+    "coordinates": {
+     "lat": 60.062,
+     "lon": 10.31051,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "473726382",
+    "heading": "Supermicro 1U – EPYC 7302p - 8x32Gb DDR4 3200MHz",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/473726382",
+    "price": {
+     "amount": 30000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Sandnes",
+    "coordinates": {
+     "lat": 58.88087,
+     "lon": 5.73257,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "475115046",
+    "heading": "SERVER-RAM / DDR3 & DDR3L ECC Registered (RDIMM)",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/475115046",
+    "price": {
+     "amount": 30,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Grimstad",
+    "coordinates": {
+     "lat": 58.3625,
+     "lon": 8.62199,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "473051845",
+    "heading": "Intel Xeon E5-2620 v3 (2 stk) – LGA2011-3, 6-core – server/homelab",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/473051845",
+    "price": {
+     "amount": 200,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Holmestrand",
+    "coordinates": {
+     "lat": 59.48883,
+     "lon": 10.3157,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "472987857",
+    "heading": "192 GB DDR3 ECC RDIMM server-RAM – selges samlet",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/472987857",
+    "price": {
+     "amount": 3000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Lillehammer",
+    "coordinates": {
+     "lat": 61.15009,
+     "lon": 10.53046,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "449731348",
+    "heading": "Hynix HP 8GB DDR3 PC3-10600R 1333Mhz ECC Registered RAM-modul for server",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/449731348",
+    "price": {
+     "amount": 90,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Oslo",
+    "coordinates": {
+     "lat": 59.91168,
+     "lon": 10.74752,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "468711532",
+    "heading": "Server RAM DDR4 ECC 512GB – 8x64GB 3200 MHz RDIMM",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/468711532",
+    "price": {
+     "amount": 48000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Frogner",
+    "coordinates": {
+     "lat": 60.02468,
+     "lon": 11.10282,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "469067509",
+    "heading": "Server RAM DDR4 ECC 512GB – 8x64GB 3200 MHz RDIMM HPE",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/469067509",
+    "price": {
+     "amount": 48000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Frogner",
+    "coordinates": {
+     "lat": 60.02468,
+     "lon": 11.10282,
+     "accuracy": 5
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "449734732",
+    "heading": "Samsung HP 16GB DDR4 2400T 2400Mhz Registered ECC RAM",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/449734732",
+    "price": {
+     "amount": 850,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Oslo",
+    "coordinates": {
+     "lat": 59.91168,
+     "lon": 10.74752,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "449734229",
+    "heading": "Hynix HP HPE 16GB DDR4 2133P 2133Mhz Registered ECC RAM",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/449734229",
+    "price": {
+     "amount": 700,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Oslo",
+    "coordinates": {
+     "lat": 59.91168,
+     "lon": 10.74752,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "465550885",
+    "heading": "HPe ProLiant DL360 G9 – 512GB DDR4 ECC RAM! | 24 kjerner | 10GbE",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/465550885",
+    "price": {
+     "amount": 14000,
+     "currency_code": "NOK",
+     "price_unit": "kr"
+    },
+    "location": "Siggerud",
+    "coordinates": {
+     "lat": 59.7914,
+     "lon": 10.88073,
+     "accuracy": 5
+    },
+    "flags": [
+     "private"
+    ],
+    "trade_type": "Til salgs"
+   },
+   {
+    "id": "421957363",
+    "heading": "Supermicro SuperServer Rackmonterbar JBOD 4U",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/421957363",
+    "price": {
+     "amount": 14000,
+     "currency_code": "NOK",
+     "price_unit": "NOK"
+    },
+    "location": "Bergen",
+    "coordinates": {
+     "lat": 60.35394385378324,
+     "lon": 5.366144621817129
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   }
+  ],
+  "q=exos+16tb&condition=1&condition=2": [],
+  "q=exos+16tb&condition=3&condition=4": [
+   {
+    "id": "477135306",
+    "heading": "2 stk Exos X16 12TB SATA disker",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/477135306",
+    "price": {
+     "amount": 5000,
+     "currency_code": "NOK",
+     "price_unit": "NOK"
+    },
+    "location": "Arnatveit",
+    "coordinates": {
+     "lat": 60.407697421670015,
+     "lon": 5.475540378738432
+    },
+    "flags": [
+     "private",
+     "shipping_exists",
+     "seller_pays_shipping",
+     "buy_now"
+    ],
+    "trade_type": "Til salgs"
+   }
+  ],
+  "q=ultrastar+16tb&condition=1&condition=2": [],
+  "q=ultrastar+16tb&condition=3&condition=4": []
+ },
+ "items": {
+  "475299403": {
+   "title": "8x MI50 32GB",
+   "description": "Selger AMD Radeon Instinct MI50 32GB HBM2 – GPU bygget for AI-inferens og HPC.\nJeg har 8 av disse på lager. Pris per stk\n• 32GB HBM2 (1 024 GB/s båndbredde)\n• 13,4 TFLOPS FP32 / 26,5 TFLOPS FP16 / 6,6 TFLOPS FP64\n• Vega 20 (GCN 5.1) – PCIe 4.0 x16\n• 250-300 W TDP, 2× 8-pin EPS-kontakt\n• Passivkjølt – krever serverairflow eller DIY-blower\n1 stk MI50 32GB:\n  • Qwen 14B Q4 (~8,5 GB) ≈ 85–100 tok/s\n  • Qwen 7B Q4 → 150+ tok/s\n  • Whisper large-v3 → ~13× sanntid\n  • Stable Diffusion 1.5 / SDXL (FP16) → fungerer\n  • Mistral, LLaMA 3 8B, Phi-3 → alle fint\nPROGRAMVARE\n  ✓ PyTorch (offisielle ROCm-builds)\n  ✓ llama.cpp / Ollama / LM Studio\n  ✓ vLLM (ROCm-fork eller offisiell ROCm-støtte)\n  ✓ Hugging Face Transformers\n  ✓ Stable Diffusion WebUI (Automatic1111 / Forge)\n• 2U+ rack-kabinett med airflow:\n    Dell R730xd / R740xd\n    HP DL380 Gen9 / Gen10\n    Supermicro 2U med GPU-SKU\n    – eller DIY 3D-printet blower-deksel\n• PSU 750 W+ for ett kort, 1100 W+ for to\n• 2× 8-pin EPS per kort \n• Linux med ROCm 5.7+ (Ubuntu 22.04 / 24.04, Debian 12)\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "468970308": {
+   "title": "Dell R730xd 12*LFF+2*SFF Server 2*E5-2680v4 128GB RAM H330 iDrac Ent X710 SFP+",
+   "description": "Dell PowerEdge R730xd – 12x 3.5\" LFF (Front) + 2x 2.5\" SFF (Bak) SAS12G/SATA6G – Dual Intel Xeon E5-2680 v4 – 128 GB RAM (2x 64GB DIMMs) – Dell X710/I350 2x 10 GbE BaseX (SFP+) + 2x 1 GbE BaseT (RJ-45) - 2x 240 GB Dell SATA SSD - 2x 2,5\" SFF Dell Caddies - 6x 3,5\" LFF Dell Caddies\nDenne Dell PowerEdge R730xd rackserveren er i meget god kosmetisk tilstand og er fullt utstyrt for krevende arbeidsbelastninger som lagring, virtualisering, databaser, hosting og avanserte bedriftsapplikasjoner.\nSpesifikasjoner:\n* Modell: Dell PowerEdge R730xd (12x 3,5\" LFF + 2x 2,5\" SFF SAS12G/SATA6G)\n* Chassis: 12x 3,5\" LFF (Front) + 2x 2,5\" SFF (Bak) – 6 PCIe-spor (Alle risere inkludert)\n* CPU: 2x Intel Xeon E5-2680 v4\n- 14 Kjerner / 28 Tråder per CPU (Totalt: 28K/56T)\n- 2.40 GHz Base / 3.40 GHz Turbo\n- 35MB Cache – 120W TDP\n* Minne: 128GB DDR4-2400T (2x 64GB DIMMs) – (24 DIMMs - Max: 3TB)\n* Lagring / Disker: 2x Dell 240GB SATA SSD (installert i diskrammer - bak)\n* RAID-kontroller: Dell PERC H330 Mini Mono SAS12G/SATA6G\n* Nettverk: Dell Ethernet 10G 4P X710/I350 rNDC Daughter Card\n- 2x 10 GbE BaseX (SFP+) (Intel X710)\n- 2x 1 GbE BaseT (RJ-45) (Intel I350)\n* Strømforsyning (PSU): 2x Dell 1100W Platinum strømforsyninger\n* Administrasjon (Management): iDRAC 8 Enterprise (fjernstyring aktivert med Enterprise-lisensnøkkel)\n* Frontdeksel (Bezel): Inkludert (Originalt med lås og nøkkel)\n* Skinnepakke: Inkludert (Original Dell 2U skinnepakke)\n* Diskrammer (Caddies): 2x 2,5\" (Installert med disker) + 6x 3,5\" (Ingen disker inkludert i disse)\nTilstand:\n* Visuell stand: Svært god – godt vedlikeholdt\n* Testet: Fullt funksjonell og klar til bruk\nKun henting. Ta gjerne kontakt dersom du har spørsmål eller ønsker mer informasjon.\n---\nDell PowerEdge R730xd – 12x 3.5\" LFF (Front) + 2x 2.5\" SFF (Back) SAS12G/SATA6G – Dual Intel Xeon E5-2680 v4 – 128 GB RAM (2x 64GB DIMMs) – Dell X710/I350 2x 10 GbE BaseX (SFP+) + 2x 1 GbE BaseT (RJ-45) - 2x 240 GB Dell SATA SSD - 2x 2,5\" SFF Dell Caddies - 6x 3,5\" LFF Dell Caddies\nThis Dell PowerEdge R730xd rack server is in very good visual condition and fully equipped for demanding workloads such as storage, virtualisation, databases, hosting, and enterprise applications.\nSpecifications:\n* Model: Dell PowerEdge R730xd (12x 3.5\" LFF + 2x 2.5\" SFF SAS12G/SATA6G) \n* Chassis: 12x 3.5\" LFF (Front) + 2x 2.5\" SFF (Back) – 6 PCIe Slots (All risers Included)\n* CPU: 2x Intel Xeon E5-2680 v4\n- 14 Cores / 28 Threads each (Total: 28C/56T)\n- 2.40 GHz Base / 3.40 GHz Turbo\n- 35MB Cache – 120W TDP\n* Memory: 128GB DDR4-2400T (2x 64GB DIMMs) – (24 DIMMs - Max: 3TB)\n* Drives: 2x Dell 240GB SATA SSDs (installed in caddies - back)\n* RAID Controller: Dell PERC H330 Mini Mono SAS12G/SATA6G\n* Network: Dell Ethernet 10G 4P X710/I350 rNDC Daughter Card\n- 2x 10 GbE BaseX (SFP+) (Intel X710)\n- 2x 1 GbE BaseT (RJ-45) (Intel I350)\n* Power Supplies: 2x Dell 1100W Platinum PSU\n* Management: iDRAC 8 Enterprise (remote management enabled with enterprise license key)\n* Front Bezel: Included (Original with lock and key)\n* Rail Kit: Included (Original Dell 2U Rail Kit)\n* Caddies: 2x 2.5\" (Installed with drives) + 6x 3.5\" (No drives included)\nCondition:\n* Visual: Very Good – well maintained\n* Tested: Fully functional, ready for deployment\nPick-up only. Please do not hesitate to send a message.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "219121915": {
+   "title": "Dell PowerEdge R730xd 2x 10core Xeon 2,3GHz, 64GB ram, 24x600GB NVIDIA Tesla P4",
+   "description": "Super server med 24stk 2,5\" 600Gb harddisker i front, totalt 20 kjerner prosessor og 64GB ram.\nMedfølger 24x 600Gb SAS 10000RPM 2,5\" disker i caddies, Totalt 21,6Tb lagringsplass.\nSlenger også med 5stk ekstra disker som reserve. \nMaskinen har også et NVIDIA Tesla P4 aksellerator / skjermkort. Perfekt for transkoding av video til Plex media server, eller lette AI modeller.\nOm ønskelig kan LFF Midplane følge med. Dette er en ramme som sitter midt i chassiset som kan huse 4*3,5\" disker. For å ta dette i bruk må du eventuelt kjøpe lavprofil cpu kjølere. \nTillegg for midplane er 1500Kr\nSpesifikasjon:\n2x Intel® Xeon® Processor E5-2650 v3 25M Cache, 2.30 GHz 10C/20T\n4x 16GB RAM, totalt 64GB.\nDell PERC H730P 2GB Minicard RAID kontroller\n2x 750W PSU\n2x 10GbE + 2x 1GbE nettverk (QLogic 57800 2x10Gb BT + 2x1Gb BT Network Daughter Card)\nIdrac 8 Enterprise managment system\nKan sendes i posten om ønskelig. Må i tilfelle sendes i to forsendelser med diskene løst. \nKodeord: Dell, PowerEdge, Freenas, proxmox, unraid, lagringsserver, nas, filserver, server, rack\nSe også min Dell Compellent SC200 diskhylle jeg også selger https://www.finn.no/475313927\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "474398976": {
+   "title": "PowerEdge R730XD - 384GB - 28 cores - 16 x 3.5 + 2 x 2.5",
+   "description": "Selger en kraftig 2U Dell server. Denne er også veldig fleksibel med hele 16 3.5 tommer diskslotter hvorav 4 av dem er montert med 2.5 tommer kit + 2 x 2.5 tommer flex bay på baksiden.\nDet gjør at du har mange muligheter for hvordan du ønsker å sette denne opp. Med disse spesifikasjonene kan den brukes til det meste. Har vært i bruk helt til nå så kan verifisere at den fungere. Vil også demonstrere dette ved evt kjøp.\nDen står pr nå montert med PERC H730 mini raid-controller men den kom opprinnelig med HBA330 som jeg fortsatt har og som du får med så her kan du velge utifra hva du har behov for.\n-Chassis Type: 2U Rack Chassis with up to 12 + 4 Internal 3.5\" Hard Drives and 2 x 2.5\" Flex Bay Hard Drives\n-Processors (CPU): 2 x Intel Xeon E5-2660 v4 (2.0GHz, 35M Cache, 9.60GT/s QPI, Turbo, Hyper-Threading, 14 Cores / 28 Threads, 105W)\n-Memory (RAM): 384 GB Total — 12 x 32GB RDIMM, 2400MT/s, Dual Rank, x4 Data Width (Performance Optimized)\n-Network Daughter Card (RNDC): 1 x Intel Ethernet i350 Quad Port 1GbE\n-PCIe Network Adapter: 1 x Mellanox ConnectX-3 Pro Dual Port 10GbE SFP+ (Full Height)\n-Power Supplies: Dual Hot-Plug Redundant Power Supplies (1+1), 750W\n-Remote Management: iDRAC8 Enterprise (integrated Dell Remote Access Controller, Enterprise license with dedicated port)\n-Security: PowerEdge Server FIPS TPM 2.0 (Trusted Platform Module)\n-Medfølger 1 stk orginal 240GB Enterprise SSD i flex bay.\nKjente feil/mangler:\n- Låsemekanismen på topplokket av serveren fungerer ikke fordi en plastikk-pin har brekt. Derfor får man ikke låst fast lokket, men det sklir på plass. Har ingen betydning for serverens operasjon untatt at man må være klar over det.\n- PERC-kontrolleren har ikke batteri installert. Jeg har derimot kjøpt batteri til den men det er bare ikke montert. Batteriet medfølger.\nMå hentes i Trondheim.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "473386139": {
+   "title": "Dell R730XD LFF 128GB RAM 2x E5-2650 v3",
+   "description": "Dell R730XD server selges.\n12x LFF + 2x SFF hdd bays\n2x Intel E5-2650v3 CPU (10 core)\n128GB RAM (8x16GB)\nPERC H730 RAID controller\nIntel X520 NIC 2xSFP+, 2x RJ45 Gbit.\n1x 750W PSU\nDisk trays følger ikke med.\nMå hentes i Oslo.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "461843162": {
+   "title": "GI BUD! Kraftig Dell PowerEdge R730xd 2U rack server med 48TB og svært mye minne",
+   "description": "Selger en kraftig Dell PowerEdge R730xd LFF 2U rackserver med svært mye minne. Passer godt til Proxmox, VMware, Hyper-V, TrueNAS, Unraid, ZFS, homelab, virtualisering, backup, labmiljø, databaser eller tyngre serveroppgaver.\nDette er LFF-utgaven med 3.5” hot-swap diskplasser.\nSpesifikasjoner:\n* Modell: Dell PowerEdge R730xd LFF\n* CPU: 2x Intel Xeon E5-2680 v4 @ 2.40GHz\n* Kjerner/tråder: 28 kjerner / 56 tråder totalt\n* RAM: 768GB Micron DDR4 ECC 2666 serverminne\n* Disker: 12x 4TB 3.5” disker\n* Rå lagringskapasitet: 48TB\n* Nettverk: 10G NIC\n* Formfaktor: 2U rackserver\n* Diskplasser: 12x 3.5” hot-swap i front\nServeren har ekstremt mye RAM for denne generasjonen og egner seg spesielt godt til mange virtuelle maskiner, ZFS/TrueNAS, store labmiljøer eller minnekrevende tjenester.\nSelges som brukt enterprise-utstyr. Henting foretrekkes, da serveren er tung. Frakt kan eventuelt avtales, men kjøper betaler frakt og risiko/emballasje.\nPris: 65 000 kr\nSeriøse bud vurderes. Skambud besvares ikke.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "473577270": {
+   "title": "DELL 3.5\" LFF Blindblende / Blank Cover",
+   "description": "Selger 6x DELL 3.5\" LFF Blindblende / Blank Cover. \nDisse passer til Dell Poweredge (kom ut av en r730xd).\nOBS! Pris er pr. stk\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "475313927": {
+   "title": "Dell Compellent SC200 diskhylle inkl. LSI kontroller",
+   "description": "Dell Compellent SC200 / PowerVault MD1200 diskhylle selges. \nDenne har plass til 12*3,5\" disker.\nMedfølger LSI 9207-8e SAS HBA kontroller og SAS kabler.\nOm ønskelig kan det medfølge ønsket antall 4Tb disker for 400Kr stk.\nSe også min Dell R730xd som jeg selger https://www.finn.no/219121915\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "473059608": {
+   "title": "DELL PowerEdge nvme Controller PCIe x16 Expander - GRATIS FRAKT",
+   "description": "DELL PowerEdge nvme Controller PCIe x16 Expander\nFor use in PowerEdge R630, R730, R730XD r920 r930  \n This is a NVMe hot-swap option that consists of a 4-port card that splits the PCI-E x16 slot into 4x ways and connects to a hotswap backplane bay in the front for 4x NVMe drives, Slots 4.  \nINTERFACE: ( 4 ) FOUR MINI SAS HD SFF-8643  \nModel: ucea-200 dell\nNB!! Bare full profil brakett følger med!!  \nFølger ikke med ledning. \nKan hentes på Kolbotn rett utenfor Oslo, overleveres i arb. tid i Oslo sentrum, eller sendes med Fiks Ferdig. \n0p31h2, p31h2,  0GY1TD, R630 R730 R730xd R920 R930\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "468711532": {
+   "title": "Server RAM DDR4 ECC 512GB – 8x64GB 3200 MHz RDIMM",
+   "description": "512 GB DDR4 PC4 ECC 3200 Server RAM\n8x64 GB moduler\nTotalt 512GB RAM DDR4\nKan sendes!\n-- Spesifikasjoner per brikke---\n- 64GB kapasitet\n- DDR4 ECC Registered (RDIMM)\n- 3200 MHz (PC4-25600)\n- 2Rx4\nTestet og fungerer som den skal.\nAlle modulene er like og har de samme spesifikasjonene som den som er vist på bildet.\nPasser til servere og workstations som støtter 64 GB ECC RDIMM\n---\nTagger: dell r630, dell r730, dell r730xd, dell r740, dell r740xd, dell r640, dell r650, dell poweredge, hpe d1360 gen9, hpe dl38Q gen9, hpe dl360 gen10, hpe dl380 gen10, hpe proliant, lenovT sr630, lenovo sr650, lenovo thinksystem, supermicro x10, supermicro x11, supermicro server\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "469067509": {
+   "title": "Server RAM DDR4 ECC 512GB – 8x64GB 3200 MHz RDIMM HPE",
+   "description": "512 GB DDR4 PC4 ECC 3200 Server HPE original RAM\nPasser til alle servere og workstations som støtter 64 GB DDR4 ECC Registered RDIMM moduler.\n8x64 GB moduler\nTotalt 512GB DDR4 RAM\nKan sendes!\n-- Spesifikasjoner per brikke ---\n- 64GB kapasitet\n- DDR4 ECC Registered (RDIMM)\n- 3200 MHz (PC4-3200AA / PC4-25600)\n- 2Rx4\n- CL22\n- 1.2 V\n- SK hynix HMAA8GR7CJR4N-XN\n- HPE Part Number: P11446-0A1\n- HPE Spare Part: P21676-001\nTestet og fungerer som den skal.\nAlle modulene er like og har de samme spesifikasjonene som den som er vist på bildet\n---\nTagger: dell r630, dell r730, dell r730xd, dell r740, dell r740xd, dell r640, dell r650, dell poweredge, hpe dl360 gen9, hpe dl380 gen9, hpe dl360 gen10, hpe dl380 gen10, hpe proliant, lenovo sr630, lenovo sr650, lenovo thinksystem, supermicro x10, supermicro x11, supermicro server\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "433000254": {
+   "title": "Dell Server",
+   "description": "Vi har et stort utvalg av brukte Dell PowerEdge-servere på lager i Norge, klare til levering.\r\nAlle servere kan tilpasses og bygges etter dine spesifikasjoner, enten du trenger kraftige rackservere for virtualisering, lagring, backup, datasenter, testmiljø eller hjemmelab.\r\nVåre Dell-servere leveres ferdig testet, oppgradert og klare til bruk – med garanti og rask levering.\r\nDell PowerEdge-modeller på lager (eksempler)\r\nVi har de mest populære modellene for både ytelse og fleksibilitet:\r\nDell PowerEdge R730xd – populær 2U-lagringsserver med plass til mange disker\r\nDell PowerEdge R740xd – høyytelsesmodell med fleksibel diskstøtte (2.5\"/3.5\")\r\nDell PowerEdge R740 – allsidig dual CPU-server for virtualisering og produksjon\r\nDell PowerEdge R640 – kompakt 1U-server med høy tetthet og ytelse\r\nDell PowerEdge R650 xs - krafrig 3de Gen Xeon Scalable CPU og NVME U.2 drives \r\nDell Precision Rack R7920 / R7910 (Rack 7910) – ideell for tunge beregninger, rendering og GPU-jobber\r\nBesøk vår nettbutikk:\r\nhttps://axentra.no/collections/servere\r\nDisse Dell-modellene dekker alt fra enterprise IT-drift til lab- og utviklingsservere.\r\nAlle systemer kan leveres med ønsket CPU, RAM, lagring, kontrollerkort og nettverkskort.\r\nOppgraderinger og tilbehør – Dell originaldeler og kompatible alternativer\r\nVi tilbyr et bredt utvalg av kompatible oppgraderinger og reservedeler for Dell PowerEdge-serien, inkludert originale Dell-komponenter.\r\nLagring og caddyer\r\nM.2 disker (NVMe og SATA)\r\nDual M.2 adapter (Dell DPWC300 / 023PX6)\r\nQuad M.2 adapter (Dell DPWC400 / 06N9RH)\r\n2.5\" SSD-disker – Enterprise SATA/SAS\r\n3.5\" caddyer og 2.5\" caddyer\r\nOvergang fra 3.5\" til 2.5\" (Dell 9W8C4)\r\nProsessor og minne\r\nIntel Xeon E5, Silver, Gold og Platinum CPU-er\r\nRAM-oppsett fra 32GB til 1TB+ ECC DDR4 / DDR5\r\nKonfigureres for VMware, Proxmox, Hyper-V, TrueNAS, pfSense m.m.\r\nKontrollerkort og nettverk\r\nLSI 9300-8i HBA (IT-mode SAS-kontroller) – perfekt for ZFS og TrueNAS\r\nIntel 10GbE X520-DA2 Dual SFP+\r\nIntel XXV710-DA2 Dual 25GbE SFP28\r\nMellanox ConnectX-4 Lx Dual 10/25GbE SFP28\r\nIntel X540-T2 Dual 10GBase-T (Dell 03DFV8)\r\nIntel X550-T2 Dual 10GBase-T 10GbE\r\nAnnet Dell-tilbehør\r\nRack rails / rackskinner\r\nStrømforsyninger (PSU) for Dell PowerEdge-serien\r\nVifter, bakplan og kabelsett ved behov\r\nKvalitet, testing og garanti\r\nAlle Dell-servere gjennomgår grundig kvalitetskontroll og testing før levering:\r\nFull maskinvaretest (RAM, CPU, disker, kontroller, PSU)\r\nFirmware-oppdatering og BIOS-konfigurasjon\r\nRengjøring, gjennomgang og funksjonstest\r\nLeveres klar til drift med garanti\r\nDette sikrer at du får en stabil og driftssikker server med lang levetid og høy ytelse\r\nHvorfor velge brukte Dell-servere fra oss\r\nStort lager i Norge – rask levering\r\nSkreddersydd konfigurasjon etter behov\r\nDell originalkomponenter og kompatible alternativer\r\nRimeligere enn nye systemer, uten å gå på kompromiss med kvalitet\r\nVelegnet for både bedrifter og privatpersoner\r\nTypiske bruksområder\r\nVirtualisering med VMware, Hyper-V eller Proxmox\r\nLagringsserver / NAS / TrueNAS / Unraid / ZFS\r\nBackup og arkiv\r\nWebhosting og applikasjonsdrift\r\nAI, maskinlæring, renderfarm og GPU-servere\r\nIT-lab og testmiljøer\r\nBe om tilbud i dag\r\nSend oss gjerne informasjon om:\r\nHvilken Dell-modell du ønsker (f.eks. R740xd)\r\nAntall CPU-er, ønsket minne og diskkonfigurasjon\r\nEventuelt behov for HBA, RAID eller nettverkskort\r\nRask levering fra vårt lager i Norge\r\nDell PowerEdge, Dell server, brukt Dell server, Dell R740xd, Dell R730xd, Dell R740, Dell R640, Dell Rackserver, brukt rackserver Norge, refurbished Dell server, Dell server til salgs, brukt server med garanti, Dell datasenter server, Dell PowerEdge R740 pris, Dell server konfigurert, brukt IT-utstyr Norge, Dell enterprise hardware, 10GbE nettverkskort, LSI 9300-8i IT-mode, Dell M.2 adapter, Dell SSD, Dell PowerEdge oppgraderinger, Dell server deler, Dell server Norway, Dell server reseller.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "468806731": {
+   "title": "Italeri Scania R730 Streamline 1:24 byggesett lastebil",
+   "description": "Italeri Scania R730 Streamline byggesett i skala 1:24 med lastebilmotiv. Esken inneholder deler, dekaler og instruksjonsark for montering.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "467731561": {
+   "title": "PERC H730 Mini Mono – 12Gb/s SAS RAID‑kontroller (1GB Cache)",
+   "description": "Selger en Dell PERC H730 Mini Mono (1Gb batteri sikret cache) kompatibel med PowerEdge‑servere som R430, R530, R630, R730 m.fl.\nKontrolleren fungerer som den skal og er testet før demontering. Perfekt oppgradering for deg som trenger rask (12Gb/s) og stabil RAID‑ytelse i Dell‑servere. Kortet støtter også såkalte 'HBA' modus.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "474360977": {
+   "title": "128 GB DDR4-SK hynix (8×16 GB) + Xeon E5 v3, P440ar RAID, 800W PSU",
+   "description": "Deler fra en HPE ProLiant ML350 Gen9 som demonteres. Alt er testet og fungerer bra.\nSelges både som deler og som komplett server, du velger.\nHele maskinen ferdig montert og i drift: 11 000 kr. Enkeltdeler til prisene under.\n128 GB DDR4-2133 ECC SK hynix (8× 16 GB) \n— 5 250 kr for alle 8 ellers 800 kr per pinne. Registrert ECC-minne til Xeon E5 v3/v4: HPE Gen9, Dell R730, Supermicro X10 m.fl. DDR4 er dyrt om dagen — dette er 128 GB til en brøkdel av nypris. Sendes trygt som Fiks ferdig.\n2× Intel Xeon E5-2650 v3 \n— 700 kr for begge eller 400 kr per stk.\n10 kjerner / 20 tråder hver, 20 kjerner totalt for under en tusenlapp.\nHPE Smart Array P440ar, 2 GB FBWC — 700 kr\n12 Gb/s SAS-kontroller med flash-backed write cache og kondensator. RAID 0/1/5/6/10/50/60. Monteres i HPEs dedikerte kontrollerspor på Gen9.\n2× HPE 800 W hot-swap PSU \n— 800 kr for begge eller 450 kr per stk. Platinum-effektivitet, redundant drift.\n6× HPE 600 GB 10K SAS (EG0600FBVFP) \n— 1 250 kr for alle eller 250 kr per stk. \n3,6 TB rå kapasitet.\n2× Intel DC S3610 200 GB SATA SSD \n— 350 kr per stk\nEnterprise-SSD med strømtapsbeskyttelse og høy TBW. Bygget for 24/7-skriving.\nBarebone — 3 000 kr\nKabinett, hovedkort, backplane med 8 SFF-brønner, vifter og all kabling.\nStartpakke: barebone + begge CPU + P440ar + begge PSU = 4 500 kr. Da mangler du bare RAM og disker.\nHele maskinen komplett = 11 000 kr. Delene til sammen koster over 13 000, kjøper du flere av dem, er hele serveren klart billigst.\nPerfekt til Proxmox, TrueNAS, ESXi, Unraid eller homelab. Kan vises i drift før salg.\nHentes i Stavanger. RAM, CPU, kontroller, PSU og SSD sendes trygt via Fiks ferdig. Kabinettet bør hentes.\nSi fra hvis du vil ha flere deler samlet, så finner vi en pris.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "462624786": {
+   "title": "Server-RAM stort utvalg — DDR3/DDR4 ECC RDIMM/UDIMM 4-32GB",
+   "description": "SERVER-RAM / SERVERMINNE — DDR3, DDR3L og DDR4 ECC Registered\nPriser fra 50 kr per brikke · alle testet og fungerer 100 %\nKapasiteter: 4GB, 8GB, 16GB, 32GB. Formater: RDIMM, LRDIMM, UDIMM.\nPasser i de fleste HP ProLiant, Dell PowerEdge, IBM / Lenovo System x, Cisco UCS, Supermicro og Fujitsu rack-servere.\nSend melding med referansen (#R-xxx) og hvor mange du trenger, så bekrefter jeg antall på lager og totalpris.\nTrenger du et matchet sett — 2, 4 eller 8 like — prøver jeg å komme så nær helt like brikker som mulig. Brikkene er uansett samme modell og spesifikasjon selv om serienummeret ikke matcher 100 %.\nGratis frakt med liten pakke opp til 5 kg via Fiks Ferdig.\n▸ DDR4 ECC REGISTERED\nPasser typisk: Xeon E5 v3/v4 og Xeon Scalable — HP ProLiant Gen9/Gen10, Dell PowerEdge R630/R730/R640/R740, Lenovo System x M5, Cisco UCS M4/M5, Supermicro X10/X11.\n--- DDR4 8GB ---\n[R-040] Micron 8GB 1Rx4 PC4-2133P-RCP-10 RDIMM — 250 kr/stk\n[R-061] Samsung 8GB 1Rx4 PC4-2133P-RC0-10-MB1 RDIMM — 250 kr/stk\n[R-017] SK Hynix 8GB 2Rx8 PC4-2133P-RE0-10 RDIMM — 250 kr/stk\n--- DDR4 16GB ---\nTomt\n--- DDR4 32GB ---\n[R-049] Micron 32GB 2Rx4 PC4-2400T-RB2-11 RDIMM — 850 kr/stk\n▸ DDR3L ECC REGISTERED (lavspent 1,35 V)\nPasser typisk: Xeon E5 v1/v2 og Xeon 5600 — HP ProLiant Gen8, Dell PowerEdge R620/R720, IBM/Lenovo System x M4, Supermicro X9. Kjører også i de fleste 1,5 V DDR3-servere.\n--- DDR3L 4GB ---\n[R-021] Kingston 4GB 1Rx4 PC3L-10600R-9-12-C2 RDIMM — 50 kr/stk\n[R-025] Samsung 4GB 1Rx4 PC3L-12800R-11-12-C2-D3 RDIMM — 50 kr/stk\n--- DDR3L 8GB ---\n[R-015] Samsung 8GB 2Rx4 PC3L-10600R-9-10-E1-D2 RDIMM — 100 kr/stk\n[R-046] SK Hynix 8GB 2Rx4 PC3L-10600R RDIMM — 100 kr/stk\n[R-055] SK Hynix 8GB 2Rx4 PC3L-10600R-9-11-E2 RDIMM — 100 kr/stk\n[R-057] Nanya 8GB 2Rx4 PC3L-10600R-9-10-J1 RDIMM — 100 kr/stk\n[R-058] Micron 8GB 2Rx4 PC3L-10600R-9-11-J0 RDIMM — 100 kr/stk\n[R-060] Samsung 8GB 2Rx4 PC3L-10600R-9-11-E2-D3 RDIMM — 100 kr/stk\n[R-044] Samsung 8GB 1Rx4 PC3L-12800R-11-11-C2-P2 RDIMM — 100 kr/stk\n--- DDR3L 16GB ---\n[R-001] SK Hynix 16GB 2Rx4 PC3L-10600R-9-12-E2 RDIMM — 200 kr/stk\n[R-016] Micron 16GB 2Rx4 PC3L-10600R-9-13-E2 RDIMM — 200 kr/stk\n[R-020] Elpida 16GB 2Rx4 PC3L-10600R-9-11-E2 RDIMM — 200 kr/stk\n[R-027] Samsung 16GB 2Rx4 PC3L-12800R-11-11-E2-D3 RDIMM — 200 kr/stk\n[R-034] SK Hynix 16GB 2Rx4 PC3L-12800R-11-13-E2 RDIMM — 200 kr/stk\n[R-035] Samsung 16GB 2Rx4 PC3L-12800R RDIMM — 200 kr/stk\n[R-050] Samsung 16GB 2Rx4 PC3L-12800R-11-12-E2-P3 RDIMM — 200 kr/stk\n[R-005] Samsung 16GB 4Rx4 PC3L-8500R-7-10-F0-D2 RDIMM — 200 kr/stk\n[R-059] SK Hynix 16GB 4Rx4 PC3L-8500R-7-10-F0 RDIMM — 200 kr/stk\n▸ DDR3 ECC REGISTERED\nPasser typisk: Xeon 5500/5600 og E5 v1/v2 — HP ProLiant G6/G7/Gen8, Dell PowerEdge R610/R710/R620/R720, IBM System x M3/M4, Supermicro X8/X9.\n--- DDR3 4GB ---\n[R-023] Micron 4GB 2Rx4 PC3-10600R-9-10-J0 RDIMM — 50 kr/stk\n[R-024] Nanya 4GB 2Rx4 PC3-10600R-9-10-E1 RDIMM — 50 kr/stk\n[R-056] SK Hynix 4GB 2Rx4 PC3-10600R-9-10-E1 RDIMM — 50 kr/stk\n[R-026] SK Hynix 4GB 1Rx4 PC3-12800R-11-11-C2 RDIMM — 50 kr/stk\n[R-022] SK Hynix 4GB 1Rx4 PC3-14900R-13-12-C2 RDIMM — 50 kr/stk\n[R-047] SK Hynix 4GB 2Rx8 PC3-14900E-13-12-E3 UDIMM — 100 kr/stk\n--- DDR3 8GB ---\n[R-014] SK Hynix 8GB 2Rx4 PC3-10600R-9-10-E1 RDIMM — 100 kr/stk\n[R-032] Samsung 8GB 2Rx4 PC3-10600R-9-11-E2-P2 RDIMM — 100 kr/stk\n[R-041] Micron 8GB 2Rx4 PC3-10600R-9-11-E2 RDIMM — 100 kr/stk\n[R-019] SK Hynix 8GB 2Rx4 PC3-12800R-11-12-E2 RDIMM — 100 kr/stk\n[R-042] Samsung 8GB 2Rx4 PC3-12800R-11-11-E2-D3 RDIMM — 100 kr/stk\n[R-045] SK Hynix 8GB 1Rx4 PC3-14900R-13-12-C2 RDIMM — 100 kr/stk\n[R-013] Samsung 8GB 4Rx8 PC3-8500R-7-10-H0-D2 RDIMM — 100 kr/stk\n[R-018] SK Hynix 8GB 4Rx8 PC3-8500R-7-10-H0 RDIMM — 100 kr/stk\n--- DDR3 16GB ---\n[R-030] Samsung 16GB 2Rx4 PC3-12800R-11-11-E2-P2 RDIMM — 200 kr/stk\n[R-043] Micron 16GB 2Rx4 PC3-12800R-11-11-E2 RDIMM — 200 kr/stk\n[R-053] Samsung 16GB 2Rx4 PC3-12800R-11-12-E2-D4 RDIMM — 200 kr/stk\n[R-054] Micron 16GB 2Rx4 PC3-14900R-13-13-E2 RDIMM — 200 kr/stk\n[R-006] SK Hynix 16GB 4Rx4 PC3-8500R-7-10-F0 RDIMM — 200 kr/stk\n[R-007] SK Hynix 16GB 2Rx4 PC3-14900R-13-12-E2 RDIMM — 250 kr/stk\n--- DDR3 32GB ---\n[R-009] SK Hynix 32GB 4Rx4 PC3-14900L LRDIMM — 500 kr/stk\n─────────────────────\nKORT FORKLART\nRDIMM = registered/buffered, det vanlige i rack-servere\nLRDIMM = load-reduced, for maks kapasitet i store konfigurasjoner\nUDIMM ECC = unbuffered, for entry-servere og enkelte workstations — passer ikke i RDIMM-servere\n1Rx4 / 2Rx4 / 4Rx4 = antall rank og DRAM-bredde — styrer hvor mange moduler serveren tar per kanal\nPC3L / DDR3L = lavspent 1,35 V\nBruker du Fiks Ferdig er frakten gratis på liten pakke opp til 5 kg.\nSjekker gjerne kompatibilitet med din server før kjøp — oppgi modell, så finner jeg riktig type.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "477102268": {
+   "title": "Tekno 1:50 Scania R730 Timmerline",
+   "description": "Detaljert samlermodell i skala 1:50 fra Tekno. Modellen pakkes inn i sin originale eske ved salg. Tømmerkloa er reparert etter beste evne med en tynn tråd, den var løs når jeg tok den ut av eske, fungerer greit nå, se bilder. Det mangler et lite gitter nederst til venstre på kufanger. Ellers er det en tøff tømmerbil med henger. Modellen har kun vært utstilt støvfritt. Kan følge med litt tømmer. Selges for kr 2800,- Kan sendes i posten som norgespakke med sporing 140,-\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "475664047": {
+   "title": "Dell PowerEdge R730 Server - 2x Intel Xeon E5-2660v3 - 384GB DDR4 - Homelab",
+   "description": "Free Shipping\nI have 2 identical units with the following specs;\nDell PowerEdge R730 (2U)\nCPU: 2x Intel Xeon E5-2660 v3 — 2.6GHz base, up to 4.0GHz Turbo\nMemory: 384GB DDR4 (all micron except one unit has a single Samsung dimm) each unit has 24x16gb\nMemory Speed: 2133 MHz\nNetworking 4x 10GbE (Intel X520) + 4x 1GbE (Intel I350) onboard rNDC, plus 2x 10GbE (Intel X540-T) add-in card — 6x 10GbE + 4x 1GbE total\nPower Supplies 2x 750W \niDRAC Enterprise, Lifecycle Controller\nBoth IDSDM SD cards have been wiped but previously was loaded with Hyper-V, these will need to be reconfigured if you plan to use the same hypervisor.\nThey have the 8-Bay LFF drive configuration but no disks are provided.\nPrice is per a unit, but if you want both we can discuss this.\nPlease feel free to send me a message if you have any questions.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "474415716": {
+   "title": "Dell PowerEdge R730 kraftig 2U enterprise-server virtualisering",
+   "description": "Pris: 26 000 kr eks. mva\r\n32 500 kr inkl. mva\r\nLeasing fra ca. 549 kr pr. måned*\r\n? 28 kjerner / 56 tråder\r\n? 192 GB DDR4 ECC RAM\r\n? Enterprise SSD-lagring\r\n? 2 × 10GbE SFP+ , 1 Gb RJ45 nettverksporter\r\n? RAID-kontroller med cache og batteribackup\r\n? 3 års garanti\r\n*Forutsetter kredittgodkjenning. Estimert leasing over 60 måneder. Faktisk månedsbeløp kan variere.\r\nDell PowerEdge R730 er en pålitelig og kraftig 2U enterprise-server som er ideell for virtualisering, filservere, backup, databaser, overvåkingssystemer og andre virksomhetskritiske løsninger. Med to Intel Xeon E5-2690 v4-prosessorer leverer serveren hele 28 kjerner og 56 tråder, noe som gir betydelig regnekraft for krevende arbeidsoppgaver.\r\nDenne konfigurasjonen kombinerer høy ytelse, god utvidelseskapasitet og robust Dell Enterprise-teknologi. Serveren er utstyrt med redundante strømforsyninger, Dell H730P RAID-kontroller med cache og batteribackup, samt høyhastighets 10GbE-nettverk for moderne datasenter- og bedriftsmiljøer.\r\nHøydepunkter\r\nDell PowerEdge R730 2U rackserver\r\n2 × Intel Xeon E5-2690 v4 prosessorer\r\n28 kjerner / 56 tråder totalt\r\n192 GB DDR4 ECC RAM\r\n2 × 400 GB Enterprise SAS SSD\r\nDell H730P RAID-kontroller med 2 GB cache\r\n16 × 2,5\" diskplasser\r\n2 × 10GbE SFP+ , 1 Gb RJ45 nettverksporter\r\nRedundante 1100W Platinum strømforsyninger\r\nFrontbezel med nøkkel inkludert\r\n3 års garanti\r\nVaren er på fjernlager og ytterligere konfig kan legges til.\r\nPerfekt for\r\nProxmox VE, VMware og Hyper-V\r\nFilserver og lagringsløsninger\r\nBackup og katastrofegjenoppretting\r\nDatabaser og ERP-systemer\r\nOvervåknings- og kamerasystemer\r\nHosting og virtuelle servere\r\nSmå og mellomstore datasentre\r\nDell PowerEdge R730 er en velprøvd enterprise-plattform som gir høy ytelse, god energieffektivitet og solid driftssikkerhet. Med 10GbE-nettverk, redundante strømforsyninger og 3 års garanti er dette et svært godt valg for bedrifter som ønsker profesjonell serverinfrastruktur til en konkurransedyktig pris.\nHvordan bestille hos oss\r\nKlikk på  Kjøp i nettbutikk -knappen i denne annonsen for å handle trygt i vår nettbutikk via vår partner Dintero.\r\nDu kan betale med:\r\n• Vipps\r\n• Bankkort / kredittkort\r\n• Delbetaling\r\n• Faktura direkte fra oss\r\nVi sender varen med Posten, eller du kan avtale henting på vårt lager på Heistad i Porsgrunn.\r\nGaranti\r\nAlle våre ordinær produkter har 2 års garanti til privatmarkedet om ikke annet er oppgitt,  14 dagers åpent kjøp på ordinære varer. Gjelder ikke bestillingsvare eller spesialvare. \r\nEgne regler for bedriftsmarkedet.  \r\nIT Garasjen\r\nIT Garasjen er Plan B IT sin nettbutikk for alle som ønsker å kjøpe IT utstyr på nett.\r\nVi samarbeider med noen av de største aktørene innen brukt IT utstyr, og alt vi selger er nøye kvalitetssikret for å sikre god ytelse og lang levetid.\r\nBedriftskunder\r\nFor deg som bedriftskunde tilbyr vi:\r\n• Bedrifts-PC av god kvalitet med garanti\r\n• Servere med god garanti og driftsavale\r\n• Server Hardware spesialist \r\n• Drift og vedlikehold IT\r\n• Det Lilledatasenter\r\n• Datasenter utstyr\r\n• Kjøp av ditt serverutsr\r\nTa kontakt med oss:\r\n   post@planbit.no\r\n   35 96 35 96\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "426464076": {
+   "title": "Dell PowerEdge R730",
+   "description": "2U server\n2x Intel Xeon U E5-2620 v3 @ 2.40GHz\n64GB RAM\n2.5\" SAS backplane. Ingen disker følger med.\niDRAC\nKan hentes i Oslo\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "473051845": {
+   "title": "Intel Xeon E5-2620 v3 (2 stk) – LGA2011-3, 6-core – server/homelab",
+   "description": "Selger et par (2 stk) Intel Xeon E5-2620 v3 prosessorer, pulled fra en aktiv dual-socket server. Byttes ut kun fordi jeg oppgraderer til nyere Broadwell-CPUer (v4-serien) – ikke på grunn av feil. Har gått stabilt i drift under kontinuerlig last.\nFunker som de skal, testet. Rengjort/vasket av. Selges uten kjøler/pasta – kun CPU-ene.\nSpesifikasjoner (per CPU):\nSokkel: LGA2011-3 (Socket R3)\n6 kjerner / 12 tråder\nGrunnklokke 2,4 GHz, Turbo opp til 3,2 GHz\n15 MB L3 cache\nTDP 85W\nHaswell-EP, støtter DDR4 (quad-channel)\nPasser til dual-socket hovedkort/servere som Dell PowerEdge R630/R730, HP ProLiant DL360/DL380 Gen9, Supermicro X10-serien og lignende. Godt valg til hjemmeserver, NAS, virtualisering (Proxmox, ESXi, Hyper-V), Plex/Jellyfin/Emby-transkoding, rendering og homelab-bruk generelt.\nSelges som et sett – ikke splittes.\nSendes med Fiksferdig, eller møtes lokalt ved behov.\nSøkeord: Xeon, E5-2620 v3, LGA2011-3, Socket R3, Haswell, server-CPU, prosessor, hjemmeserver, homelab, dual socket, Proxmox, ESXi, virtualisering, NAS\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "465550885": {
+   "title": "HPe ProLiant DL360 G9 – 512GB DDR4 ECC RAM! | 24 kjerner | 10GbE",
+   "description": "HP ProLiant DL360 G9 – komplett, testet og klar til bruk. Fullpakket med 512 GB ECC-serverminne (16 × 32 GB), som i dagens minnemarked alene er verdt det meste av prisen – her får du i tillegg en komplett, fungerende server.\n⭐ Minnet er stjernen: 512 GB HP SmartMemory (16 × 32 GB 2Rx4 PC4-2133P ECC Registered). Enkeltmoduler av denne typen omsettes nå rundt 800–900 kr/stk på grunn av den pågående RAM-mangelen – regn selv på 16 stk. Modulene er standard DDR4 RDIMM og passer også i andre LGA2011-3-plattformer (Dell R730, Supermicro X10, Lenovo x3650 M5 osv.), så de kan gjenbrukes om du bytter plattform senere.\nSpesifikasjoner:\n2 × Intel Xeon E5-2690v3 2.6 GHz – 12 kjerner / 24 tråder hver (totalt 24 kjerner / 48 tråder), med de store kjøleribbene\n512 GB HP SmartMemory (16 × 32 GB 2Rx4 PC4-2133P ECC)\nSmart Array P440ar RAID-kontroller med batteribackup\n2 × 800W strømforsyning (redundant)\n120 GB SSD (mini-SSD montert på SATA-kontakt på hovedkortet – alle 8 diskbrønner står dermed ledige til eget bruk)\n10GbE 2-port 560FLR-SFP+ mLOM-adapter\n4 × 1GbE RJ45\nHP iLO4 for fjernadministrasjon\nPerfekt til:\nVirtualisering med Proxmox, VMware, Hyper-V – mye RAM = mange VM-er samtidig\nHomelab / selvhosting / lagrings- og databaseoppgaver\nLokal AI / LLM-kjøring på CPU – 512 GB gjør at den kan laste svært store modeller (inkl. store MoE-modeller) som vanlige GPU-er ikke har minne til\nStandalone Linux/Windows-maskin\nTestet og fungerer som den skal. Disker til diskbrønnene selges separat. \nPrisantydning 14 900 kr – ta kontakt ved spørsmål eller bud.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "473899005": {
+   "title": "Ny Dell serverbatteri. To stykk",
+   "description": "Uåpnet to stykk serverbatteri for backup. Passer til Dell DPST-150DB A PowerEdge R640 R740 NvDIMM Battery Module JHVY6\nPasser alle poweredge servermaskiner\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "476154464": {
+   "title": "Dell PowerEdge R740 – 64 GB ECC RAM / 8×2 TB SAS / H730P / 10GbE",
+   "description": "Selger en kraftig Dell PowerEdge R740 2U rackserver.\nServeren passer godt til hjemmelab, virtualisering, NAS/storage, backup, Proxmox, VMware, testmiljø eller som generell server.\nSpesifikasjoner:\nDell PowerEdge R740, 14. generasjon\n2U rackserver\nIntel Xeon Silver – 1 CPU installert Intel(R) Xeon(R) Silver 4110 CPU @ 2.10GHz\n64 GB DDR4 ECC RDIMM RAM ( 4 x 16 gb brikker)\nPERC H730P RAID-kontroller med 2 GB cache\n8 × 2 TB Toshiba SAS 12 Gbps harddisker\nRAID 5 med 7 disker\n1 × 2 TB disk satt opp som global hot spare\nCa. 12 TB rå kapasitet i RAID-volumet\n10GbE nettverk via Intel X710\n1GbE nettverk via Intel I350\niDRAC Enterprise\nRedundante strømforsyninger\n24 DIMM-spor totalt, så RAM kan enkelt oppgraderes\n2 CPU-sokler totalt, slik at serveren kan oppgraderes med CPU nr. 2\nDiskene er Toshiba SAS-disker produsert i 2019.\nServeren har vært brukt som server og selges som brukt. RAID-kontroller og diskene rapporterer normal status i systemet.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "468742286": {
+   "title": "Dell Riser Board 0DTTHJ PCIe x16/x8 3.0 for PowerEdge R740 R740XD",
+   "description": "Dell Riser Board 0DTTHJ PCIe x16/x8 3.0 for PowerEdge R740 R740XD\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "400139004": {
+   "title": "6 stk Intel Xeon Silver 4110 Prosessor CPU SR3B6 8 kjerner / 16 tråder",
+   "description": "6 stk nesten ikke brukte Intel Silver 4110 selges rimelig.\n100 pr stk\n(Eller 2stk for kr 150,-)\nDette er \"standard\" CPU i de fleste Gen10/G10  servere og arbeidsstasjoner.\nOfte er makinene levert med kun 1 av 2 stk prosessorer installert - og da vil denne passe perfekt som inn som CPU nr 2.\nFor eksempel passer denne til HP ML350 G10, HP DL380 Gen10 og HP DL360 Gen10. Dessuten har jeg selv testet dem i Lenovo SR650 og i Dell Poweredge R740 og R640.\nSokkel: FCLGA3647 LGA 3647 LGA3647\nHentes på Nøtterøy, sendes med FiksFerdig eller annen foretrukket fraktmåte mot fraktkostnad.\n-----------\nVi oppgraderer diverse servere og har derfor etter hvert samlet en del ekstra komponenter på lager som vi selger her på Finn.\nDet er hovedsakelig RAM, CPU og nettverkskort som vi oppgraderer. Av og til også komplette servere. Spør om det er noe du trenger. Se også mine andre annonser.\n----------\nRelevante søkeord:\nXeon prosessor processor\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "308226942": {
+   "title": "2 stk Intel Xeon Gold 6148 Prosessor CPU SR3B6 20 kjerner / 40 tråder",
+   "description": "Kun 2 stk stk igjen av disse SVÆRT raske og gode prosessorene. Selges svært rimelig.\n20 kjerner og 40 tråder!\nNå kun 650,- pr stk / (̶K̶r̶ 1̶.10̶0̶,-̶ p̶r̶ s̶t̶k̶)̶\n(Mulig å prutte ved kjøp av flere)\nNy-pris på disse var over 30.000kr(!).\nDette er vel den aller beste CPU med TDP under 200W. Faktisk så ligger TDP på kun 150W(!) Altså kan den benyttes i tilnærmet alle servere og arbeidsstasjoner som støtter Intel Xeon Scalable -UTEN oppgraderte vifter og kjøleribbe.\nIntel Xeon Gold 6148 Prosessor CPU SR3B6\nVELDIG bra oppgradering fra Bronze eller Silver som ofte er standard i f.eks HPE HP DL380 Gen10 G10 og DL360 Gen10 + ML350 Gen10, Dell R640/R740 og Lenovo SR650 mfl servere samt diverse kraftige arbeidsstasjoner. Gold er som oftest også det aller *beste valget* ettersom Platinum har et helt absurd høyt strømforbruk og støttes kun av et fåtall hovekort.\nSokkel: FCLGA3647 LGA 3647 LGA3647\nHer er mer info:\nhttps://www.intel.com/content/www/us/en/products/sku/120489/intel-xeon-gold-6148-processor-27-5m-cache-2-40-ghz/specifications.html\nHentes på Nøtterøy, sendes med FiksFerdig eller annen foretrukket fraktmåte mot fraktkostnad.\n-----------\nVi oppgraderer diverse servere og har derfor etter hvert samlet en del ekstra komponenter på lager som vi selger her på Finn.\nDet er hovedsakelig RAM, CPU og nettverkskort som vi oppgraderer. Av og til også komplette servere. Spør om det er noe du trenger. Se også mine andre annonser.\n----------\nRelevante søkeord:\nXeon prosessor processor 6248\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "469749680": {
+   "title": "Dell PowerEdge R720xd - 128 GB RAM - 2x Xeon E5 2620 CPU",
+   "description": "Dell r720xd\nRam: 16*8GB PC3L 12800R (128GB)\nDisker: Ingen, men 12x 3.5\" bays\nCPU: 2x Intel Xeon E5-2620 @ 2GHz (2.5GHz turbo) (6 Cores / 12 Threads pr cpu)\nPSU: 2x 750w Platinum 80 plus\nRack rails\nSuper til bruk med f.eks. Proxmox, Talos eller TrueNAS.\nKan leveres med oppgradert minne og systemdisk installert. Ta kontakt for tilbud.\nMulighet for å sende mot at kjøper betaler frakt.\nÅpen for bud ved rask handel\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "440873042": {
+   "title": "HPE 32GB DDR4-2400 ECC RDIMM SmartMemory – DL360 / DL380 Gen9",
+   "description": "Selger original HPE 32GB DDR4-2400 ECC Registered SmartMemory.\nTatt ut av HPE ProLiant DL380 Gen9. Passer blant annet DL360/DL380 Gen9 og andre kompatible HPE Gen9-servere.\n• Kapasitet: 32 GB\n• DDR4-2400 / PC4-19200\n• ECC Registered / RDIMM\n• 2Rx4\n• HPE SmartMemory\n• HPE P/N: 809083-091\nPris:\n1–2 stk: 1 990 kr/stk\n2–4 stk: 1 890 kr/stk\n5 stk eller flere: 1 790 kr/stk\nPersonlig overlevering, Fiks Ferdig eller sendes med HeltHjem/Posten etter forhåndsbetaling med Vipps.\nHPE HP ProLiant DL360 DL380 Gen9 G9 32GB DDR4 2400MHz ECC RDIMM Registered SmartMemory PC4-19200 serverminne RAM Proxmox VMware TrueNAS homelab\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "474841752": {
+   "title": "HPE DL380 Gen9 Fan Cage / viftebrakett + 2 vifter",
+   "description": "Selger original HPE fan cage / viftebrakett til HPE ProLiant DL380 Gen9, inkludert 2 stk hot-plug systemvifter.\n• 6-slot fan cage\n• HPE P/N: 747596-001\n• Spare P/N: 777294-001\n• 2 stk HPE/Nidec hot-plug vifter medfølger\n• Vifte SPS: 777285-001\n• Nidec: V60E12BS2CB5-08T06\nPersonlig overlevering, Fiks Ferdig eller sendes med Posten/HeltHjem etter forhåndsbetaling med Vipps.\nHPE HP ProLiant DL380 Gen9 G9 fan cage viftebrakett fan assembly hot plug 747596-001 777294-001 777285-001\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "464683222": {
+   "title": "HPE CPU-kjøler / Heatsink til DL380 Gen9 – 747608-001 / 777290-001",
+   "description": "Original HPE CPU-kjøler / heatsink til HPE ProLiant DL380 Gen9.\nStandard heatsink beregnet for prosessorer opptil 105 W TDP.\n• HPE P/N: 747608-001\n• Spare P/N: 777290-001\n• Kompatibilitet: HPE ProLiant DL380 Gen9\n• Standard heatsink / opptil 105 W TDP\n• Fjærbelastede skruer for enkel montering\nPris:\n1 stk: 200 kr\n2 stk eller flere: 150 kr/stk\nPersonlig overlevering, Fiks Ferdig eller sendes med HeltHjem etter forhåndsbetaling med Vipps.\nHPE HP ProLiant DL380 Gen9 G9 heatsink CPU-kjøler 747608-001 777290-001\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "464683966": {
+   "title": "HPE Smart Array P440ar RAID-kontroller til DL360 / DL380 Gen9",
+   "description": "Pris per stk. Har flere tilgjengelige.\nHPE Smart Array P440ar mezzanine RAID-kontroller til blant annet HPE ProLiant DL360 og DL380 Gen9.\n• 12 Gb/s SAS / 6 Gb/s SATA\n• 2 GB FBWC cache\n• PCIe 3.0 x8\n• RAID- og HBA-modus\n• Kontroller P/N: 749796-001\n• SAS-kabel P/N: 747568-001\nLeveres med tilhørende SAS/SATA-kabel som vist på bildene.\nPersonlig overlevering, Fiks Ferdig eller sendes med Posten/HeltHjem etter forhåndsbetaling med Vipps.\nHPE HP Smart Array P440ar RAID SAS SATA DL360 DL380 Gen9 G9 12G 12Gb 749796-001 747568-001\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "474839795": {
+   "title": "HPE Smart Storage Battery 96W - Gen9/Gen10 - spare P/N 875843-001",
+   "description": "HPE 96W Smart Storage Battery til salgs.\n• HPE P/N: 878643-001\n• Type: Smart Storage Battery\n• Effekt: 96 W\n• Kabel: 145 mm\n• Kompatibel med blant annet HPE ProLiant DL360 / DL380 Gen9 og Gen10\n• Brukes sammen med HPE Smart Array-kontrollere med cache\n• Pris per stk, har flere\nPersonlig overlevering, Fiks Ferdig eller sendes med HeltHjem etter forhåndsbetaling med Vipps.\nHPE HP Smart Storage Battery RAID Cache Battery Gen9 Gen10 G9 G10 DL380 DL360 878643-001\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "453285739": {
+   "title": "HPE ProLiant Gen8 / Gen9 / Gen10 2U Security Bezel m/lås og nøkkel",
+   "description": "Selger original HPE Security Bezel for HPE ProLiant Gen9 2U-servere.\nOriginal HPE-del\nMed lås og nøkkel\nBeskytter frontdisker og power-knapp\nEnkel montering i rack\nDetaljer:\nHPE P/N: 654582-002\nSpare P/N: 662529-001\nModell: Security Bezel 2U\nKompatibel med HPE Proliant DL380 Gen8 / Gen9 / Gen10 servere\nsøkeord\nHPE, HP Enterprise, ProLiant, Gen9, DL380, DL360, 2U, Security Bezel, frontdeksel, serverdeksel, serverlås, rackserver, datarom, enterprise server, HPE tilbehør, 654582-002, 662529-001, lås, nøkkel, serverutstyr, server\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "474915483": {
+   "title": "HPE MC96 storage cell batteri 878643-001",
+   "description": "878643-001\nSmart Storage Cache Battery\nSmart array controller cache batteri til\nDL360 DL380 DL385 Gen9 Gen10\nNytt men utestet\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "474821356": {
+   "title": "HPE / Intel DC S3510 80GB Enterprise SSD inkl. 2.5\" Smart Carrier (pris per stk)",
+   "description": "Pris per stk, har flere.\nIntel DC S3510 80GB med HPE-caddy. Ypperlig som ZFS RAID1 OS mirror.\nSelger Intel SSD DC S3510 80GB Enterprise SATA SSD, levert i original HPE 2.5\" Smart Carrier/caddy.\n• Kapasitet: 80 GB\n• SATA 6 Gb/s\n• 2.5\" Enterprise SSD\n• Intel SSD DC S3510 Series\n• HPE P/N: 804574-001\n• Intel modell: SSDSC2BB080G6P\n• HPE 2.5\" caddy medfølger\n• Minimum 95 % gjenstående levetid\n80 GB SSD-en er testet med både kort og utvidet SMART self-test. Begge fullførte uten feil. SMART-status er PASSED, med 0 reallocated sectors, 0 uncorrectable errors og 0 CRC-feil. Disken har 56 029 driftstimer, men endurance-indikatoren viser kun 2 % brukt, altså ca. 98 % estimert skrivelevetid igjen.\nPasser blant annet en rekke HPE ProLiant Gen8/Gen9-servere, inkludert DL360 og DL380.\nPersonlig overlevering, Fiks Ferdig eller sendes med Posten/HeltHjem etter forhåndsbetaling med Vipps.\nHPE HP Intel SSD DC S3510 80GB SATA Enterprise SSD 2.5 Smart Carrier caddy DL360 DL380 Gen8 Gen9 G8 G9 804574-001\nHPE-delen 804574-001 er listet for blant annet DL360/DL380 Gen8 og Gen9.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "441389560": {
+   "title": "HP Ethernet 1Gb 4-port 366FLR Adapter (FlexIO)",
+   "description": "Selger HP Ethernet 1Gb 4-port 366FLR Adapter (FlexIO)\n1 stk: 150,-\n2 stk eller flere: 130,-/stk\nPersonlig overlevering, Fiks Ferdig eller sendes med HeltHjem etter forhåndsbetaling med Vipps.\n• FlexibleLOM for select HP Gen8 Rack servers \n• Energy Efficient Ethernet (EEE) support \n• Industry-leading hardware integration for low power \n• Quad-port 1GbE provides up to 8 Gb/s full duplex throughput per adapter \n• Optimized for virtual servers \n• Improved small packet performance \n• This adapter is compatible only with HPE FlexibleLOM slots available on select HPE ProLiant Gen8 rack and scale-out servers. \n• Support for Preboot eXecution Environment (PXE)\nPasser blant annet til:\nHPE ProLiant DL20 Gen9 Server\nHPE ProLiant DL60 Gen9 Server\nHPE ProLiant DL80 Gen9 Server\nHPE ProLiant DL120 Gen9 Server\nHPE ProLiant DL160 Gen9 Server\nHPE ProLiant DL180 Gen9 Server\nHPE ProLiant DL360 Gen9 Server\nHPE ProLiant DL360 Gen10 Server\nHPE ProLiant DL380 Gen9 Server\nHPE ProLiant DL380 Gen10 Server\nHPE ProLiant DL385 Gen10 Server\nHPE ProLiant DL560 Gen9 Server\nHPE ProLiant DL580 Gen9 Server\nHPE ProLiant DL560 Gen10 Server\nHPE ProLiant DL580 Gen10 Server\nHPE Apollo 2000 – XL1x0r Gen9 Server\nHPE Apollo 4200 Gen9 Server\nHPE Apollo 4500 – XL450 Gen9 Server\nHPE Apollo 6000 – XL230b Gen9 Server\nHPE Apollo 6000 – XL250a Gen9 Server\nSikkert Gen8 og Gen10 også.\nChipset: Intel® Ethernet Controller I350\nHPE partnumber: 665238-001\nhttps://www.hpe.com/psnow/doc/c04111405\nHPE 1G 1GB 1GBE G8 G9 G10 Proxmox VMware Hyper-V OPNsense pfsense\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "474840519": {
+   "title": "LOT OF 5 | HPE 544+FLR-QSFP dual mode, 40Gb/s Ethernet, 56Gb/s InfiniBand",
+   "description": "5 stk HPE 544+FLR-QSFP 40GbE / InfiniBand FDR - selges samlet. Rimelig mulighet til å oppgradere cluster med 40- eller 56Gbit/s.\nSelger lot med 5 stk HPE 544+FLR-QSFP FlexibleLOM-kort.\n• Mellanox ConnectX-3 Pro\n• 2 × QSFP\n• Ethernet opptil 40 GbE\n• InfiniBand FDR opptil 56 Gb/s\n• PCIe 3.0 / FlexibleLOM, kan kjøpe FlexibleLOM til PCIe adapter på f.eks. Aliexpress\n• Option P/N: 764285-B21\n• Spare P/N: 764737-001\n• Selges samlet som lot med 5 stk\nPasser blant annet HPE ProLiant Gen9-servere.\nInspirasjon:\n• Fin kombinasjon med f.eks. Mellanox SX6012, 6018 eller 6036, som er relativt strømgjerrige QSFP Ethernet/InfiniBand switcher.\n• Wiki med masse informasjon: https://wiki.fnord.greeley.co.us/mediawiki/index.php/Mellanox_SX6036\n• Converting Mellanox EMC switch to SX60xx: https://docs.google.com/document/d/1SS0_70PSD5NZDxMy-B---4X1i_2WiLoe/edit\n• Mellanox SwitchX-2 18-Port QSFP FDR InfiniBand switch System Hardware User Manual: https://manualzz.com/doc/4128212/sx6015-user-manual---mellanox-technologies?p=41\n• Mellanox SwitchX 36-Port QSFP FDR, MSX6025F-1SFR, MSX6025F-1SRR ... : https://manualzz.com/doc/7066137/mellanox-switchx-36-port-qsfp-fdr--msx6025f-1sfr--msx6025...?p=53\n• \"I’ve been pretty content with just using the fae mlxi2c set_fan /PS1/FAN 1 27 (and /PS2 and /FAN) commands from the Mellanox CLI. Now it’s quieter than my R720. I’m pretty happy with it for I think $160 for the switch plus rails.\": https://forums.servethehome.com/index.php?threads/mellanox-sx6036-rail-kit.44118/page-2#post-427131\nPersonlig overlevering, Fiks Ferdig eller sendes med Posten/HeltHjem etter forhåndsbetaling med Vipps.\nHPE HP Mellanox ConnectX-3 Pro InfiniBand FDR 40GbE 40G QSFP 544+FLR-QSFP FlexibleLOM DL360 DL380 Gen9 G9 764285-B21 764737-001\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "466396535": {
+   "title": "HPE ProLiant DL380 Gen9 LFF Server | E5 v4 | Opp til 768 GB ECC",
+   "description": "Selger deler av hjemmelabben, bestående av HPE ProLiant DL380 Gen9 LFF 2U servere.\nStrømgjerrige og kraftige servere som kun bruker rett i overkant av 35 watt i Proxmox med én CPU, målt ved veggen. Stort potensiale for både tallknusing, lagring og utvidelsesmuligheter. Viftene går på rundt 15% ved lav last og serveren oppleves som stillegående.\n𝗣𝗿𝗼𝘀𝗲𝘀𝘀𝗼𝗿𝗲𝗿:\n- 2 stk. E5 2630 v4 (𝗶𝗻𝗸𝗹𝘂𝗱𝗲𝗿𝘁) 20/40 cores/threads\n- 𝗦𝗼𝗹𝗴𝘁! 2 stk. E5 2630L v4 (+ 690,-) 20/40\n- 𝗦𝗼𝗹𝗴𝘁! 2 stk. E5 2650L v4 (+ 790,-) 28/56\n- 2 stk. E5 2650 v4 (+ 690,-) 24/48\n- 2 stk. E5 2690 v4 & High Performance Heatsink (+ 1490,-) 28/56\n- 𝗦𝗼𝗹𝗴𝘁! 2 stk. E5 2695 v4 & High Performance Heatsink (+ 1590,-) 36/72\n- 2 stk. E5 2673 v4 & High Performance Heatsink (+ 1690,-) 40/80 (tilsvarer 2698 V4)\n- 𝗦𝗼𝗹𝗴𝘁! 2 stk. E5 2696 v4 & High Performance Heatsink (+ 1990,-) 44/88 (tilsvarer 2699 V4)\n𝗠𝗶𝗻𝗻𝗲 (𝗢𝗿𝗶𝗴𝗶𝗻𝗮𝗹𝘁 𝗛𝗣𝗘 𝗦𝗺𝗮𝗿𝘁𝗠𝗲𝗺𝗼𝗿𝘆):\n- 64 GB, 2*32 GB (𝗶𝗻𝗸𝗹𝘂𝗱𝗲𝗿𝘁)\n- 𝗦𝗼𝗹𝗴𝘁! 128 GB, 4*32 GB (+ 3290,-)\n- 𝗦𝗼𝗹𝗴𝘁! 256 GB 8*32 GB (+ 8990,-)\n- 𝗦𝗼𝗹𝗴𝘁! 384 GB 12*32 GB (på forespørsel)\n𝗟𝗮𝗴𝗿𝗶𝗻𝗴:\n- HP Smart Array P840 Controller og HPE 96W Smart Storage Battery (𝗶𝗻𝗸𝗹𝘂𝗱𝗲𝗿𝘁)\n- 2 stk. HPE SATA Enterprise SSD 80GB SATA 6G SFF inkl. 2,5\" caddy, Intel S3510 (𝗶𝗻𝗸𝗹𝘂𝗱𝗲𝗿𝘁)\n- Ekstra HPE SATA Enterprise SSD 80GB SATA 6G SFF inkl. 2,5\" caddy, Intel S3510 (+ 290,-)\n- 𝗦𝗼𝗹𝗴𝘁! HPE 800GB SAS SSD 12G Mixed Use SFF SC inkl. 3,5\" caddy og 2,5\" -> 3,5\" adapter (+ 1690,-/stk.)\n𝗡𝗲𝘁𝘁𝘃𝗲𝗿𝗸:\n- HPE Ethernet 1 Gbit/s 4-port 331i (𝗶𝗻𝗸𝗹𝘂𝗱𝗲𝗿𝘁)\n- HPE Ethernet 10 Gbit/s 2-port 562FLR-T FlexibleLOM, RJ45, Intel X550 chipset (+ 690,-)\n- 𝗦𝗼𝗹𝗴𝘁! HPE Ethernet 10 Gbit/s 2-port 562FLR-SFP+ FlexibleLOM, Intel X710 chipset (+ 690,-)\n- HPE InfiniBand FDR/Ethernet 2-Port 544+QSFP, Mellanox ConnectX-3 Pro, 10/40Gbit/s (+ 290,-)\nTips: Mellanox SX6012, 6018 og 6036 er gode, strømgjerrige infiniband switcher.\n𝗣𝗦𝗨𝘀:\n- 2 stk. HPE 500W Platinum 94 % efficiency (𝗶𝗻𝗸𝗹𝘂𝗱𝗲𝗿𝘁)\n- 𝗦𝗼𝗹𝗴𝘁! 2 stk. HPE 800W Platinum 94 % efficiency (+ 690,-)\n- 𝗦𝗼𝗹𝗴𝘁! 2 stk HPE 800W Titanium 96 % efficiency (+ 790,-)\n- 2 stk HPE 1400W Platinum 94 % efficiency (+ 890,-)\n𝟯,𝟱\" 𝗖𝗮𝗱𝗱𝘆 𝗼𝗴 𝗯𝗹𝗮𝗻𝗸𝘀:\n- HP 3,5\" Disk Caddy (+ 129,-/stk)\n- HP 3,5\" Blank Filler (+ 59,-/stk)\n- 2,5\" til 3,5\" adapter (+ 89,-/stk)\n𝗥𝗮𝗶𝗹𝘀:\n- 𝗦𝗼𝗹𝗴𝘁! HPE Ball Bearing Sliding Rack Rail Kit for ProLiant DL380 Gen9 (+ 790,-)\n𝗙𝗿𝗼𝗻𝘁 𝗕𝗲𝘇𝗲𝗹:\n- HPE Security Front Bezel 2U for ProLiant DL380 Gen9 (+ 590,-)\n𝗖𝗮𝗯𝗹𝗲 𝗔𝗿𝗺 𝗞𝗶𝘁:\n- HPE Rack Cable Arm Kit for ProLiant DL380 Gen9 (+ 490,-)\nUEFI og iLO er oppdatert til siste versjon. iLO Advanced License er aktivert.\nHentes helst. Sending etter avtale. Oppgjør med Fiks Ferdig (gi bud med pris på konfigurasjon), Vipps eller overføring til bankkonto. \nTa kontakt for en hyggelig server-prat!\nhp proxmox vmware vm-ware esxi xen zen citrix virtualisering homelab hjemmelab server pfsense opnsense sophos truenas unraid nas san iscsi openmediavault open media vault omv\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "476213780": {
+   "title": "3stk - HPE 19\" 2U LFF Rack Rails - DL380 DL385 DL560 Gen8 Gen9 Gen10",
+   "description": "Suitable for: HPE Cloudline CL2800 Gen10 (LFF Version)\n  HPE ProLiant DL380e Gen8 (LFF Version)\n  HPE ProLiant DL380p Gen8 (LFF Version)\n  HPE ProLiant DL380 Gen9 (LFF Version)\n  HPE ProLiant DL380 Gen10 (LFF Version)\n  HPE ProLiant DL385p Gen8 (LFF Version)\n  HPE ProLiant DL385 Gen10 (LFF Version)\n  HPE ProLiant DL560 Gen9 (SFF Version)\n  HPE ProLiant DL560 Gen10 (SFF Version)\n  HPE SimpliVity 380 (LFF Version)\n878413-001 \n733662-B21\nPris per stk.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "464685435": {
+   "title": "HPE 1400W Flex Slot Platinum Plus PSU til DL360 / DL380 Gen9 – 720620-B21",
+   "description": "Original HPE 1400W Flex Slot Platinum Plus Hot Plug strømforsyning til HPE ProLiant Gen9-servere, blant annet DL360 Gen9 og DL380 Gen9.\nTatt ut av HPE ProLiant DL380 Gen9 LFF.\n• Effekt: 1400 W\n• Platinum Plus / opptil 94 % effektivitet\n• Hot Plug / Flex Slot\n• Input: 200–240 V AC\n• Modell: HSTNS-PF43\n• HPE P/N: 733427-001\n• Spare P/N: 754383-001\n• Option P/N: 720620-B21\n• Flex P/N: HPM-S-1400ADH00-101\n1 stk: 690 kr\n2 stk eller flere: 649 kr/stk\nPersonlig overlevering, Fiks Ferdig eller sendes med Posten/HeltHjem etter forhåndsbetaling med Vipps.\nHPE HP ProLiant PSU strømforsyning power supply DL360 DL380 Gen9 G9 Flex Slot Platinum Plus 1400W 733427-001 754383-001 720620-B21 HSTNS-PF43\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "474151723": {
+   "title": "HPE 1400W Flex Slot Platinum Plus PSU til DL360 / DL380 Gen9 – 720620-B21",
+   "description": "Original HPE 1400W Flex Slot Platinum Plus Hot Plug strømforsyning til HPE ProLiant Gen9-servere, blant annet DL360 Gen9 og DL380 Gen9.\n• Effekt: 1400 W\n• Platinum Plus / opptil 94 % effektivitet\n• Hot Plug / Flex Slot\n• Input: 200–240 V AC\n• Modell: HSTNS-PD43\n• HPE P/N: 733428-001\n• Spare P/N: 754383-001\n• Option P/N: 720620-B21\n• Flex P/N: HPM-S-1400ADH00-101\n1 stk: 590 kr/stk\nHPE HP ProLiant PSU strømforsyning power supply DL360 DL380 Gen9 G9 Flex Slot Platinum Plus 1400W 733428-001 754383-001 720620-B21 HSTNS-PD43\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "441592139": {
+   "title": "1 igjen | HPE 800W Flex Slot Platinum PSU til DL360 / DL380 Gen9",
+   "description": "Original HPE 800W Flex Slot Platinum Hot Plug strømforsyning til HPE ProLiant Gen9-servere, blant annet DL360 Gen9 og DL380 Gen9.\n• Effekt: 800 W\n• 80 PLUS Platinum / opptil 94 % effektivitet\n• Hot Plug / Flex Slot\n• HPE P/N: 723599-001\n• Spare P/N: 754381-001\n• Option P/N: 720479-B21\n• Modell: HSTNS-PL41\nPersonlig overlevering, Fiks Ferdig eller sendes med Posten/HeltHjem etter forhåndsbetaling med Vipps.\nHPE HP ProLiant PSU strømforsyning power supply DL360 DL380 Gen9 G9 Flex Slot Platinum 800W 723599-001 754381-001 720479-B21 HSTNS-PL41\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "429995564": {
+   "title": "500 W Power Supply for HP Proliant DL360/DL380/ML350 Gen 10/Gen9 Server",
+   "description": "Model: HSTNS-PL40-1\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "455322579": {
+   "title": "HPE 8-SFF Drive Cage m/ Backplane (777279-001) til DL380 Gen9",
+   "description": "Beskrivelse\nSelger en komplett HPE 8-SFF (2.5\") Drive Cage Upgrade Kit til HPE ProLiant DL380 Gen9. Dette er den fysiske rammen (chassis-delen) som inneholder bakplanet, slik at du kan utvide serveren din med 8 ekstra diskplasser (totalt 16 eller 24 disker).\nDette er en \"all-in-one\" løsning som skyves rett inn i de ledige brønnene foran på serveren.\nInkludert i pakken:\nHPE Drive Cage: Selve stålrammen for 8 stk. 2.5-tommers disker.\nHPE Backplane (777279-001): Kretskortet som kobler diskene til kontrolleren.\nTilkoblinger: SAS-porter og strømkontakt på baksiden av bakplanet.\nTekniske detaljer:\nHPE Spare Part (Backplane): 777279-001 / 747592-001\nType: SFF (Small Form Factor) – 2.5\" SAS/SATA\nKompatibilitet: Kun for HPE ProLiant DL380 Gen9\nTilstand\nBrukt: Meget pen stand, ingen skjevheter i metallet eller skader på bakplanets kontakter.\nTestet og fungerer 100%.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "455107692": {
+   "title": "HP ProLiant DL380 Gen9 - Xeon E5-2620v3, 64gb DDR4 ECC - perfekt til homelab",
+   "description": "Jeg nedskalerer og har for salg en HP ProLiant DL380 Gen9 rackserver.\nStabil enterprise-hardware som fortsatt er veldig kapabel til homelab, virtualisering eller labmiljø.\nFungerer fint med Proxmox, VMware, TrueNAS, Unraid, Linux osv.\nIngen disker eller OS installert. 8 diskcaddies og skruer medfølger.\nSpesifikasjoner:\nHP ProLiant DL380 Gen9\nIntel Xeon E5-2620 v3 (6c/12t)\n64GB DDR4 ECC\n• 8 diskcaddies med skruer\n• Dual PSU\n• Onboard RAID / backplane\n• 4×1Gb NIC\n• iLO management\nTestet, booter og fungerer som den skal.\nEn del i låsen for lokket er knekt (se bilde) og faller ut hvis man er for brå i bevegelsene, men lokket låses som det skal når den ligger på plass. Dette påvirker ikke serverens funksjon ellers.\nPris kan diskuteres noe ved rask og enkel handel. Betaling via Vipps. \nKan hentes på Aker Brygge man-fre 9-15 etter avtale. \nKan evt organisere transport med Oslo Budservice innenfor deres leveringsområde i Stor-Oslo mot forhåndsbetaling etter avtale.\nJeg har ikke emballasje egnet for sending av stor og tung server med Posten/Bring, men jeg kan få tak i mot et tillegg på kr 500 etter kjøp. Levering av emballasje tar ca en uke, så forsendelsen vil da bli tilsvarende forsinket.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "464682213": {
+   "title": "HPE High Performance Heatsink til DL380 Gen9 – 747607-001 / 777291-001",
+   "description": "HPE High Performance Heatsink til salgs.\n• HPE P/N: 747607-001\n• Spare P/N: 777291-001\n• Passer blant annet HPE ProLiant DL380 Gen9\n• High Performance-modell for CPU-er med høyere TDP\nPris:\n1 stk: 250 kr\n2 stk eller flere: 200 kr/stk\nPersonlig overlevering, Fiks Ferdig eller sendes med HeltHjem etter forhåndsbetaling med Vipps.\nHPE HP DL380 Gen9 G9 heatsink kjøler CPU 747607-001 777291-001\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "469674224": {
+   "title": "800W Power Supply for HP Proliant DL360/DL380/ML350 Gen9 Server",
+   "description": "Passer til Gen10 også.\n2 stk tilgjengelig.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "469675650": {
+   "title": "HPE Proliant DL380 G9 - 2x E5-2630 V4 2.2GHz - 32GB RAM - Rails",
+   "description": "Selger våre eldre servere, bestående av 4stk HPE ProLiant DL380 Gen9 LFF 2U. \n2 server er solgt. \n2 stk igjen.\nPrisen gjelder per server.\nCPU: 2x E5-2630 V4 2.2GHz 20 cores\nRam: 2x 16GB 2400MHz\nHDD/SSD: ingen\nRAID: Smart Array P440ar Controller med Battery \nNettverk: 4x1Gb + FlexibleLOM dual  10Gb RJ45\nRails: Ja\nPSU: 2x 800\nSiste BIOS P89/FW og iLO advance.\nDual riser card \nKan sendes.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "467711954": {
+   "title": "HP 500w server PSU",
+   "description": "HP 500w server PSU / har 2 typer : HSTNS-PL40-1 / DPS-500AB-13 A. \nSelges for kr 500,- stk \nHSTNS-PL40-1 Compatible Models:\nProLiant G9 G10\nDPS-500AB-13 A Compatible Models:\nHPE StoreOnce Systems\nHPE ProLiant DL388 Gen9 Server\nH3C Converged System\nHPE Cloudline CL4100 Gen10 Server\nHPE ProLiant ML350 Gen9 Server\nHPE ProLiant DL360 Gen9 Server\nHPE ProLiant DL380 Gen9 Server\nHPE ProLiant DL360p Gen8 SE Server\nHPE ProLiant DL360p Gen8 Server\nKan skrive under på at disse fungerer utmerked til cryptomining rigs med breakeout board, veldig stabile! spesielt fine i miningkasser da de tar liten plass :-)\nBlir testet og blåst før de sendes, gir 14 dager funksjonsgaranti, du kan heve kjøpet innen 14 dager om du ikke er fornøyd eller få ny psu eller pengene tilbake, kjøper betaler frakt ved evt. tilbakesending. \nkjøper betaler frakt. betaling med fiks ferdig / forhåndsbetaling med Vipps.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "469535061": {
+   "title": "HP Server Fan Module",
+   "description": "Typer små vifter:\n-HP 867118-001 - Standard Fan Module for ProLiant DL380 Gen10 G10\n(AVC DBTA0638B2S) (Sunion VF6038BX-Q07U-Q9I) (Nidec UltraFlo V60E12BS2CB5-08T02A1)\nSelges kr 100,- pr stk.\n-747597-001 - Standard Hot Plug Fan for ProLiant DL380 DL380p DL388 Gen9 G9\n(Delta PFR0612XHE) selges kr 100,- pr stk\nStor Vifte:\nHP 661332-001 - 92mm Cooling Fan for ProLiant ML350p Gen8 G8\n(Delta PFR0912XHE) selges kr 200,- pr stk\nRabatt ved kjøp av flere vifter.\nSelges med 14 dagers funksjonsgaranti, pengene tilbake eller ny vare om man ikke er førnøyd, kjøper betaler ekstrakosnader ved frakt i tilfelle.\n Betaling ved fiks ferdig eller forhåndsbetaling via Vipps, kjøper betaler frakt.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "441642940": {
+   "title": "Ca 20 stk diskrammer til HP G8 G9 G10",
+   "description": "Fikk inn en del servere og har derfor plutselig en god del ekstra  diskrammer til salgs.\nPris: kr 100,- pr stk\n(Mulig å prutte noe ved kjøp av flere)\nHentes på Nøtterøy eller sendes på valgfri måte mot fraktkostnad.\nDisktray, hdskuff, tray, hd caddy, HDD-caddy\nDette er 2,5\" versjon som passer til HP HPE servere og arbeidsstasjoner Proliant G8 / G9 / G10\n(Gen8 / Gen9 / Gen10)\nFungerer for eksempel til DL380, DL385, DL365, DL360, DL180, DL160, DL120, ML350 osv.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "395547992": {
+   "title": "Supermicro CBL-SAST-0568",
+   "description": "Internal Mini-SAS HD to Mini-SAS HD, 35cm, 30 AWG, 12 Gb/s jeg har 2 stk 100 pr stk\nDetailed information\nThe Supermicro CBL-SAST-0568 enables SFF-8643 internal MiniSAS HD connections for storage. This cable is compliant with T10 and SFF standard and is verified with Supermicro servers, AOC cards, and storage. This cable is also available in 25cm and 50cm cable length. Each Supermicro cable is validated to ensure quality and performance.\nAdditional Information\nManufacturer Supermicro\nLength 35 cm\nCable Type MiniSAS HD Cables\nConnectors MiniSAS HD (SFF-8643)\nConnectors (Other Side) MiniSAS HD (SFF-8643)\nWarranty 1 year warranty\nProduct Environmental Compliance RoHS and REACH compliant, details available upon request\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "473853084": {
+   "title": "Supermicro MBD-X11DDW-L-0 Hovedkort (Nytt i eske)",
+   "description": "Selger et helt nytt Supermicro MBD-X11DDW-L-0 serverhovedkort. Dette er et kraftig dual-socket hovedkort for Intel Xeon Scalable-prosessorer, perfekt for server, virtualisering, lagring, AI, datasenter eller avanserte hjemmelab-prosjekter.\nHøydepunkter:\nStøtter 2 stk Intel Xeon Scalable CPU-er\nDDR4 ECC Registered-minne\nMange PCIe-utvidelsesmuligheter\nIntegrert IPMI-fjernadministrasjon\nDatasenterkvalitet med høy stabilitet og pålitelighet\nKortet er nytt og ubrukt.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "472273061": {
+   "title": "Supermicro hovedkort med flere CPU- og RAM-plasser",
+   "description": "Supermicro hovedkort selges, med plass til flere prosessorer og mange RAM-slots. Fint til deg som vil bygge eller oppgradere server, se bilder for detaljer på kontakter og oppsett.\nBetalte 2300 fra forige eier hvis jeg husker riktig.\nMen tar bud på denne.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "471457145": {
+   "title": "Server Rack APC NetShelter 4 Post Open Frame Rack - rack - 44U",
+   "description": "Link: https://www.multicom.no/apc-netshelter-4-post-open/cat-p/c/p2847222\nAPC NetShelter AR204A 44U Open Frame Rack – Profesjonelt 19\" serverrack\nSelger et APC NetShelter AR204A 44U 4-post Open Frame Rack fra Schneider Electric. Dette er et robust rack av høy kvalitet, beregnet for servere, nettverksutstyr, UPS-er og annet 19\" rackmontert utstyr.\nSpesifikasjoner:\n44U høyde\nStandard 19\" rack\n4-post open frame\n12-24 gjengede monteringshull\nJusterbar monteringsdybde\nKraftig stålkonstruksjon\nMeget stabil og solid\nPasser til de fleste typer rackmontert utstyr som switcher, patchpaneler, UPS-er, Cisco, HPE, Supermicro, Lenovo og annet standard 19\" utstyr.\nMerk: Dette racket har 12-24 gjenge hull. Standard Dell ReadyRails med hurtigfeste (for firkanthull eller runde ugjengede hull) passer derfor ikke direkte uten adaptere eller alternative skinner.\nRacket er i god stand med normale bruksspor. Original emballasje følger ikke med.\nKun henting, da racket er stort og tungt.\nTa gjerne kontakt dersom du har spørsmål eller ønsker flere bilder.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "476946894": {
+   "title": "4x 32GB Samsung DDR3-1866 LRDIMM 4Rx4 (128GB) PC3-14900L M386B4G70DM0-CMA",
+   "description": "Samsung M386B4G70DM0-CMA\n4 stk 32GB = 128GB\n32 GB\nLRDIMM — Load Reduced, ikke RDIMM\n4Rx4\nPC3-14900L = DDR3-1866\nECC\nCL13, 1,5 / 1,35 V\n240 pin, heatspreader\nLRDIMM. Ikke RDIMM. Må sjekkes mot server f. eks. :\nDell R720/R820, HP Gen8 z LRDIMM, Supermicro X9\n4x #32GB\n#128GB\n#DDR3\n#LRDIMM\n#Samsung\n#4Rx4\n# PC3-14900L\n#DDR3-1866\n#M386B4G70DM0-CMA\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "474449641": {
+   "title": "Supermicro H13SAE-MF Server/Workstation- DDR5 - PCIe 5.0 - USB C",
+   "description": "Svært kraftig 1U AM5 server/workstation-pakke med 64 GB RAM, IPMI, innebygd M.2 NVMe PCIe 5.0 støtte, PCIe 5.0 utvidelsesmuligheter og enterprise-grade Supermicro chassis. Passer utmerket til homelab, virtualisering, lagring eller workstation-bruk.\n--- Spesifikasjoner ---\nKabinett / Chassis: Supermicro 514-S5H13\nHovedkort: Supermicro H13SAE-MF\nCPU: AMD Ryzen 9 7950X3D (16 kjerner / 32 tråder, opptil 5.7GHz boost)\nRAM: 64GB DDR5 UDIMM (2×32GB)\nOnboard LAN: 2 × Intel I210 Gigabit NIC\nBMC/IPMI: ASPEED AST2600 fjernadministrasjon (IPMI)\n--- Tilkoblinger / I/O ---\n1 × HDMI 2.0\n1 × DisplayPort\n1 x VGA\n2 × USB-C 3.2 Gen2 med DisplayPort Alt Mode\n1 × USB-C 3.2 Gen2x2 20Gb/s\n3 × USB-A 3.2 Gen2 10Gb/s\nInterne USB-headere\nCOM/serial-header\nTPM-header\nAudio inn/ut\nDedikert IPMI management interface\nBMC/IPMI remote console / fjernadministrasjon\n--- Plattform / Minne ---\nAM5 socket\nStøtter AMD Ryzen 7000 / 8000 / 9000-serien\nStøtter AMD EPYC 4004 / 4005-serien\nECC UDIMM-støtte\nDDR5 minnestøtte\nServer/workstation-grade hovedkort\n--- Ikke inkludert ---\nIngen SSD / HDD / NVMe-disker inkludert\n--- Passer godt til ---\nProxmox\nESXi\nTrueNAS\npfSense / OPNsense\nHomelab\nVirtualisering\nLagringsserver\nWorkstation bruk\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "448993044": {
+   "title": "server hovedkort Supermicro X10SRL-H TMP 2.0",
+   "description": "server hovedkort\nSupermicro X10SRL-H  mainboard with TMP 2.0 comes with INTEL XEON E5-1620V4 CPU 3.5Ghz, fan and heat sink, new thermal cooling paste on the cpu\nCan take up to 1Tb DDR 4 ecc ram \nIngen scam bud\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "473390688": {
+   "title": "Supermicro server/workstation – 2x Xeon, 32 GB RAM, GTX 690",
+   "description": "Selger en Supermicro server/workstation i fungerende stand.\nSpesifikasjoner:\n* Supermicro X9DRG-QF\n* 2 × Intel Xeon E5-2620 @ 2.00 GHz\n* Totalt 12 kjerner / 24 tråder\n* 32 GB RAM\n* NVIDIA GeForce GTX 690\n* Linux installert\n* Stor Supermicro tower-kabinett\n* Mange PCIe-utvidelsesmuligheter\nMaskinen starter og fungerer.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "460978501": {
+   "title": "Supermicro H13SAE-MF Server - PCIe 5.0 - NVIDIA RTX A4000 Ada Gen 20GB VRAM",
+   "description": "Svært kraftig 1U AM5 server/workstation-pakke med 64GB RAM, IPMI, GPU NVIDIA RTX A4000 Ada Generation 20GB VRAM, innebygd M.2  PCIe 5.0 NVMe-støtte, PCIe 5.0 utvidelsesmuligheter og enterprise-grade Supermicro chassis. Passer utmerket til homelab, maskinlæring, virtualisering, lagring eller workstation-bruk.\n--- Spesifikasjoner ---\nKabinett / Chassis: Supermicro 1U\nHovedkort: Supermicro H13SAE-MF\nCPU: AMD Ryzen 9 7950X3D (16 kjerner / 32 tråder, opptil 5.7GHz boost)\nGPU: NVIDIA RTX A4000 Ada Generation 20GB VRAM\nRAM: 64GB DDR5 ECC UDIMM\nOnboard LAN: 2 × Intel I210 Gigabit NIC\nBMC/IPMI: ASPEED AST2600 fjernadministrasjon (IPMI)\n--- Nettverk ---\n2 × 1GbE (Intel I210)\n1 x IPMI\n--- Tilkoblinger / I/O ---\n1 × HDMI 2.0\n1 × DisplayPort\n1 x VGA\n2 × USB-C 3.2 Gen2 med DisplayPort Alt Mode\n1 × USB-C 3.2 Gen2x2 20Gb/s\n3 × USB-A 3.2 Gen2 10Gb/s\nInterne USB-headere\nCOM/serial-header\nTPM-header\nAudio inn/ut\nDedikert IPMI management interface\nBMC/IPMI remote console / fjernadministrasjon\n--- Plattform / Minne ---\nAM5 socket\nStøtter AMD Ryzen 7000 / 8000 / 9000-serien\nStøtter AMD EPYC 4004 / 4005-serien\nECC UDIMM-støtte\nDDR5 minnestøtte\nServer/workstation-grade hovedkort\n--- Ikke inkludert ---\nIngen SSD / HDD / NVMe-disker inkludert\n--- Passer godt til ---\nLLM\nProxmox\nESXi\nTrueNAS\npfSense / OPNsense\nHomelab\nVirtualisering\nLagringsserver\nWorkstation-bruk\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "476013521": {
+   "title": "Lavstrøms hjemmeserver/NAS – 6 SATA, 6 diskplasser, Supermicro",
+   "description": "Hjemmebygd tårn-server som egner seg godt som hjemmeserver, NAS, backupserver, filserver, Linux-maskin, Docker-host eller lignende.\nMaskinen er basert på et Supermicro server-hovedkort og har hele 6 SATA-porter, samt plass til opptil 6 harddisker i kabinettet. Det gjør den spesielt aktuell dersom du ønsker en rimelig maskin for mye lokal lagring.\nSpesifikasjoner:\nChieftec BH-02 ATX Medium Tower, Chieftec 400 W strømforsyning\nSupermicro X7SPA-HF server-hovedkort\nIntel Atom D525, 1,8 GHz, 4 kjerner\n4 GB RAM\nKingston SSDNow V Series 64 GB SSD\n6 × SATA-porter\nPlass til opptil 6 harddisker\nVGA-utgang for skjerm\nMålt strømforbruk på ca. 33 watt ved lav aktivitet\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "449145935": {
+   "title": "Supermicro 1U, 2x Xeon E5620, 64GB, 4x300 SAS, ssd, satadom, Perc H310",
+   "description": "1U supermicro server.\nX8DTU-LN4F+ hovedkort m 4 gbit ethernet\n119-7 chassie\n1 PSU (plass til to i chassie)\n2x Xeon E5620 @ 2.4GHz\n64GB ram\nLagring:\nDell Perc H310\n4 x 300gb 10k SAS (HP)\n8 bays totalt, følger med trays til alle.\n32GB SataDOM\nIntel 520 series SSD 120gb (SATA) - denne tar opp en tray\nLite brukt supermicro. Stort sett stått avskrudd i en hjemmelab. Ser veldig ryddig ut innvendig. Utvendig bærer den preg av å ha blitt tatt inn og ut av rack et par ganger.\nDet følger ikke med skinner - men supermicro sine fester står på siden av servern.\nMå hentes.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "473726382": {
+   "title": "Supermicro 1U – EPYC 7302p - 8x32Gb DDR4 3200MHz",
+   "description": "Selger 3 stk. Supermicro AS-1114S-WTRT.\nSpesifikasjoner:\nAMD EPYC 7302p - 16 kjerner / 32 tråder\n- 1 server: 8 × 32Gb DDR4-3200 ECC RAM --> 50,000 NOK\n- 1 server: 8 x 16Gb DDR4-3200 EEC RAM --> 40,000 NOK\n- 1server: 4x16Gb DDR4-3200 EEC RAM --> 30,000 NOK\nNVMe SSD for operativsystem\nFlere 2.5\" hot-swap diskplasser\nRedundante strømforsyninger\nIPMI/BMC fjernadministrasjon\n1U rackformat\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "475115046": {
+   "title": "SERVER-RAM / DDR3 & DDR3L ECC Registered (RDIMM)",
+   "description": "Stort parti med brukt serverminne – hentet fra fungerende maskiner. \nPerfekt for oppgradering av eldre servere og arbeidsstasjoner som støtter DDR3 ECC Registered.\n4GB: 30 kr\n8GB: 50 kr\n8GB VLP Very Low Profile: 60 kr \n16GB: 150 kr\nPakkepris ved kjøp av flere!\nTilgjengelige moduler\n4GB RDIMM\n15 × 4GB 2Rx4 PC3‑10600R SK Hynix, med kjøleribbe) — 1333 MHz\n29 × 4GB 2Rx4 PC3‑10600R Micron, med kjøleribbe — 1333 MHz\n8 × 4GB 2Rx4 PC3‑10600R Samsung — 1333 MHz\n8GB RDIMM\n78 × 8GB 4Rx4 PC3‑8500R Hynix — 1066 MHz, VLP Very Low Profile, med kjøleribbe\n4 × 8GB 2Rx4 PC3‑8500R Micron — 1066 MHz, med kjøleribbe\n94 × 8GB 2Rx4 PC3L‑10600R Samsung — 1333 MHz\n9 × 8GB 2Rx4 PC3L‑8500R Hynix — 1066 MHz\n5 × 8GB 2Rx4 PC3‑8500R Hynix — 1066 MHz\n26 × 8GB 2Rx4 PC3‑10600R Micron — 1333 MHz, med kjøleribbe\n42  × 8GB 2Rx4 PC3‑10600R Hynix — 1333 MHz, med kjøleribbe\n16GB RDIMM\n2 × 16GB 2Rx4 PC3‑12800R SK Hynix — 1600 MHz\n34 × 16GB 2Rx4 PC3‑12800R Samsung — 1600 MHz\nTeknisk info\nDDR3L / PC3L = lavspent 1,35 V\n1Rx4 / 2Rx4 / 4Rx4 = rank‑konfigurasjon og DRAM‑bredde (påvirker hvor mange moduler serveren støtter per kanal)\nKompatibilitet\nPasser bl.a. til servere og arbeidsstasjoner som støtter DDR3 RDIMM ECC:\nHP/HPE ProLiant Gen7/Gen8 (DL380p, DL360p, BL460c m.fl.)\nHP Z600/Z620 og Z800/Z820 workstations\nIBM/Lenovo System x\nSupermicro og Dell-plattformer med Xeon E5 v1/v2\nSjekk kompatibilitet med din maskin før kjøp.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "472987857": {
+   "title": "192 GB DDR3 ECC RDIMM server-RAM – selges samlet",
+   "description": "16 stk moduler totalt:\n-4x Kingston KTH-PL316/16G – 16 GB, DDR3-1600, PC3-12800R, 2Rx4, ECC Registered, 1.5V\n-4x MicroMemory MMI1208/16GB – 16 GB, DDR3-1600, PC3-12800R, ECC Registered (IBM/Lenovo-kompatibel)\n-8x Kingston KTH-PL316S/8G – 8 GB, DDR3-1600, PC3-12800R, 1Rx4, ECC Registered, 1.5V\nKompatibelt med plattformer som støtter DDR3 RDIMM ECC, bl.a.:\n– HP/HPE ProLiant Gen8 (DL380p, DL360p, BL460c m.fl.)\n– HP Z620 / Z820 workstations\n– IBM/Lenovo System x\n– Supermicro og Dell-plattformer med Xeon E5 v1/v2\nHentet fra fungerende maskin. \nSelges samlet, ikke enkeltvis.\nHentes av kjøper. Sender ikke.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "449731348": {
+   "title": "Hynix HP 8GB DDR3 PC3-10600R 1333Mhz ECC Registered RAM-modul for server",
+   "description": "Server-minne. Ikke for vanlige PCer.\nHar mange av disse, bare skriv hvor mange du trenger.\nPasser i HP, Dell, Supermicro, osv.\n1 års garanti.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "449734732": {
+   "title": "Samsung HP 16GB DDR4 2400T 2400Mhz Registered ECC RAM",
+   "description": "Server-RAM. Passer ikke til hjemme-PC.\nMerke Samsung for HP, men fungerer også på Dell, Supermicro, osv. \nHar flere av disse. Kan sende. \n1 års garanti.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "449734229": {
+   "title": "Hynix HP HPE 16GB DDR4 2133P 2133Mhz Registered ECC RAM",
+   "description": "Server-RAM, passer ikke til hjemme-PC.\nHar flere av disse, si hvor mange du trenger.\nPasser både til HP, Dell, Supermicro osv. \nKan sende.\n1 års garanti\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  },
+  "421957363": {
+   "title": "Supermicro SuperServer Rackmonterbar JBOD 4U",
+   "description": "Supermicro SuperServer rackmonterbar JBOD i 4U format. Designet for høy ytelse og skalerbarhet, ideell for datarom og IT-infrastruktur. Kabinettet har 45x harddiskplasser og gode kjølefunksjoner. Perfekt for bedrifter som trenger pålitelig og kraftig lagringsløsning. \nKey Features\n4U SAS2 JBOD storage chassis\n45 x 3.5\" hot-swap HDD bays for JBOD solution\n1U 1280W Redundant Platinum 95%+ Super Quiet Power Supply with PMbus\n7 x 8cm hot-swap redundant PWM cooling fan(s)\n4SAS kontakter 2 in / 2 out.\nPga vekt så bør den hentes i Bergen før du kjøper og den må sendes ta kontakt på forhånd. ,  tar imot bud.\n Vis hele beskrivelsenNB: Knappen for å vise hele beskrivelsen har kun en visuell effekt."
+  }
+ }
+}

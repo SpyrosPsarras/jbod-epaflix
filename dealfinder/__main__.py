@@ -5,7 +5,7 @@ import sys
 
 from .app import App
 from .costs import DailyFx
-from .sources import EbaySource
+from .sources import EbaySource, FinnSource
 
 
 def main():
@@ -15,6 +15,7 @@ def main():
         sources.append(EbaySource(os.environ["EBAY_CLIENT_ID"], os.environ["EBAY_CLIENT_SECRET"]))
     else:
         logging.warning("EBAY_CLIENT_ID/EBAY_CLIENT_SECRET not set: eBay UK Source disabled")
+    sources.append(FinnSource())
     app = App(os.environ["DATABASE_URL"], sources, fx=DailyFx())
     if sys.argv[1:] == ["hunt"]:
         app.hunt()

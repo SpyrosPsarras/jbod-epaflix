@@ -71,7 +71,7 @@ Landed cost of a Build divided by its Usable TiB. Lower is better.
 _Avoid_: Rating, rank value
 
 **Unreadable Listing**:
-A Listing whose text does not state every fact the rules need (for a Machine: model, generation, 3.5" bay count, working condition; for a Disk: capacity, 3.5" form factor, enterprise/NAS class, condition). Shown under "Could not read", never ranked.
+A Listing whose text does not state every fact the rules need (for a Machine: model, generation, 3.5" bay count, working condition; for a Disk: capacity, 3.5" form factor, enterprise/NAS class, condition), or that has no price. Shown under "Could not read", never ranked. A Listing whose known facts already rule it out (a 2TB drive, a 12th Gen server) is rejected instead.
 _Avoid_: Unknown, unparsed, bad listing
 
 **Gone Listing**:
