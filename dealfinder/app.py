@@ -9,7 +9,7 @@ import urllib.parse
 from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-from .config import (CEILING_NOK, DISK_QUERIES, HUNT_INTERVAL_S, MACHINE_QUERIES, MAX_QUERY_CHARS,
+from .config import (CEILING_NOK, DISK_QUERIES, HISTORY_WEEKS, HUNT_INTERVAL_S, MACHINE_QUERIES, MAX_QUERY_CHARS,
                      PICKUP_MAX_MINUTES, PICKUP_NOK_PER_KM, SOURCE_PAUSE_S, TARGET_TIB)
 from .builds import rank_builds
 from .costs import OsrmRouter, cost_breakdown, machine_penalties
@@ -29,6 +29,41 @@ COST_LABEL = {"shipping": "shipping", "shipping_estimate": "shipping (est.)", "p
               "controller_unknown": "HBA (controller not stated)", "rails_unknown": "rails (not stated)",
               "weak_seller": "weak seller +10%", "seller_unknown": "seller rating not stated +10%",
               "high_risk": "High-risk +20%"}
+
+
+STYLE = """<meta name="color-scheme" content="dark"><style>
+:root{color-scheme:dark}
+body{font-family:sans-serif;margin:2em;background:#121212;color:#e0e0e0}
+a{color:#8ab4f8} a:visited{color:#c58af9} th a,th a:visited{color:#e0e0e0}
+table{border-collapse:collapse;margin-bottom:2em} td,th{padding:4px 10px;border-bottom:1px solid #333;text-align:left}
+input,select,button{background:#1e1e1e;color:#e0e0e0;border:1px solid #555;padding:4px 8px;border-radius:3px}
+button{cursor:pointer} button:hover{background:#2a2a2a}
+.fault{background:#3b1f1f;border-left:4px solid #ef5350;padding:8px 12px}
+.notice{background:#1a2a3f;border-left:4px solid #64b5f6;padding:8px 12px}
+.bought{background:#1b3320;border-left:4px solid #66bb6a;padding:8px 12px}
+.risk{color:#ef5350} tr.gone,tr.gone a{color:#777} .note{font-size:85%} .costs{color:#9e9e9e}
+.drop{color:#66bb6a;font-weight:bold} .up{color:#ef5350} .down{color:#66bb6a}
+</style>"""
+
+
+def _history_table(rows, label, unit):
+    """One row per (key, Source), one column per week: 'lowest / median (Listings)'."""
+    weeks = sorted({r["week"] for r in rows})
+    groups = {}
+    for r in rows:
+        groups.setdefault((r["key"], r["source"]), {})[r["week"]] = r
+    body = []
+    for (key, source), cells in sorted(groups.items(), key=lambda g: (str(g[0][0]), g[0][1])):
+        first, last = cells[min(cells)], cells[max(cells)]
+        change = (float(last["median"]) / float(first["median"]) - 1) * 100 if len(cells) > 1 else 0
+        trend = (f'<td class="{"up" if change > 0 else "down"}">{change:+.0f}%</td>' if len(cells) > 1
+                 else "<td>&ndash;</td>")
+        body.append(f'<tr data-history="{_e(label(key))}|{_e(source)}"><td>{_e(label(key))}</td><td>{_e(source)}</td>'
+                    + "".join(f'<td>{c["low"]:,.0f} / {float(c["median"]):,.0f} <small>({c["n"]})</small></td>'
+                              if (c := cells.get(w)) else "<td></td>" for w in weeks) + trend + "</tr>")
+    head = "".join(f"<th>week of {w:%d %b}</th>" for w in weeks)
+    return (f"<table><tr><th>{_e(unit)}</th><th>Source</th>{head}<th>Median change</th></tr>{''.join(body)}</table>"
+            if body else "<p>No data yet.</p>")
 
 
 def _safe_url(url):
@@ -224,6 +259,16 @@ class App:
                 ok = False
         self.store.finish_hunt(hunt_id, ok, detail)
         log.info("hunt %s done ok=%s %s", hunt_id, ok, detail)
+        try:  # the best Build of this Hunt, for the price history; a failure here must not fail the Hunt
+            builds = rank_builds(*self.store.build_parts())
+            if builds:
+                b = min(builds, key=lambda b: b.score)
+                self.store.set_best_build(hunt_id, {
+                    "score": round(b.score, 2), "landed_nok": b.landed_nok, "usable_tib": round(b.usable_tib, 2),
+                    "machine": b.machine["title"], "url": b.machine["url"],
+                    "disks": f"{len(b.disks)} x {b.capacity_tb:g} TB"})
+        except Exception:
+            log.exception("recording the best Build of hunt %s failed", hunt_id)
 
     def _score(self, source, listing, kind):
         """The rules' verdict on one Listing: None when it is not a Disk/Machine at all, else a dict with
@@ -312,13 +357,31 @@ class App:
         body = "".join(body)
         fault = "".join(f'<p class="fault" data-fault="{_e(n)}">Source fault: <b>{_e(n)}</b> {_e(m)}</p>' for n, m in faults)
         return f"""<!doctype html><html><head><meta charset="utf-8"><title>Search: {_e(query)}</title>
-<style>body{{font-family:sans-serif;margin:2em}}td,th{{padding:4px 10px;border-bottom:1px solid #ddd;text-align:left}}
-.fault{{background:#fde8e8;border-left:4px solid #c62828;padding:8px 12px}}</style></head><body>
+{STYLE}</head><body>
 <p><a href="/">&larr; Deal Finder</a></p><h1>Search: {_e(query)} ({_e(kind)}s)</h1>{fault}
 <form method="post" action="/track"><input type="hidden" name="q" value="{_e(query)}">
 <input type="hidden" name="kind" value="{_e(kind)}"><button>Track this query</button> (every Hunt will run it)</form>
 <p>{len(rows)} results, {sum(r["qualifies"] for r in rows)} qualify. Scored with the same rules as a Hunt; nothing is saved.</p>
 <table><tr><th>Source</th><th>Listing</th><th>Verdict</th><th>Landed NOK</th><th>NOK per TB</th></tr>{body}</table>
+</body></html>"""
+
+    def history_page(self):
+        disks, machines, builds = self.store.history()
+        build_rows = "".join(
+            f'<tr data-best-week="{r["week"]}"><td>week of {r["week"]:%d %b}</td><td>{b["score"]:,.0f}</td>'
+            f'<td>{b["landed_nok"]:,.0f}</td><td><a href="{_e(_safe_url(b["url"]))}">{_e(b["machine"])}</a></td>'
+            f'<td>{_e(b["disks"])}</td></tr>'
+            for r in builds for b in [r["best_build"]])
+        return f"""<!doctype html><html><head><meta charset="utf-8"><title>Deal Finder: price history</title>
+{STYLE}</head><body><p><a href="/">&larr; Deal Finder</a></p><h1>Price history</h1>
+<p>Qualifying Listings only, by Landed cost (price + shipping or pickup trip + VAT + Penalties). Each cell is
+lowest / median that week, with the number of Listings; each Listing counts once a week, at its lowest price.
+History starts with this version (27 Sep 2026): earlier Hunts stored no Landed cost, so month-to-month comparison
+needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
+<h2>Best Build per week</h2>
+{f"<table><tr><th>Week</th><th>Score (NOK/TiB)</th><th>Landed NOK</th><th>Machine</th><th>Disks</th></tr>{build_rows}</table>" if build_rows else "<p>No data yet.</p>"}
+<h2>Disks, NOK per TB</h2>{_history_table(disks, lambda k: f"{k:g} TB", "Capacity")}
+<h2>Machines, NOK</h2>{_history_table(machines, lambda k: k, "Model")}
 </body></html>"""
 
     def page(self, notice=None, sort="score"):
@@ -376,16 +439,12 @@ class App:
         per_source = " &middot; ".join(f"{_e(s.name)}: last successful Hunt {_when(success.get(s.name))}"
                                        for s in self.sources)
         return f"""<!doctype html><html><head><meta charset="utf-8"><title>Deal Finder</title>
-<style>body{{font-family:sans-serif;margin:2em}}table{{border-collapse:collapse;margin-bottom:2em}}
-td,th{{padding:4px 10px;border-bottom:1px solid #ddd;text-align:left}}
-.fault{{background:#fde8e8;border-left:4px solid #c62828;padding:8px 12px}}
-.notice{{background:#e8f0fd;border-left:4px solid #1565c0;padding:8px 12px}}
-.risk{{color:#c62828}} .bought{{background:#e8f5e9;border-left:4px solid #2e7d32;padding:8px 12px}} tr.gone{{color:#999}} tr.gone a{{color:#999}} .note{{font-size:85%}} .drop{{color:#2e7d32;font-weight:bold}}</style></head><body>
+{STYLE}</head><body>
 <h1>Deal Finder</h1>{banner}{note}{running}
 <p>Last Hunt: {_when(last["finished"] if last else None)}{took}. Hunts run every {HUNT_INTERVAL_S // 3600} hours.
 {"" if bought else '<form method="post" action="/hunt" style="display:inline"><button>Hunt now</button></form>'}</p>
 {_bought_html(bought)}
-<p>{per_source}</p>
+<p>{per_source} &middot; <a href="/history">Price history</a></p>
 <form method="get" action="/search"><input name="q" size="30" placeholder="e.g. exos x20 or r740xd" required
 maxlength="{MAX_QUERY_CHARS}"> <select name="kind"><option value="disk">Disks</option><option value="machine">Machines</option>
 </select> <button>Search every Source now</button></form>
@@ -415,6 +474,11 @@ Machine, Builds over {CEILING_NOK:,} NOK hidden. Lower Score is better.</p>
         lines.append("# TYPE dealfinder_hunt_last_success_timestamp_seconds gauge")  # kept from ticket #2
         ok = max((t for t in success.values() if t), default=None)
         lines.append(f"dealfinder_hunt_last_success_timestamp_seconds {ok.timestamp() if ok else 0}")
+        best = self.store.latest_best_build() or {}
+        lines.append("# TYPE dealfinder_best_build_score gauge")  # NOK per usable TiB of the latest Hunt's best Build
+        lines.append(f"dealfinder_best_build_score {best.get('score', 0)}")
+        lines.append("# TYPE dealfinder_best_build_landed_nok gauge")
+        lines.append(f"dealfinder_best_build_landed_nok {best.get('landed_nok', 0)}")
         lines.append("# TYPE dealfinder_bought gauge")  # 1 once a Build is bought and hunting has stopped
         lines.append(f"dealfinder_bought {int(self.store.bought() is not None)}")
         lines.append("# TYPE dealfinder_hunt_running gauge")
@@ -473,6 +537,7 @@ Machine, Builds over {CEILING_NOK:,} NOK hidden. Lower Score is better.</p>
                     return
                 routes = {"/": ("text/html; charset=utf-8", lambda: app.page(notice, sort)),
                           "/search": ("text/html; charset=utf-8", lambda: app.search_page(*picked)),
+                          "/history": ("text/html; charset=utf-8", app.history_page),
                           "/metrics": ("text/plain; version=0.0.4", app.metrics),
                           "/healthz": ("text/plain", lambda: "ok\n")}
                 if url.path not in routes:

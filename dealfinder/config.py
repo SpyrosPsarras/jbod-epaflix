@@ -24,6 +24,7 @@ CEILING_NOK = 35_000     # Builds above this Landed cost are hidden
 MIN_BUILD_DISKS = 4      # smallest RAIDZ2 layout considered
 BOOT_BAYS = 1            # one 3.5" bay kept for the boot SSD
 
+HISTORY_WEEKS = 12      # weeks shown on the price history page
 GONE_DAYS = 7          # a Gone Listing stays visible, greyed out, this many days
 HUNT_INTERVAL_S = 6 * 3600  # a Hunt every 6 hours, counted from the last Hunt in the database
 
