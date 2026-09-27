@@ -19,7 +19,7 @@ A CPU, RAM or Heatsink Listing that completes a Machine. A heatsink Listing name
 _Avoid_: Component, add-on
 
 **Build**:
-One Machine, plus the Parts it lacks (a CPU of one model in every socket, RAM up to 128 GB, a heatsink for every added CPU), plus enough same-capacity Disks to reach at least 40 TiB usable in RAIDZ2. One eBay Disk Listing can supply several of those Disks, up to the stock eBay states for it; each Disk after the first pays its own extra shipping and VAT. The unit that gets ranked. A Build whose Parts are not on sale is hidden.
+One Machine, plus the Parts it lacks (a CPU of one model in every socket, RAM up to 128 GB, a heatsink for every added CPU), plus enough same-capacity Disks to reach at least 40 TiB usable in RAIDZ2. One Disk Listing can supply several of those Disks: a lot ("4x 16TB") whole at its price, or a single disk up to the stock eBay states or a finn text priced per disk states ("Selger 4 stk. Pris per stk"); each Disk after the first pays its price, extra shipping and VAT or fee again. The unit that gets ranked. A Build whose Parts are not on sale is hidden.
 _Avoid_: Bundle, combo (a Deal is one Listing)
 
 ### Where it comes from
