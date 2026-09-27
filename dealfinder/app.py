@@ -133,8 +133,8 @@ def _row_state(row, per=None, deal=None, unit="NOK"):
                                          f'{float(prev):,.0f} {_e(row["currency"])}</span>')
     if deal is not None and per < deal:
         attrs += ' class="deal" data-deal="1"'
-        note += (f' <span class="deal-note">That\'s a deal: cheaper than 3 in 4 prices of the last {HISTORY_WEEKS} weeks'
-                 f' (under {deal:,.0f} {unit})</span>')
+        note += (f' <span class="deal-note">That\'s a deal: under the lowest price of earlier weeks'
+                 f' ({deal:,.0f} {unit})</span>')
     return attrs, note
 
 
