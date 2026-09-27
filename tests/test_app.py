@@ -12,6 +12,7 @@ import unittest
 import urllib.error
 import urllib.parse
 import urllib.request
+from unittest import mock
 
 import pgserver
 
@@ -685,6 +686,29 @@ class BuildsEndToEnd(unittest.TestCase):
 
     def test_ceiling_hides_the_expensive_machine(self):
         self.assertEqual(sorted(self.rows()), ["1", "3"])
+
+    def test_the_page_shows_the_hunts_ranking_and_a_restart_ranks_again(self):
+        pattern = r'data-build="([^"]+)" data-score="([\d.]+)" data-landed="([\d.]+)"'
+        with mock.patch.object(self.app.store, "build_parts", side_effect=AssertionError("a page load ranked")):
+            self.assertEqual(re.findall(pattern, self.app.page()), self.builds)
+            self.assertFalse(self.app.mark_bought("finn|nope"))  # Mark as bought reads the ranking too
+        with self.app.store._conn() as c:
+            c.execute("DELETE FROM ranking")
+        self.assertEqual(re.findall(pattern, self.app.page()), [])
+        App(self.pg.get_uri(), [], fx=RATES.__getitem__, pause=0, router=fake_router)  # a new pod ranks at start-up
+        self.assertEqual(re.findall(pattern, self.app.page()), self.builds)
+
+    def test_a_failed_ranking_keeps_the_last_builds_and_says_so(self):
+        pattern = r'data-build="([^"]+)" data-score="([\d.]+)" data-landed="([\d.]+)"'
+        with mock.patch("dealfinder.store.Store.build_parts", side_effect=RuntimeError("new rule broke")):
+            app = App(self.pg.get_uri(), [], fx=RATES.__getitem__, pause=0, router=fake_router)  # a new pod
+        page = app.page()
+        self.assertEqual(re.findall(pattern, page), self.builds)
+        self.assertIn('data-fault="ranking">Ranking the Builds failed (hunt 1: new rule broke)', page)
+        self.assertIn("dealfinder_ranking_failed 1", app.metrics())
+        app.rank(app.store.last_hunt()["id"])  # the next Hunt's ranking works
+        self.assertNotIn('data-fault="ranking"', app.page())
+        self.assertIn("dealfinder_ranking_failed 0", app.metrics())
 
     def test_details_link_every_listing_and_sort_by_any_column(self):
         for fid in (3, 30, 31, 32, 33, 34):

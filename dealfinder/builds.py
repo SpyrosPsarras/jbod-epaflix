@@ -102,10 +102,10 @@ def _pick(rows, need, trips, unit=None):
     return whole if whole and whole[1] < total else (picks, total, trips)
 
 
-def _complete(machine, cpus, rams, heatsinks):
+def _complete(machine, cpus, rams, heatsinks, pick):
     """The cheapest Part Listings a Machine needs, CPUs then RAM then heatsinks, sharing Pickup trips:
     ([(row, count used, NOK)], NOK, trips), or the HIDDEN reason it cannot be completed. The Parts come grouped by
-    rank_builds."""
+    rank_builds, and `pick` is its memoized _pick."""
     need = machine_needs(machine["facts"])
     if need is None:
         return "platform"
@@ -128,7 +128,7 @@ def _complete(machine, cpus, rams, heatsinks):
     for reason, needed, sets, unit in options:
         if not needed:
             continue
-        best = min((p for rows, n in sets if (p := _pick(rows, n, trips, unit))),
+        best = min((p for rows, n in sets if (p := pick(rows, n, trips, unit))),
                    key=lambda p: p[1], default=None)
         if best is None:
             return reason
@@ -136,7 +136,7 @@ def _complete(machine, cpus, rams, heatsinks):
     return picked, total, trips
 
 
-def best_build(machine, disks_by_capacity, parts, parts_nok, trips):
+def best_build(machine, disks_by_capacity, parts, parts_nok, trips, pick):
     """Cheapest Build for one completed Machine that reaches TARGET_TIB, or None.
 
     ponytail: each Disk Listing supplies one disk (the Sources do not say how many a seller has).
@@ -148,7 +148,7 @@ def best_build(machine, disks_by_capacity, parts, parts_nok, trips):
             if usable_tib(count, capacity) < TARGET_TIB:
                 continue
             machine_nok, penalties = _machine_cost(machine, count)
-            chosen, disks_nok, _ = _pick(disks, count, trips)
+            chosen, disks_nok, _ = pick(disks, count, trips)
             total = machine_nok + parts_nok + disks_nok
             if best is None or total < best.landed_nok:
                 best = Build(machine, [d for d, _, _ in chosen], capacity, usable_tib(count, capacity), round(total, 2),
@@ -175,11 +175,18 @@ def rank_builds(machines, disks, parts):
         else:
             for model in f["fits"]:
                 heatsinks.setdefault(model, []).append(r)
+    memo = {}  # most Machines share no Pickup trip, so the same picks repeat: 5,572 calls, 188 distinct on 27 Sep 2026
+
+    def pick(rows, need, trips, unit=None):
+        key = (id(rows), need, frozenset(trips), unit)  # rows are the group lists above, alive for this call
+        if key not in memo:
+            memo[key] = _pick(rows, need, trips, unit)
+        return memo[key]
     for m in machines:
-        done = _complete(m, cpus, rams, heatsinks)
+        done = _complete(m, cpus, rams, heatsinks, pick)
         if isinstance(done, str):
             hidden[done] += 1
-        elif (b := best_build(m, by_capacity, *done)) and b.landed_nok > CEILING_NOK:
+        elif (b := best_build(m, by_capacity, *done, pick)) and b.landed_nok > CEILING_NOK:
             hidden["ceiling"] += 1
         elif b:
             builds.append(b)
