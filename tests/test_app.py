@@ -1437,7 +1437,10 @@ class MarkAsBought(unittest.TestCase):
             return r.url, r.read().decode()
 
     def test_mark_as_bought_then_no_hunt_calls_a_source(self):
-        self.assertIn('action="/buy"', self.app.page())
+        page = self.app.page()
+        self.assertIn('action="/buy"', page)
+        self.assertIn('data-copy="finn|1"', page)  # Copy ID copies the same key the /buy form posts
+        self.assertIn('<details><summary title="More">&#9662;</summary><form method="post" action="/buy"', page)  # buy sits in the dropdown
         self.assertIn("?hunt=gone", self.post("/buy", b"machine=finn%7C999")[0])  # not a shown Build: nothing kept
         self.assertIsNone(self.app.store.bought())
 
@@ -1451,6 +1454,7 @@ class MarkAsBought(unittest.TestCase):
         self.assertIn('data-bought="1"', page)                    # the page shows the bought Build...
         self.assertIn("https://www.finn.no/recommerce/forsale/item/14", page)
         self.assertNotIn('action="/buy"', page)                    # ...and offers no more buttons
+        self.assertIn('data-copy="finn|1"', page)                  # Copy ID stays after the purchase
         self.assertNotIn('action="/hunt"', page)
 
         self.calls.clear()
