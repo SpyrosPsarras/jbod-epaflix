@@ -1066,3 +1066,12 @@ class PriceHistory(unittest.TestCase):
         for html in (self.page, self.app.page(), self.app.search_page("exos", "disk")):
             self.assertIn('<meta name="color-scheme" content="dark">', html)
             self.assertIn("background:#121212", html)
+
+    def test_sections_are_tabs_with_sticky_headers(self):
+        for html, labels in ((self.page, ["Best Build per week", "Disks, NOK per TB", "Machines, NOK"]),
+                             (self.app.page(), ["Builds", "Best Disks", "Best Machines", "Could not read"])):
+            self.assertEqual(re.findall(r'<label for="tab\d">([^<]+)</label>', html), labels)
+            self.assertEqual(html.count("<section>"), len(labels))
+            self.assertEqual(html.count('name="tab" id="tab0" checked'), 1)
+            self.assertIn(f".tabs>input:nth-of-type({len(labels)}):checked~section:nth-of-type({len(labels)})", html)
+            self.assertIn("th{position:sticky;top:0", html)
