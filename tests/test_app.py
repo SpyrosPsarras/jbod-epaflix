@@ -1513,20 +1513,29 @@ class PriceHistory(unittest.TestCase):
                 q = urllib.parse.parse_qs(url.split("?", 1)[1])
                 disks = [_doc(10 + i, 'Seagate Exos X16 16TB 3.5" SATA', cls.disk_price + 100 * i, 60.4, 5.5, ship)
                          for i in range(5)]
-                machines = [_doc(1, "Dell PowerEdge R730xd 12x LFF", 6000, 59.91, 10.72)]
-                docs = (machines if q["q"] == ["r730xd"] else disks) if q["condition"] == ["3", "4"] else []
+                parts = {"r730xd": [_doc(1, "Dell PowerEdge R730xd 12x LFF", 6000, 59.91, 10.72)],
+                         "xeon": [_doc(40, "2x Intel Xeon E5-2680 v4 CPU", 1000, 60.4, 5.5, ship)],
+                         "rdimm": [_doc(50, "4x 32GB DDR4-2400 ECC RDIMM", 2000, 60.4, 5.5, ship)],
+                         "heatsink": [_doc(60, "2 x Dell PowerEdge R730 CPU Heatsink", 300, 60.4, 5.5, ship)]}
+                docs = parts.get(q["q"][0], disks) if q["condition"] == ["3", "4"] else []
                 blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
                 return f"<script>{blob}</script>"
             return f'<section data-testid="description"><p>{htmllib.escape(full)}</p></section>'
 
         cls.pg = _pg()
         cls.app = App(cls.pg.get_uri(), [FinnSource(fetch=fetch, pause=0)], fx=RATES.__getitem__,
-                      disk_queries={"finn": ["exos"]}, machine_queries=["r730xd"], pause=0, router=fake_router)
+                      disk_queries={"finn": ["exos"]}, machine_queries=["r730xd"], cpu_queries={"finn": ["xeon"]},
+                      ram_queries={"finn": ["rdimm"]}, heatsink_queries={"finn": ["heatsink"]}, pause=0,
+                      router=fake_router)
         cls.app.hunt()
         import psycopg
         with psycopg.connect(cls.pg.get_uri(), autocommit=True) as c:  # make Hunt 1 a week old
             c.execute("UPDATE price_observations SET seen_at = seen_at - interval '7 days'")
             c.execute("UPDATE hunts SET started = started - interval '7 days'")
+            # Hunt 1 as recorded before Parts had history: no kind, and no key or units for a Part
+            c.execute("UPDATE price_observations SET kind = NULL, units = NULL, "
+                      "model = CASE WHEN source_id = '1' THEN model END")
+        cls.app.store.migrate()  # keys the old Part observations from their Listings
         cls.disk_price = 1200  # every seller drops the price by 300 NOK
         cls.app.hunt()
         cls.page = cls.app.history_page()
@@ -1569,6 +1578,13 @@ class PriceHistory(unittest.TestCase):
             with psycopg.connect(self.pg.get_uri(), autocommit=True) as c:
                 c.execute("DELETE FROM hunts WHERE id = %s", (hunt,))
 
+    def test_parts_have_weekly_rows_per_unit_including_old_hunts(self):
+        for key, landed, units in (("E5-2680 v4|finn", _shipped(1000), 2), ("DDR4 RDIMM 32 GB|finn", _shipped(2000), 128),
+                                   ("R730|finn", _shipped(300), 2)):
+            (old, new), _ = self.cells(key)
+            self.assertEqual(old, (f"{landed / units:,.0f}", f"{landed / units:,.0f}", "1"), key)
+            self.assertEqual(new, old, key)
+
     def test_a_listing_that_stops_qualifying_keeps_its_history(self):
         import psycopg
         with psycopg.connect(self.pg.get_uri(), autocommit=True) as c:  # e.g. now "make an offer"
@@ -1584,7 +1600,8 @@ class PriceHistory(unittest.TestCase):
             self.assertIn("background:#121212", html)
 
     def test_sections_are_tabs_with_sticky_headers(self):
-        for html, labels in ((self.page, ["Best Build per week", "Disks, NOK per TB", "Machines, NOK"]),
+        for html, labels in ((self.page, ["Best Build per week", "Disks, NOK per TB", "Machines, NOK", "CPUs, NOK per CPU",
+                                          "RAM, NOK per GB", "Heatsinks, NOK per heatsink"]),
                              (self.app.page(), ["Builds", "Best Disks", "Best Machines", "Best CPUs", "Best RAM",
                                               "Heatsinks", "Could not read"])):
             self.assertEqual(re.findall(r'<label for="tab\d">([^<]+)</label>', html), labels)

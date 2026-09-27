@@ -457,7 +457,7 @@ class App:
 </body></html>"""
 
     def history_page(self):
-        disks, machines, builds = self.store.history()
+        series, builds = self.store.history()
         build_rows = "".join(
             f'<tr data-best-week="{r["week"]}"><td>week of {r["week"]:%d %b}</td><td>{b["score"]:,.0f}</td>'
             f'<td>{b["landed_nok"]:,.0f}</td><td><a href="{_e(_safe_url(b["url"]))}">{_e(b["machine"])}</a></td>'
@@ -472,8 +472,11 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
 {_tabs([
     ("Best Build per week", f"<table><tr><th>Week</th><th>Score (NOK/TiB)</th><th>Landed NOK</th><th>Machine</th>"
                             f"<th>Disks</th></tr>{build_rows}</table>" if build_rows else "<p>No data yet.</p>"),
-    ("Disks, NOK per TB", _history_table(disks, lambda k: f"{k:g} TB", "Capacity")),
-    ("Machines, NOK", _history_table(machines, lambda k: k, "Model"))])}
+    ("Disks, NOK per TB", _history_table(series["disk"], lambda k: f"{k:g} TB", "Capacity")),
+    ("Machines, NOK", _history_table(series["machine"], str, "Model")),
+    ("CPUs, NOK per CPU", _history_table(series["cpu"], str, "Model")),
+    ("RAM, NOK per GB", _history_table(series["ram"], str, "RAM")),
+    ("Heatsinks, NOK per heatsink", _history_table(series["heatsink"], str, "Fits"))])}
 </body></html>"""
 
     def page(self, notice=None, sort="score"):
