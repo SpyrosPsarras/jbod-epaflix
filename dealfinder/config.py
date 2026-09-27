@@ -39,6 +39,9 @@ EBAY_SEARCH = {
     # "CPUs/Processors" (checked 27 Sep 2026: E5-2680 v4 from £10, EPYC 7302 from £30, Silver 4310 £440-£515);
     # the £3 floor skips £1 junk, £600 keeps 3rd Gen Xeon in reach
     "cpu": ("164", (3, 600)),
+    # "Server Memory (RAM)" (checked 27 Sep 2026: 32 GB RDIMM from £50, 8x64 GB kits under £1,500). Browse takes one
+    # category; "Memory (RAM)" 170083 holds a similar share of RDIMMs among desktop and laptop sticks
+    "ram": ("11210", (5, 1500)),
 }
 
 # per Source: eBay returns only the 100 cheapest per query, so its queries name a capacity; finn.no search is
@@ -68,8 +71,17 @@ CPU_QUERIES = {
                 "xeon gold 6230", "xeon silver 4310", "epyc 7302"],
     "finn": ["xeon e5", "xeon gold", "xeon silver", "epyc"],
 }
-# DISK_QUERIES, MACHINE_QUERIES and CPU_QUERIES are only the starting Tracked queries, copied into the database
-# for each (kind, Source) group that has none yet; after that the page's Track button adds more (tickets #8, #12)
+# RAM (ticket #32): eBay queries name a size or speed to fit the 100 cheapest; finn.no is small
+RAM_QUERIES = {
+    "ebay_uk": ["ddr4 ecc rdimm 16gb", "ddr4 ecc rdimm 32gb", "ddr4 ecc rdimm 64gb", "ddr4 lrdimm 64gb",
+                "ddr4 ecc reg 2400", "ddr4 ecc reg 2666", "ddr4 ecc reg 3200"],
+    "finn": ["ddr4 ecc", "rdimm", "server minne", "ecc ram"],
+}
+# lowest believable Landed NOK per GB for used DDR4 RDIMM (16 GB DDR4-2133 lands at 9-13, 27 Sep 2026); below it a
+# multi-stick Listing is priced per stick ("32GB x 10 stk" for 1,500 NOK) and counts as one stick
+RAM_MIN_NOK_PER_GB = 8
+# DISK_QUERIES, MACHINE_QUERIES, CPU_QUERIES and RAM_QUERIES are only the starting Tracked queries, copied into the
+# database for each (kind, Source) group that has none yet; after that the page's Track button adds more (#8, #12)
 
 # CPU socket per Machine platform (amd, generation); 16th Gen and newer (DDR5) are not supported: None.
 # Vendor does not change the socket: a 13th Gen PowerEdge, ProLiant Gen9 and Supermicro X10 are all LGA2011-3

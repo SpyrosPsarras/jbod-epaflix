@@ -1,0 +1,694 @@
+[
+ {
+  "note": "eBay 236918526853",
+  "title": "SK Hynix 32GB DDR4 2400MHz PC4-2400T ECC REG Server RAM DIMM HMA84GR7MFR4N-UH",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2400
+  }
+ },
+ {
+  "note": "'2x16GB' is two sticks (eBay 298703994260)",
+  "title": "Crucial 32GB 2x16GB DDR4-2133 RDIMM ECC Registered 288-Pin CT16G4RFD4213",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 2,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2133
+  }
+ },
+ {
+  "note": "'4x 8GB' before the total (eBay 206572509282)",
+  "title": "4x 8GB SK hynix 32GB DDR4-2133P ECC RDIMM HPE 752368-081 Server RAM",
+  "condition": "new",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 8,
+   "sticks": 4,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2133
+  }
+ },
+ {
+  "note": "'8GB(X4)' is four sticks (eBay 127927901532)",
+  "title": "HPE 32GB RAM Kit 8GB(X4) DDR4 2133MHz ECC RDIMM Server RAM PC4-2133P 752368-081 ",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 8,
+   "sticks": 4,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2133
+  }
+ },
+ {
+  "note": "'Reg.' and a P-bin speed (eBay 227523292774)",
+  "title": "Samsung M393A4K40BB0-CPB DDR4 32GB ECC Reg. DDR4-2133P-RA0-10-DC0 / Server",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2133
+  }
+ },
+ {
+  "note": "'PC4-2133-R' label and 'DDR4-17000' rating (eBay 407201582802)",
+  "title": "New Unigen 32GB 2Rx4 PC4-2133-R DDR4-17000 ECC RDIMM Memory U40V7200Q4DGD",
+  "condition": "new",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2133
+  }
+ },
+ {
+  "note": "'1x 2Rx4' is one stick, not a count (eBay 366397827642)",
+  "title": "Micron MTA36ASF4G72PZ-2G9E2TI 32GB 1x 2Rx4 DDR4 2666MHz PC4-21300 ECC REG RAM",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2666
+  }
+ },
+ {
+  "note": "'PC4-2666V' speed (eBay 198620090113)",
+  "title": "SAMSUNG M393A4K40BB2-CTD6Q 32GB 2RX4 PC4-2666V DDR4 ECC RDIMM",
+  "condition": "new",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2666
+  }
+ },
+ {
+  "note": "'2933Y' bin, PC4-2933Y (eBay 128004062893)",
+  "title": "Micron 32GB DDR4 2933MHz PC4-2933Y ECC RDIMM Server RAM MTA36ASF4G72PZ",
+  "condition": "new",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2933
+  }
+ },
+ {
+  "note": "LRDIMM 'for' a Primergy is RAM, not a server (eBay 364603761417)",
+  "title": "32GB DDR4 2133MHz ECC LRDIMM RAM PC4 for FUJITSU SIEMENS PRIMERGY BX2560 M1",
+  "condition": "refurbished",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "LRDIMM",
+   "speed": 2133
+  }
+ },
+ {
+  "note": "'for Dell PowerEdge T630' is RAM (eBay 178215971962)",
+  "title": "16GB DDR4 2400 PC4-19200 ECC REG DIMM for Dell PowerEdge T630 Memory RAM",
+  "condition": "new",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2400
+  }
+ },
+ {
+  "note": "naming the servers it fits is RAM, not a server (finn 440873042)",
+  "title": "HPE 32GB DDR4-2400 ECC RDIMM SmartMemory – DL360 / DL380 Gen9",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2400
+  }
+ },
+ {
+  "note": "'(5 x 8 GB)' (finn 477365161)",
+  "title": "40 GB (5 x 8 GB) Samsung DDR4-2666 ECC RDIMM",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 8,
+   "sticks": 5,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2666
+  }
+ },
+ {
+  "note": "finn 477309789",
+  "title": "Samsung 128GB (4x32GB) DDR4-3200MHz ECC RDIMM serverminne PC4-25600",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 4,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 3200
+  }
+ },
+ {
+  "note": "LRDIMM and REG: LRDIMM (finn 468982316)",
+  "title": "64GB DDR4 2400MHz ECC REG LRDIMM RAM 4DRx4 PC4-2400T",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 64,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "LRDIMM",
+   "speed": 2400
+  }
+ },
+ {
+  "note": "'8x Samsung 32GB' with a total first (finn 465722109)",
+  "title": "(256gb) 8x Samsung 32GB DDR4  2666v RDIMM ECC RAM",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 8,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2666
+  }
+ },
+ {
+  "note": "'REG.DIMM' and MT/s (finn 457579194)",
+  "title": "128GB 4x32GB REG.DIMM DDR4 ECC RAM 2933MT/s",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 4,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2933
+  }
+ },
+ {
+  "note": "'x 4 st.' after the stick (finn 413849643)",
+  "title": "DDR4 8Gb RDIMM × 4 st.",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 8,
+   "sticks": 4,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": null
+  }
+ },
+ {
+  "note": "'PC4-19200T-R' (finn 469501670)",
+  "title": "SK Hynix 32GB RAM 2Rx4 PC4-19200T-R (DDR4-2400) ECC CAS-17 server minne",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2400
+  }
+ },
+ {
+  "note": "the 32GB sticks are counted, not the 256GB total (finn 475942987)",
+  "title": "8 x 32GB HPE/Samsung ECC DDR4-2666 RDIMM serverminne – 256GB",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 8,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2666
+  }
+ },
+ {
+  "note": "a total of four sticks, 128 GB",
+  "title": "128GB (4x32GB) DDR4-3200 ECC RDIMM",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 4,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 3200
+  }
+ },
+ {
+  "note": "'-R' label only: RDIMM, ECC implied",
+  "title": "HPE 32GB 2Rx4 PC4-2400T-R",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2400,
+   "ecc": true
+  }
+ },
+ {
+  "note": "LRDIMM with a V bin",
+  "title": "Samsung 64GB 4DRx4 PC4-2666V LRDIMM",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 64,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "LRDIMM",
+   "speed": 2666
+  }
+ },
+ {
+  "note": "'kit of 4' and a total: 16 GB per stick (synthetic)",
+  "title": "Kit of 4 16GB DDR4 ECC RDIMM 64GB",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 4,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": null
+  }
+ },
+ {
+  "note": "'lot of 4' (synthetic)",
+  "title": "Lot of 4 Samsung 16GB DDR4 2400 ECC Registered",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 4,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2400
+  }
+ },
+ {
+  "note": "'8 stk' (synthetic)",
+  "title": "8 stk Samsung 16GB DDR4 2400T RDIMM",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 8,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2400
+  }
+ },
+ {
+  "note": "'4 pcs.' of '(1x 32GB)': the stick size wins (finn 435410566)",
+  "title": "4 pcs. | Samsung / Cisco 32GB (1x 32GB) DDR4 2133MHz 2Rx4 ECC RDIMM",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM",
+   "speed": 2133
+  }
+ },
+ {
+  "note": "for parts is rejected",
+  "title": "Samsung 32GB DDR4 2400 ECC RDIMM",
+  "condition": "for_parts",
+  "expect": {
+   "qualifies": false,
+   "working": false
+  }
+ },
+ {
+  "note": "DDR3 RDIMM is read but only DDR4 qualifies (finn 477365255)",
+  "title": "64 GB (8 x 8 GB) SK hynix DDR3-1600 ECC RDIMM",
+  "condition": "used",
+  "expect": {
+   "qualifies": false,
+   "gb_per_stick": 8,
+   "sticks": 8,
+   "ddr": 3,
+   "type": "RDIMM",
+   "speed": 1600
+  }
+ },
+ {
+  "note": "DDR3 LRDIMM, PC3-14900L (finn 476946894)",
+  "title": "4x 32GB Samsung DDR3-1866 LRDIMM 4Rx4 (128GB) PC3-14900L M386B4G70DM0-CMA",
+  "condition": "used",
+  "expect": {
+   "qualifies": false,
+   "gb_per_stick": 32,
+   "sticks": 4,
+   "ddr": 3,
+   "type": "LRDIMM",
+   "speed": 1866
+  }
+ },
+ {
+  "note": "no RDIMM/LRDIMM word (finn 475607405)",
+  "title": "32GB DDR4 ECC RAM",
+  "condition": "used",
+  "expect": {
+   "unreadable": [
+    "type"
+   ]
+  }
+ },
+ {
+  "note": "PC4-2666V has no -R: type unknown (finn 475599337)",
+  "title": "4x16gb RAM DDR4 PC4-2666V",
+  "condition": "used",
+  "expect": {
+   "unreadable": [
+    "type"
+   ]
+  }
+ },
+ {
+  "note": "price per stick and '32x2 GB': size unknown (finn 462654595)",
+  "title": "Selges: pris per stykk;Samsung 32x2 GB DDR4 ECC RDIMM RAM – M393A4K40BB1",
+  "condition": "used",
+  "expect": {
+   "unreadable": [
+    "gb_per_stick"
+   ]
+  }
+ },
+ {
+  "note": "a 256 GB total of unknown sticks (finn 442186209)",
+  "title": "Til salgs: 256 GB DDR4 ECC RAM - selges samlet",
+  "condition": "used",
+  "expect": {
+   "unreadable": [
+    "gb_per_stick",
+    "type"
+   ]
+  }
+ },
+ {
+  "note": "SODIMM (finn 473381753)",
+  "title": "Crucial Ballistix 16GB (2 x 8GB) DDR4 3200MHz SO-DIMM CL16 Non-ECC",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "ECC SODIMM for a NAS (finn 473272619)",
+  "title": "Synology 4GB ECC SODIMM DDR4 RAM-modul",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "UDIMM (finn 471934209)",
+  "title": "A-Tech 32GB DDR5 4800MHz ECC UDIMM RAM-modul",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "unbuffered non-ECC (finn 474220489)",
+  "title": "Hynix 8GB PC4-17000 DDR4-2133MHz non-ECC Unbuffered CL15 260-Pin",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "non-ECC (finn 476238536)",
+  "title": "8GB Kingston DDR4 RAM | 2x4GB | 2400MHz | Non-ECC",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "desktop kit",
+  "title": "Corsair Vengeance LPX 32GB (2x16GB) DDR4 3200MHz C16 RGB",
+  "condition": "new",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "mixed UDIMM/RDIMM lot (eBay 257485134102)",
+  "title": "DDR4 DDR5 Desktop Server ECC RAM Memory 4GB 8GB 16GB 32GB 64GB UDIMM RDIMM Lot",
+  "condition": "refurbished",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "a whole server in a RAM search",
+  "title": "Dell R730 server 128GB RAM",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "a whole server, finn 465550885",
+  "title": "HPe ProLiant DL360 G9 – 512GB DDR4 ECC RAM! | 24 kjerner | 10GbE",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "a whole server, finn 455107692",
+  "title": "HP ProLiant DL380 Gen9 - Xeon E5-2620v3, 64gb DDR4 ECC - perfekt til homelab",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "a server with a CPU word (finn 319988736)",
+  "title": "Lenovo 3650M4 128GB Minne, Dual CPU",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "a desktop PC (finn 476651172)",
+  "title": "Kraftig W680 Workstation AI-Server Gigabyte W680, i5-14600K, 64GB RAM,1500W PSU",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "a home server with disks (finn 474076662)",
+  "title": "DIY NAS/Homelab/server 48GB ECC RAM / 32 TB rå diskplass",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "not RAM (finn 415652537)",
+  "title": "Gammelt Kors 'Serve, Pray, Learn for Jesus'",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "F2: '10 stk på lager' is stock, not a count (synthetic, finn phrasing)",
+  "title": "Samsung 32GB DDR4 2666 RDIMM ECC - 10 stk på lager",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "F2: 'har 12 stk' is stock, not a count (synthetic, finn phrasing)",
+  "title": "16GB DDR4 ECC REG 2400 selges, har 12 stk",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "F2: '4 stk tilgjengelig' is stock (synthetic)",
+  "title": "Samsung 16GB DDR4 2400 RDIMM, 4 stk tilgjengelig",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "N1: 'Pair of' is two sticks (synthetic)",
+  "title": "Pair of 32GB DDR4 RDIMM",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 2,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "a trailing 'x8' is not a count: ranks are written 'x8' too (synthetic)",
+  "title": "32GB DDR4 RDIMM x8",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "N2: a whole workstation (synthetic)",
+  "title": "HP Z840 workstation 64GB DDR4 ECC REG",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "N2: RAM 'for' a Precision workstation is RAM (eBay 375086695898)",
+  "title": "32GB DDR4 2133MHz ECC LRDIMM RAM PC4 for Dell Precision Workst. 7810 (T7810)",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "LRDIMM"
+  }
+ },
+ {
+  "note": "'Dual Rank x4' is the DRAM width, not 4 sticks",
+  "title": "HPE 32GB Dual Rank x4 DDR4-2666 CAS-19 Registered Smart Memory Kit 815100-B21",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "'Single Rank x4' is the DRAM width",
+  "title": "HP 16GB Single Rank x4 DDR4-2400 CAS-17 Registered Memory Kit 805349-B21",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "'Quad Rank x4' LRDIMM",
+  "title": "HPE 64GB Quad Rank x4 DDR4-2666 LRDIMM 815101-B21",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 64,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "LRDIMM"
+  }
+ },
+ {
+  "note": "'2R x4' rank and width",
+  "title": "Samsung 16GB 2R x4 PC4-2133P-R DDR4 ECC",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "'1R x8' rank and width",
+  "title": "Micron 8GB 1R x8 PC4-2400T-R DDR4",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 8,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "'x 12 available' is stock",
+  "title": "Samsung M393A2K43BB1-CTD 16GB DDR4 2666 ECC Registered x 12 available",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ }
+]

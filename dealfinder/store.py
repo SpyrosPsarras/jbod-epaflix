@@ -91,7 +91,7 @@ ALTER TABLE hunts ADD COLUMN IF NOT EXISTS best_build jsonb;
 _SOURCE_OK = """
     h.finished IS NOT NULL AND (s.value->>'ok')::boolean
     AND coalesce((s.value->>'disk')::int, 0) + coalesce((s.value->>'machine')::int, 0)
-        + coalesce((s.value->>'cpu')::int, 0) > 0
+        + coalesce((s.value->>'cpu')::int, 0) + coalesce((s.value->>'ram')::int, 0) > 0
 """
 _FRESH = f"""
 WITH fresh AS (
@@ -282,7 +282,7 @@ class Store:
             """, (limit,)).fetchall()
 
     def best_listings(self, kind, limit=50):
-        """Ranked Machines or CPUs, cheapest first; a CPU Listing selling several CPUs ranks by NOK per CPU."""
+        """Ranked Machines, CPUs or RAM, cheapest first; a CPU Listing ranks by NOK per CPU, RAM by NOK per GB."""
         with self._conn() as c:
             return c.execute(_RANKED + f"""
                 SELECT l.source, l.source_id, title, url, facts, landed_nok, location, pickup_only, l.costs,
@@ -290,7 +290,9 @@ class Store:
                 FROM listings l JOIN fresh f ON f.source = l.source
                 LEFT JOIN prev p ON p.source = l.source AND p.source_id = l.source_id
                 WHERE kind = %s AND {_RANKED_WHERE}
-                ORDER BY gone, landed_nok / coalesce((facts->>'count')::numeric, 1), landed_nok LIMIT %s
+                ORDER BY gone, landed_nok / coalesce((facts->>'count')::numeric,
+                                                     (facts->>'gb_per_stick')::numeric * (facts->>'sticks')::numeric, 1),
+                         landed_nok LIMIT %s
             """, (kind, limit)).fetchall()
 
     def build_parts(self):
