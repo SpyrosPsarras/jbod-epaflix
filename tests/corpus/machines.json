@@ -22,7 +22,8 @@
    "ram_sticks": {
     "count": 2,
     "gb": 64,
-    "speed": 2400
+    "speed": 2400,
+    "lrdimm": false
    }
   }
  },
@@ -46,7 +47,8 @@
    "ram_sticks": {
     "count": 8,
     "gb": 16,
-    "speed": null
+    "speed": null,
+    "lrdimm": false
    }
   }
  },
@@ -65,7 +67,8 @@
    "ram_sticks": {
     "count": 12,
     "gb": 32,
-    "speed": 2400
+    "speed": 2400,
+    "lrdimm": false
    }
   }
  },
@@ -794,7 +797,8 @@
    "ram_sticks": {
     "count": 8,
     "gb": 16,
-    "speed": 2400
+    "speed": 2400,
+    "lrdimm": false
    }
   }
  },
@@ -809,7 +813,8 @@
    "ram_sticks": {
     "count": 4,
     "gb": 32,
-    "speed": 2400
+    "speed": 2400,
+    "lrdimm": false
    }
   }
  },
@@ -1055,5 +1060,12 @@
    "qualifies": true,
    "heatsinks": 2
   }
+ },
+ {
+  "note": "LRDIMM installed sticks are recorded, so a top-up buys LRDIMM (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x 3.5\" LFF",
+  "description": "2x Xeon E5-2680 v4. 64GB (4x16GB) DDR4-2400 LRDIMM.",
+  "condition": "used",
+  "expect": {"ram_gb": 64, "ram_sticks": {"count": 4, "gb": 16, "speed": 2400, "lrdimm": true}}
  }
 ]

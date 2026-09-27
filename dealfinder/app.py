@@ -10,9 +10,9 @@ from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from .config import (CEILING_NOK, CPU_QUERIES, DISK_QUERIES, HEATSINK_QUERIES, HISTORY_WEEKS, HUNT_INTERVAL_S,
-                     MACHINE_QUERIES, MAX_QUERY_CHARS, PENALTY_NOK, PICKUP_MAX_MINUTES, PICKUP_NOK_PER_KM,
-                     RAM_MIN_NOK_PER_GB, RAM_NOK_PER_GB, RAM_QUERIES, RAM_TARGET_GB, SOURCE_PAUSE_S, TARGET_TIB)
-from .builds import rank_builds
+                     MACHINE_QUERIES, MAX_QUERY_CHARS, PICKUP_MAX_MINUTES, PICKUP_NOK_PER_KM, RAM_MIN_NOK_PER_GB,
+                     RAM_QUERIES, RAM_TARGET_GB, SOURCE_PAUSE_S, TARGET_TIB)
+from .builds import HIDDEN, machine_needs, rank_builds
 from .costs import OsrmRouter, cost_breakdown, machine_penalties
 from .rules import Unreadable, read_cpu, read_disk, read_heatsink, read_machine, read_ram
 from .store import Store
@@ -33,8 +33,8 @@ COST_LABEL = {"shipping": "shipping", "shipping_estimate": "shipping (est.)", "p
               "psu_unknown": "2nd PSU (not stated)", "caddies_unknown": "caddies (not stated)",
               "controller_unknown": "HBA (controller not stated)", "rails_unknown": "rails (not stated)",
               "weak_seller": "weak seller +10%", "seller_unknown": "seller rating not stated +10%",
-              "high_risk": "High-risk +20%", "no_cpu": "CPUs", "cpu_unknown": "CPUs (not stated)",
-              "ram": f"RAM to {RAM_TARGET_GB} GB", "ram_unknown": f"RAM to {RAM_TARGET_GB} GB (not stated)"}
+              "high_risk": "High-risk +20%"}
+PART_LABEL = {"cpu": "CPU", "ram": "RAM", "heatsink": "Heatsink"}
 
 
 STYLE = """<meta name="color-scheme" content="dark"><style>
@@ -127,14 +127,29 @@ def _row_state(row):
     return "", ""
 
 
+def _sources(b):
+    return ", ".join(sorted({b.machine["source"], *(r["source"] for r, _, _ in b.parts["parts"]),
+                             *(d["source"] for d in b.disks)}))
+
+
 BUILD_SORT = {  # column -> (header, key); every column sortable, server-side, no JavaScript
     "score": ("Score (NOK/TiB)", lambda b: b.score),
     "landed": ("Landed NOK", lambda b: b.landed_nok),
     "usable": ("Usable TiB", lambda b: -b.usable_tib),
     "machine": ("Machine", lambda b: b.machine["title"].lower()),
     "disks": ("Disks", lambda b: (len(b.disks), b.capacity_tb)),
-    "sources": ("Sources", lambda b: ",".join(sorted({b.machine["source"], *(d["source"] for d in b.disks)}))),
+    "sources": ("Sources", _sources),
 }
+
+
+def _needs(facts):
+    """What a Machine lacks, for Best Machines: '2 CPU, 128 GB, 2 HS', 'nothing' or 'unsupported platform'."""
+    n = machine_needs(facts)
+    if n is None:
+        return "unsupported platform"
+    ram = n["ram"] or {}
+    return ", ".join(text for text, value in ((f"{n['cpu']} CPU", n["cpu"]), (f"{ram.get('gb')} GB", ram),
+                                              (f"{n['heatsink']} HS", n["heatsink"])) if value) or "nothing"
 
 
 def _risk_tag(row):
@@ -151,7 +166,7 @@ def _bought_html(bought):
         return ""
     b = bought["build"]
     links = "".join(f'<li>{_e(p["source"])}: <a href="{_e(_safe_url(p["url"]))}">{_e(p["title"])}</a> '
-                    f'{p["landed_nok"]:,.0f} NOK</li>' for p in [b["machine"], *b["disks"]])
+                    f'{p["landed_nok"]:,.0f} NOK</li>' for p in [b["machine"], *b.get("parts", []), *b["disks"]])
     return (f'<div class="bought" data-bought="{_e(b["machine"]["source_id"])}"><h2>Bought {_when(bought["bought"])}</h2>'
             f'<p>{_e(b["machine"]["title"])} + {len(b["disks"])} &times; {b["capacity_tb"]:g} TB: '
             f'{b["landed_nok"]:,.0f} NOK, {b["usable_tib"]} TiB usable, Score {b["score"]:,.0f}. '
@@ -162,8 +177,10 @@ def _build_rows(builds, sort, can_buy=True):
     rows = []
     for b in sorted(builds, key=BUILD_SORT[sort][1]):
         m = b.machine
-        sources = ", ".join(sorted({m["source"], *(d["source"] for d in b.disks)}))
+        sources = _sources(b)
         items = [f"<li>Machine {_link(m)}: {b.parts['machine']:,.0f} NOK{_breakdown(m, b.parts['machine_penalties'])}</li>"]
+        items += [f'<li data-part="{_e(r["source_id"])}" data-count="{n}" data-nok="{nok:.2f}">{PART_LABEL[r["kind"]]} '
+                  f"{_link(r)}: {n} used, {nok:,.0f} NOK{_breakdown(r)}</li>" for r, n, nok in b.parts["parts"]]
         items += [f"<li>Disk {_link(d)}: {float(d['landed_nok']):,.0f} NOK{_breakdown(d)}</li>" for d in b.disks]
         rows.append(
             f'<tr data-build="{_e(m["source_id"])}" data-score="{b.score:.2f}" data-landed="{b.landed_nok:.2f}">'
@@ -173,7 +190,8 @@ def _build_rows(builds, sort, can_buy=True):
                f'hunting for good?\')"><input type="hidden" name="machine" value="{_e(m["source"])}|{_e(m["source_id"])}">'
                f'<button>Mark as bought</button></form></td>' if can_buy else "<td></td>")
             + f"<td><details><summary>show</summary><ul>{''.join(items)}</ul>"
-            f"<p>Total {b.landed_nok:,.0f} NOK = Machine {b.parts['machine']:,.0f} + Disks {b.parts['disks']:,.0f}"
+            f"<p>Total {b.landed_nok:,.0f} NOK = Machine {b.parts['machine']:,.0f} + Parts {b.parts['parts_nok']:,.0f}"
+            f" + Disks {b.parts['disks']:,.0f}"
             f" (a shared pickup place is driven once)</p></details></td></tr>")
     return "".join(rows)
 
@@ -293,13 +311,12 @@ class App:
         self.store.finish_hunt(hunt_id, ok, detail)
         log.info("hunt %s done ok=%s %s", hunt_id, ok, detail)
         try:  # the best Build of this Hunt, for the price history; a failure here must not fail the Hunt
-            builds = rank_builds(*self.store.build_parts())
-            if builds:
-                b = min(builds, key=lambda b: b.score)
-                self.store.set_best_build(hunt_id, {
-                    "score": round(b.score, 2), "landed_nok": b.landed_nok, "usable_tib": round(b.usable_tib, 2),
-                    "machine": b.machine["title"], "url": b.machine["url"],
-                    "disks": f"{len(b.disks)} x {b.capacity_tb:g} TB"})
+            builds, hidden = rank_builds(*self.store.build_parts())
+            b = min(builds, key=lambda b: b.score, default=None)
+            self.store.set_best_build(hunt_id, b and {
+                "score": round(b.score, 2), "landed_nok": b.landed_nok, "usable_tib": round(b.usable_tib, 2),
+                "machine": b.machine["title"], "url": b.machine["url"],
+                "disks": f"{len(b.disks)} x {b.capacity_tb:g} TB"}, hidden)
         except Exception:
             log.exception("recording the best Build of hunt %s failed", hunt_id)
 
@@ -348,13 +365,14 @@ class App:
 
     def mark_bought(self, machine_key):
         """Record the current Build for one Machine ("source|source_id") as bought. False when it is not shown."""
-        for b in rank_builds(*self.store.build_parts()):
+        for b in rank_builds(*self.store.build_parts())[0]:
             if f'{b.machine["source"]}|{b.machine["source_id"]}' == machine_key:
                 def part(row):
                     return {k: row.get(k) for k in ("source", "source_id", "title", "url", "location")} | {
                         "landed_nok": float(row["landed_nok"])}
                 if not self.store.record_purchase({
                         "machine": part(b.machine), "disks": [part(d) for d in b.disks], "capacity_tb": b.capacity_tb,
+                        "parts": [part(r) | {"kind": r["kind"], "count": n} for r, n, _ in b.parts["parts"]],
                         "usable_tib": round(b.usable_tib, 2), "landed_nok": b.landed_nok, "score": round(b.score, 2)}):
                     return False
                 log.info("Build bought: %s, %s x %g TB, %.0f NOK", b.machine["title"], len(b.disks), b.capacity_tb,
@@ -432,7 +450,7 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
 
     def page(self, notice=None, sort="score"):
         sort = sort if sort in BUILD_SORT else "score"
-        builds = rank_builds(*self.store.build_parts())
+        builds, _ = rank_builds(*self.store.build_parts())
         build_head = "".join(f'<th><a href="/?sort={k}">{_e(label)}</a></th>' for k, (label, _) in BUILD_SORT.items())
         last = self.store.last_hunt()
         disks, machines, unreadable = self.store.best_disks(), self.store.best_listings("machine"), self.store.unreadable()
@@ -449,12 +467,12 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
         machine_rows = "".join(
             '<tr data-machine="{id}" data-landed="{landed:.2f}"{attrs}><td><a href="{url}">{title}</a>{note}</td><td>{model}</td>'
             '<td>{gen}th</td><td>{bays}</td><td>{ram}</td><td>{psu}</td><td>{caddies}</td><td>{ctrl}</td>'
-            '<td>{rails}</td><td>{where}</td><td>{landed:,.0f}</td></tr>'.format(
+            '<td>{rails}</td><td>{needs}</td><td>{where}</td><td>{landed:,.0f}</td></tr>'.format(
                 id=_e(r["source_id"]), landed=float(r["landed_nok"]), url=_e(_safe_url(r["url"])), title=_e(r["title"]),
                 model=_e(f["model"]), gen=_e(f["generation"]), bays=_e(f["bays_35"]),
                 ram=_e("?" if f["ram_gb"] is None else f"{f['ram_gb']} GB"), psu=_e(f["psu_count"] or "?"),
                 caddies=_e("?" if f["caddies_35"] is None else f["caddies_35"]), ctrl=_e(f["controller"] or "?"),
-                rails=_yes_no(f["rails"]), where=_where(r), attrs=state[0], note=state[1] + _breakdown(r))
+                rails=_yes_no(f["rails"]), needs=_e(_needs(f)), where=_where(r), attrs=state[0], note=state[1] + _breakdown(r))
             for r in machines for f in [r["facts"]] for state in [_row_state(r)])
         cpu_rows = "".join(
             '<tr data-cpu="{id}" data-nok-per-cpu="{per:.2f}"{attrs}><td>{link}{note}</td><td>{platform}</td>'
@@ -510,13 +528,16 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
         per_source = " &middot; ".join(f"{_e(s.name)}: last successful Hunt {_when(success.get(s.name))}"
                                        for s in self.sources)
         tabs = _tabs([
-            ("Builds", f"<p>One Machine plus same-size Disks reaching {TARGET_TIB} TiB usable in RAIDZ2; the cheapest per"
-                       f" Machine, Builds over {CEILING_NOK:,} NOK hidden. Lower Score is better.</p>"
+            ("Builds", f"<p>One Machine plus the CPUs, RAM (to {RAM_TARGET_GB} GB) and heatsinks it lacks, plus same-size"
+                       f" Disks reaching {TARGET_TIB} TiB usable in RAIDZ2; the cheapest per Machine. Builds over"
+                       f" {CEILING_NOK:,} NOK, or missing a Part no Listing on sale supplies, are hidden."
+                       f" Lower Score is better.</p>"
                        f"<table><tr>{build_head}<th></th><th>Details</th></tr>{_build_rows(builds, sort, bought is None)}</table>"),
             ("Best Disks", "<table><tr><th>Disk</th><th>Capacity</th><th>Condition</th><th>Where</th>"
                            f"<th>Landed NOK</th><th>NOK per TB</th></tr>{disk_rows}</table>"),
             ("Best Machines", '<table><tr><th>Machine</th><th>Model</th><th>Gen</th><th>3.5" bays</th><th>RAM</th>'
-                              '<th>PSUs</th><th>3.5" caddies</th><th>Controller</th><th>Rails</th><th>Where</th>'
+                              '<th>PSUs</th><th>3.5" caddies</th><th>Controller</th><th>Rails</th><th>Needs</th>'
+                              '<th>Where</th>'
                               f"<th>Landed NOK</th></tr>{machine_rows}</table>"),
             ("Best CPUs", "<table><tr><th>CPU</th><th>Platform</th><th>Model</th><th>Count</th><th>Where</th>"
                           f"<th>Landed NOK</th><th>NOK per CPU</th></tr>{cpu_rows}</table>"),
@@ -541,7 +562,7 @@ maxlength="{MAX_QUERY_CHARS}"> <select name="kind"><option value="disk">Disks</o
 <p><b>Disks:</b> {tracked_list["disk"]}</p><p><b>Machines:</b> {tracked_list["machine"]}</p>
 <p><b>CPUs:</b> {tracked_list["cpu"]}</p><p><b>RAM:</b> {tracked_list["ram"]}</p>
 <p><b>Heatsinks:</b> {tracked_list["heatsink"]}</p></details>
-<p>Landed cost = price + shipping or pickup trip from Sandefjord ({PICKUP_NOK_PER_KM} NOK/km, max {PICKUP_MAX_MINUTES} min one way) + import VAT + Penalties (unknown PSU, caddies, controller or rails are charged; a Machine without CPUs pays {PENALTY_NOK["cpu"]} NOK, and RAM below {RAM_TARGET_GB} GB costs {RAM_NOK_PER_GB} NOK per missing GB).
+<p>Landed cost = price + shipping or pickup trip from Sandefjord ({PICKUP_NOK_PER_KM} NOK/km, max {PICKUP_MAX_MINUTES} min one way) + import VAT + Penalties (unknown PSU, caddies, controller or rails are charged).
 AliExpress Disks are High-risk (+20%); their shipping is an estimate and their condition is new unless the title says otherwise.</p>
 {tabs}
 </body></html>"""
@@ -563,6 +584,9 @@ AliExpress Disks are High-risk (+20%); their shipping is an estimate and their c
         lines.append(f"dealfinder_best_build_score {best.get('score', 0)}")
         lines.append("# TYPE dealfinder_best_build_landed_nok gauge")
         lines.append(f"dealfinder_best_build_landed_nok {best.get('landed_nok', 0)}")
+        lines.append("# TYPE dealfinder_builds_hidden gauge")  # Machines without a shown Build, per reason, last Hunt
+        hidden = self.store.latest_builds_hidden() or dict.fromkeys(HIDDEN, 0)
+        lines += [f'dealfinder_builds_hidden{{reason="{k}"}} {n}' for k, n in hidden.items()]
         lines.append("# TYPE dealfinder_bought gauge")  # 1 once a Build is bought and hunting has stopped
         lines.append(f"dealfinder_bought {int(self.store.bought() is not None)}")
         lines.append("# TYPE dealfinder_hunt_running gauge")

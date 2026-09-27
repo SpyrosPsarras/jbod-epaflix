@@ -82,6 +82,8 @@ ALTER TABLE price_observations ADD COLUMN IF NOT EXISTS landed_nok numeric;
 ALTER TABLE price_observations ADD COLUMN IF NOT EXISTS capacity_tb numeric;
 ALTER TABLE price_observations ADD COLUMN IF NOT EXISTS model text;
 ALTER TABLE hunts ADD COLUMN IF NOT EXISTS best_build jsonb;
+-- Machines without a shown Build per reason, from each Hunt's ranking, for /metrics (#34)
+ALTER TABLE hunts ADD COLUMN IF NOT EXISTS builds_hidden jsonb;
 """
 
 
@@ -163,9 +165,17 @@ class Store:
         with self._conn() as c:
             return c.execute("SELECT query, kind, source FROM tracked_queries ORDER BY added, query").fetchall()
 
-    def set_best_build(self, hunt_id, best):
+    def set_best_build(self, hunt_id, best, hidden):
+        """The Hunt's best Build (None when no Build is shown) and its hidden counts."""
         with self._conn() as c:
-            c.execute("UPDATE hunts SET best_build = %s WHERE id = %s", (json.dumps(best), hunt_id))
+            c.execute("UPDATE hunts SET best_build = %s, builds_hidden = %s WHERE id = %s",
+                      (json.dumps(best) if best else None, json.dumps(hidden), hunt_id))
+
+    def latest_builds_hidden(self):
+        with self._conn() as c:
+            row = c.execute("SELECT builds_hidden FROM hunts WHERE builds_hidden IS NOT NULL "
+                            "ORDER BY id DESC LIMIT 1").fetchone()
+            return row["builds_hidden"] if row else None
 
     def history(self):
         """Weekly lowest and median Landed cost of qualifying Listings over HISTORY_WEEKS weeks, each Listing
@@ -298,7 +308,7 @@ class Store:
             """, (kind, limit)).fetchall()
 
     def build_parts(self):
-        """Live (not Gone) qualified Machines and Disks, the inputs of the Build optimizer."""
+        """Live (not Gone) qualified Machines, Disks and Parts (CPU, RAM, heatsink), the inputs of the Build optimizer."""
         with self._conn() as c:
             rows = c.execute(_FRESH + """
                 SELECT l.source, source_id, kind, title, url, facts, capacity_tb, landed_nok, location,
@@ -306,7 +316,8 @@ class Store:
                 FROM listings l JOIN fresh f ON f.source = l.source
                 WHERE qualifies AND landed_nok IS NOT NULL AND last_seen >= f.since
             """).fetchall()
-        return [r for r in rows if r["kind"] == "machine"], [r for r in rows if r["kind"] == "disk"]
+        return ([r for r in rows if r["kind"] == "machine"], [r for r in rows if r["kind"] == "disk"],
+                [r for r in rows if r["kind"] in ("cpu", "ram", "heatsink")])
 
     def unreadable(self, limit=200):
         with self._conn() as c:

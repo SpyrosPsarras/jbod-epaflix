@@ -19,7 +19,7 @@ A CPU, RAM or Heatsink Listing that completes a Machine. A heatsink Listing name
 _Avoid_: Component, add-on
 
 **Build**:
-One Machine plus enough same-capacity Disks to reach at least 40 TiB usable in RAIDZ2. The unit that gets ranked.
+One Machine, plus the Parts it lacks (a CPU of one model in every socket, RAM up to 128 GB, a heatsink for every added CPU), plus enough same-capacity Disks to reach at least 40 TiB usable in RAIDZ2. The unit that gets ranked. A Build whose Parts are not on sale is hidden.
 _Avoid_: Deal, bundle, combo
 
 ### Where it comes from
@@ -67,7 +67,7 @@ Capacity of the Build's RAIDZ2 pool: (disk count − 2) × disk size in TiB, min
 _Avoid_: Capacity, space
 
 **Penalty**:
-NOK added to a Build's Landed cost for a known weakness: the real cost to fix it (single PSU +500, per missing caddy +100, RAID-only controller +500, no rails +400) or a risk surcharge on the money paid to that seller (weak eBay seller under 98% positive or under 50 ratings +10%, an unstated rating counts as weak; High-risk Listing +20%).
+NOK added to a Build's Landed cost for a known weakness: the real cost to fix it (single PSU +500, per missing caddy +100, RAID-only controller +500, no rails +400; missing CPUs and RAM are bought as Parts instead) or a risk surcharge on the money paid to that seller (weak eBay seller under 98% positive or under 50 ratings +10%, an unstated rating counts as weak; High-risk Listing +20%).
 _Avoid_: Deduction, malus
 
 **Score**:
