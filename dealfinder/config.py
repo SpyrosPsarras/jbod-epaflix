@@ -15,8 +15,8 @@ PENALTY_NOK = {"single_psu": 500, "caddy": 100, "raid_only": 500, "no_rails": 40
 RAM_TARGET_GB = 128   # RAM a Build is completed up to; more earns no credit
 # ponytail: DIMM slots per socket, assumed (R730/R740/DL380 have 12); read the model's real count if a Build hits it
 RAM_SLOTS_PER_SOCKET = 12
-# risk Penalties: a share of the Listing's price + shipping or pickup trip + VAT (ticket #11, #12)
-RISK = {"weak_seller": 0.10, "seller_unknown": 0.10, "high_risk": 0.20}
+# risk Penalties: a share of the Listing's price + shipping or pickup trip + VAT (ticket #11)
+RISK = {"weak_seller": 0.10, "seller_unknown": 0.10}
 WEAK_SELLER = (98.0, 50)  # eBay seller under 98% positive or under 50 ratings is weak
 ROUTE_FALLBACK = (1.3, 75)  # router down: straight-line km x 1.3 at 75 km/h (shown as an estimate)
 
@@ -58,11 +58,7 @@ DISK_QUERIES = {
         "ironwolf pro 16tb", "wd red pro 16tb",
     ],
     "finn": ["exos", "ultrastar", "ironwolf pro", "wd red pro", "toshiba", "14tb", "16tb", "18tb", "20tb"],
-    "aliexpress": ["exos 16tb", "exos 18tb", "exos 20tb", "ultrastar 18tb", "toshiba mg09 18tb"],
 }
-# AliExpress (ticket #12): the Affiliate API's product search publishes no freight price, so Disks carry this
-# visible estimate for tracked shipping to Norway
-ALIEXPRESS_SHIPPING_NOK = 150
 
 MACHINE_QUERIES = [
     "r730xd", "r740xd", "r730", "r740", "r540",
