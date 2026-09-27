@@ -144,7 +144,7 @@ class FinnSource:
 
     name = "finn"
     foreign = False
-    supports_machines = True  # Machines and Parts (CPUs, RAM)
+    supports_machines = True  # Machines and Parts (CPUs, RAM, heatsinks)
     _search_url = "https://www.finn.no/recommerce/forsale/search"
     _buckets = (("new", ("1", "2")), ("used", ("3", "4")))  # 1 Helt ny, 2 Som ny, 3 Pent brukt, 4 Godt brukt
 
@@ -229,7 +229,7 @@ class EbaySource:
 
     name = "ebay_uk"
     foreign = True
-    supports_machines = True  # Machines and Parts (CPUs, RAM)
+    supports_machines = True  # Machines and Parts (CPUs, RAM, heatsinks)
     _token_url = "https://api.ebay.com/identity/v1/oauth2/token"
     _search_url = "https://api.ebay.com/buy/browse/v1/item_summary/search"
     _item_url = "https://api.ebay.com/buy/browse/v1/item/"
