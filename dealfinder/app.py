@@ -32,8 +32,7 @@ COST_LABEL = {"shipping": "shipping", "shipping_estimate": "shipping (est.)", "p
               "vat": "VAT", "single_psu": "2nd PSU", "caddies": "caddies", "raid_only": "HBA", "no_rails": "rails",
               "psu_unknown": "2nd PSU (not stated)", "caddies_unknown": "caddies (not stated)",
               "controller_unknown": "HBA (controller not stated)", "rails_unknown": "rails (not stated)",
-              "weak_seller": "weak seller +10%", "seller_unknown": "seller rating not stated +10%",
-              "high_risk": "High-risk +20%"}
+              "weak_seller": "weak seller +10%", "seller_unknown": "seller rating not stated +10%"}
 PART_LABEL = {"cpu": "CPU", "ram": "RAM", "heatsink": "Heatsink"}
 
 
@@ -47,7 +46,7 @@ button{cursor:pointer} button:hover{background:#2a2a2a}
 .fault{background:#3b1f1f;border-left:4px solid #ef5350;padding:8px 12px}
 .notice{background:#1a2a3f;border-left:4px solid #64b5f6;padding:8px 12px}
 .bought{background:#1b3320;border-left:4px solid #66bb6a;padding:8px 12px}
-.risk{color:#ef5350} tr.gone,tr.gone a{color:#777} .note{font-size:85%} .costs{color:#9e9e9e}
+tr.gone,tr.gone a{color:#777} .note{font-size:85%} .costs{color:#9e9e9e}
 .drop{color:#66bb6a;font-weight:bold} .up{color:#ef5350} .down{color:#66bb6a}
 th{position:sticky;top:0;z-index:1;background:#121212;box-shadow:0 1px 0 #333}
 .tabs>input{position:absolute;opacity:0} .tabs>section{display:none;padding-top:1em}
@@ -152,13 +151,8 @@ def _needs(facts):
                                               (f"{n['heatsink']} HS", n["heatsink"])) if value) or "nothing"
 
 
-def _risk_tag(row):
-    """A visible tag on every High-risk Listing (AliExpress)."""
-    return ' <b class="risk">High-risk</b>' if "high_risk" in ((row.get("costs") or {}).get("penalties") or {}) else ""
-
-
 def _link(row):
-    return f'<a href="{_e(_safe_url(row["url"]))}">{_e(row["title"])}</a>{_risk_tag(row)}'
+    return f'<a href="{_e(_safe_url(row["url"]))}">{_e(row["title"])}</a>'
 
 
 def _bought_html(bought):
@@ -297,8 +291,7 @@ class App:
                 break
             counts = dict.fromkeys(KINDS, 0)
             try:
-                work = [(r["query"], r["kind"]) for r in tracked if r["source"] in ("", source.name)
-                        and (r["kind"] == "disk" or source.supports_machines)]  # Machines and Parts
+                work = [(r["query"], r["kind"]) for r in tracked if r["source"] in ("", source.name)]
                 for query, kind in work:
                     for listing in source.search(query, kind):
                         counts[kind] += self._record(source, listing, kind, hunt_id)
@@ -385,8 +378,6 @@ class App:
         Returns (rows, faults): rows are dicts of the Listing fields plus the score, best first."""
         rows, faults = [], []
         for source in self.sources:
-            if kind != "disk" and not source.supports_machines:
-                continue
             try:
                 for listing in source.search(query, kind):
                     s = self._score(source, listing, kind)
@@ -457,12 +448,11 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
         cpus, rams = self.store.best_listings("cpu"), self.store.best_listings("ram")
         heatsinks = self.store.best_listings("heatsink")
         disk_rows = "".join(
-            '<tr data-listing="{id}" data-nok-per-tb="{npt:.2f}"{attrs}><td><a href="{url}">{title}</a>{risk}{note}</td>'
+            '<tr data-listing="{id}" data-nok-per-tb="{npt:.2f}"{attrs}><td><a href="{url}">{title}</a>{note}</td>'
             '<td>{cap:g} TB</td><td>{cond}</td><td>{where}</td><td>{landed:,.0f}</td><td>{npt:,.0f}</td></tr>'.format(
                 id=_e(r["source_id"]), npt=float(r["nok_per_tb"]), url=_e(_safe_url(r["url"])), title=_e(r["title"]),
                 cap=float(r["capacity_tb"]), cond=_e(CONDITION_LABEL.get(r["condition"], r["condition"] or "?")),
-                where=_where(r), landed=float(r["landed_nok"]), attrs=state[0], note=state[1] + _breakdown(r),
-                risk=_risk_tag(r))
+                where=_where(r), landed=float(r["landed_nok"]), attrs=state[0], note=state[1] + _breakdown(r))
             for r in disks for state in [_row_state(r)])
         machine_rows = "".join(
             '<tr data-machine="{id}" data-landed="{landed:.2f}"{attrs}><td><a href="{url}">{title}</a>{note}</td><td>{model}</td>'
@@ -562,8 +552,7 @@ maxlength="{MAX_QUERY_CHARS}"> <select name="kind"><option value="disk">Disks</o
 <p><b>Disks:</b> {tracked_list["disk"]}</p><p><b>Machines:</b> {tracked_list["machine"]}</p>
 <p><b>CPUs:</b> {tracked_list["cpu"]}</p><p><b>RAM:</b> {tracked_list["ram"]}</p>
 <p><b>Heatsinks:</b> {tracked_list["heatsink"]}</p></details>
-<p>Landed cost = price + shipping or pickup trip from Sandefjord ({PICKUP_NOK_PER_KM} NOK/km, max {PICKUP_MAX_MINUTES} min one way) + import VAT + Penalties (unknown PSU, caddies, controller or rails are charged).
-AliExpress Disks are High-risk (+20%); their shipping is an estimate and their condition is new unless the title says otherwise.</p>
+<p>Landed cost = price + shipping or pickup trip from Sandefjord ({PICKUP_NOK_PER_KM} NOK/km, max {PICKUP_MAX_MINUTES} min one way) + import VAT + Penalties (unknown PSU, caddies, controller or rails are charged).</p>
 {tabs}
 </body></html>"""
 

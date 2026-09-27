@@ -68,8 +68,7 @@ def cost_breakdown(listing, fx, foreign, router, penalties=None):
         if minutes <= PICKUP_MAX_MINUTES:
             trip = round(2 * km * PICKUP_NOK_PER_KM, 2)
     if listing.shipping is not None:
-        parts["shipping_estimate" if listing.shipping_estimated else "shipping"] = round(
-            listing.shipping * fx(listing.shipping_currency or listing.currency), 2)
+        parts["shipping"] = round(listing.shipping * fx(listing.shipping_currency or listing.currency), 2)
     elif foreign:
         problem = "shipping"
     elif listing.pickup_only:

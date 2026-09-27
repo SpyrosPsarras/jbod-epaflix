@@ -1,6 +1,5 @@
 """Source adapters: a query in, Listings out. Each adapter normalises its Source's quirks (condition codes)."""
 import base64
-import hashlib
 import http.client
 import json
 import logging
@@ -12,7 +11,7 @@ import urllib.request
 from dataclasses import dataclass
 from html.parser import HTMLParser
 
-from .config import ALIEXPRESS_SHIPPING_NOK, EBAY_SEARCH, SOURCE_PAUSE_S, WEAK_SELLER
+from .config import EBAY_SEARCH, SOURCE_PAUSE_S, WEAK_SELLER
 from .rules import Unreadable, read_machine
 
 log = logging.getLogger("dealfinder.sources")
@@ -37,8 +36,7 @@ class Listing:
     lat: float | None = None
     lon: float | None = None
     pickup_only: bool = False
-    risk: str | None = None  # a config.RISK key the Source attaches (weak or unrated seller, High-risk)
-    shipping_estimated: bool = False  # `shipping` is the Source's estimate, not the seller's price
+    risk: str | None = None  # a config.RISK key the Source attaches (weak or unrated seller)
 
 
 def _get(url, headers=None, data=None):
@@ -144,7 +142,6 @@ class FinnSource:
 
     name = "finn"
     foreign = False
-    supports_machines = True  # Machines and Parts (CPUs, RAM, heatsinks)
     _search_url = "https://www.finn.no/recommerce/forsale/search"
     _buckets = (("new", ("1", "2")), ("used", ("3", "4")))  # 1 Helt ny, 2 Som ny, 3 Pent brukt, 4 Godt brukt
 
@@ -229,7 +226,6 @@ class EbaySource:
 
     name = "ebay_uk"
     foreign = True
-    supports_machines = True  # Machines and Parts (CPUs, RAM, heatsinks)
     _token_url = "https://api.ebay.com/identity/v1/oauth2/token"
     _search_url = "https://api.ebay.com/buy/browse/v1/item_summary/search"
     _item_url = "https://api.ebay.com/buy/browse/v1/item/"
@@ -314,61 +310,4 @@ class EbaySource:
             shipping_currency=ship.get("currency"),
             condition=_EBAY_CONDITION.get(it.get("conditionId")),
             seller=seller.get("username"), risk=risk,
-        )
-
-
-_ALI_USED = re.compile(r"\b(used|second[- ]hand|pulled)\b", re.I)
-_ALI_REFURB = re.compile(r"\b(refurb\w*|renewed|recertified)\b", re.I)
-
-
-class AliExpressSource:
-    """AliExpress Disks via the Affiliate API. Every Listing is High-risk (+20%); no keys = a Source fault."""
-
-    name = "aliexpress"
-    foreign = True
-    supports_machines = False  # AliExpress Machines are out of scope
-    _url = "https://api-sg.aliexpress.com/sync"
-
-    def __init__(self, app_key=None, app_secret=None, tracking_id=None, fetch=http_json):
-        self._key, self._secret, self._tracking, self._fetch = app_key, app_secret, tracking_id, fetch
-
-    def _signed(self, params):
-        """The Open Platform's MD5 signature: secret + sorted key/value pairs + secret, upper-case hex."""
-        text = self._secret + "".join(f"{k}{v}" for k, v in sorted(params.items())) + self._secret
-        return {**params, "sign": hashlib.md5(text.encode()).hexdigest().upper()}
-
-    def search(self, query, kind="disk"):
-        if not (self._key and self._secret):
-            raise RuntimeError("no Affiliate API keys: set ALIEXPRESS_APP_KEY and ALIEXPRESS_APP_SECRET")
-        params = {"app_key": self._key, "method": "aliexpress.affiliate.product.query", "sign_method": "md5",
-                  "timestamp": str(int(time.time() * 1000)), "format": "json", "v": "2.0", "keywords": query,
-                  "ship_to_country": "NO", "target_currency": "EUR", "target_language": "EN", "page_size": "50",
-                  "sort": "SALE_PRICE_ASC", **({"tracking_id": self._tracking} if self._tracking else {})}
-        r = self._fetch(f"{self._url}?{urllib.parse.urlencode(self._signed(params))}")
-        if "error_response" in r:
-            err = r["error_response"]
-            raise RuntimeError(f"AliExpress API error {err.get('code')}: {err.get('msg')}")
-        resp = r["aliexpress_affiliate_product_query_response"]["resp_result"]
-        if resp.get("resp_code") == 405:
-            return []  # "result is empty": a query with no hits is not a fault
-        if resp.get("resp_code") != 200:
-            raise RuntimeError(f"AliExpress API error {resp.get('resp_code')}: {resp.get('resp_msg')}")
-        listings = []
-        for p in (((resp.get("result") or {}).get("products") or {}).get("product") or []):
-            try:
-                listings.append(self._listing(p))
-            except (AttributeError, KeyError, TypeError, ValueError):
-                log.warning("skipping malformed AliExpress product %s", p.get("product_id") if isinstance(p, dict) else p)
-        return listings
-
-    def _listing(self, p):
-        title = p["product_title"]
-        # ponytail: the API has no condition field; AliExpress retail is new unless the title says otherwise
-        condition = "used" if _ALI_USED.search(title) else "refurbished" if _ALI_REFURB.search(title) else "new"
-        return Listing(
-            source=self.name, source_id=str(p["product_id"]), title=title,
-            url=p.get("product_detail_url") or p["promotion_link"],
-            price=float(p["target_sale_price"]), currency=p.get("target_sale_price_currency") or "EUR",
-            shipping=float(ALIEXPRESS_SHIPPING_NOK), shipping_currency="NOK", shipping_estimated=True,
-            condition=condition, seller=str(p.get("shop_id") or ""), risk="high_risk",
         )

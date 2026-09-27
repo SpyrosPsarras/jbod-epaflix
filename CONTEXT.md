@@ -29,7 +29,7 @@ One offer for a Machine, Disks, CPUs, RAM or heatsinks on a Source, at one momen
 _Avoid_: Ad, item, offer
 
 **Source**:
-A marketplace that is searched: finn.no, eBay UK, and AliExpress (Disks only, off until its Affiliate API is approved).
+A marketplace that is searched: finn.no and eBay UK.
 _Avoid_: Site, provider, shop
 
 **Pickup trip**:
@@ -52,10 +52,6 @@ _Avoid_: Saved search, keyword, watch
 A Source that failed during the last Hunt, or returned no Listings for any Tracked query. Shown as a warning on the page.
 _Avoid_: Error, alert
 
-**High-risk Listing**:
-A Disk Listing from AliExpress. Always tagged and carries a +20% risk Penalty. AliExpress Machines are out of scope.
-_Avoid_: Risky listing, untrusted listing
-
 ### How it is ranked
 
 **Landed cost**:
@@ -67,7 +63,7 @@ Capacity of the Build's RAIDZ2 pool: (disk count − 2) × disk size in TiB, min
 _Avoid_: Capacity, space
 
 **Penalty**:
-NOK added to a Build's Landed cost for a known weakness: the real cost to fix it (single PSU +500, per missing caddy +100, RAID-only controller +500, no rails +400; missing CPUs and RAM are bought as Parts instead) or a risk surcharge on the money paid to that seller (weak eBay seller under 98% positive or under 50 ratings +10%, an unstated rating counts as weak; High-risk Listing +20%).
+NOK added to a Build's Landed cost for a known weakness: the real cost to fix it (single PSU +500, per missing caddy +100, RAID-only controller +500, no rails +400; missing CPUs and RAM are bought as Parts instead) or a risk surcharge on the money paid to that seller (weak eBay seller under 98% positive or under 50 ratings +10%, an unstated rating counts as weak).
 _Avoid_: Deduction, malus
 
 **Score**:

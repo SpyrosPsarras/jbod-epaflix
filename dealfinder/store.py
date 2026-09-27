@@ -84,6 +84,9 @@ ALTER TABLE price_observations ADD COLUMN IF NOT EXISTS model text;
 ALTER TABLE hunts ADD COLUMN IF NOT EXISTS best_build jsonb;
 -- Machines without a shown Build per reason, from each Hunt's ranking, for /metrics (#34)
 ALTER TABLE hunts ADD COLUMN IF NOT EXISTS builds_hidden jsonb;
+-- a removed Source
+DELETE FROM tracked_queries WHERE source = 'aliexpress';
+DELETE FROM listings WHERE source = 'aliexpress';
 """
 
 
