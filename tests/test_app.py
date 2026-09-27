@@ -633,7 +633,7 @@ class BuildsEndToEnd(unittest.TestCase):
         full = "2x Xeon E5-2680 v4. 128GB RAM. 2x 750W PSU. Dell HBA330. 12x 3.5\" caddies. Rails included."
         # all docs share one place ("X"); Oslo pickups there share one 952 NOK trip
         machines = [_doc(1, "Dell PowerEdge R730xd 12x LFF", 6000, 59.91, 10.72),    # 6,952, every fact good
-                    _doc(2, "Dell PowerEdge R730xd 12x LFF", 30000, 59.91, 10.72),   # 30,952 + disks > Ceiling
+                    _doc(2, "Dell PowerEdge R730xd 12x LFF", 35000, 59.91, 10.72),   # 35,952 + disks > Ceiling
                     _doc(3, "Dell PowerEdge R730xd 12x LFF", 5000, 59.91, 10.72)]    # caddies not stated
         descriptions = {"1": full, "2": full, "3": "2x Xeon E5-2680 v4. 128GB RAM. 2x 750W PSU. Dell HBA330. Rails included."}
         ship = ["shipping_exists", "seller_pays_shipping"]
@@ -1531,6 +1531,19 @@ class PriceHistory(unittest.TestCase):
         metrics = self.app.metrics()
         self.assertRegex(metrics, r"dealfinder_best_build_score 350\.\d+")  # 14,517 / 41.47 TiB
         self.assertIn(f"dealfinder_best_build_landed_nok {landed:g}", metrics)
+
+    def test_a_hunt_that_shows_no_build_zeroes_the_best_build_gauges(self):
+        import psycopg
+        hunt = self.app.store.start_hunt()
+        try:
+            self.app.store.set_best_build(hunt, None, {"ceiling": 3})  # every Build over the Ceiling
+            metrics = self.app.metrics()
+            self.assertIn("dealfinder_best_build_score 0\n", metrics)
+            self.assertIn("dealfinder_best_build_landed_nok 0\n", metrics)
+            self.assertEqual(len(re.findall("data-best-week=", self.app.history_page())), 2)  # history keeps its weeks
+        finally:  # the class shares one database
+            with psycopg.connect(self.pg.get_uri(), autocommit=True) as c:
+                c.execute("DELETE FROM hunts WHERE id = %s", (hunt,))
 
     def test_a_listing_that_stops_qualifying_keeps_its_history(self):
         import psycopg

@@ -79,7 +79,7 @@ A Listing that disappeared from its Source since the last Hunt, usually sold. Ke
 _Avoid_: Sold, expired, deleted
 
 **Ceiling**:
-The highest Build Landed cost that is shown: 35,000 NOK. Builds above it are hidden.
+The highest Build Landed cost that is shown: 40,000 NOK. Builds above it are hidden.
 _Avoid_: Budget, limit
 
 **Bought**:

@@ -207,8 +207,9 @@ class Store:
         return disks, machines, builds
 
     def latest_best_build(self):
+        """The best Build of the latest ranked Hunt; None when that Hunt showed no Build."""
         with self._conn() as c:
-            row = c.execute("SELECT best_build FROM hunts WHERE best_build IS NOT NULL "
+            row = c.execute("SELECT best_build FROM hunts WHERE best_build IS NOT NULL OR builds_hidden IS NOT NULL "
                             "ORDER BY id DESC LIMIT 1").fetchone()
             return row["best_build"] if row else None
 
