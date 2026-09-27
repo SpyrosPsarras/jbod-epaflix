@@ -84,6 +84,10 @@ ALTER TABLE price_observations ADD COLUMN IF NOT EXISTS model text;
 ALTER TABLE hunts ADD COLUMN IF NOT EXISTS best_build jsonb;
 -- Machines without a shown Build per reason, from each Hunt's ranking, for /metrics (#34)
 ALTER TABLE hunts ADD COLUMN IF NOT EXISTS builds_hidden jsonb;
+-- Part price history: each observation's kind, and for a Part its group key (in `model`) and the units its
+-- Landed cost is divided by (CPUs, GB of RAM, heatsinks)
+ALTER TABLE price_observations ADD COLUMN IF NOT EXISTS kind text;
+ALTER TABLE price_observations ADD COLUMN IF NOT EXISTS units numeric;
 -- a removed Source
 DELETE FROM tracked_queries WHERE source = 'aliexpress';
 DELETE FROM listings WHERE source = 'aliexpress';
@@ -129,6 +133,19 @@ _RANKED_WHERE = f"""
 """
 
 
+def _history_key(kind, facts):
+    """(group key, units) of a qualifying Listing on the price history page. A Disk groups by capacity instead."""
+    if kind == "machine":
+        return facts["model"], None
+    if kind == "cpu":
+        return facts["model"], facts["count"]
+    if kind == "ram":
+        return f"DDR{facts['ddr']} {facts['type']} {facts['gb_per_stick']} GB", facts["gb_per_stick"] * facts["sticks"]
+    if kind == "heatsink":
+        return ", ".join(facts["fits"]), facts["count"]
+    return None, None
+
+
 class Store:
     def __init__(self, uri):
         self.uri = uri
@@ -144,6 +161,22 @@ class Store:
     def migrate(self):
         with self._conn() as c:
             c.execute(SCHEMA)
+            # observations from before Part history carry no kind: key the Parts from their Listing's facts, then
+            # give every other one its Listing's kind.
+            # ponytail: current facts stand in for the observed ones (those Hunts were hours old); a Part that no
+            # longer qualifies stays out of history
+            old = c.execute("""
+                SELECT o.source, o.source_id, o.hunt_id, l.kind, l.facts
+                FROM price_observations o JOIN listings l USING (source, source_id)
+                WHERE o.kind IS NULL AND o.landed_nok IS NOT NULL AND l.qualifies
+                  AND l.kind IN ('cpu', 'ram', 'heatsink')""").fetchall()
+            c.cursor().executemany(
+                "UPDATE price_observations SET kind = %s, model = %s, units = %s "
+                "WHERE source = %s AND source_id = %s AND hunt_id = %s",
+                [(r["kind"], *_history_key(r["kind"], r["facts"]), r["source"], r["source_id"], r["hunt_id"])
+                 for r in old])
+            c.execute("""UPDATE price_observations o SET kind = l.kind FROM listings l
+                         WHERE o.kind IS NULL AND l.source = o.source AND l.source_id = o.source_id""")
 
     def start_hunt(self):
         with self._conn() as c:
@@ -187,29 +220,31 @@ class Store:
 
     def history(self):
         """Weekly lowest and median Landed cost of qualifying Listings over HISTORY_WEEKS weeks, each Listing
-        counted once per week at its lowest price: (disk rows per capacity and Source, in NOK per TB;
-        Machine rows per model and Source, in NOK; best Build per week)."""
+        counted once per week at its lowest price: ({kind: rows}, best Build per week). Disk rows are per capacity
+        and Source in NOK per TB, Machine rows per model and Source in NOK, Part rows per key and Source in NOK per
+        CPU, GB or heatsink."""
         since = f"now() - interval '{int(HISTORY_WEEKS)} weeks'"
-        def weekly(key, value):  # each Listing once per week, at its lowest price, grouped by `key`
+        def weekly(kind, key, value):  # each Listing once per week, at its lowest price, grouped by `key`
             return c.execute(f"""
                 SELECT week, key, source, count(*) AS n, min(v)::float AS low,
                        percentile_cont(0.5) WITHIN GROUP (ORDER BY v) AS median
                 FROM (SELECT date_trunc('week', seen_at)::date AS week, {key} AS key, source, source_id,
                              min({value}) AS v
                       FROM price_observations
-                      WHERE {key} IS NOT NULL AND landed_nok IS NOT NULL AND seen_at > {since}
+                      WHERE kind = %s AND {key} IS NOT NULL AND {value} IS NOT NULL AND seen_at > {since}
                       GROUP BY 1, 2, 3, 4) w
                 GROUP BY 1, 2, 3
-            """).fetchall()
+            """, (kind,)).fetchall()
         with self._conn() as c:
-            disks = weekly("capacity_tb::float", "landed_nok / capacity_tb")
-            machines = weekly("model", "landed_nok")
+            series = {"disk": weekly("disk", "capacity_tb::float", "landed_nok / capacity_tb"),
+                      "machine": weekly("machine", "model", "landed_nok"),
+                      **{kind: weekly(kind, "model", "landed_nok / units") for kind in ("cpu", "ram", "heatsink")}}
             builds = c.execute(f"""
                 SELECT DISTINCT ON (week) date_trunc('week', started)::date AS week, best_build
                 FROM hunts WHERE best_build IS NOT NULL AND started > {since}
                 ORDER BY week, (best_build->>'score')::float
             """).fetchall()
-        return disks, machines, builds
+        return series, builds
 
     def latest_best_build(self):
         """The best Build of the latest ranked Hunt; None when that Hunt showed no Build."""
@@ -253,14 +288,14 @@ class Store:
     def save_listing(self, listing, kind, facts, missing, qualifies, capacity_tb, landed, hunt_id, costs=None):
         with self._conn() as c:
             c.execute("""
-                INSERT INTO price_observations (source, source_id, hunt_id, price, currency, landed_nok,
-                                                capacity_tb, model)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                ON CONFLICT (source, source_id, hunt_id) DO UPDATE SET price = EXCLUDED.price,
-                    landed_nok = EXCLUDED.landed_nok, capacity_tb = EXCLUDED.capacity_tb, model = EXCLUDED.model
-            """, (listing.source, listing.source_id, hunt_id, listing.price, listing.currency,
-                  *((landed, capacity_tb, (facts or {}).get("model") if kind == "machine" else None)
-                    if qualifies else (None, None, None))))
+                INSERT INTO price_observations (source, source_id, hunt_id, price, currency, kind, landed_nok,
+                                                capacity_tb, model, units)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (source, source_id, hunt_id) DO UPDATE SET price = EXCLUDED.price, kind = EXCLUDED.kind,
+                    landed_nok = EXCLUDED.landed_nok, capacity_tb = EXCLUDED.capacity_tb, model = EXCLUDED.model,
+                    units = EXCLUDED.units
+            """, (listing.source, listing.source_id, hunt_id, listing.price, listing.currency, kind,
+                  *((landed, capacity_tb, *_history_key(kind, facts)) if qualifies else (None, None, None, None))))
             c.execute("""
                 INSERT INTO listings (source, source_id, kind, title, url, price, currency, shipping,
                                       condition, seller, facts, missing, qualifies, capacity_tb, landed_nok,
