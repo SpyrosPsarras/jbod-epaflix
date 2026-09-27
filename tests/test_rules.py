@@ -3,7 +3,7 @@ import json
 import pathlib
 import unittest
 
-from dealfinder.rules import Unreadable, read_disk, read_machine
+from dealfinder.rules import Unreadable, read_cpu, read_disk, read_machine
 
 CORPUS = pathlib.Path(__file__).parent / "corpus"
 
@@ -31,6 +31,11 @@ class RuleCorpus(unittest.TestCase):
         for case in json.loads((CORPUS / "machines.json").read_text()):
             with self.subTest(case["note"]):
                 self.check(case, read_machine(case["title"], case["description"], case["condition"]))
+
+    def test_cpus(self):
+        for case in json.loads((CORPUS / "cpus.json").read_text()):
+            with self.subTest(case["note"]):
+                self.check(case, read_cpu(case["title"], case["condition"]))
 
 
 if __name__ == "__main__":

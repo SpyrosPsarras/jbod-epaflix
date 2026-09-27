@@ -90,7 +90,8 @@ ALTER TABLE hunts ADD COLUMN IF NOT EXISTS best_build jsonb;
 # the Listings from its last good Hunt, and the banner says so (ticket #7).
 _SOURCE_OK = """
     h.finished IS NOT NULL AND (s.value->>'ok')::boolean
-    AND coalesce((s.value->>'disk')::int, 0) + coalesce((s.value->>'machine')::int, 0) > 0
+    AND coalesce((s.value->>'disk')::int, 0) + coalesce((s.value->>'machine')::int, 0)
+        + coalesce((s.value->>'cpu')::int, 0) > 0
 """
 _FRESH = f"""
 WITH fresh AS (
@@ -280,16 +281,17 @@ class Store:
                 ORDER BY gone, nok_per_tb, landed_nok LIMIT %s
             """, (limit,)).fetchall()
 
-    def best_machines(self, limit=50):
+    def best_listings(self, kind, limit=50):
+        """Ranked Machines or CPUs, cheapest first; a CPU Listing selling several CPUs ranks by NOK per CPU."""
         with self._conn() as c:
             return c.execute(_RANKED + f"""
                 SELECT l.source, l.source_id, title, url, facts, landed_nok, location, pickup_only, l.costs,
                        l.price, l.currency, p.prev_price, l.last_seen < f.since AS gone, l.last_seen
                 FROM listings l JOIN fresh f ON f.source = l.source
                 LEFT JOIN prev p ON p.source = l.source AND p.source_id = l.source_id
-                WHERE kind = 'machine' AND {_RANKED_WHERE}
-                ORDER BY gone, landed_nok LIMIT %s
-            """, (limit,)).fetchall()
+                WHERE kind = %s AND {_RANKED_WHERE}
+                ORDER BY gone, landed_nok / coalesce((facts->>'count')::numeric, 1), landed_nok LIMIT %s
+            """, (kind, limit)).fetchall()
 
     def build_parts(self):
         """Live (not Gone) qualified Machines and Disks, the inputs of the Build optimizer."""

@@ -1,0 +1,557 @@
+[
+ {
+  "note": "eBay 127871807462",
+  "title": "Intel SR2N7 Xeon E5-2680v4 (2.4GHz/14-core/35MB/120W) Processor - 3YR Warranty",
+  "condition": "refurbished",
+  "expect": {
+   "qualifies": true,
+   "model": "E5-2680 v4",
+   "platform": "LGA2011-3",
+   "count": 1,
+   "vendor": "intel"
+  }
+ },
+ {
+  "note": "eBay 204941697658",
+  "title": "Intel Xeon E5-2680 v4 SR2N7 2.4 - 3.3GHz, 35MB, 14 Core, LGA2011-3, 120W CPU",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "E5-2680 v4",
+   "platform": "LGA2011-3",
+   "count": 1
+  }
+ },
+ {
+  "note": "'2 x' is a count (eBay 116574437353)",
+  "title": "2 x Intel Xeon E5-2680V4 CPU Processer 14 Core SR2N7 2.40GHz 120W 35MB",
+  "condition": "new",
+  "expect": {
+   "qualifies": true,
+   "model": "E5-2680 v4",
+   "platform": "LGA2011-3",
+   "count": 2
+  }
+ },
+ {
+  "note": "'LOT OF 2' is a count (eBay 117319695762)",
+  "title": "LOT OF 2 Intel Xeon E5-2680V4 CPU 14 Core SR2N7 2.40GHz LGA2011 (OFFERS WELCOME)",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "E5-2680 v4",
+   "platform": "LGA2011-3",
+   "count": 2
+  }
+ },
+ {
+  "note": "L suffix (finn 468977467)",
+  "title": "Intel Xeon E5-2630L v4 10-Core 20-Threads 1.80GHz Base 2.90GHz Turbo 55W TDP CPU",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "E5-2630L v4",
+   "platform": "LGA2011-3",
+   "count": 1
+  }
+ },
+ {
+  "note": "'2 stk' is a count (finn 477305141)",
+  "title": "2 stk Intel Xeon E5-2690 v4, selges samlet eller hver for seg",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "E5-2690 v4",
+   "platform": "LGA2011-3",
+   "count": 2
+  }
+ },
+ {
+  "note": "'(2 stk)' and 'server/homelab' (finn 473051845)",
+  "title": "Intel Xeon E5-2620 v3 (2 stk) – LGA2011-3, 6-core – server/homelab",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "E5-2620 v3",
+   "platform": "LGA2011-3",
+   "count": 2
+  }
+ },
+ {
+  "note": "'prosessorpar' and 'til server/workstation' (finn 472053818)",
+  "title": "2× Intel Xeon E5-2620 v3 – matchet prosessorpar til server/workstation",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "E5-2620 v3",
+   "platform": "LGA2011-3",
+   "count": 2
+  }
+ },
+ {
+  "note": "® marks (finn 443226633)",
+  "title": "Intel® Xeon® Processor E5-2640 v4",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "E5-2640 v4",
+   "platform": "LGA2011-3",
+   "count": 1
+  }
+ },
+ {
+  "note": "Gold 6130 (eBay 187455011350)",
+  "title": "Intel Xeon Gold 6130 CPU SR3B9 2.10GHz 22MB L3 Cache 16-Core Processor SR3B9",
+  "condition": "refurbished",
+  "expect": {
+   "qualifies": true,
+   "model": "Gold 6130",
+   "platform": "LGA3647",
+   "count": 1
+  }
+ },
+ {
+  "note": "trap: 2x Gold 6130 (eBay 236372115292)",
+  "title": "2x Intel Xeon Gold 6130 SR3B9 2.10GHz 22MB L3 Cache 16-Core CPU Processor",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "Gold 6130",
+   "platform": "LGA3647",
+   "count": 2
+  }
+ },
+ {
+  "note": "a CPU kit named after its server is a CPU (eBay 127103432783)",
+  "title": "HP 840393-B21 ProLiant DL560 Gen10 - Intel Xeon Gold 6130 CPU 2 Kit",
+  "condition": "refurbished",
+  "expect": {
+   "qualifies": true,
+   "model": "Gold 6130",
+   "platform": "LGA3647",
+   "count": 2
+  }
+ },
+ {
+  "note": "'48x PCIe' is not a count (eBay 396356482909)",
+  "title": "Xeon Gold 6230N 20-Core 3.5Ghz Turbo 48x PCIe LGA 3647 CPU Intel SRFPR Processor",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "Gold 6230N",
+   "platform": "LGA3647",
+   "count": 1
+  }
+ },
+ {
+  "note": "trap: Xeon Silver 4210",
+  "title": "Xeon Silver 4210",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "Silver 4210",
+   "platform": "LGA3647",
+   "count": 1
+  }
+ },
+ {
+  "note": "3rd Gen Xeon is LGA4189 (eBay 188850514527)",
+  "title": "SRKXN INTEL XEON SILVER 4310 12 CORE 2.10GHZ 18MB 120W FCLGA4189 CPU",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "Silver 4310",
+   "platform": "LGA4189",
+   "count": 1
+  }
+ },
+ {
+  "note": "3rd Gen Gold (finn 469538921)",
+  "title": "Intel Xeon Gold 6342 – 24 Cores / 48 Threads – 3.5GHz – FCLGA4189",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "Gold 6342",
+   "platform": "LGA4189",
+   "count": 1
+  }
+ },
+ {
+  "note": "EPYC 7302P (eBay 188834542739)",
+  "title": "AMD EPYC 7302P 16 Core 32 Thread 3.0GHz Server CPU Processor Dell Locked SP3",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "EPYC 7302P",
+   "platform": "SP3",
+   "count": 1,
+   "vendor": "amd"
+  }
+ },
+ {
+  "note": "trap: EPYC 7302 16-core",
+  "title": "AMD EPYC 7302 16-core",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "EPYC 7302",
+   "platform": "SP3",
+   "count": 1,
+   "vendor": "amd"
+  }
+ },
+ {
+  "note": "trap: matched pair",
+  "title": "Matched Pair E5-2690 v4",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "E5-2690 v4",
+   "platform": "LGA2011-3",
+   "count": 2
+  }
+ },
+ {
+  "note": "several models in one Listing: which one is sold is not stated (eBay 256676917689)",
+  "title": "Matched Pair Intel Xeon E5-2690 V4 E5-2680 V4 E5-2660 V4 E5-2650V4 LGA2011-3 CPU",
+  "condition": "used",
+  "expect": {
+   "unreadable": [
+    "model"
+   ]
+  }
+ },
+ {
+  "note": "a family, not a model (finn 475632705)",
+  "title": "Intel Xeon E5 2600v3 prosessorer",
+  "condition": "used",
+  "expect": {
+   "unreadable": [
+    "model",
+    "platform"
+   ]
+  }
+ },
+ {
+  "note": "E5 v2 is LGA2011, no Machine takes it: rejected (finn 293051893)",
+  "title": "4 stk Intel Xeon E5-2697v2 2.7GHz 12C/24HT (3.5GHz Turbo) (Matched)",
+  "condition": "used",
+  "expect": {
+   "qualifies": false,
+   "model": "E5-2697 v2",
+   "platform": "LGA2011",
+   "count": 4
+  }
+ },
+ {
+  "note": "E5-24xx is LGA1356: rejected (finn 465628493)",
+  "title": "Intel Xeon E5-2407 v2 prosessor",
+  "condition": "used",
+  "expect": {
+   "qualifies": false,
+   "platform": "LGA1356"
+  }
+ },
+ {
+  "note": "for parts",
+  "title": "Intel Xeon E5-2680 v4 SR2N7 bent pins",
+  "condition": "for_parts",
+  "expect": {
+   "qualifies": false,
+   "working": false
+  }
+ },
+ {
+  "note": "trap: whole server",
+  "title": "Dell R730 2x E5-2680 v4",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "whole server, SFF (eBay 404826913895)",
+  "title": "Dell PowerEdge R730 16SFF Configurable Xeon E5-2600 v3/v4 10-Core, 128GB RAM Lot",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "server named only by RAM and cores (finn 468874231)",
+  "title": "Inspur i24 2U 4-Node Server 4x Intel Gold 6152, 256 GB RAM, 10GbE SFP+, IPMI2.0",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "rack server without a model (finn 473047553)",
+  "title": "Cisco UCS C220 M3 Rack Server – 1U / Dual Xeon / 2x SAS HDD / 2x 650W PSU",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "workstation (eBay 187467075283)",
+  "title": "14-CORE HP Z440 Workstation Xeon E5-2680v4 3.30GHz 64GB DDR4 2x CADDY 3.5\" ONLY",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "gaming PC (finn 477014884)",
+  "title": "Entry-level gaming PC: Xeon E5-2696 V4 22C/44T, GTX 1070 8GB, 16GB DDR4, nvme",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "Mac Pro (finn 476621663)",
+  "title": "Apple Mac Pro 3.5 GHz 6-core Intel Xeon E5",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "board + CPU combo (finn 477384177)",
+  "title": "Machinist X99 MD8 + 2x Intel Xeon E5-2680 v4 + 2-vifte kjøler (combo)",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "motherboard (finn 475147363)",
+  "title": "HUANANZHI X99 F8D PLUS – Dual Xeon LGA2011-3 hovedkort",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "trap: laptop CPU",
+  "title": "Intel Core i7-8650U",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "desktop CPU list (finn 216471628)",
+  "title": "Intel CPU - i3, i5, i7, i9, Xeon, Pentium, Celeron",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "trap: E3 is a desktop socket (LGA1151), not a Machine Part",
+  "title": "Intel Xeon E3-1230 v5",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "E5-16xx is a single-socket workstation CPU (finn 476526022)",
+  "title": "Intel Xeon E5-1650 v3 prosessor 3.5 GHz",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "trap: cooler",
+  "title": "CPU cooler heatsink for R730",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "heatsink in Norwegian (finn 433624847)",
+  "title": "2 stk Performance kjøleribbe til HP ML350 Gen10",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "a server listing with no CPU words (finn 433000254)",
+  "title": "Dell Server",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "F1: EPYC 7F52 has a letter in its number",
+  "title": "AMD EPYC 7F52 CPU Processor SP3",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "EPYC 7F52",
+   "platform": "SP3",
+   "count": 1,
+   "vendor": "amd"
+  }
+ },
+ {
+  "note": "F1: EPYC 7H12 has a letter in its number",
+  "title": "AMD EPYC 7H12 CPU Processor SP3",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "EPYC 7H12",
+   "platform": "SP3",
+   "count": 1,
+   "vendor": "amd"
+  }
+ },
+ {
+  "note": "F1: EPYC 7B12 has a letter in its number",
+  "title": "AMD EPYC 7B12 CPU Processor SP3",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "EPYC 7B12",
+   "platform": "SP3",
+   "count": 1,
+   "vendor": "amd"
+  }
+ },
+ {
+  "note": "F1: EPYC 74F3 has a letter in its number",
+  "title": "AMD EPYC 74F3 CPU Processor SP3",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "EPYC 74F3",
+   "platform": "SP3",
+   "count": 1,
+   "vendor": "amd"
+  }
+ },
+ {
+  "note": "F2: Lenovo server",
+  "title": "Lenovo ThinkSystem SR650 2x Xeon Silver 4210",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "F2: Fujitsu server",
+  "title": "Fujitsu Primergy RX2540 M4 2x Xeon Gold 6130",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "F2: Cisco server",
+  "title": "Cisco UCS C240 M5 2x Gold 6130 Server",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "F2: ProLiant without 'kit' is a server",
+  "title": "HPE ProLiant DL360 Gen10 2x Xeon Gold 6130",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "F2: a bare 'server' with no CPU word is a server",
+  "title": "Xeon Gold 6130 2x server 64-core",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "F2: ', Server' after 'Prosessorer' is the use, not the Listing (finn 447883643)",
+  "title": "2 stk. Intel® Xeon® Gold 6132 Prosessorer 2.6 GHz, 14 kjerner, 28 tråder, Server",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "Gold 6132",
+   "platform": "LGA3647",
+   "count": 2
+  }
+ },
+ {
+  "note": "F2: 'Server FCLGA3647' in a CPU title (eBay 389154939707)",
+  "title": "INTEL XEON GOLD 6230 CPU  20 CORE 2.10GHZ 27.5MB L3 CACHE 125W Server FCLGA3647",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "Gold 6230",
+   "platform": "LGA3647",
+   "count": 1
+  }
+ },
+ {
+  "note": "F4: '3x UPI' is a link count",
+  "title": "Intel Xeon Gold 6148 SR3B6 20 Core 2.40GHz 3x UPI LGA3647",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "Gold 6148",
+   "platform": "LGA3647",
+   "count": 1
+  }
+ },
+ {
+  "note": "F4: '2 x QPI' is a link count",
+  "title": "Intel Xeon E5-2699v4 22 Core 2.2GHz 2 x QPI LGA2011-3",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "E5-2699 v4",
+   "platform": "LGA2011-3",
+   "count": 1
+  }
+ },
+ {
+  "note": "F4: '(4 pcs available)' is stock, not a lot",
+  "title": "Intel Xeon E5-2680 v4 SR2N7 (4 pcs available)",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "E5-2680 v4",
+   "platform": "LGA2011-3",
+   "count": 1
+  }
+ },
+ {
+  "note": "F4: '2x Available' is stock, not a lot",
+  "title": "Intel Xeon E5-2680 v4 SR2N7 2x Available",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "E5-2680 v4",
+   "platform": "LGA2011-3",
+   "count": 1
+  }
+ },
+ {
+  "note": "N7: 'lot of 0' counts as one",
+  "title": "Intel Xeon E5-2680 v4 lot of 0",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "E5-2680 v4",
+   "platform": "LGA2011-3",
+   "count": 1
+  }
+ }
+]

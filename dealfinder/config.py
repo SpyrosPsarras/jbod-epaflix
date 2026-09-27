@@ -31,12 +31,15 @@ HISTORY_WEEKS = 12      # weeks shown on the price history page
 GONE_DAYS = 7          # a Gone Listing stays visible, greyed out, this many days
 HUNT_INTERVAL_S = 6 * 3600  # a Hunt every 6 hours, counted from the last Hunt in the database
 
-# eBay sorts by price and returns 100 results per query; the floor skips £1-£29 parts and
-# accessories so those 100 slots go to real disks. Visible here on purpose, not hidden in the adapter.
-EBAY_PRICE_GBP = (30, 2000)
-# eBay Machines: category 11211 "Computer Servers" keeps rails, PSUs and other parts out of the 100 slots
-EBAY_MACHINE_PRICE_GBP = (100, 2500)
-EBAY_MACHINE_CATEGORY = "11211"
+# eBay sorts by price and returns 100 results per query, so each kind gets a category and a GBP price range.
+# Visible here on purpose, not hidden in the adapter. kind -> (category or None, (low, high))
+EBAY_SEARCH = {
+    "disk": (None, (30, 2000)),        # the floor skips £1-£29 parts and accessories
+    "machine": ("11211", (100, 2500)),  # "Computer Servers" keeps rails, PSUs and other parts out
+    # "CPUs/Processors" (checked 27 Sep 2026: E5-2680 v4 from £10, EPYC 7302 from £30, Silver 4310 £440-£515);
+    # the £3 floor skips £1 junk, £600 keeps 3rd Gen Xeon in reach
+    "cpu": ("164", (3, 600)),
+}
 
 # per Source: eBay returns only the 100 cheapest per query, so its queries name a capacity; finn.no search is
 # token based ("16tb" misses "16 tb") and small, so family words find more there
@@ -58,6 +61,18 @@ MACHINE_QUERIES = [
     "r730xd", "r740xd", "r730", "r740", "r540",
     "dl380 gen9", "dl380 gen10", "supermicro server", "supermicro 12 bay",
 ]
-# DISK_QUERIES and MACHINE_QUERIES are only the starting Tracked queries, copied into the database for each
-# (kind, Source) group that has none yet; after that the page's Track button adds more (tickets #8, #12)
+# CPUs (ticket #31): eBay needs model numbers to fit its 100 cheapest; finn.no is small, so family words.
+# 3rd Gen Xeon under £600 is rare on eBay UK (5318Y and 6338: none on 27 Sep 2026), Silver 4310 has some
+CPU_QUERIES = {
+    "ebay_uk": ["e5-2680 v4", "e5-2690 v4", "e5-2650 v4", "e5-2660 v4", "xeon gold 6130", "xeon silver 4210",
+                "xeon gold 6230", "xeon silver 4310", "epyc 7302"],
+    "finn": ["xeon e5", "xeon gold", "xeon silver", "epyc"],
+}
+# DISK_QUERIES, MACHINE_QUERIES and CPU_QUERIES are only the starting Tracked queries, copied into the database
+# for each (kind, Source) group that has none yet; after that the page's Track button adds more (tickets #8, #12)
+
+# CPU socket per Machine platform (amd, generation); 16th Gen and newer (DDR5) are not supported: None.
+# Vendor does not change the socket: a 13th Gen PowerEdge, ProLiant Gen9 and Supermicro X10 are all LGA2011-3
+PLATFORMS = {(False, 13): "LGA2011-3", (False, 14): "LGA3647", (False, 15): "LGA4189",
+             (True, 14): "SP3", (True, 15): "SP3"}
 MAX_QUERY_CHARS = 80

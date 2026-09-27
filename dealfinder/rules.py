@@ -2,7 +2,7 @@
 import re
 from dataclasses import dataclass
 
-from .config import MIN_DISK_TB, MIN_MACHINE_BAYS, MIN_MACHINE_GEN
+from .config import MIN_DISK_TB, MIN_MACHINE_BAYS, MIN_MACHINE_GEN, PLATFORMS
 
 # model families, written once and reused by the form-factor and class rules
 _ENTERPRISE_FAMILY = (r"\bexos\b(?!-)|\bultrastar\b|\bhc5\d\d\b|\bmg\d\d|\bwuh72|\bst\d{4,5}(nm|ne|nt)|\bwd\s?gold\b"
@@ -110,8 +110,10 @@ def read_disk(title, condition):
 
 _DELL_MODEL = re.compile(r"\b([rt])(\d)(\d)(\d)(\d)?\s?(xd2|xd|xs|xa|xr)?\b", re.I)
 _DELL_CONTEXT = re.compile(r"\bdell\b|poweredge|\bidrac", re.I)
-_HP_MODEL = re.compile(r"\b(dl|ml)\s?(\d{3})[a-z]?\s?(?:gen\s?|g)(\d{1,2})\b", re.I)
+_HP_MODEL = re.compile(r"\b(dl|ml)\s?(\d{2,3})[a-z]?\s?(?:gen\s?|g)(\d{1,2})\b", re.I)
 _HP_GEN = {8: 12, 9: 13, 10: 14, 11: 16}  # HPE ProLiant Gen -> Dell generation number
+# single-socket models on a desktop socket (Xeon E3/E-2xxx): no CPU Part fits them
+_DESKTOP_SOCKET = re.compile(r"[RT][1-3]\d0|(?:DL20|ML10|ML30) Gen\d+")
 _SUPERMICRO = re.compile(r"\bsupermicro\b", re.I)
 _SERVER_WORD = re.compile(r"\bserver\b|superserver|\b[1-4]u\b|chassis|\bcse-\d|\bsys-\d", re.I)
 # a part or accessory sold *for* a server, not the server
@@ -195,6 +197,9 @@ class MachineFacts:
     bays_35: int | None
     ram_gb: int | None       # 0 = the Listing says no RAM, None = not stated
     cpu: bool | None         # False = the Listing says no CPU or barebones, None = not stated
+    sockets: int
+    cpu_model: str | None    # normalised like read_cpu ("E5-2680 v4"), None = not stated
+    cpu_count: int | None    # CPUs installed: 0 = none, None = not stated
     ecc: bool
     psu_count: int | None
     caddies_35: int | None
@@ -210,12 +215,19 @@ class MachineFacts:
         return (self.generation >= MIN_MACHINE_GEN and not old_amd and self.bays_35 >= MIN_MACHINE_BAYS
                 and self.ecc and self.working)
 
+    @property
+    def platform(self):
+        """The CPU socket this Machine takes; None when unsupported (16th Gen and newer, a desktop socket) or unknown."""
+        if _DESKTOP_SOCKET.fullmatch(self.model) and not self.amd:
+            return None
+        return PLATFORMS.get((self.amd, self.generation))
+
 
 def _model(title, text):
     """(vendor, model, generation or None, amd) for a server named in the title, else None."""
     m = _HP_MODEL.search(title)
     if m:
-        return "hpe", f"{m[1].upper()}{m[2]} Gen{m[3]}", _HP_GEN.get(int(m[3])), False
+        return "hpe", f"{m[1].upper()}{m[2]} Gen{m[3]}", _HP_GEN.get(int(m[3])), m[2] in ("325", "385")
     m = _DELL_MODEL.search(title)
     if m and _DELL_CONTEXT.search(text):
         kind, d1, d2, d3, d4, suffix = m.groups()
@@ -272,6 +284,40 @@ def _cpu(title, text):
     return False if _NO_CPU.search(text) else None
 
 
+# "2x", "2*", "2 stk.", "Dual", "two" right before the model, with "Intel® Xeon® Processor" or "10-core" between;
+# or "x2" right after it
+_COUNT_BEFORE = re.compile(r"(?:(?<![\w.,])(\d)\s?(?:[x×*]|stk\.?)|\b(dual|two))\s*"
+                           r"(?:(?:intel|xeon|processor|®|™|\d+-?cores?)\s*)*$", re.I)
+_COUNT_AFTER = re.compile(r"\s*[x×*]\s?(\d)\b")
+
+
+def _cpu_installed(title, text):
+    """(model, count) of the installed CPUs, title first like _cpu. A model named without a count is one CPU;
+    (None, 0) when the Listing says none, (None, None) when not stated."""
+    if _NO_CPU.search(title):
+        return None, 0
+    for where in (title, text):  # text starts with the title
+        found = _cpus(where)
+        if found:
+            m, model, _ = found[0]
+            n = _COUNT_BEFORE.search(where[max(0, m.start() - 40):m.start()])
+            after = _COUNT_AFTER.match(where, m.end())
+            return model, int(after[1]) if after else int(n[1]) if n and n[1] else 2 if n else 1  # else one
+    return (None, 0) if _cpu(title, text) is False else (None, None)
+
+
+def _sockets(vendor, model, text):
+    """Dell R1x0-R3x0/T1x0-T3x0 = 1; Dell AMD names the count in its third digit (R6415, R7515 = 1, R7425 = 2);
+    HPE DL20/DL325/ML10/ML30/ML110 = 1; a Supermicro board X..S.. = 1 (X10SRi), X..D.. = 2; anything else 2."""
+    if vendor == "dell":
+        digits = re.sub(r"\D", "", model)
+        return 1 if (digits[2] == "1" if len(digits) == 4 else digits[0] in "123") else 2
+    if vendor == "hpe":
+        return 1 if model.split()[0] in ("DL20", "DL325", "ML10", "ML30", "ML110") else 2
+    board = re.search(r"\b[xh]1\d([ds])", text, re.I)
+    return 1 if board and board[1].lower() == "s" else 2
+
+
 def _psu_count(text):
     m = _PSU_COUNT.search(text)
     if m:
@@ -319,8 +365,93 @@ def read_machine(title, description, condition):
                  or (bays is not None and bays < MIN_MACHINE_BAYS))
     if missing and not ruled_out:
         return Unreadable(missing)
+    cpu_model, cpu_count = _cpu_installed(title, text)
     return MachineFacts(
         vendor=vendor, model=model, generation=generation, amd=amd, bays_35=bays, ram_gb=_ram_gb(title, text), cpu=_cpu(title, text),
+        sockets=_sockets(vendor, model, text), cpu_model=cpu_model, cpu_count=cpu_count,
         ecc=True,  # PowerEdge, ProLiant and Supermicro server boards take ECC RDIMMs only
         psu_count=_psu_count(text), caddies_35=_caddies_35(text), controller=_controller(text),
         rails=_rails(text), working=condition != "for_parts" and not _MACHINE_FAULTY.search(title))
+
+
+# ---- CPUs -----------------------------------------------------------------------------------------------------
+
+# "E5-2680 v4" (E5-16xx is a workstation part, x00 is a family: "E5-2600 v3"), "Gold 6130", "EPYC 7302P";
+# "2xE5-2680" is a count glued to the model, so E5 may follow an "x"
+_CPU_NAME = re.compile(
+    r"(?<![a-wyz])e5[-\s]?(?P<e5>[24][46](?!00)\d\d)(?P<e5s>[lwa]?)(?:\s?v(?P<v>[1-4]))?\b"
+    r"|\b(?P<tier>bronze|silver|gold|platinum)\s?(?P<sp>[3-9][1-5]\d\d)(?P<sps>[a-z]{0,2})\b"
+    r"|\bepyc\s?(?P<epyc>7(?!00)[\dfhb]{2}[1-3])(?P<epycs>p?)\b", re.I)  # 7302, 7F52, 7H12, 74F3
+_CPU_TEXT = re.compile(rf"\bxeon\b|\bepyc\b|\b{_CPU_WORD}", re.I)
+# a desktop or laptop CPU, a whole computer, a CPU + board combo, or a cooler: not a CPU Listing.
+# E3/E-2xxx and E5-16xx are desktop-socket or single-socket workstation CPUs, not Machine Parts
+_NOT_A_CPU = re.compile(
+    r"\bi[3579]\b|\bryzen\b|threadripper|\bceleron\b|\bpentium\b|\be3[-\s]?1\d{3}|\be5[-\s]?1\d{3}|\be-2\d{3}"
+    r"|\bpc\b|(?<!/)workstation|arbeidsstasjon|mac\s?pro|precision|thinkstation|laptop|notebook|rack\s?server"
+    r"|\b[1-4]u\b|\b\d{1,4}\s?gb\b|\s\+\s|combo|hovedkort|motherboard|mainboard"
+    r"|cooler|heatsink|kjøle|\bfans?\b|vifte", re.I)
+# servers from vendors outside the decoder, and a bare "server" in a title with no CPU word; "til server/...",
+# "for server" and "Server CPU" are CPUs
+_SERVER_TEXT = re.compile(r"thinksystem|primergy|\bucs\b|\bproliant\b", re.I)
+_BARE_SERVER = re.compile(r"(?<!\btil\s)(?<!\bfor\s)(?<!\bin\s)\bserver\b(?!/)", re.I)
+_KIT = re.compile(r"\bkit\b", re.I)  # "ProLiant DL360 Gen10 - Xeon Gold 6130 CPU 1 Kit" is a CPU, not a server
+# not "48x PCIe", "3x UPI", "2 x QPI" links, nor stock on hand: "(4 pcs available)"
+_UNITS = re.compile(r"(?<![\w.,/-])([1-9]\d?)\s?(?:[x×*]|pcs|pieces|stk|units|kit)(?!\s*(?:pci|upi|qpi|available))"
+                    r"|\bx\s?([2-8])\b"
+                    r"|\blot\s+of\s+(\d{1,2})\b", re.I)
+_PAIR = re.compile(r"\bpairs?\b|\b\w*par\b", re.I)  # "matchet prosessorpar"
+_SUPPORTED_SOCKETS = set(PLATFORMS.values())
+
+
+@dataclass
+class CpuFacts:
+    vendor: str
+    model: str | None
+    platform: str | None   # socket: LGA2011-3, LGA3647, LGA4189, SP3, or an older/newer one that no Machine takes
+    count: int             # CPUs this one Listing sells
+    working: bool
+
+    @property
+    def qualifies(self):
+        return self.working and self.model is not None and self.platform in _SUPPORTED_SOCKETS
+
+
+def _cpus(text):
+    """(match, model, socket) for every CPU model named in `text`."""
+    found = []
+    for m in _CPU_NAME.finditer(text):
+        if m["e5"]:
+            model = f"E5-{m['e5']}{m['e5s'].upper()}" + (f" v{m['v']}" if m["v"] else "")
+            socket = "LGA1356" if m["e5"][1] == "4" else "LGA2011-3" if m["v"] in ("3", "4") else "LGA2011"
+        elif m["sp"]:
+            model = f"{m['tier'].title()} {m['sp']}{m['sps'].upper()}"
+            socket = {"1": "LGA3647", "2": "LGA3647", "3": "LGA4189"}.get(m["sp"][1], "LGA4677")
+        else:
+            model, socket = f"EPYC {m['epyc'].upper()}{m['epycs'].upper()}", "SP3"
+        found.append((m, model, socket))
+    return found
+
+
+def read_cpu(title, condition):
+    """Facts for a CPU Listing, Unreadable when the model or socket is missing, None when it is not a CPU
+    (a whole server, a desktop or laptop CPU, a cooler)."""
+    cpus = _cpus(title)
+    if (not cpus and not _CPU_TEXT.search(title)) or _NOT_A_CPU.search(title):
+        return None
+    server = (_model(title, title) or _SERVER_TEXT.search(title)
+              or (_BARE_SERVER.search(title) and not re.search(rf"\b{_CPU_WORD}", title, re.I)))
+    if server and not _KIT.search(title) and not _FOR_SERVER.search(title):
+        return None  # a whole server in a CPU search
+    models, sockets = {c[1] for c in cpus}, {c[2] for c in cpus}
+    model = models.pop() if len(models) == 1 else None  # several models: a multi-choice Listing
+    platform = sockets.pop() if len(sockets) == 1 else None
+    working = condition != "for_parts" and not _FAULTY.search(title)
+    missing = [name for name, value in (("model", model), ("platform", platform)) if value is None]
+    # a known disqualifying fact decides it: rejected, not "could not read"
+    ruled_out = not working or platform not in (None, *_SUPPORTED_SOCKETS)
+    if missing and not ruled_out:
+        return Unreadable(missing)
+    n = _UNITS.search(title)
+    count = max(1, int(next(g for g in n.groups() if g))) if n else 2 if _PAIR.search(title) else 1  # not "lot of 0"
+    return CpuFacts(vendor="amd" if re.search(r"\bepyc\b|\bamd\b", title, re.I) else "intel", model=model,
+                    platform=platform, count=count, working=working)

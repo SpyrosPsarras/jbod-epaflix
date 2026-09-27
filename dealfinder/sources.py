@@ -12,8 +12,7 @@ import urllib.request
 from dataclasses import dataclass
 from html.parser import HTMLParser
 
-from .config import (ALIEXPRESS_SHIPPING_NOK, EBAY_MACHINE_CATEGORY, EBAY_MACHINE_PRICE_GBP, EBAY_PRICE_GBP,
-                     SOURCE_PAUSE_S, WEAK_SELLER)
+from .config import ALIEXPRESS_SHIPPING_NOK, EBAY_SEARCH, SOURCE_PAUSE_S, WEAK_SELLER
 from .rules import Unreadable, read_machine
 
 log = logging.getLogger("dealfinder.sources")
@@ -145,14 +144,14 @@ class FinnSource:
 
     name = "finn"
     foreign = False
-    supports_machines = True
+    supports_machines = True  # Machines and Parts (CPUs)
     _search_url = "https://www.finn.no/recommerce/forsale/search"
     _buckets = (("new", ("1", "2")), ("used", ("3", "4")))  # 1 Helt ny, 2 Som ny, 3 Pent brukt, 4 Godt brukt
 
     def __init__(self, fetch=http_text, pause=SOURCE_PAUSE_S):
         self._fetch, self._pause = fetch, pause
 
-    def search(self, query, details=False):
+    def search(self, query, kind="disk"):
         listings, seen = [], set()
         for condition, codes in self._buckets:
             time.sleep(self._pause)
@@ -166,7 +165,7 @@ class FinnSource:
                 if listing and listing.source_id not in seen:
                     seen.add(listing.source_id)
                     listings.append(listing)
-        if details:
+        if kind == "machine":
             for listing in listings:
                 listing.description = self._description(listing.url)
                 _shipping_from_text(listing)
@@ -230,7 +229,7 @@ class EbaySource:
 
     name = "ebay_uk"
     foreign = True
-    supports_machines = True
+    supports_machines = True  # Machines and Parts (CPUs)
     _token_url = "https://api.ebay.com/identity/v1/oauth2/token"
     _search_url = "https://api.ebay.com/buy/browse/v1/item_summary/search"
     _item_url = "https://api.ebay.com/buy/browse/v1/item/"
@@ -253,13 +252,14 @@ class EbaySource:
         return {"Authorization": "Bearer " + self._auth(), "X-EBAY-C-MARKETPLACE-ID": "EBAY_GB",
                 "X-EBAY-C-ENDUSERCTX": "contextualLocation=country%3DNO"}  # shipping costs quoted to Norway
 
-    def search(self, query, details=False):
-        """`details` = a Machine search: Computer Servers only, item text fetched for the rules."""
-        low, high = EBAY_MACHINE_PRICE_GBP if details else EBAY_PRICE_GBP
+    def search(self, query, kind="disk"):
+        """The kind picks the category and price range; a Machine search also fetches item text for the rules."""
+        category, (low, high) = EBAY_SEARCH[kind]
+        details = kind == "machine"
         params = {"q": query, "sort": "price", "limit": "100",
                   "filter": f"buyingOptions:{{FIXED_PRICE}},deliveryCountry:NO,price:[{low}..{high}],priceCurrency:GBP"}
-        if details:
-            params["category_ids"] = EBAY_MACHINE_CATEGORY
+        if category:
+            params["category_ids"] = category
         r = self._fetch(f"{self._search_url}?{urllib.parse.urlencode(params)}", self._headers())
         listings = []
         for it in r.get("itemSummaries", []):
@@ -337,7 +337,7 @@ class AliExpressSource:
         text = self._secret + "".join(f"{k}{v}" for k, v in sorted(params.items())) + self._secret
         return {**params, "sign": hashlib.md5(text.encode()).hexdigest().upper()}
 
-    def search(self, query, details=False):
+    def search(self, query, kind="disk"):
         if not (self._key and self._secret):
             raise RuntimeError("no Affiliate API keys: set ALIEXPRESS_APP_KEY and ALIEXPRESS_APP_SECRET")
         params = {"app_key": self._key, "method": "aliexpress.affiliate.product.query", "sign_method": "md5",
