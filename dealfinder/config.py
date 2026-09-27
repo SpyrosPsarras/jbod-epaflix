@@ -53,6 +53,11 @@ EBAY_SEARCH = {
     # the laptop coolers and fans. R730 and DL380 Gen9 heatsinks from about £9, the £2 floor keeps them in reach
     "heatsink": (None, (2, 150)),
 }
+# Disk stock: eBay's search results carry no quantity, so one item call reads it (estimatedAvailableQuantity), for the
+# cheapest qualifying Disks of each query only, at most once a day per Listing. The Browse quota is 5,000 calls a day,
+# searches and item calls together: 11 Disk queries x 20 is at most 220 item calls a day, Hunts or not
+EBAY_STOCK_LOOKUPS = 20
+EBAY_STOCK_MAX_AGE_S = 24 * 3600
 
 # per Source: eBay returns only the 100 cheapest per query, so its queries name a capacity; finn.no search is
 # token based ("16tb" misses "16 tb") and small, so family words find more there
@@ -86,6 +91,9 @@ RAM_QUERIES = {
 # lowest believable Landed NOK per GB for used DDR4 RDIMM (16 GB DDR4-2133 lands at 9-13, 27 Sep 2026); below it a
 # multi-stick Listing is priced per stick ("32GB x 10 stk" for 1,500 NOK) and counts as one stick
 RAM_MIN_NOK_PER_GB = 8
+# lowest believable seller NOK per TB for a lot of used enterprise Disks (the cheapest single on sale was 185, eBay
+# 14 TB, 27 Sep 2026); below it a multi-disk title is priced per disk ("5 stk 16TB" for 3,000 NOK) and counts as one
+DISK_MIN_NOK_PER_TB = 100
 # heatsinks (ticket #33): one eBay query per common Machine family; finn.no is small, so generic words
 HEATSINK_QUERIES = {
     "ebay_uk": ["r730 heatsink", "r730xd heatsink", "r740 heatsink", "r740xd heatsink", "r630 heatsink",

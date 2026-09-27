@@ -11,8 +11,8 @@ import urllib.request
 from dataclasses import dataclass
 from html.parser import HTMLParser
 
-from .config import EBAY_SEARCH, SOURCE_PAUSE_S, WEAK_SELLER
-from .rules import Unreadable, read_cpu, read_heatsink, read_machine, read_ram
+from .config import EBAY_SEARCH, EBAY_STOCK_LOOKUPS, EBAY_STOCK_MAX_AGE_S, SOURCE_PAUSE_S, WEAK_SELLER
+from .rules import Unreadable, read_cpu, read_disk, read_heatsink, read_machine, read_ram
 
 log = logging.getLogger("dealfinder.sources")
 
@@ -37,6 +37,9 @@ class Listing:
     lon: float | None = None
     pickup_only: bool = False
     risk: str | None = None  # a config.RISK key the Source attaches (weak or unrated seller)
+    stock: int = 1  # units a buyer can take at this price; eBay Disks read it, a finn Disk's text may state it
+    extra_shipping: float | None = None  # shipping per unit after the first, shipping currency; None = unknown
+    stock_read: float | None = None  # epoch seconds eBay stock was read, kept so a restart does not read it again
 
 
 def _get(url, headers=None, data=None):
@@ -145,8 +148,10 @@ class FinnSource:
     _search_url = "https://www.finn.no/recommerce/forsale/search"
     _buckets = (("new", ("1", "2")), ("used", ("3", "4")))  # 1 Helt ny, 2 Som ny, 3 Pent brukt, 4 Godt brukt
 
-    # a Part's description matters only for a price per unit, so only a Part whose title names several units is read
-    _PART_UNITS = {"cpu": (read_cpu, "count"), "ram": (read_ram, "sticks"), "heatsink": (read_heatsink, "count")}
+    # a Part's or Disk's description matters only for a price per unit (and a Disk's stock at that price), so only
+    # one whose title names several units, or a Disk that qualifies, is read
+    _PART_UNITS = {"disk": (read_disk, "count"), "cpu": (read_cpu, "count"), "ram": (read_ram, "sticks"),
+                   "heatsink": (read_heatsink, "count")}
 
     def __init__(self, fetch=http_text, pause=SOURCE_PAUSE_S):
         self._fetch, self._pause = fetch, pause
@@ -170,7 +175,8 @@ class FinnSource:
         for listing in listings:
             if kind == "machine":
                 listing.description = self._description(listing.url)
-            elif read and getattr(read(listing.title, listing.condition), unit, 1) > 1:  # None/Unreadable: 1
+            elif read and (getattr(facts := read(listing.title, listing.condition), unit, 1) > 1  # None/Unreadable: 1
+                           or kind == "disk" and getattr(facts, "qualifies", False)):
                 if listing.source_id not in self._descriptions:
                     if len(self._descriptions) > 5000:  # ponytail: crude bound; texts are refetched after a reset
                         self._descriptions.clear()
@@ -248,6 +254,7 @@ class EbaySource:
         self._fetch = fetch
         self._token, self._token_expiry = None, 0.0
         self._descriptions = {}  # itemId -> text; one Listing shows up under several Machine queries
+        self._stock = {}  # itemId -> (read at, stock, extra shipping); one Disk shows up under several queries
 
     def _auth(self):
         if time.time() > self._token_expiry - 60:
@@ -270,7 +277,7 @@ class EbaySource:
         if category:
             params["category_ids"] = category
         r = self._fetch(f"{self._search_url}?{urllib.parse.urlencode(params)}", self._headers())
-        listings = []
+        listings, lookups = [], EBAY_STOCK_LOOKUPS if kind == "disk" else 0
         for it in r.get("itemSummaries", []):
             try:
                 listing = self._listing(it)
@@ -281,8 +288,46 @@ class EbaySource:
                 continue  # a Machine with no freight price to Norway cannot be bought from here: excluded
             if details:
                 listing.description = self._description(listing)
+            # results come cheapest first: only the cheapest Disks that can be ranked are worth an item call
+            if lookups and listing.shipping is not None and getattr(
+                    read_disk(listing.title, listing.condition), "qualifies", False):
+                lookups -= 1
+                listing.stock_read, listing.stock, listing.extra_shipping = self._read_stock(listing)
             listings.append(listing)
         return listings
+
+    def seed_stock(self, known):
+        """Stock read before this process started, [(source_id, read at, stock, extra shipping)], from the store."""
+        self._stock.update((sid, rest) for sid, *rest in known)
+
+    def _read_stock(self, listing):
+        """(read at, units one buyer can take, shipping per unit after the first or None) of a Disk, from its eBay item
+        endpoint; (None, 1, None) when it cannot be read, so a dead Listing never ends the Source.
+
+        ponytail: stock is read at most once a day, so a Disk that sells out in between still counts; the owner
+        sees the count on the Build and checks it before buying. "More than 10" counts as 10.
+        """
+        cached = self._stock.get(listing.source_id)
+        if cached and time.time() - cached[0] < EBAY_STOCK_MAX_AGE_S:
+            return tuple(cached)
+        try:
+            item = self._fetch(self._item_url + urllib.parse.quote(listing.source_id), self._headers())
+            a = (item.get("estimatedAvailabilities") or [{}])[0]
+            n = a.get("estimatedAvailableQuantity")
+            if n is None and a.get("availabilityThresholdType") == "MORE_THAN":
+                n = a.get("availabilityThreshold")
+            stock = max(1, min(int(n or 1), int(item.get("quantityLimitPerBuyer") or 99), 99))  # untrusted numbers
+            more = (item.get("shippingOptions") or [{}])[0].get("additionalShippingCostPerUnit") or {}
+            same = "value" in more and more.get("currency") == listing.shipping_currency
+            extra = float(more["value"]) if same else None
+            extra = extra if extra is not None and math.isfinite(extra) and extra >= 0 else None  # untrusted
+        except (OSError, http.client.HTTPException, AttributeError, KeyError, TypeError, ValueError) as exc:
+            log.warning("eBay item %s stock unavailable: %s", listing.source_id, exc)
+            return None, 1, None
+        if len(self._stock) > 5000:  # ponytail: crude bound, as for descriptions
+            self._stock.clear()
+        self._stock[listing.source_id] = (time.time(), stock, extra)
+        return self._stock[listing.source_id]
 
     def _description(self, listing):
         """Item text for a Machine the title alone does not settle; None when the title already rules it out.

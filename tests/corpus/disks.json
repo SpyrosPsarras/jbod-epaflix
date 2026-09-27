@@ -360,15 +360,25 @@
   "condition": null
  },
  {
-  "note": "multi-pack price is not per disk",
+  "note": "multi-pack: the price buys a lot of 4",
   "title": "Lot of 4x Seagate Exos X16 16TB 3.5\" SATA enterprise HDD",
   "expect": {
-   "unreadable": [
-    "quantity"
-   ]
+   "capacity_tb": 16,
+   "count": 4,
+   "qualifies": true
   },
   "condition": "used"
  },
+ {"note": "'4x 16TB' is a lot of 4 (synthetic)", "title": "4x 16TB Seagate Exos X16 3.5\" SATA", "condition": "used",
+  "expect": {"capacity_tb": 16, "count": 4, "qualifies": true}},
+ {"note": "'5 stk ... pris per stk' is priced per disk (synthetic)", "title": "5 stk Exos X18 18TB 3.5\" pris per stk",
+  "condition": "used", "expect": {"capacity_tb": 18, "count": 1, "qualifies": true}},
+ {"note": "'10 stk på lager' is stock, not a lot: how many the price buys is unknown (synthetic, finn phrasing)",
+  "title": "Seagate Exos X16 16TB 3.5\" 10 stk på lager", "condition": "used", "expect": {"unreadable": ["quantity"]}},
+ {"note": "'(4 pcs available)' is stock, not a lot (synthetic)", "title": "Seagate Exos 16TB 3.5\" (4 pcs available)",
+  "condition": "used", "expect": {"unreadable": ["quantity"]}},
+ {"note": "a single disk is one (synthetic)", "title": "Seagate Exos X20 20TB 3.5\" SATA", "condition": "used",
+  "expect": {"capacity_tb": 20, "count": 1, "qualifies": true}},
  {
   "note": "nas class qualifies",
   "title": "Seagate IronWolf 16TB NAS 3.5\" SATA internal hard drive ST16000VN001",

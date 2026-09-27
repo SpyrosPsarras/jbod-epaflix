@@ -43,6 +43,7 @@ class DiskFacts:
     disk_class: str | None
     working: bool
     genuine: bool
+    count: int = 1  # disks this one Listing sells as one lot, at its one price ("4x 16TB")
 
     @property
     def qualifies(self):
@@ -88,8 +89,9 @@ def read_disk(title, condition):
         missing.append("form_factor")
     if condition not in CONDITIONS:
         missing.append("condition")
-    if _QUANTITY.search(title):
-        missing.append("quantity")
+    count = _disk_count(title)
+    if count == 1 and _QUANTITY.search(title) and not _PER_UNIT.search(title):
+        missing.append("quantity")  # names several disks, but not how many the price buys ("lot", "10 stk på lager")
     too_small = bool(sizes) and max(sizes) < MIN_DISK_TB
     # a known disqualifying fact decides it: rejected, not "could not read"
     ruled_out = (too_small or form_factor in ("2.5", "external") or disk_class in ("external", "desktop")
@@ -103,7 +105,18 @@ def read_disk(title, condition):
         disk_class=disk_class,
         working=condition != "for_parts" and not _FAULTY.search(title),
         genuine=not _NON_GENUINE.search(title),
+        count=count,
     )
+
+
+# "4x 16TB", "4 x Exos", "4 stk", "lot of 4"; not stock on hand ("10 stk på lager", "har 12 stk"): see _STICK_COUNT
+_DISKS_X = re.compile(r"(?<![\w.,])(\d{1,2})\s?[x×*]\s?\d{1,2}(?:[.,]\d)?\s?tb\b", re.I)
+
+
+def _disk_count(title):
+    """Disks one Listing sells as a lot: 1 when priced per disk, else the title's count, else 1."""
+    m = not _PER_UNIT.search(title) and (_DISKS_X.search(title) or _STICK_COUNT.search(title))
+    return max(1, int(next(g for g in m.groups() if g))) if m else 1
 
 
 # ---- Machines -------------------------------------------------------------------------------------------------
@@ -495,6 +508,17 @@ def priced_per_unit(description, price):
     """True when a description says the Listing's price is for one unit (finn.no 471846605: "Pris per srk.")."""
     return any(m["pris"] or int(re.sub(r"\D", "", m["amount"])) == price
                for m in _PRICED_UNIT.finditer(description or ""))
+
+
+# units on sale in a description that prices one ("Selger 4 stk. Pris per stk", "har 5 stk", "3 disker igjen").
+# ponytail: the first count wins, so "2 stk caddies følger med" reads as 2 disks; the owner sees the count on the Build
+_STOCK = re.compile(r"(?<![\w.,])(\d{1,2})\s?(?:stk|stykk(?:er)?|pcs|pieces|disker|igjen)\b", re.I)
+
+
+def stock_in(description):
+    """Units a description priced per unit says are on sale; 1 when it does not say."""
+    m = _STOCK.search(description or "")
+    return max(1, int(m[1])) if m else 1
 
 
 def _count(title, n):
