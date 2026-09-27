@@ -43,7 +43,21 @@ button{cursor:pointer} button:hover{background:#2a2a2a}
 .bought{background:#1b3320;border-left:4px solid #66bb6a;padding:8px 12px}
 .risk{color:#ef5350} tr.gone,tr.gone a{color:#777} .note{font-size:85%} .costs{color:#9e9e9e}
 .drop{color:#66bb6a;font-weight:bold} .up{color:#ef5350} .down{color:#66bb6a}
-</style>"""
+th{position:sticky;top:0;z-index:1;background:#121212;box-shadow:0 1px 0 #333}
+.tabs>input{position:absolute;opacity:0} .tabs>section{display:none;padding-top:1em}
+.tabs>label{display:inline-block;padding:6px 14px;border:1px solid #555;border-bottom:none;border-radius:3px 3px 0 0;cursor:pointer}
+.tabs>input:checked+label{background:#2a2a2a;font-weight:bold} .tabs>input:focus-visible+label{outline:2px solid #8ab4f8}
+"""
+STYLE += "".join(f".tabs>input:nth-of-type({n}):checked~section:nth-of-type({n})" + "{display:block}\n"
+                 for n in range(1, 5))  # ponytail: CSS-only tabs, up to 4 per page; raise the range for more
+STYLE += "</style>"
+
+
+def _tabs(sections):
+    """[(label, html)] as CSS-only tabs, the first one open."""
+    heads = "".join(f'<input type="radio" name="tab" id="tab{i}"{" checked" if i == 0 else ""}>'
+                    f'<label for="tab{i}">{_e(label)}</label>' for i, (label, _) in enumerate(sections))
+    return f'<div class="tabs">{heads}{"".join(f"<section>{body}</section>" for _, body in sections)}</div>'
 
 
 def _history_table(rows, label, unit):
@@ -378,10 +392,11 @@ class App:
 lowest / median that week, with the number of Listings; each Listing counts once a week, at its lowest price.
 History starts with this version (27 Sep 2026): earlier Hunts stored no Landed cost, so month-to-month comparison
 needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
-<h2>Best Build per week</h2>
-{f"<table><tr><th>Week</th><th>Score (NOK/TiB)</th><th>Landed NOK</th><th>Machine</th><th>Disks</th></tr>{build_rows}</table>" if build_rows else "<p>No data yet.</p>"}
-<h2>Disks, NOK per TB</h2>{_history_table(disks, lambda k: f"{k:g} TB", "Capacity")}
-<h2>Machines, NOK</h2>{_history_table(machines, lambda k: k, "Model")}
+{_tabs([
+    ("Best Build per week", f"<table><tr><th>Week</th><th>Score (NOK/TiB)</th><th>Landed NOK</th><th>Machine</th>"
+                            f"<th>Disks</th></tr>{build_rows}</table>" if build_rows else "<p>No data yet.</p>"),
+    ("Disks, NOK per TB", _history_table(disks, lambda k: f"{k:g} TB", "Capacity")),
+    ("Machines, NOK", _history_table(machines, lambda k: k, "Model"))])}
 </body></html>"""
 
     def page(self, notice=None, sort="score"):
@@ -438,6 +453,17 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
         took = f" (took {(last['finished'] - last['started']).total_seconds():.0f} s)" if last else ""
         per_source = " &middot; ".join(f"{_e(s.name)}: last successful Hunt {_when(success.get(s.name))}"
                                        for s in self.sources)
+        tabs = _tabs([
+            ("Builds", f"<p>One Machine plus same-size Disks reaching {TARGET_TIB} TiB usable in RAIDZ2; the cheapest per"
+                       f" Machine, Builds over {CEILING_NOK:,} NOK hidden. Lower Score is better.</p>"
+                       f"<table><tr>{build_head}<th></th><th>Details</th></tr>{_build_rows(builds, sort, bought is None)}</table>"),
+            ("Best Disks", "<table><tr><th>Disk</th><th>Capacity</th><th>Condition</th><th>Where</th>"
+                           f"<th>Landed NOK</th><th>NOK per TB</th></tr>{disk_rows}</table>"),
+            ("Best Machines", '<table><tr><th>Machine</th><th>Model</th><th>Gen</th><th>3.5" bays</th><th>RAM</th>'
+                              '<th>PSUs</th><th>3.5" caddies</th><th>Controller</th><th>Rails</th><th>Where</th>'
+                              f"<th>Landed NOK</th></tr>{machine_rows}</table>"),
+            ("Could not read", "<table><tr><th>Kind</th><th>Source</th><th>Listing</th><th>Missing</th></tr>"
+                               f"{unreadable_rows}</table>")])
         return f"""<!doctype html><html><head><meta charset="utf-8"><title>Deal Finder</title>
 {STYLE}</head><body>
 <h1>Deal Finder</h1>{banner}{note}{running}
@@ -452,14 +478,7 @@ maxlength="{MAX_QUERY_CHARS}"> <select name="kind"><option value="disk">Disks</o
 <p><b>Disks:</b> {tracked_list["disk"]}</p><p><b>Machines:</b> {tracked_list["machine"]}</p></details>
 <p>Landed cost = price + shipping or pickup trip from Sandefjord ({PICKUP_NOK_PER_KM} NOK/km, max {PICKUP_MAX_MINUTES} min one way) + import VAT + Penalties (unknown PSU, caddies, controller or rails are charged).
 AliExpress Disks are High-risk (+20%); their shipping is an estimate and their condition is new unless the title says otherwise.</p>
-<h2>Builds</h2><p>One Machine plus same-size Disks reaching {TARGET_TIB} TiB usable in RAIDZ2; the cheapest per
-Machine, Builds over {CEILING_NOK:,} NOK hidden. Lower Score is better.</p>
-<table><tr>{build_head}<th></th><th>Details</th></tr>{_build_rows(builds, sort, bought is None)}</table>
-<h2>Best Disks</h2><table><tr><th>Disk</th><th>Capacity</th><th>Condition</th><th>Where</th>
-<th>Landed NOK</th><th>NOK per TB</th></tr>{disk_rows}</table>
-<h2>Best Machines</h2><table><tr><th>Machine</th><th>Model</th><th>Gen</th><th>3.5" bays</th><th>RAM</th>
-<th>PSUs</th><th>3.5" caddies</th><th>Controller</th><th>Rails</th><th>Where</th><th>Landed NOK</th></tr>{machine_rows}</table>
-<h2>Could not read</h2><table><tr><th>Kind</th><th>Source</th><th>Listing</th><th>Missing</th></tr>{unreadable_rows}</table>
+{tabs}
 </body></html>"""
 
     def metrics(self):
