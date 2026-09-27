@@ -396,6 +396,14 @@ class Store:
         return ([r for r in rows if r["kind"] == "machine"], [r for r in rows if r["kind"] == "disk"],
                 [r for r in rows if r["kind"] in ("cpu", "ram", "heatsink")])
 
+    def stock_read(self, source):
+        """[(source_id, read at, stock, extra shipping)] of the Disks whose stock `source` read; the Source skips
+        the ones read too long ago."""
+        with self._conn() as c:
+            return [(r["source_id"], r["facts"]["stock_read"], r["facts"]["stock"], r["facts"]["extra_shipping"])
+                    for r in c.execute("SELECT source_id, facts FROM listings WHERE source = %s AND kind = 'disk' "
+                                       "AND facts->>'stock_read' IS NOT NULL", (source,))]
+
     def unreadable(self, limit=200):
         with self._conn() as c:
             return c.execute(_FRESH + """

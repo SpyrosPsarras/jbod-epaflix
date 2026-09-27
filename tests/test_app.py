@@ -1008,7 +1008,7 @@ class EbayDiskStockEndToEnd(unittest.TestCase):
                           disk_queries={"ebay_uk": ["exos 16tb"]}, machine_queries=["r730xd"], pause=0,
                           router=fake_router)
             cls.app.hunt()
-        cls.page = cls.app.page()
+        cls.page, cls.first_hunt = cls.app.page(), list(cls.calls)
 
     @classmethod
     def tearDownClass(cls):
@@ -1037,7 +1037,7 @@ class EbayDiskStockEndToEnd(unittest.TestCase):
         self.assertNotIn("extra_unit", self.stored("B")["costs"])
 
     def test_item_calls_go_to_the_cheapest_qualifying_disks_and_a_failed_one_counts_one_disk(self):
-        fetched = [u.rsplit("/", 1)[1] for u in self.calls if "/item/" in u]
+        fetched = [u.rsplit("/", 1)[1] for u in self.first_hunt if "/item/" in u]
         self.assertEqual(sorted(fetched), sorted("MBCDEFAGH"))
         self.assertEqual(self.stored("H")["facts"]["stock"], 1)
         self.assertEqual(self.stored("I")["facts"]["stock"], 1)
@@ -1050,10 +1050,24 @@ class EbayDiskStockEndToEnd(unittest.TestCase):
         self.assertEqual([u.rsplit("/", 1)[1] for u in self.calls if "/item/" in u], ["H"])  # only the failed one
         self.assertEqual(self.stored("A")["facts"]["stock"], 10)
 
+    def test_a_new_pod_does_not_read_stock_again(self):
+        calls, fetch = [], self.app.sources[0]._fetch
+
+        def counting(url, headers=None, data=None):
+            calls.append(url)
+            return fetch(url, headers, data)
+        with mock.patch("dealfinder.sources.EBAY_STOCK_LOOKUPS", 8):
+            app = App(self.pg.get_uri(), [EbaySource("id", "secret", fetch=counting)], fx=RATES.__getitem__,
+                      disk_queries={"ebay_uk": ["exos 16tb"]}, machine_queries=["r730xd"], pause=0,
+                      router=fake_router)
+            app.hunt()
+        self.assertEqual(sorted(u.rsplit("/", 1)[1] for u in calls if "/item/" in u), ["H", "M"])  # M: its text
+        self.assertEqual(self.stored("A")["facts"]["stock"], 10)
+
 
 class FinnDiskLotsEndToEnd(unittest.TestCase):
-    """Seam 1: a title that names several disks ("4x 16TB") is one lot at its price; a lot priced per disk, in the
-    title, the description or under DISK_MIN_NOK_PER_TB, is one disk."""
+    """Seam 1: a title that names several disks ("4x 16TB") is one lot at its price; one priced per disk (title,
+    description, or under DISK_MIN_NOK_PER_TB) is one disk, sold up to the stock its text states."""
 
     @classmethod
     def setUpClass(cls):
@@ -1061,7 +1075,7 @@ class FinnDiskLotsEndToEnd(unittest.TestCase):
         ship = ["shipping_exists", "seller_pays_shipping"]
         machines = [_doc(1, "Dell PowerEdge R730xd 12x LFF", 6000, 59.91, 10.72, ship)]
         disks = [_doc(10, '4x Seagate Exos X16 16TB 3.5" SATA', 7000, 60.4, 5.5, ship),       # a lot: 1,750 a disk
-                 _doc(11, '4 stk Seagate Exos X16 16TB 3.5" SATA', 1400, 60.4, 5.5, ship),    # description: per disk
+                 _doc(11, '4 stk Seagate Exos X16 16TB 3.5" SATA', 1900, 60.4, 5.5, ship),    # description: per disk
                  _doc(12, '5 stk Seagate Exos X16 16TB 3.5" SATA', 1300, 60.4, 5.5, ship)]    # 16 NOK/TB: per disk
         disks += [_doc(20 + i, 'Seagate Exos X16 16TB 3.5" SATA', 2000 + i, 60.4, 5.5, ship) for i in range(3)]
         descriptions = {"1": full, "10": "Fire disker, selges samlet.", "11": "Fire like disker. Pris per stk.",
@@ -1073,7 +1087,7 @@ class FinnDiskLotsEndToEnd(unittest.TestCase):
                 docs = (machines if q["q"] == ["r730xd"] else disks) if q["condition"] == ["3", "4"] else []
                 blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
                 return f"<script>{blob}</script>"
-            return f'<section data-testid="description"><p>{descriptions[url.rsplit("/", 1)[1]]}</p></section>'
+            return f'<section data-testid="description"><p>{descriptions.get(url.rsplit("/", 1)[1], "")}</p></section>'
 
         cls.pg = _pg()
         cls.app = App(cls.pg.get_uri(), [FinnSource(fetch=fetch, pause=0)], fx=RATES.__getitem__,
@@ -1095,9 +1109,16 @@ class FinnDiskLotsEndToEnd(unittest.TestCase):
     def test_best_disks_price_a_lot_per_disk_and_say_it_is_a_lot(self):
         rows = dict(re.findall(r'data-listing="(\d+)" data-nok-per-tb="([\d.]+)"', self.page))
         self.assertAlmostEqual(float(rows["10"]), round(_shipped(7000) / 64, 2), places=2)
-        self.assertAlmostEqual(float(rows["11"]), round(_shipped(1400) / 16, 2), places=2)
+        self.assertAlmostEqual(float(rows["11"]), round(_shipped(1900) / 16, 2), places=2)
         self.assertAlmostEqual(float(rows["12"]), round(_shipped(1300) / 16, 2), places=2)
         self.assertIn("<td>4 &times; 16 TB</td>", self.page.split('data-listing="10"', 1)[1].split("</tr>", 1)[0])
+
+    def test_a_text_priced_per_disk_sells_its_stated_stock(self):
+        # "4 stk" priced per disk: 4 on sale, each after the first at its price + Trygg betaling (seller pays shipping)
+        with self.app.store._conn() as c:
+            row = c.execute("SELECT facts, costs FROM listings WHERE source_id = '11'").fetchone()
+        self.assertEqual((row["facts"]["count"], row["facts"]["stock"]), (1, 4))
+        self.assertAlmostEqual(row["costs"]["extra_unit"], _shipped(1900), places=2)
 
 
 class PickStock(unittest.TestCase):
@@ -1440,8 +1461,8 @@ class FinnFeesAndPerUnitEndToEnd(unittest.TestCase):
 
     def test_only_multi_unit_parts_are_read_once_across_queries(self):
         # Machines are always read; a Part only when its title names several units, and once for both RAM queries;
-        # Disks and the single stick 86 never
-        self.assertEqual(sorted(self.fetched), ["80", "82", "83", "84", "85", "87", "88", "89"])
+        # a qualifying Disk for its stock (81); the single stick 86 never
+        self.assertEqual(sorted(self.fetched), ["80", "81", "82", "83", "84", "85", "87", "88", "89"])
 
     def test_a_part_offering_free_shipping_in_its_text_is_shipped(self):
         # pickup only by finn's flags, but "Gratis frakt" in the text: 700 + Trygg betaling, no trip
@@ -1485,6 +1506,8 @@ class SearchAndTrack(unittest.TestCase):
             return x20 if q == "exos x20" else {"itemSummaries": []}
 
         def finn(url):
+            if "/search?" not in url:
+                return ""  # a qualifying Disk's item page: no text
             q = urllib.parse.parse_qs(url.split("?", 1)[1])
             cls.queries.append(("finn", q["q"][0]))
             docs = [_doc(99, 'Seagate Exos X20 20TB 3.5"', 3000, 59.9, 10.7, ["shipping_exists", "seller_pays_shipping"])]

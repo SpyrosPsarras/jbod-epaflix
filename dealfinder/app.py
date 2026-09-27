@@ -14,7 +14,7 @@ from .config import (CEILING_NOK, CPU_QUERIES, DISK_MIN_NOK_PER_TB, DISK_QUERIES
                      RAM_MIN_NOK_PER_GB, RAM_QUERIES, RAM_TARGET_GB, SOURCE_PAUSE_S, TARGET_TIB)
 from .builds import HIDDEN, Build, machine_needs, rank_builds
 from .costs import OsrmRouter, cost_breakdown, machine_penalties
-from .rules import Unreadable, priced_per_unit, read_cpu, read_disk, read_heatsink, read_machine, read_ram
+from .rules import Unreadable, priced_per_unit, read_cpu, read_disk, read_heatsink, read_machine, read_ram, stock_in
 from .store import Store, _history_key
 
 log = logging.getLogger("dealfinder")
@@ -268,6 +268,9 @@ class App:
         self.store.migrate()
         self.router = router or OsrmRouter(self.store)
         self.sources, self.fx, self.pause = sources, fx, pause
+        for source in sources:  # eBay stock read by an earlier pod counts against the same daily quota
+            if hasattr(source, "seed_stock"):
+                source.seed_stock(self.store.stock_read(source.name))
         disk_queries, machine_queries = disk_queries or DISK_QUERIES, machine_queries or MACHINE_QUERIES
         cpu_queries, ram_queries = cpu_queries or CPU_QUERIES, ram_queries or RAM_QUERIES
         heatsink_queries = heatsink_queries or HEATSINK_QUERIES
@@ -396,25 +399,30 @@ class App:
                     "landed_nok": None, "costs": None}
         facts_json = asdict(facts)
         # the readers see the title only; a price per unit stated in the description is applied here.
-        # ponytail: a per-unit Listing supplies one unit, even when the seller has several ("Bare 4 igjen")
+        # ponytail: a per-unit Part Listing supplies one unit, even when the seller has several ("Bare 4 igjen")
         unit = {"disk": "count", "cpu": "count", "ram": "sticks", "heatsink": "count"}.get(kind)
-        if unit and priced_per_unit(listing.description, listing.price):
+        per_unit = unit and priced_per_unit(listing.description, listing.price)
+        if per_unit:
             facts_json[unit] = 1
         penalties = machine_penalties(facts_json) if kind == "machine" and facts.bays_35 is not None else None
         costs, problem = cost_breakdown(listing, self.fx, source.foreign, self.router, kind, penalties)
         # unknown shipping or place is a missing fact; a pickup beyond the limit is a disqualifier (rejected)
         landed = None if problem else costs["total"]
         if kind == "disk":
-            # a lot ("4x 16TB") is bought whole at its price; a single disk up to its stock, each unit after the first
-            # paying its own extra shipping (unknown: charged in full again, never a fake bargain).
+            # a lot ("4x 16TB") is bought whole at its price. A single disk sells up to its stock: eBay's, or what a
+            # text priced per disk states ("Selger 4 stk. Pris per stk"). Each unit after the first pays the price,
+            # VAT and its extra shipping (unknown: the full shipping again, never a fake bargain), no second trip.
             # ponytail: a fixed floor, as for RAM: a lot under DISK_MIN_NOK_PER_TB is read as one disk
-            facts_json["stock"] = listing.stock
             lot_tb = (facts.capacity_tb or 0) * facts_json["count"]
             if facts_json["count"] > 1 and (not lot_tb or costs["price"] / lot_tb < DISK_MIN_NOK_PER_TB):
                 facts_json["count"] = 1
-            if landed and facts_json["count"] == 1 and listing.stock > 1:
+            stock = max(stock_in(listing.description), facts.count) if per_unit else listing.stock
+            facts_json["stock"] = stock if facts_json["count"] == 1 else 1
+            if listing.stock_read:  # kept so a restart does not read eBay stock again (EbaySource.seed_stock)
+                facts_json["stock_read"], facts_json["extra_shipping"] = listing.stock_read, listing.extra_shipping
+            if landed and facts_json["stock"] > 1:
                 more = replace(listing, shipping=listing.shipping if listing.extra_shipping is None
-                               else listing.extra_shipping)
+                               else listing.extra_shipping, lat=None, lon=None, pickup_only=False)
                 costs["extra_unit"] = cost_breakdown(more, self.fx, source.foreign, self.router, kind)[0]["total"]
         # ponytail: a fixed floor; a real bulk lot under RAM_MIN_NOK_PER_GB is read as one stick and ranks too dear.
         # Lower the floor as used DDR4 prices fall. The seller's price, not Landed: a pickup trip lifts a per-stick

@@ -510,6 +510,17 @@ def priced_per_unit(description, price):
                for m in _PRICED_UNIT.finditer(description or ""))
 
 
+# units on sale in a description that prices one ("Selger 4 stk. Pris per stk", "har 5 stk", "3 disker igjen").
+# ponytail: the first count wins, so "2 stk caddies følger med" reads as 2 disks; the owner sees the count on the Build
+_STOCK = re.compile(r"(?<![\w.,])(\d{1,2})\s?(?:stk|stykk(?:er)?|pcs|pieces|disker|igjen)\b", re.I)
+
+
+def stock_in(description):
+    """Units a description priced per unit says are on sale; 1 when it does not say."""
+    m = _STOCK.search(description or "")
+    return max(1, int(m[1])) if m else 1
+
+
 def _count(title, n):
     """Units one Listing sells: 1 when priced per unit, else the count match `n`, 2 for a pair, else 1."""
     if _PER_UNIT.search(title):
