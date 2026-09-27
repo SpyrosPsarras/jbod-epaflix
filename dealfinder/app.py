@@ -49,6 +49,9 @@ button{cursor:pointer} button:hover{background:#2a2a2a}
 .bought{background:#1b3320;border-left:4px solid #66bb6a;padding:8px 12px}
 tr.gone,tr.gone a{color:#777} .note{font-size:85%} .costs{color:#9e9e9e}
 .drop{color:#66bb6a;font-weight:bold} .up{color:#ef5350} .down{color:#66bb6a}
+.act{white-space:nowrap} .act details{display:inline-block;position:relative}
+.act summary{list-style:none;display:inline-block;cursor:pointer;border:1px solid #555;border-radius:3px;padding:4px 6px}
+.act summary::-webkit-details-marker{display:none} .act details>form{position:absolute;right:0;z-index:2}
 th{position:sticky;top:0;z-index:1;background:#121212;box-shadow:0 1px 0 #333}
 .tabs>input{position:absolute;opacity:0} .tabs>section{display:none;padding-top:1em}
 .tabs>label{display:inline-block;padding:6px 14px;border:1px solid #555;border-bottom:none;border-radius:3px 3px 0 0;cursor:pointer}
@@ -169,10 +172,16 @@ def _bought_html(bought):
             f'Hunting has stopped for good.</p><ul>{links}</ul></div>')
 
 
+# navigator.clipboard exists only over https or localhost; elsewhere a prompt shows the id, selected, to copy by hand
+COPY_JS = ("const ask = () => prompt('Copy the Build ID', this.dataset.copy); navigator.clipboard ? "
+           "navigator.clipboard.writeText(this.dataset.copy).then(() => this.textContent = 'Copied', ask) : ask()")
+
+
 def _build_rows(builds, sort, can_buy=True):
     rows = []
     for b in sorted(builds, key=BUILD_SORT[sort][1]):
         m = b.machine
+        key = f'{_e(m["source"])}|{_e(m["source_id"])}'  # a Build's id: one Build per Machine, as /buy reads it
         sources = _sources(b)
         items = [f"<li>Machine {_link(m)}: {b.parts['machine']:,.0f} NOK{_breakdown(m, b.parts['machine_penalties'])}</li>"]
         items += [f'<li data-part="{_e(r["source_id"])}" data-count="{n}" data-nok="{nok:.2f}">{PART_LABEL[r["kind"]]} '
@@ -182,9 +191,11 @@ def _build_rows(builds, sort, can_buy=True):
             f'<tr data-build="{_e(m["source_id"])}" data-score="{b.score:.2f}" data-landed="{b.landed_nok:.2f}">'
             f"<td>{b.score:,.0f}</td><td>{b.landed_nok:,.0f}</td><td>{b.usable_tib:.1f}</td>"
             f"<td>{_link(m)}</td><td>{len(b.disks)} &times; {b.capacity_tb:g} TB</td><td>{_e(sources)}</td>"
-            + (f'<td><form method="post" action="/buy" onsubmit="return confirm(\'Record this Build as bought and stop '
-               f'hunting for good?\')"><input type="hidden" name="machine" value="{_e(m["source"])}|{_e(m["source_id"])}">'
-               f'<button>Mark as bought</button></form></td>' if can_buy else "<td></td>")
+            + f'<td class="act"><button type="button" data-copy="{key}" onclick="{COPY_JS}">Copy ID</button>'
+            + (f'<details><summary title="More">&#9662;</summary><form method="post" action="/buy" onsubmit="return confirm('
+               f'\'Record this Build as bought and stop hunting for good?\')"><input type="hidden" name="machine" '
+               f'value="{key}"><button>Mark as bought</button></form></details>' if can_buy else "")
+            + "</td>"
             + f"<td><details><summary>show</summary><ul>{''.join(items)}</ul>"
             f"<p>Total {b.landed_nok:,.0f} NOK = Machine {b.parts['machine']:,.0f} + Parts {b.parts['parts_nok']:,.0f}"
             f" + Disks {b.parts['disks']:,.0f}"
