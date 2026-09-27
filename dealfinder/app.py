@@ -6,7 +6,7 @@ import re
 import threading
 import time
 import urllib.parse
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from .config import (CEILING_NOK, CPU_QUERIES, DISK_QUERIES, HEATSINK_QUERIES, HISTORY_WEEKS, HUNT_INTERVAL_S,
@@ -145,7 +145,7 @@ def _deal(deals, kind, row):
 
 def _sources(b):
     return ", ".join(sorted({b.machine["source"], *(r["source"] for r, _, _ in b.parts["parts"]),
-                             *(d["source"] for d in b.disks)}))
+                             *(d["source"] for d, _, _ in b.disks)}))
 
 
 BUILD_SORT = {  # column -> (header, key); every column sortable, server-side, no JavaScript
@@ -153,7 +153,7 @@ BUILD_SORT = {  # column -> (header, key); every column sortable, server-side, n
     "landed": ("Landed NOK", lambda b: b.landed_nok),
     "usable": ("Usable TiB", lambda b: -b.usable_tib),
     "machine": ("Machine", lambda b: b.machine["title"].lower()),
-    "disks": ("Disks", lambda b: (len(b.disks), b.capacity_tb)),
+    "disks": ("Disks", lambda b: (b.disk_count, b.capacity_tb)),
     "sources": ("Sources", _sources),
 }
 
@@ -179,7 +179,8 @@ def _bought_html(bought):
     links = "".join(f'<li>{_e(p["source"])}: <a href="{_e(_safe_url(p["url"]))}">{_e(p["title"])}</a> '
                     f'{p["landed_nok"]:,.0f} NOK</li>' for p in [b["machine"], *b.get("parts", []), *b["disks"]])
     return (f'<div class="bought" data-bought="{_e(b["machine"]["source_id"])}"><h2>Bought {_when(bought["bought"])}</h2>'
-            f'<p>{_e(b["machine"]["title"])} + {len(b["disks"])} &times; {b["capacity_tb"]:g} TB: '
+            f'<p>{_e(b["machine"]["title"])} + {sum(d.get("count", 1) for d in b["disks"])} &times; '
+            f'{b["capacity_tb"]:g} TB: '
             f'{b["landed_nok"]:,.0f} NOK, {b["usable_tib"]} TiB usable, Score {b["score"]:,.0f}. '
             f'Hunting has stopped for good.</p><ul>{links}</ul></div>')
 
@@ -198,11 +199,14 @@ def _build_rows(builds, sort, can_buy=True):
         items = [f"<li>Machine {_link(m)}: {b.parts['machine']:,.0f} NOK{_breakdown(m, b.parts['machine_penalties'])}</li>"]
         items += [f'<li data-part="{_e(r["source_id"])}" data-count="{n}" data-nok="{nok:.2f}">{PART_LABEL[r["kind"]]} '
                   f"{_link(r)}: {n} used, {nok:,.0f} NOK{_breakdown(r)}</li>" for r, n, nok in b.parts["parts"]]
-        items += [f"<li>Disk {_link(d)}: {float(d['landed_nok']):,.0f} NOK{_breakdown(d)}</li>" for d in b.disks]
+        items += [f'<li data-disk="{_e(d["source_id"])}" data-count="{n}" data-nok="{nok:.2f}">Disk {_link(d)}: '
+                  f"{n} used, {nok:,.0f} NOK{_breakdown(d)}"
+                  + (f'<br><small class="costs">each after the first {d["costs"]["extra_unit"]:,.0f}</small>'
+                     if n > 1 else "") + "</li>" for d, n, nok in b.disks]
         rows.append(
             f'<tr data-build="{_e(m["source_id"])}" data-score="{b.score:.2f}" data-landed="{b.landed_nok:.2f}">'
             f"<td>{b.score:,.0f}</td><td>{b.landed_nok:,.0f}</td><td>{b.usable_tib:.1f}</td>"
-            f"<td>{_link(m)}</td><td>{len(b.disks)} &times; {b.capacity_tb:g} TB</td><td>{_e(sources)}</td>"
+            f"<td>{_link(m)}</td><td>{b.disk_count} &times; {b.capacity_tb:g} TB</td><td>{_e(sources)}</td>"
             + f'<td class="act"><button type="button" data-copy="{key}" onclick="{COPY_JS}">Copy ID</button>'
             + (f'<details><summary title="More">&#9662;</summary><form method="post" action="/buy" onsubmit="return confirm('
                f'\'Record this Build as bought and stop hunting for good?\')"><input type="hidden" name="machine" '
@@ -346,7 +350,7 @@ class App:
             self.store.set_best_build(hunt_id, b and {
                 "score": round(b.score, 2), "landed_nok": b.landed_nok, "usable_tib": round(b.usable_tib, 2),
                 "machine": b.machine["title"], "url": b.machine["url"],
-                "disks": f"{len(b.disks)} x {b.capacity_tb:g} TB"}, hidden)
+                "disks": f"{b.disk_count} x {b.capacity_tb:g} TB"}, hidden)
         except Exception:
             log.exception("ranking the Builds of hunt %s failed", hunt_id)
 
@@ -398,6 +402,12 @@ class App:
         costs, problem = cost_breakdown(listing, self.fx, source.foreign, self.router, kind, penalties)
         # unknown shipping or place is a missing fact; a pickup beyond the limit is a disqualifier (rejected)
         landed = None if problem else costs["total"]
+        if kind == "disk":  # a Disk Listing sells up to its stock; each unit after the first pays its own shipping
+            facts_json["count"] = listing.stock
+            if landed and listing.stock > 1:  # unknown extra shipping: charged in full again, never a fake bargain
+                more = replace(listing, shipping=listing.shipping if listing.extra_shipping is None
+                               else listing.extra_shipping)
+                costs["extra_unit"] = cost_breakdown(more, self.fx, source.foreign, self.router, kind)[0]["total"]
         # ponytail: a fixed floor; a real bulk lot under RAM_MIN_NOK_PER_GB is read as one stick and ranks too dear.
         # Lower the floor as used DDR4 prices fall. The seller's price, not Landed: a pickup trip lifts a per-stick
         # price over the floor
@@ -424,11 +434,12 @@ class App:
                     return {k: row.get(k) for k in ("source", "source_id", "title", "url", "location")} | {
                         "landed_nok": float(row["landed_nok"])}
                 if not self.store.record_purchase({
-                        "machine": part(b.machine), "disks": [part(d) for d in b.disks], "capacity_tb": b.capacity_tb,
+                        "machine": part(b.machine), "capacity_tb": b.capacity_tb,
+                        "disks": [part(d) | {"count": n, "landed_nok": nok} for d, n, nok in b.disks],
                         "parts": [part(r) | {"kind": r["kind"], "count": n} for r, n, _ in b.parts["parts"]],
                         "usable_tib": round(b.usable_tib, 2), "landed_nok": b.landed_nok, "score": round(b.score, 2)}):
                     return False
-                log.info("Build bought: %s, %s x %g TB, %.0f NOK", b.machine["title"], len(b.disks), b.capacity_tb,
+                log.info("Build bought: %s, %s x %g TB, %.0f NOK", b.machine["title"], b.disk_count, b.capacity_tb,
                          b.landed_nok)
                 return True
         return False

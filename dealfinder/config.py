@@ -53,6 +53,11 @@ EBAY_SEARCH = {
     # the laptop coolers and fans. R730 and DL380 Gen9 heatsinks from about £9, the £2 floor keeps them in reach
     "heatsink": (None, (2, 150)),
 }
+# Disk stock: eBay's search results carry no quantity, so one item call reads it (estimatedAvailableQuantity), for the
+# cheapest qualifying Disks of each query only, at most once a day per Listing. The Browse quota is 5,000 calls a day,
+# searches and item calls together: 11 Disk queries x 20 is at most 220 item calls a day, Hunts or not
+EBAY_STOCK_LOOKUPS = 20
+EBAY_STOCK_MAX_AGE_S = 24 * 3600
 
 # per Source: eBay returns only the 100 cheapest per query, so its queries name a capacity; finn.no search is
 # token based ("16tb" misses "16 tb") and small, so family words find more there
