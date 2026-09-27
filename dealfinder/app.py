@@ -12,7 +12,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from .config import (CEILING_NOK, CPU_QUERIES, DISK_QUERIES, HEATSINK_QUERIES, HISTORY_WEEKS, HUNT_INTERVAL_S,
                      MACHINE_QUERIES, MAX_QUERY_CHARS, PICKUP_MAX_MINUTES, PICKUP_NOK_PER_KM, RAM_MIN_NOK_PER_GB,
                      RAM_QUERIES, RAM_TARGET_GB, SOURCE_PAUSE_S, TARGET_TIB)
-from .builds import HIDDEN, machine_needs, rank_builds
+from .builds import HIDDEN, Build, machine_needs, rank_builds
 from .costs import OsrmRouter, cost_breakdown, machine_penalties
 from .rules import Unreadable, priced_per_unit, read_cpu, read_disk, read_heatsink, read_machine, read_ram
 from .store import Store
@@ -248,6 +248,13 @@ class App:
                                 + [(q, "ram", src) for src, qs in ram_queries.items() for q in qs]
                                 + [(q, "heatsink", src) for src, qs in heatsink_queries.items() for q in qs])
         self._hunt_lock = threading.Lock()  # one Hunt at a time, scheduled or by hand
+        self.ranking_error = None  # why the last ranking in this process failed, shown on the page and /metrics
+        last = self.store.last_hunt()
+        try:  # re-rank the stored Listings so a deploy's rules show now, not after the next Hunt
+            if last:
+                self.rank(last["id"])
+        except Exception:  # a start-up must not fail on it; the page shows the fault
+            log.exception("ranking at start-up failed")
 
     def start_hunt(self):
         """Start a Hunt in the background. False when one is already running or the Build is bought."""
@@ -305,15 +312,38 @@ class App:
                 ok = False
         self.store.finish_hunt(hunt_id, ok, detail)
         log.info("hunt %s done ok=%s %s", hunt_id, ok, detail)
-        try:  # the best Build of this Hunt, for the price history; a failure here must not fail the Hunt
-            builds, hidden = rank_builds(*self.store.build_parts())
+        # the Builds the page shows, and the best one for the price history; a failure must not fail the Hunt.
+        # ponytail: ranked after finish_hunt because build_parts counts finished Hunts only, so until rank() returns
+        # the page shows the previous ranking: ~1 s in production, or until a ranking works if it fails (the page
+        # and dealfinder_ranking_failed say so). Publish both in one transaction, with a savepoint around the
+        # ranking, if that gap starts to matter
+        try:
+            builds, hidden = self.rank(hunt_id)
             b = min(builds, key=lambda b: b.score, default=None)
             self.store.set_best_build(hunt_id, b and {
                 "score": round(b.score, 2), "landed_nok": b.landed_nok, "usable_tib": round(b.usable_tib, 2),
                 "machine": b.machine["title"], "url": b.machine["url"],
                 "disks": f"{len(b.disks)} x {b.capacity_tb:g} TB"}, hidden)
         except Exception:
-            log.exception("recording the best Build of hunt %s failed", hunt_id)
+            log.exception("ranking the Builds of hunt %s failed", hunt_id)
+
+    def rank(self, hunt_id):
+        """Rank the Builds from the live Listings and store the shown ones for the page: (builds, hidden counts).
+        Listings change only in a Hunt, so this runs once per Hunt, and at start-up for new rules."""
+        start = time.monotonic()
+        try:
+            builds, hidden = rank_builds(*self.store.build_parts())
+            self.store.set_ranking(hunt_id, [asdict(b) for b in builds])
+        except Exception as exc:  # the page keeps the last ranking and says so, until a ranking succeeds
+            self.ranking_error = f"hunt {hunt_id}: {exc}"[:300]
+            raise
+        self.ranking_error = None
+        log.info("ranked %d Builds for hunt %s in %.1f s", len(builds), hunt_id, time.monotonic() - start)
+        return builds, hidden
+
+    def builds(self):
+        """The Builds of the last ranking, as stored; the page and Mark as bought read these, never re-rank."""
+        return [Build(**b) for b in self.store.ranking()]
 
     def _score(self, source, listing, kind):
         """The rules' verdict on one Listing: None when it is not of that kind at all, else a dict with
@@ -365,7 +395,7 @@ class App:
 
     def mark_bought(self, machine_key):
         """Record the current Build for one Machine ("source|source_id") as bought. False when it is not shown."""
-        for b in rank_builds(*self.store.build_parts())[0]:
+        for b in self.builds():
             if f'{b.machine["source"]}|{b.machine["source_id"]}' == machine_key:
                 def part(row):
                     return {k: row.get(k) for k in ("source", "source_id", "title", "url", "location")} | {
@@ -448,7 +478,7 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
 
     def page(self, notice=None, sort="score"):
         sort = sort if sort in BUILD_SORT else "score"
-        builds, _ = rank_builds(*self.store.build_parts())
+        builds = self.builds()
         build_head = "".join(f'<th><a href="/?sort={k}">{_e(label)}</a></th>' for k, (label, _) in BUILD_SORT.items())
         last = self.store.last_hunt()
         disks, machines, unreadable = self.store.best_disks(), self.store.best_listings("machine"), self.store.unreadable()
@@ -508,6 +538,9 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
             + (f"Its Listings below are from its last successful Hunt ({_when(success[name])}).</p>"
                if name in success else "It has no Listings yet.</p>")
             for name, reason in faults)
+        if self.ranking_error:
+            banner += (f'<p class="fault" data-fault="ranking">Ranking the Builds failed ({_e(self.ranking_error)}). '
+                       "The Builds below are from the last ranking that worked.</p>")
         notices = {"started": "Hunt started. Refresh in a few minutes.",
                    "busy": "A Hunt is already running; this request was ignored.",
                    "tracked": "Query tracked. Every Hunt runs it from now on.",
@@ -585,6 +618,8 @@ maxlength="{MAX_QUERY_CHARS}"> <select name="kind"><option value="disk">Disks</o
         lines += [f'dealfinder_builds_hidden{{reason="{k}"}} {n}' for k, n in hidden.items()]
         lines.append("# TYPE dealfinder_bought gauge")  # 1 once a Build is bought and hunting has stopped
         lines.append(f"dealfinder_bought {int(self.store.bought() is not None)}")
+        lines.append("# TYPE dealfinder_ranking_failed gauge")  # 1 while the page shows Builds from an older ranking
+        lines.append(f"dealfinder_ranking_failed {int(self.ranking_error is not None)}")
         lines.append("# TYPE dealfinder_hunt_running gauge")
         lines.append(f"dealfinder_hunt_running {int(self.hunt_running())}")
         faulty = {name for name, _ in source_faults(detail)}

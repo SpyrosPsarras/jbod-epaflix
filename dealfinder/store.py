@@ -1,8 +1,8 @@
 """Postgres store for Listings and Hunts."""
 import json
 
-import psycopg
 from psycopg.rows import dict_row
+from psycopg_pool import ConnectionPool
 
 from .config import GONE_DAYS, HISTORY_WEEKS
 
@@ -87,6 +87,12 @@ ALTER TABLE hunts ADD COLUMN IF NOT EXISTS builds_hidden jsonb;
 -- a removed Source
 DELETE FROM tracked_queries WHERE source = 'aliexpress';
 DELETE FROM listings WHERE source = 'aliexpress';
+-- the shown Builds, ranked once per Hunt (and at start-up) so a page load does not rank; one row
+CREATE TABLE IF NOT EXISTS ranking (
+    one     boolean PRIMARY KEY DEFAULT true CHECK (one),
+    hunt_id bigint NOT NULL,
+    builds  jsonb NOT NULL
+);
 """
 
 
@@ -110,17 +116,12 @@ WITH fresh AS (
 
 
 # Ranked rows: fresh Listings plus Gone Listings (missed by their Source's latest successful Hunt) for
-# GONE_DAYS days; `prev_price` is the Source price at the Hunt before the latest one that saw the Listing.
-# ponytail: the window scans every observation per page load (~100k rows/month, fine for one user for months);
-# if the page slows, fetch the previous price per shown Listing with LATERAL ... OFFSET 1 LIMIT 1 or prune old rows
-_RANKED = _FRESH + f""",
-prev AS (
-    SELECT source, source_id, price AS prev_price
-    FROM (SELECT source, source_id, price,
-                 row_number() OVER (PARTITION BY source, source_id ORDER BY hunt_id DESC) AS rn
-          FROM price_observations) o
-    WHERE rn = 2
-)
+# GONE_DAYS days; `prev_price` is the Source price at the Hunt before the latest one that saw the Listing, one
+# primary-key lookup per candidate row (a window over every observation took ~280 ms per table at 35k rows)
+_PREV = """
+LEFT JOIN LATERAL (SELECT o.price AS prev_price FROM price_observations o
+                   WHERE o.source = l.source AND o.source_id = l.source_id
+                   ORDER BY o.hunt_id DESC OFFSET 1 LIMIT 1) p ON true
 """
 _RANKED_WHERE = f"""
     qualifies AND landed_nok IS NOT NULL
@@ -131,10 +132,14 @@ _RANKED_WHERE = f"""
 class Store:
     def __init__(self, uri):
         self.uri = uri
+        # a TLS connect costs ~100 ms and a query ~3 ms: a Hunt saves ~4k Listings, a page makes ~10 calls. The
+        # Hunt, the scheduler and every request thread share the pool. check= replaces connections broken by a
+        # Postgres failover. ponytail: 4 connections; raise max_size if page loads wait on the pool during a Hunt
+        self._pool = ConnectionPool(uri, min_size=1, max_size=4, open=True, check=ConnectionPool.check_connection,
+                                    kwargs={"autocommit": True, "row_factory": dict_row})
 
     def _conn(self):
-        # ponytail: one connection per call (~1k per Hunt, every 6h); batch per Source if Hunts get slow
-        return psycopg.connect(self.uri, autocommit=True, row_factory=dict_row)
+        return self._pool.connection()
 
     def migrate(self):
         with self._conn() as c:
@@ -213,6 +218,18 @@ class Store:
                             "ORDER BY id DESC LIMIT 1").fetchone()
             return row["best_build"] if row else None
 
+    def set_ranking(self, hunt_id, builds):
+        """The shown Builds (JSON-ready dicts) ranked from the Listings of Hunt `hunt_id`."""
+        with self._conn() as c:
+            c.execute("INSERT INTO ranking (hunt_id, builds) VALUES (%s, %s) ON CONFLICT (one) DO UPDATE SET "
+                      "hunt_id = EXCLUDED.hunt_id, builds = EXCLUDED.builds", (hunt_id, json.dumps(builds, default=float)))
+
+    def ranking(self):
+        """The stored Builds as dicts, [] before the first ranking."""
+        with self._conn() as c:
+            row = c.execute("SELECT builds FROM ranking").fetchone()
+            return row["builds"] if row else []
+
     def record_purchase(self, build):
         """True when recorded; False when a Build was already bought."""
         with self._conn() as c:
@@ -286,12 +303,11 @@ class Store:
 
     def best_disks(self, limit=100):
         with self._conn() as c:
-            return c.execute(_RANKED + f"""
+            return c.execute(_FRESH + f"""
                 SELECT l.source, l.source_id, title, url, capacity_tb, condition, landed_nok, location, pickup_only,
                        round(landed_nok / capacity_tb, 2) AS nok_per_tb, l.price, l.currency, p.prev_price, l.costs,
                        l.last_seen < f.since AS gone, l.last_seen
-                FROM listings l JOIN fresh f ON f.source = l.source
-                LEFT JOIN prev p ON p.source = l.source AND p.source_id = l.source_id
+                FROM listings l JOIN fresh f ON f.source = l.source {_PREV}
                 WHERE kind = 'disk' AND {_RANKED_WHERE}
                 ORDER BY gone, nok_per_tb, landed_nok LIMIT %s
             """, (limit,)).fetchall()
@@ -300,11 +316,10 @@ class Store:
         """Ranked Machines or Parts, cheapest first; a CPU or heatsink Listing ranks by NOK per unit, RAM by NOK
         per GB."""
         with self._conn() as c:
-            return c.execute(_RANKED + f"""
+            return c.execute(_FRESH + f"""
                 SELECT l.source, l.source_id, title, url, facts, landed_nok, location, pickup_only, l.costs,
                        l.price, l.currency, p.prev_price, l.last_seen < f.since AS gone, l.last_seen
-                FROM listings l JOIN fresh f ON f.source = l.source
-                LEFT JOIN prev p ON p.source = l.source AND p.source_id = l.source_id
+                FROM listings l JOIN fresh f ON f.source = l.source {_PREV}
                 WHERE kind = %s AND {_RANKED_WHERE}
                 ORDER BY gone, landed_nok / coalesce((facts->>'count')::numeric,
                                                      (facts->>'gb_per_stick')::numeric * (facts->>'sticks')::numeric, 1),
