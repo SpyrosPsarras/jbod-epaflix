@@ -10,7 +10,8 @@ from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from .config import (CEILING_NOK, DISK_QUERIES, HISTORY_WEEKS, HUNT_INTERVAL_S, MACHINE_QUERIES, MAX_QUERY_CHARS,
-                     PICKUP_MAX_MINUTES, PICKUP_NOK_PER_KM, SOURCE_PAUSE_S, TARGET_TIB)
+                     PENALTY_NOK, PICKUP_MAX_MINUTES, PICKUP_NOK_PER_KM, RAM_NOK_PER_GB, RAM_TARGET_GB,
+                     SOURCE_PAUSE_S, TARGET_TIB)
 from .builds import rank_builds
 from .costs import OsrmRouter, cost_breakdown, machine_penalties
 from .rules import Unreadable, read_disk, read_machine
@@ -28,7 +29,8 @@ COST_LABEL = {"shipping": "shipping", "shipping_estimate": "shipping (est.)", "p
               "psu_unknown": "2nd PSU (not stated)", "caddies_unknown": "caddies (not stated)",
               "controller_unknown": "HBA (controller not stated)", "rails_unknown": "rails (not stated)",
               "weak_seller": "weak seller +10%", "seller_unknown": "seller rating not stated +10%",
-              "high_risk": "High-risk +20%"}
+              "high_risk": "High-risk +20%", "no_cpu": "CPUs", "cpu_unknown": "CPUs (not stated)",
+              "ram": f"RAM to {RAM_TARGET_GB} GB", "ram_unknown": f"RAM to {RAM_TARGET_GB} GB (not stated)"}
 
 
 STYLE = """<meta name="color-scheme" content="dark"><style>
@@ -419,7 +421,7 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
             '<td>{rails}</td><td>{where}</td><td>{landed:,.0f}</td></tr>'.format(
                 id=_e(r["source_id"]), landed=float(r["landed_nok"]), url=_e(_safe_url(r["url"])), title=_e(r["title"]),
                 model=_e(f["model"]), gen=_e(f["generation"]), bays=_e(f["bays_35"]),
-                ram=_e(f"{f['ram_gb']} GB" if f["ram_gb"] else "?"), psu=_e(f["psu_count"] or "?"),
+                ram=_e("?" if f["ram_gb"] is None else f"{f['ram_gb']} GB"), psu=_e(f["psu_count"] or "?"),
                 caddies=_e("?" if f["caddies_35"] is None else f["caddies_35"]), ctrl=_e(f["controller"] or "?"),
                 rails=_yes_no(f["rails"]), where=_where(r), attrs=state[0], note=state[1] + _breakdown(r))
             for r in machines for f in [r["facts"]] for state in [_row_state(r)])
@@ -476,7 +478,7 @@ maxlength="{MAX_QUERY_CHARS}"> <select name="kind"><option value="disk">Disks</o
 </select> <button>Search every Source now</button></form>
 <details><summary>{len(tracked)} Tracked queries run by every Hunt</summary>
 <p><b>Disks:</b> {tracked_list["disk"]}</p><p><b>Machines:</b> {tracked_list["machine"]}</p></details>
-<p>Landed cost = price + shipping or pickup trip from Sandefjord ({PICKUP_NOK_PER_KM} NOK/km, max {PICKUP_MAX_MINUTES} min one way) + import VAT + Penalties (unknown PSU, caddies, controller or rails are charged).
+<p>Landed cost = price + shipping or pickup trip from Sandefjord ({PICKUP_NOK_PER_KM} NOK/km, max {PICKUP_MAX_MINUTES} min one way) + import VAT + Penalties (unknown PSU, caddies, controller or rails are charged; a Machine without CPUs pays {PENALTY_NOK["cpu"]} NOK, and RAM below {RAM_TARGET_GB} GB costs {RAM_NOK_PER_GB} NOK per missing GB).
 AliExpress Disks are High-risk (+20%); their shipping is an estimate and their condition is new unless the title says otherwise.</p>
 {tabs}
 </body></html>"""

@@ -400,5 +400,116 @@
    "controller": "raid",
    "rails": false
   }
+ },
+ {
+  "note": "No CPU No RAM title wins over another server's specs in the shop's cross-promo (eBay 144915910706)",
+  "title": "Dell PowerEdge R730 Rack Server 2U No CPU No RAM 2x Cooler 8x LFF 3.5\"",
+  "description": "Dell R730 Server ohne CPU ohne RAM 2x Kühler.\nOther items from our shop:\nHP ProLiant DL380 Gen9 2U 2xE5-2680 V4 64 GB RAM 12x LFF +2x2,5 Zoll\nDell PowerEdge R630 Rack Server 2x E5-2640 V4 32GB DDR4 RAM 8x 2,5\" H330 1x PSU",
+  "condition": "refurbished",
+  "expect": {
+   "qualifies": true,
+   "model": "R730",
+   "bays_35": 8,
+   "ram_gb": 0,
+   "cpu": false
+  }
+ },
+ {
+  "note": "Barebones means no CPU and no RAM (eBay)",
+  "title": "HPE ProLiant DL380 Gen9 12LFF Configurable Barebones 2U Rack Server",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "model": "DL380 Gen9",
+   "bays_35": 12,
+   "ram_gb": 0,
+   "cpu": false
+  }
+ },
+ {
+  "note": "CPUs but no RAM (eBay 147188531871)",
+  "title": "Dell PowerEdge R730 Rack Server 2U 2xE5-2687W V3 CPU 2xHS No RAM 8x3.5\" LFF",
+  "description": "Dell R730 Server ohne CPU ohne RAM 2x Kühler.\nOther items from our shop:\nHP ProLiant DL380 Gen9 2U 2xE5-2680 V4 64 GB RAM 12x LFF +2x2,5 Zoll\nDell PowerEdge R630 Rack Server 2x E5-2640 V4 32GB DDR4 RAM 8x 2,5\" H330 1x PSU",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "bays_35": 8,
+   "ram_gb": 0,
+   "cpu": true
+  }
+ },
+ {
+  "note": "CPU and RAM not stated anywhere: unknown, charged later",
+  "title": "Dell PowerEdge R730xd 12x LFF",
+  "description": "2x 750W PSU. Dell HBA330.",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "bays_35": 12,
+   "ram_gb": null,
+   "cpu": null
+  }
+ },
+ {
+  "note": "Description: stated CPUs and RAM beat 'no memory errors' and another server's 'barebone No CPU No RAM'",
+  "title": "Dell PowerEdge R730xd 12x LFF",
+  "description": "2x E5-2680 v4, 128GB DDR4 RAM. Tested, no memory errors.\nOther items: Dell R630 barebone No CPU No RAM",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "cpu": true,
+   "ram_gb": 128
+  }
+ },
+ {
+  "note": "Title 'CPU/RAM not included' wins over a cross-promo description",
+  "title": "Dell PowerEdge R730xd 12x LFF CPU/RAM not included",
+  "description": "2x E5-2680 v4 256GB DDR4 RAM",
+  "condition": "used",
+  "expect": {
+   "cpu": false,
+   "ram_gb": 0
+  }
+ },
+ {
+  "note": "Title 'No-CPU No-RAM' wins over a cross-promo description",
+  "title": "Dell PowerEdge R730xd 12x LFF No-CPU No-RAM",
+  "description": "2x E5-2680 v4 256GB DDR4 RAM",
+  "condition": "used",
+  "expect": {
+   "cpu": false,
+   "ram_gb": 0
+  }
+ },
+ {
+  "note": "Title 'without CPUs or RAM' wins over a cross-promo description",
+  "title": "Dell PowerEdge R730xd 12x LFF without CPUs or RAM",
+  "description": "2x E5-2680 v4 256GB DDR4 RAM",
+  "condition": "used",
+  "expect": {
+   "cpu": false,
+   "ram_gb": 0
+  }
+ },
+ {
+  "note": "'No CPU, RAM 128GB': the RAM after a comma is not absent (the amount-first order reads as not stated)",
+  "title": "Dell PowerEdge R730xd 12x LFF No CPU, RAM 128GB",
+  "description": "No memory or CPU errors.",
+  "condition": "used",
+  "expect": {
+   "cpu": false,
+   "ram_gb": null
+  }
+ },
+ {
+  "note": "'No CPU, RAM 8x16GB': a DIMM count after RAM is not 'no RAM' (the amount-first order reads as not stated)",
+  "title": "Dell PowerEdge R730xd 12x LFF No CPU, RAM 8x16GB",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "cpu": false,
+   "ram_gb": null
+  }
  }
 ]

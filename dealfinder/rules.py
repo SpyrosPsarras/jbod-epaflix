@@ -147,6 +147,22 @@ _SFF_CHASSIS = re.compile(r"\bsff\b|2[.,]5\s?[\"”']?\s?(?:sas\s+)?(?:backplane
 
 _RAM_TOTAL = re.compile(r"(\d{2,4})\s?gb\b\s*(?:ddr\d|ram|ecc|minne|memory|rdimm|micron|total)", re.I)
 _RAM_PRODUCT = re.compile(r"(\d{1,2})\s?[x×*]\s?(\d{1,3})\s?gb\b(?=[^\n]{0,25}(?:ddr|ram|dimm|ecc|minne|memory|brikker|pc[34]))", re.I)
+_CPU_WORD, _RAM_WORD = r"(?:cpus?|prosessor\w*|processors?)", r"(?:ram|memory|minne|dimms?)"
+
+
+def _absent(noun):
+    """'no CPU', 'No-CPU No-RAM', 'without CPUs or RAM', 'CPU/RAM not included', 'barebones'; not 'no memory errors'."""
+    # after each noun: not "RAM 128GB", "RAM included" or "memory errors"
+    faults = r"\s+(?:errors?|issues?|faults?|problems?|feil)"
+    guard = rf"\b(?!\s*:?\s*\d+\s?(?:[x×*]\s?\d+\s?)?gb\b|\s+(?:included|inkl\w*)|{faults})"
+    join, word = r"\s*(?:/|&|,|\+|and|or|og|und|oder)\s*", f"(?:{_CPU_WORD}|{_RAM_WORD})"
+    obj = rf"(?:{word}{guard}{join})?{noun}{guard}(?:{join}{word}{guard})?(?!{join}{word}{faults})"
+    return re.compile(rf"\b(?:no|ingen|uten|ohne|without|w/o)[\s-]+{obj}"
+                      rf"|\b{obj}\s+(?:not\s+included|mangler|følger\s+ikke|medfølger\s+ikke)|\bbarebones?\b", re.I)
+
+
+_NO_RAM, _NO_CPU = _absent(_RAM_WORD), _absent(_CPU_WORD)
+_CPU_MODEL = re.compile(r"e5-?\s?2\d{3}|\bxeon\b|\b(?:bronze|silver|gold|platinum)\s?\d{4}|\bepyc\b", re.I)
 _PSU_COUNT = re.compile(r"(?<![\w.,])(\d)\s?[x×*]\s?(?:\S+\s+){0,2}?\d{3,4}\s?w\b|(?<![\w.,])(\d)\s?[x×*]?\s?psu\b", re.I)
 _PSU_TWO = re.compile(r"dual\s+psu|redundant\w*\s+(psu|power|strøm)|doble\s+strøm|2\s+strømforsyninger", re.I)
 _PSU_ONE = re.compile(r"single\s+psu|\b1\s+psu\b", re.I)
@@ -171,7 +187,8 @@ class MachineFacts:
     generation: int | None
     amd: bool
     bays_35: int | None
-    ram_gb: int | None
+    ram_gb: int | None       # 0 = the Listing says no RAM, None = not stated
+    cpu: bool | None         # False = the Listing says no CPU or barebones, None = not stated
     ecc: bool
     psu_count: int | None
     caddies_35: int | None
@@ -221,11 +238,32 @@ def _bays_35(model, text):
     return None
 
 
-def _ram_gb(text):
+def _ram_in(text):
     totals = [int(m[1]) for m in _RAM_TOTAL.finditer(text)]
     totals += [int(m[1]) * int(m[2]) for m in _RAM_PRODUCT.finditer(text)]
     totals = [t for t in totals if 8 <= t <= 3072]
     return max(totals) if totals else None
+
+
+def _ram_gb(title, text):
+    """GB installed, 0 when none, None when not stated. The title wins: some eBay descriptions end with other
+    servers from the same shop ("...2xE5-2680 V4 64 GB RAM"), so a "No RAM" title must not read 64 GB.
+    In the description a stated amount beats a "no RAM", which may belong to another server there."""
+    if _NO_RAM.search(title):
+        return 0
+    found = _ram_in(title)
+    found = found if found is not None else _ram_in(text)
+    return 0 if found is None and _NO_RAM.search(text) else found
+
+
+def _cpu(title, text):
+    """True when CPUs are installed, False when the Listing says none, None when not stated. Title wins; in the
+    description a named CPU beats a "no CPU"."""
+    if _NO_CPU.search(title):
+        return False
+    if _CPU_MODEL.search(text):  # text starts with the title
+        return True
+    return False if _NO_CPU.search(text) else None
 
 
 def _psu_count(text):
@@ -276,7 +314,7 @@ def read_machine(title, description, condition):
     if missing and not ruled_out:
         return Unreadable(missing)
     return MachineFacts(
-        vendor=vendor, model=model, generation=generation, amd=amd, bays_35=bays, ram_gb=_ram_gb(text),
+        vendor=vendor, model=model, generation=generation, amd=amd, bays_35=bays, ram_gb=_ram_gb(title, text), cpu=_cpu(title, text),
         ecc=True,  # PowerEdge, ProLiant and Supermicro server boards take ECC RDIMMs only
         psu_count=_psu_count(text), caddies_35=_caddies_35(text), controller=_controller(text),
         rails=_rails(text), working=condition != "for_parts" and not _MACHINE_FAULTY.search(title))
