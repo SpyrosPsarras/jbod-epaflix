@@ -1543,6 +1543,7 @@ class PriceHistory(unittest.TestCase):
         cls.disk_price = 1200  # every seller drops the price by 300 NOK
         cls.app.hunt()
         cls.page = cls.app.history_page()
+        cls.main = cls.app.page()  # before any test changes the shared database
 
     @classmethod
     def tearDownClass(cls):
@@ -1588,6 +1589,17 @@ class PriceHistory(unittest.TestCase):
             (old, new), _ = self.cells(key)
             self.assertEqual(old, (f"{landed / units:,.0f}", f"{landed / units:,.0f}", "1"), key)
             self.assertEqual(new, old, key)
+
+    def test_listings_under_the_history_low_quartile_are_deals(self):
+        # 16 TB history: 1,500..1,900 last week, 1,200..1,600 now; 25th percentile of the ten = 1,425 (per TB, shipped)
+        page = self.main
+        rows = dict(re.findall(r'<tr data-listing="(\d+)"([^>]*)>', page))
+        self.assertEqual({i for i, attrs in rows.items() if 'data-deal="1"' in attrs}, {"10", "11", "12"})  # 1,200..1,400
+        self.assertIn('data-drop="1" class="deal" data-deal="1"', rows["10"])  # a drop and a deal both show
+        self.assertIn(f"That's a deal: cheaper than 3 in 4 prices of the last 12 weeks (under {_shipped(1425) / 16:,.0f} NOK per TB)",
+                      page)
+        # one Listing per Machine model or Part is too little history for a deal price
+        self.assertEqual(page.count('data-deal="1"'), 3)
 
     def test_a_listing_that_stops_qualifying_keeps_its_history(self):
         import psycopg

@@ -20,7 +20,7 @@ _Avoid_: Component, add-on
 
 **Build**:
 One Machine, plus the Parts it lacks (a CPU of one model in every socket, RAM up to 128 GB, a heatsink for every added CPU), plus enough same-capacity Disks to reach at least 40 TiB usable in RAIDZ2. The unit that gets ranked. A Build whose Parts are not on sale is hidden.
-_Avoid_: Deal, bundle, combo
+_Avoid_: Bundle, combo (a Deal is one Listing)
 
 ### Where it comes from
 
@@ -77,6 +77,10 @@ _Avoid_: Unknown, unparsed, bad listing
 **Gone Listing**:
 A Listing that disappeared from its Source since the last Hunt, usually sold. Kept greyed out for 7 days with its last price.
 _Avoid_: Sold, expired, deleted
+
+**Deal**:
+A live ranked Listing whose Landed cost per unit (per TB, CPU, GB or heatsink; a Machine as a whole) is under the 25th percentile of its group's price history: same Disk capacity, Machine model or Part key, all Sources, the price history page's weeks. A group seen in fewer than 5 Listings has no Deals. Highlighted with "That's a deal".
+_Avoid_: Bargain, steal
 
 **Ceiling**:
 The highest Build Landed cost that is shown: 40,000 NOK. Builds above it are hidden.

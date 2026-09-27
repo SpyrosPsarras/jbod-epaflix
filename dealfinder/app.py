@@ -15,7 +15,7 @@ from .config import (CEILING_NOK, CPU_QUERIES, DISK_QUERIES, HEATSINK_QUERIES, H
 from .builds import HIDDEN, Build, machine_needs, rank_builds
 from .costs import OsrmRouter, cost_breakdown, machine_penalties
 from .rules import Unreadable, priced_per_unit, read_cpu, read_disk, read_heatsink, read_machine, read_ram
-from .store import Store
+from .store import Store, _history_key
 
 log = logging.getLogger("dealfinder")
 
@@ -52,6 +52,7 @@ tr.gone,tr.gone a{color:#777} .note{font-size:85%} .costs{color:#9e9e9e}
 .act{white-space:nowrap} .act details{display:inline-block;position:relative}
 .act summary{list-style:none;display:inline-block;cursor:pointer;border:1px solid #555;border-radius:3px;padding:4px 6px}
 .act summary::-webkit-details-marker{display:none} .act details>form{position:absolute;right:0;z-index:2}
+tr.deal{background:#2e2a12} .deal-note{color:#ffd54f;font-weight:bold}
 th{position:sticky;top:0;z-index:1;background:#121212;box-shadow:0 1px 0 #333}
 .tabs>input{position:absolute;opacity:0} .tabs>section{display:none;padding-top:1em}
 .tabs>label{display:inline-block;padding:6px 14px;border:1px solid #555;border-bottom:none;border-radius:3px 3px 0 0;cursor:pointer}
@@ -118,17 +119,28 @@ def _breakdown(row, penalties=None):
     return '<br><small class="costs">' + _e(" + ".join(parts)) + "</small>" if c else ""
 
 
-def _row_state(row):
-    """(class/data attributes, price-drop or gone note) for one ranked row."""
+def _row_state(row, per=None, deal=None, unit="NOK"):
+    """(class/data attributes, gone, price-drop and deal notes) for one ranked row. `per` is the row's Landed NOK per
+    unit and `deal` its group's deal price (Store.deal_prices), in `unit`; a live row under it is a deal."""
     if row["gone"]:
         return (' class="gone" data-gone="1"',
                 f' <span class="note">gone, last seen {row["last_seen"]:%Y-%m-%d}, last seller price {float(row["price"]):,.0f} '
                 f'{_e(row["currency"])}</span>')
+    attrs, note = "", ""
     prev, now = row["prev_price"], row["price"]
     if prev is not None and now < prev:
-        return (' data-drop="1"', f' <span class="drop" title="seller price dropped">&darr; seller price was {float(prev):,.0f} '
-                                  f'{_e(row["currency"])}</span>')
-    return "", ""
+        attrs, note = ' data-drop="1"', (f' <span class="drop" title="seller price dropped">&darr; seller price was '
+                                         f'{float(prev):,.0f} {_e(row["currency"])}</span>')
+    if deal is not None and per < deal:
+        attrs += ' class="deal" data-deal="1"'
+        note += (f' <span class="deal-note">That\'s a deal: cheaper than 3 in 4 prices of the last {HISTORY_WEEKS} weeks'
+                 f' (under {deal:,.0f} {unit})</span>')
+    return attrs, note
+
+
+def _deal(deals, kind, row):
+    """The deal price of a ranked row's group, None when its history is too thin."""
+    return deals.get((kind, float(row["capacity_tb"]) if kind == "disk" else _history_key(kind, row["facts"])[0]))
 
 
 def _sources(b):
@@ -498,13 +510,18 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
         disks, machines, unreadable = self.store.best_disks(), self.store.best_listings("machine"), self.store.unreadable()
         cpus, rams = self.store.best_listings("cpu"), self.store.best_listings("ram")
         heatsinks = self.store.best_listings("heatsink")
+        deals = self.store.deal_prices()
+
+        def state(kind, r, per):
+            unit = {"disk": "NOK per TB", "cpu": "NOK per CPU", "ram": "NOK per GB", "heatsink": "NOK per heatsink"}
+            return _row_state(r, per, _deal(deals, kind, r), unit.get(kind, "NOK"))
         disk_rows = "".join(
             '<tr data-listing="{id}" data-nok-per-tb="{npt:.2f}"{attrs}><td><a href="{url}">{title}</a>{note}</td>'
             '<td>{cap:g} TB</td><td>{cond}</td><td>{where}</td><td>{landed:,.0f}</td><td>{npt:,.0f}</td></tr>'.format(
                 id=_e(r["source_id"]), npt=float(r["nok_per_tb"]), url=_e(_safe_url(r["url"])), title=_e(r["title"]),
                 cap=float(r["capacity_tb"]), cond=_e(CONDITION_LABEL.get(r["condition"], r["condition"] or "?")),
-                where=_where(r), landed=float(r["landed_nok"]), attrs=state[0], note=state[1] + _breakdown(r))
-            for r in disks for state in [_row_state(r)])
+                where=_where(r), landed=float(r["landed_nok"]), attrs=st[0], note=st[1] + _breakdown(r))
+            for r in disks for st in [state("disk", r, float(r["nok_per_tb"]))])
         machine_rows = "".join(
             '<tr data-machine="{id}" data-landed="{landed:.2f}"{attrs}><td><a href="{url}">{title}</a>{note}</td><td>{model}</td>'
             '<td>{gen}th</td><td>{bays}</td><td>{ram}</td><td>{psu}</td><td>{caddies}</td><td>{ctrl}</td>'
@@ -513,15 +530,15 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
                 model=_e(f["model"]), gen=_e(f["generation"]), bays=_e(f["bays_35"]),
                 ram=_e("?" if f["ram_gb"] is None else f"{f['ram_gb']} GB"), psu=_e(f["psu_count"] or "?"),
                 caddies=_e("?" if f["caddies_35"] is None else f["caddies_35"]), ctrl=_e(f["controller"] or "?"),
-                rails=_yes_no(f["rails"]), needs=_e(_needs(f)), where=_where(r), attrs=state[0], note=state[1] + _breakdown(r))
-            for r in machines for f in [r["facts"]] for state in [_row_state(r)])
+                rails=_yes_no(f["rails"]), needs=_e(_needs(f)), where=_where(r), attrs=st[0], note=st[1] + _breakdown(r))
+            for r in machines for f in [r["facts"]] for st in [state("machine", r, float(r["landed_nok"]))])
         cpu_rows = "".join(
             '<tr data-cpu="{id}" data-nok-per-cpu="{per:.2f}"{attrs}><td>{link}{note}</td><td>{platform}</td>'
             '<td>{model}</td><td>{count}</td><td>{where}</td><td>{landed:,.0f}</td><td>{per:,.0f}</td></tr>'.format(
                 id=_e(r["source_id"]), per=float(r["landed_nok"]) / f["count"], link=_link(r), platform=_e(f["platform"]),
                 model=_e(f["model"]), count=_e(f["count"]), where=_where(r), landed=float(r["landed_nok"]),
-                attrs=state[0], note=state[1] + _breakdown(r))
-            for r in cpus for f in [r["facts"]] for state in [_row_state(r)])
+                attrs=st[0], note=st[1] + _breakdown(r))
+            for r in cpus for f in [r["facts"]] for st in [state("cpu", r, float(r["landed_nok"]) / f["count"])])
         ram_rows = "".join(
             '<tr data-ram="{id}" data-nok-per-gb="{per:.2f}"{attrs}><td>{link}{note}</td><td>{type}</td>'
             '<td>{sticks} &times; {gb} GB</td><td>{speed}</td><td>{where}</td><td>{landed:,.0f}</td><td>{per:,.0f}</td>'
@@ -529,15 +546,16 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
                 id=_e(r["source_id"]), per=float(r["landed_nok"]) / (f["gb_per_stick"] * f["sticks"]), link=_link(r),
                 type=_e(f["type"]), sticks=_e(f["sticks"]), gb=_e(f["gb_per_stick"]),
                 speed=_e(f"{f['speed']} MT/s" if f["speed"] else "?"),
-                where=_where(r), landed=float(r["landed_nok"]), attrs=state[0], note=state[1] + _breakdown(r))
-            for r in rams for f in [r["facts"]] for state in [_row_state(r)])
+                where=_where(r), landed=float(r["landed_nok"]), attrs=st[0], note=st[1] + _breakdown(r))
+            for r in rams for f in [r["facts"]]
+            for st in [state("ram", r, float(r["landed_nok"]) / (f["gb_per_stick"] * f["sticks"]))])
         heatsink_rows = "".join(
             '<tr data-heatsink="{id}" data-nok-per-heatsink="{per:.2f}"{attrs}><td>{link}{note}</td><td>{fits}</td>'
             '<td>{count}</td><td>{where}</td><td>{landed:,.0f}</td><td>{per:,.0f}</td></tr>'.format(
                 id=_e(r["source_id"]), per=float(r["landed_nok"]) / f["count"], link=_link(r),
                 fits=_e(", ".join(f["fits"])), count=_e(f["count"]), where=_where(r), landed=float(r["landed_nok"]),
-                attrs=state[0], note=state[1] + _breakdown(r))
-            for r in heatsinks for f in [r["facts"]] for state in [_row_state(r)])
+                attrs=st[0], note=st[1] + _breakdown(r))
+            for r in heatsinks for f in [r["facts"]] for st in [state("heatsink", r, float(r["landed_nok"]) / f["count"])])
         unreadable_rows = "".join(
             '<tr data-unreadable="{id}" data-missing="{missing}"><td>{kind}</td><td>{src}</td>'
             '<td><a href="{url}">{title}</a></td><td>{labels}</td></tr>'.format(

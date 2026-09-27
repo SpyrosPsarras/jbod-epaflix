@@ -246,6 +246,26 @@ class Store:
             """).fetchall()
         return series, builds
 
+    def deal_prices(self, min_listings=5):
+        """{(kind, key): the 25th percentile of its price history}: the price a live Listing must beat to be a deal.
+        Same values as the history page (each Listing once per week at its lowest, per unit), all Sources pooled,
+        over HISTORY_WEEKS weeks; a group seen in fewer than `min_listings` Listings has no deal price. The key is
+        the capacity in TB for a Disk, else the history key (_history_key)."""
+        with self._conn() as c:
+            rows = c.execute(f"""
+                SELECT kind, model, cap, percentile_cont(0.25) WITHIN GROUP (ORDER BY v) AS p25
+                FROM (SELECT kind, model, capacity_tb::float AS cap, source, source_id,
+                             min(landed_nok / CASE kind WHEN 'disk' THEN capacity_tb WHEN 'machine' THEN 1
+                                                        ELSE units END) AS v
+                      FROM price_observations
+                      WHERE landed_nok IS NOT NULL AND seen_at > now() - interval '{int(HISTORY_WEEKS)} weeks'
+                        AND CASE kind WHEN 'disk' THEN capacity_tb IS NOT NULL ELSE model IS NOT NULL END
+                      GROUP BY 1, 2, 3, 4, 5, date_trunc('week', seen_at)) w
+                WHERE v IS NOT NULL
+                GROUP BY 1, 2, 3 HAVING count(DISTINCT source || '|' || source_id) >= %s
+            """, (min_listings,)).fetchall()
+        return {(r["kind"], r["cap"] if r["kind"] == "disk" else r["model"]): r["p25"] for r in rows}
+
     def latest_best_build(self):
         """The best Build of the latest ranked Hunt; None when that Hunt showed no Build."""
         with self._conn() as c:
