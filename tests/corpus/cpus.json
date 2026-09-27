@@ -563,5 +563,12 @@
    "platform": "LGA2011-3",
    "count": 1
   }
- }
+ },
+ {"note": "per unit: '4x Intel Xeon E5-2680 v4 CPU. Pris per srk.' names a price per CPU (synthetic)", "title": "4x Intel Xeon E5-2680 v4 CPU. Pris per srk.", "condition": "used", "expect": {"model": "E5-2680 v4", "platform": "LGA2011-3", "count": 1, "qualifies": true}},
+ {"note": "per unit: '4x Intel Xeon E5-2680 v4 pris pr stk' names a price per CPU (synthetic)", "title": "4x Intel Xeon E5-2680 v4 pris pr stk", "condition": "used", "expect": {"model": "E5-2680 v4", "platform": "LGA2011-3", "count": 1, "qualifies": true}},
+ {"note": "per unit: '4 stk Xeon E5-2680 v4, pr. stk' names a price per CPU (synthetic)", "title": "4 stk Xeon E5-2680 v4, pr. stk", "condition": "used", "expect": {"model": "E5-2680 v4", "platform": "LGA2011-3", "count": 1, "qualifies": true}},
+ {"note": "per unit: '4x Xeon E5-2680 v4 250 kr per stk.' names a price per CPU (synthetic)", "title": "4x Xeon E5-2680 v4 250 kr per stk.", "condition": "used", "expect": {"model": "E5-2680 v4", "platform": "LGA2011-3", "count": 1, "qualifies": true}},
+ {"note": "per unit: '4x Xeon E5-2680 v4 stykkpris 250' names a price per CPU (synthetic)", "title": "4x Xeon E5-2680 v4 stykkpris 250", "condition": "used", "expect": {"model": "E5-2680 v4", "platform": "LGA2011-3", "count": 1, "qualifies": true}},
+ {"note": "per unit: '4x Intel Xeon E5-2680 v4 CPU £20 each' names a price per CPU (synthetic)", "title": "4x Intel Xeon E5-2680 v4 CPU £20 each", "condition": "used", "expect": {"model": "E5-2680 v4", "platform": "LGA2011-3", "count": 1, "qualifies": true}},
+ {"note": "per unit: '4x Xeon E5-2680 v4 price per piece' names a price per CPU (synthetic)", "title": "4x Xeon E5-2680 v4 price per piece", "condition": "used", "expect": {"model": "E5-2680 v4", "platform": "LGA2011-3", "count": 1, "qualifies": true}}
 ]

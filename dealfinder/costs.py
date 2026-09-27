@@ -3,8 +3,8 @@ import datetime
 import math
 import threading
 
-from .config import (FINN_SHIPPING_NOK, HOME_LAT_LON, PENALTY_NOK, PICKUP_MAX_MINUTES, PICKUP_NOK_PER_KM, RISK,
-                     ROUTE_FALLBACK, VAT)
+from .config import (FINN_BUYER_FEE, FINN_SHIPPING_NOK, HOME_LAT_LON, PENALTY_NOK, PICKUP_MAX_MINUTES,
+                     PICKUP_NOK_PER_KM, RISK, ROUTE_FALLBACK, VAT)
 from .sources import http_json
 
 
@@ -57,10 +57,12 @@ def machine_penalties(facts):
     return {k: v for k, v in penalties.items() if v}
 
 
-def cost_breakdown(listing, fx, foreign, router, penalties=None):
+def cost_breakdown(listing, fx, foreign, router, kind, penalties=None):
     """(breakdown, problem). breakdown holds each NOK part and `total`; problem is None, "shipping" (unknown
-    for a foreign Source), "location" (pickup-only without a place) or "too_far" (over the pickup limit)."""
+    for a foreign Source), "location" (pickup-only without a place) or "too_far" (over the pickup limit).
+    `kind` picks the finn.no shipping estimate; a finn.no Listing that ships pays the Trygg betaling fee."""
     parts = {"price": round(listing.price * fx(listing.currency), 2)}
+    estimate, fee = FINN_SHIPPING_NOK[kind], round(FINN_BUYER_FEE[0] + FINN_BUYER_FEE[1] * parts["price"], 2)
     problem, trip = None, None
     if not foreign and listing.lat is not None and listing.lon is not None:
         km, minutes = router(listing.lat, listing.lon)
@@ -69,6 +71,8 @@ def cost_breakdown(listing, fx, foreign, router, penalties=None):
             trip = round(2 * km * PICKUP_NOK_PER_KM, 2)
     if listing.shipping is not None:
         parts["shipping"] = round(listing.shipping * fx(listing.shipping_currency or listing.currency), 2)
+        if not foreign:
+            parts["finn_fee"] = fee
     elif foreign:
         problem = "shipping"
     elif listing.pickup_only:
@@ -78,12 +82,13 @@ def cost_breakdown(listing, fx, foreign, router, penalties=None):
             problem = "too_far"
         else:
             parts["pickup_trip"] = trip
-    else:  # finn with Fiks ferdig: its price is not published, so the cheaper of a near pickup or the estimate
-        parts["pickup_trip" if trip is not None and trip < FINN_SHIPPING_NOK else "shipping_estimate"] = (
-            trip if trip is not None and trip < FINN_SHIPPING_NOK else FINN_SHIPPING_NOK)
+    elif trip is not None and trip < estimate + fee:  # finn with Fiks ferdig: a near pickup pays no fee
+        parts["pickup_trip"] = trip
+    else:  # its shipping price is not published: the estimate
+        parts["shipping_estimate"], parts["finn_fee"] = estimate, fee
     if foreign:
         parts["vat"] = round((parts["price"] + parts.get("shipping", 0) + parts.get("shipping_estimate", 0)) * VAT, 2)
-    money = ("price", "shipping", "shipping_estimate", "pickup_trip", "vat")
+    money = ("price", "shipping", "shipping_estimate", "finn_fee", "pickup_trip", "vat")
     parts["penalties"] = dict(penalties or {})
     if listing.risk:  # a share of the money paid to that seller
         parts["penalties"][listing.risk] = round(RISK[listing.risk] * sum(parts.get(k, 0) for k in money), 2)
