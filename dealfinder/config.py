@@ -9,8 +9,14 @@ SOURCE_PAUSE_S = 1.0   # polite gap between requests to one Source
 HOME_LAT_LON = (59.1312, 10.2166)  # Sandefjord
 PICKUP_NOK_PER_KM = 4              # fuel, tolls, wear; round trip
 PICKUP_MAX_MINUTES = 120           # one way; farther pickup-only Listings are hidden
-# finn.no search results do not publish the Fiks ferdig price; estimate for a heavy parcel
-FINN_SHIPPING_NOK = 400
+# finn.no search results do not publish the Fiks ferdig price, so it is estimated per kind. Parts and Disks go as a
+# small parcel up to 5 kg (finn.no help center "Fiks ferdig - Slik velger du riktig pakkestørrelse": Helthjem 38,
+# PostNord 39, Posten 55, PostNord 65 NOK); the highest, so it never underestimates. A Machine is a heavy parcel
+# (owner's estimate)
+FINN_SHIPPING_NOK = {"machine": 400, "disk": 65, "cpu": 65, "ram": 65, "heatsink": 65}
+# Trygg betaling, the buyer fee on every finn.no Fiks ferdig purchase: (fixed NOK, share of the price). An ESTIMATE
+# fitted to one checkout (77 NOK on 800 NOK, 27 Sep 2026); finn.no does not publish the formula
+FINN_BUYER_FEE = (29, 0.06)
 PENALTY_NOK = {"single_psu": 500, "caddy": 100, "raid_only": 500, "no_rails": 400}
 RAM_TARGET_GB = 128   # RAM a Build is completed up to; more earns no credit
 # ponytail: DIMM slots per socket, assumed (R730/R740/DL380 have 12); read the model's real count if a Build hits it

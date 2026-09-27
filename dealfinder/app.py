@@ -14,7 +14,7 @@ from .config import (CEILING_NOK, CPU_QUERIES, DISK_QUERIES, HEATSINK_QUERIES, H
                      RAM_QUERIES, RAM_TARGET_GB, SOURCE_PAUSE_S, TARGET_TIB)
 from .builds import HIDDEN, machine_needs, rank_builds
 from .costs import OsrmRouter, cost_breakdown, machine_penalties
-from .rules import Unreadable, read_cpu, read_disk, read_heatsink, read_machine, read_ram
+from .rules import Unreadable, priced_per_unit, read_cpu, read_disk, read_heatsink, read_machine, read_ram
 from .store import Store
 
 log = logging.getLogger("dealfinder")
@@ -28,7 +28,8 @@ FACT_LABEL = {"capacity": "capacity", "form_factor": "3.5\" or 2.5\"", "disk_cla
               "gb_per_stick": "GB per stick", "ddr": "DDR generation", "type": "RDIMM or LRDIMM",
               "fits": "Machine model it fits",
               "price": "price (make an offer)", "location": "pickup place"}
-COST_LABEL = {"shipping": "shipping", "shipping_estimate": "shipping (est.)", "pickup_trip": "pickup trip",
+COST_LABEL = {"shipping": "shipping", "shipping_estimate": "shipping (est.)", "finn_fee": "Trygg betaling (est.)",
+              "pickup_trip": "pickup trip",
               "vat": "VAT", "single_psu": "2nd PSU", "caddies": "caddies", "raid_only": "HBA", "no_rails": "rails",
               "psu_unknown": "2nd PSU (not stated)", "caddies_unknown": "caddies (not stated)",
               "controller_unknown": "HBA (controller not stated)", "rails_unknown": "rails (not stated)",
@@ -108,7 +109,8 @@ def _breakdown(row, penalties=None):
     c = row.get("costs") or {}
     c = {**c, "penalties": penalties} if c and penalties is not None else c
     parts = [f"{c.get('price', 0):,.0f}"]
-    parts += [f"{COST_LABEL[k]} {c[k]:,.0f}" for k in ("shipping", "shipping_estimate", "pickup_trip", "vat") if c.get(k)]
+    parts += [f"{COST_LABEL[k]} {c[k]:,.0f}" for k in ("shipping", "shipping_estimate", "finn_fee", "pickup_trip", "vat")
+              if c.get(k)]
     parts += [f"{COST_LABEL.get(k, k)} {v:,.0f}" for k, v in (c.get("penalties") or {}).items()]
     return '<br><small class="costs">' + _e(" + ".join(parts)) + "</small>" if c else ""
 
@@ -334,8 +336,13 @@ class App:
             return {"facts": None, "missing": facts.missing, "qualifies": False, "capacity_tb": None,
                     "landed_nok": None, "costs": None}
         facts_json = asdict(facts)
+        # the readers see the title only; a price per unit stated in the description is applied here.
+        # ponytail: a per-unit Listing supplies one unit, even when the seller has several ("Bare 4 igjen")
+        unit = {"cpu": "count", "ram": "sticks", "heatsink": "count"}.get(kind)
+        if unit and priced_per_unit(listing.description, listing.price):
+            facts_json[unit] = 1
         penalties = machine_penalties(facts_json) if kind == "machine" and facts.bays_35 is not None else None
-        costs, problem = cost_breakdown(listing, self.fx, source.foreign, self.router, penalties)
+        costs, problem = cost_breakdown(listing, self.fx, source.foreign, self.router, kind, penalties)
         # unknown shipping or place is a missing fact; a pickup beyond the limit is a disqualifier (rejected)
         landed = None if problem else costs["total"]
         # ponytail: a fixed floor; a real bulk lot under RAM_MIN_NOK_PER_GB is read as one stick and ranks too dear.
@@ -552,7 +559,7 @@ maxlength="{MAX_QUERY_CHARS}"> <select name="kind"><option value="disk">Disks</o
 <p><b>Disks:</b> {tracked_list["disk"]}</p><p><b>Machines:</b> {tracked_list["machine"]}</p>
 <p><b>CPUs:</b> {tracked_list["cpu"]}</p><p><b>RAM:</b> {tracked_list["ram"]}</p>
 <p><b>Heatsinks:</b> {tracked_list["heatsink"]}</p></details>
-<p>Landed cost = price + shipping or pickup trip from Sandefjord ({PICKUP_NOK_PER_KM} NOK/km, max {PICKUP_MAX_MINUTES} min one way) + import VAT + Penalties (unknown PSU, caddies, controller or rails are charged).</p>
+<p>Landed cost = price + shipping or pickup trip from Sandefjord ({PICKUP_NOK_PER_KM} NOK/km, max {PICKUP_MAX_MINUTES} min one way) + finn.no Trygg betaling when shipped + import VAT + Penalties (unknown PSU, caddies, controller or rails are charged).</p>
 {tabs}
 </body></html>"""
 

@@ -690,5 +690,10 @@
    "ddr": 4,
    "type": "RDIMM"
   }
- }
+ },
+ {"note": "per unit: '4x 16Gb DDR4 2400 ECC RDIMM pris per srk' (synthetic; srk: finn 471846605 description)", "title": "4x 16Gb DDR4 2400 ECC RDIMM pris per srk", "condition": "used", "expect": {"gb_per_stick": 16, "sticks": 1, "qualifies": true}},
+ {"note": "per unit: '4x 16GB DDR4 ECC RDIMM per stick' (synthetic; srk: finn 471846605 description)", "title": "4x 16GB DDR4 ECC RDIMM per stick", "condition": "used", "expect": {"gb_per_stick": 16, "sticks": 1, "qualifies": true}},
+ {"note": "per unit: '4x 16GB DDR4 ECC RDIMM per module' (synthetic; srk: finn 471846605 description)", "title": "4x 16GB DDR4 ECC RDIMM per module", "condition": "used", "expect": {"gb_per_stick": 16, "sticks": 1, "qualifies": true}},
+ {"note": "per unit: '4x 16GB DDR4 ECC RDIMM pr stk' (synthetic; srk: finn 471846605 description)", "title": "4x 16GB DDR4 ECC RDIMM pr stk", "condition": "used", "expect": {"gb_per_stick": 16, "sticks": 1, "qualifies": true}},
+ {"note": "per unit: '4x 16GB DDR4 ECC RDIMM per brikke' (synthetic; srk: finn 471846605 description)", "title": "4x 16GB DDR4 ECC RDIMM per brikke", "condition": "used", "expect": {"gb_per_stick": 16, "sticks": 1, "qualifies": true}}
 ]

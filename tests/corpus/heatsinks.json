@@ -531,5 +531,11 @@
   "title": "Supermicro SNK-P0048P 2U Passive CPU Heatsink",
   "condition": "used",
   "expect": {"unreadable": ["fits"]}
- }
+ },
+ {"note": "per unit: '4x Dell R730 R730xd kjøleribbe, pris per srk' names a price per heatsink (synthetic)", "title": "4x Dell R730 R730xd kjøleribbe, pris per srk", "condition": "used", "expect": {"fits": ["R730", "R730xd"], "count": 1, "qualifies": true}},
+ {"note": "per unit: '4 stk Dell R730 R730xd heatsink pr. stk' names a price per heatsink (synthetic)", "title": "4 stk Dell R730 R730xd heatsink pr. stk", "condition": "used", "expect": {"fits": ["R730", "R730xd"], "count": 1, "qualifies": true}},
+ {"note": "per unit: '4x Dell R730 R730xd CPU heatsink per stykk' names a price per heatsink (synthetic)", "title": "4x Dell R730 R730xd CPU heatsink per stykk", "condition": "used", "expect": {"fits": ["R730", "R730xd"], "count": 1, "qualifies": true}},
+ {"note": "per unit: '4x Dell R730 R730xd heatsink £8 each' names a price per heatsink (synthetic)", "title": "4x Dell R730 R730xd heatsink £8 each", "condition": "used", "expect": {"fits": ["R730", "R730xd"], "count": 1, "qualifies": true}},
+ {"note": "per unit: '4x Dell R730 R730xd heatsink stykkpris' names a price per heatsink (synthetic)", "title": "4x Dell R730 R730xd heatsink stykkpris", "condition": "used", "expect": {"fits": ["R730", "R730xd"], "count": 1, "qualifies": true}},
+ {"note": "per unit: '4x Dell R730 R730xd heatsink, pris pr' names a price per heatsink (synthetic)", "title": "4x Dell R730 R730xd heatsink, pris pr", "condition": "used", "expect": {"fits": ["R730", "R730xd"], "count": 1, "qualifies": true}}
 ]

@@ -477,6 +477,33 @@ _PAIR = re.compile(r"\bpairs?\b|\b\w*par\b", re.I)  # "matchet prosessorpar"
 _SUPPORTED_SOCKETS = set(PLATFORMS.values())
 
 
+# a title priced for one unit (CPU, RAM stick, heatsink), whatever count it names; "srk" is a seen typo.
+# ponytail: without these words the count is trusted, so a "10x Samsung 32GB" priced per stick reads as 10 sticks;
+# the RAM NOK-per-GB floor catches the worst of it
+_PER_UNIT = re.compile(r"\bpris\s+(?:per|pr)\b|\bstykkpris\b|\bpr\.?\s*st(?:k|ykk)\b"
+                       r"|\bper\s+(?:s[tr]k|stykk|brikke|modul|stick|module|piece)\b|\beach\b", re.I)
+# a description is stricter: it also carries spec text ("16GB per modul") and single-unit offers on a lot
+# ("enkeltvis for 750kr per brikke"). "Pris (er) per stk", "stykkpris" and "pris pr." always count; an amount in
+# NOK on the same line before a bare "per/pr stk|stykk|srk|brikke|modul" counts only when it is the Listing price
+_PRICED_UNIT = re.compile(
+    r"(?P<pris>\bpris\s+(?:er\s+)?(?:per|pr)\.?\s*(?:s[tr]k|stykk)\b|\bstykkpris\b|\bpris\s+pr\.)"
+    r"|(?<![\d.,])(?P<amount>\d{1,3}(?:[ .]\d{3})+|\d+)[ \t]*(?:kr|nok|,-)\.?[ \t]*(?:per|pr)\b\.?[ \t]*"
+    r"(?:s[tr]k|stykk|brikke|modul)\b", re.I)
+
+
+def priced_per_unit(description, price):
+    """True when a description says the Listing's price is for one unit (finn.no 471846605: "Pris per srk.")."""
+    return any(m["pris"] or int(re.sub(r"\D", "", m["amount"])) == price
+               for m in _PRICED_UNIT.finditer(description or ""))
+
+
+def _count(title, n):
+    """Units one Listing sells: 1 when priced per unit, else the count match `n`, 2 for a pair, else 1."""
+    if _PER_UNIT.search(title):
+        return 1
+    return max(1, int(next(g for g in n.groups() if g))) if n else 2 if _PAIR.search(title) else 1  # not "lot of 0"
+
+
 @dataclass
 class CpuFacts:
     vendor: str
@@ -525,8 +552,7 @@ def read_cpu(title, condition):
     ruled_out = not working or platform not in (None, *_SUPPORTED_SOCKETS)
     if missing and not ruled_out:
         return Unreadable(missing)
-    n = _UNITS.search(title)
-    count = max(1, int(next(g for g in n.groups() if g))) if n else 2 if _PAIR.search(title) else 1  # not "lot of 0"
+    count = _count(title, _UNITS.search(title))
     return CpuFacts(vendor="amd" if re.search(r"\bepyc\b|\bamd\b", title, re.I) else "intel", model=model,
                     platform=platform, count=count, working=working)
 
@@ -550,11 +576,6 @@ _STICK_COUNT = re.compile(
     r"(?<![\w.,/-])(?<!har\s)(\d{1,2})\s?(?:[x×*](?!\s?\d)|stk\b|pcs\b|pieces\b|st\.)"
     r"(?!\s*(?:available|tilgjengelig|på\s+lager|ledig))"
     r"|(?<!\w)[x×]\s?(\d{1,2})\s?(?:st|stk|pcs)\b|\b(?:kit|lot|set|sett)\s+(?:of|med|på)\s+(\d{1,2})\b", re.I)
-# the price is for one stick, whatever count the title names.
-# ponytail: without these words the count is trusted, so a finn.no "10x Samsung 32GB" priced per stick reads as
-# 10 sticks at a tenth of the real NOK per GB; a NOK-per-GB floor would catch it if such Listings top Best RAM
-_PER_STICK = re.compile(r"\bpris\s+per\s+st\w*|\bpr\.?\s+st(?:k|ykk)\b"
-                        r"|\bper\s+(?:stk|stykk|brikke|modul|stick|module|piece)\b|\beach\b", re.I)
 _DDR = re.compile(r"\bddr\s?([2-5])(?!\d)|\bpc([2-5])l?-", re.I)
 # labels: "PC4-2400T-R" / "PC4-17000R" registered, "PC3-14900L" / "PC4-2133P-LD0" load reduced
 _LRDIMM = re.compile(r"lrdimm|load[\s-]?reduced|\bpc[34]l?-\d{4,5}[a-z]{0,2}-?l", re.I)
@@ -597,7 +618,7 @@ def read_ram(title, condition):
         sizes = {s for s in sizes if s * sticks in sizes} or sizes  # "kit of 4 16GB 64GB": 16 per stick
         sizes &= _STICK_SIZES
         gb = sizes.pop() if len(sizes) == 1 else None
-    sticks = 1 if _PER_STICK.search(title) else sticks
+    sticks = 1 if _PER_UNIT.search(title) else sticks
     gens = {int(a or b) for a, b in _DDR.findall(title)}
     ddr = gens.pop() if len(gens) == 1 else None
     ram_type = "LRDIMM" if _LRDIMM.search(title) else "RDIMM" if _RDIMM.search(title) else None
@@ -674,6 +695,5 @@ def read_heatsink(title, condition):
     if not fits:
         return (Unreadable(["fits"]) if working and _HS_STRONG.search(title)
                 and (supermicro or _SERVER_CONTEXT.search(title)) else None)
-    n = _UNITS.search(_NOT_UNITS.sub(" ", title))
-    count = max(1, int(next(g for g in n.groups() if g))) if n else 2 if _PAIR.search(title) else 1
+    count = _count(title, _UNITS.search(_NOT_UNITS.sub(" ", title)))
     return HeatsinkFacts(fits=sorted(fits), count=count, working=working)

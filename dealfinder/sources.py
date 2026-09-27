@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from html.parser import HTMLParser
 
 from .config import EBAY_SEARCH, SOURCE_PAUSE_S, WEAK_SELLER
-from .rules import Unreadable, read_machine
+from .rules import Unreadable, read_cpu, read_heatsink, read_machine, read_ram
 
 log = logging.getLogger("dealfinder.sources")
 
@@ -145,8 +145,12 @@ class FinnSource:
     _search_url = "https://www.finn.no/recommerce/forsale/search"
     _buckets = (("new", ("1", "2")), ("used", ("3", "4")))  # 1 Helt ny, 2 Som ny, 3 Pent brukt, 4 Godt brukt
 
+    # a Part's description matters only for a price per unit, so only a Part whose title names several units is read
+    _PART_UNITS = {"cpu": (read_cpu, "count"), "ram": (read_ram, "sticks"), "heatsink": (read_heatsink, "count")}
+
     def __init__(self, fetch=http_text, pause=SOURCE_PAUSE_S):
         self._fetch, self._pause = fetch, pause
+        self._descriptions = {}  # source_id -> Part text; one Listing shows up under several Part queries
 
     def search(self, query, kind="disk"):
         listings, seen = [], set()
@@ -162,10 +166,19 @@ class FinnSource:
                 if listing and listing.source_id not in seen:
                     seen.add(listing.source_id)
                     listings.append(listing)
-        if kind == "machine":
-            for listing in listings:
+        read, unit = self._PART_UNITS.get(kind, (None, None))
+        for listing in listings:
+            if kind == "machine":
                 listing.description = self._description(listing.url)
-                _shipping_from_text(listing)
+            elif read and getattr(read(listing.title, listing.condition), unit, 1) > 1:  # None/Unreadable: 1
+                if listing.source_id not in self._descriptions:
+                    if len(self._descriptions) > 5000:  # ponytail: crude bound; texts are refetched after a reset
+                        self._descriptions.clear()
+                    self._descriptions[listing.source_id] = self._description(listing.url)
+                listing.description = self._descriptions.get(listing.source_id)  # a Search may clear()
+            else:
+                continue
+            _shipping_from_text(listing)
         return listings
 
     def _description(self, url):
