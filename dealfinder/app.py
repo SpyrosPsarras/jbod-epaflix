@@ -10,21 +10,22 @@ from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from .config import (CEILING_NOK, CPU_QUERIES, DISK_QUERIES, HISTORY_WEEKS, HUNT_INTERVAL_S, MACHINE_QUERIES, MAX_QUERY_CHARS,
-                     PENALTY_NOK, PICKUP_MAX_MINUTES, PICKUP_NOK_PER_KM, RAM_NOK_PER_GB, RAM_TARGET_GB,
-                     SOURCE_PAUSE_S, TARGET_TIB)
+                     PENALTY_NOK, PICKUP_MAX_MINUTES, PICKUP_NOK_PER_KM, RAM_MIN_NOK_PER_GB, RAM_NOK_PER_GB, RAM_QUERIES,
+                     RAM_TARGET_GB, SOURCE_PAUSE_S, TARGET_TIB)
 from .builds import rank_builds
 from .costs import OsrmRouter, cost_breakdown, machine_penalties
-from .rules import Unreadable, read_cpu, read_disk, read_machine
+from .rules import Unreadable, read_cpu, read_disk, read_machine, read_ram
 from .store import Store
 
 log = logging.getLogger("dealfinder")
 
-KINDS = ("disk", "machine", "cpu")
+KINDS = ("disk", "machine", "cpu", "ram")
 
 CONDITION_LABEL = {"new": "New", "refurbished": "Refurbished", "used": "Used", "for_parts": "For parts"}
 FACT_LABEL = {"capacity": "capacity", "form_factor": "3.5\" or 2.5\"", "disk_class": "Disk class",
               "condition": "condition", "quantity": "single-unit price", "shipping": "shipping to Norway",
               "generation": "generation", "bays_35": "3.5\" bay count", "model": "CPU model", "platform": "CPU socket",
+              "gb_per_stick": "GB per stick", "ddr": "DDR generation", "type": "RDIMM or LRDIMM",
               "price": "price (make an offer)", "location": "pickup place"}
 COST_LABEL = {"shipping": "shipping", "shipping_estimate": "shipping (est.)", "pickup_trip": "pickup trip",
               "vat": "VAT", "single_psu": "2nd PSU", "caddies": "caddies", "raid_only": "HBA", "no_rails": "rails",
@@ -53,7 +54,7 @@ th{position:sticky;top:0;z-index:1;background:#121212;box-shadow:0 1px 0 #333}
 .tabs>input:checked+label{background:#2a2a2a;font-weight:bold} .tabs>input:focus-visible+label{outline:2px solid #8ab4f8}
 """
 STYLE += "".join(f".tabs>input:nth-of-type({n}):checked~section:nth-of-type({n})" + "{display:block}\n"
-                 for n in range(1, 6))  # ponytail: CSS-only tabs, up to 5 per page; raise the range for more
+                 for n in range(1, 7))  # ponytail: CSS-only tabs, up to 6 per page; raise the range for more
 STYLE += "</style>"
 
 
@@ -177,8 +178,10 @@ def _build_rows(builds, sort, can_buy=True):
 
 
 def _per_unit(row):
-    """Landed NOK per TB for a Disk, per CPU for a CPU Listing; None for a Machine or without a Landed cost."""
-    unit = row["capacity_tb"] or (row["facts"] or {}).get("count")
+    """Landed NOK per TB for a Disk, per CPU for a CPU Listing, per GB for RAM; None for a Machine or without a
+    Landed cost."""
+    f = row["facts"] or {}
+    unit = row["capacity_tb"] or f.get("count") or (f.get("gb_per_stick") or 0) * f.get("sticks", 0)
     return row["landed_nok"] / unit if row["landed_nok"] and unit else None
 
 
@@ -216,16 +219,17 @@ def source_faults(detail):
 
 class App:
     def __init__(self, db_uri, sources, fx, disk_queries=None, machine_queries=None, cpu_queries=None,
-                 pause=SOURCE_PAUSE_S, router=None):
+                 ram_queries=None, pause=SOURCE_PAUSE_S, router=None):
         self.store = Store(db_uri)
         self.store.migrate()
         self.router = router or OsrmRouter(self.store)
         self.sources, self.fx, self.pause = sources, fx, pause
         disk_queries, machine_queries = disk_queries or DISK_QUERIES, machine_queries or MACHINE_QUERIES
-        cpu_queries = cpu_queries or CPU_QUERIES
+        cpu_queries, ram_queries = cpu_queries or CPU_QUERIES, ram_queries or RAM_QUERIES
         self.store.seed_tracked([(q, "disk", src) for src, qs in disk_queries.items() for q in qs]
                                 + [(q, "machine", "") for q in machine_queries]
-                                + [(q, "cpu", src) for src, qs in cpu_queries.items() for q in qs])
+                                + [(q, "cpu", src) for src, qs in cpu_queries.items() for q in qs]
+                                + [(q, "ram", src) for src, qs in ram_queries.items() for q in qs])
         self._hunt_lock = threading.Lock()  # one Hunt at a time, scheduled or by hand
 
     def start_hunt(self):
@@ -273,7 +277,7 @@ class App:
             counts = dict.fromkeys(KINDS, 0)
             try:
                 work = [(r["query"], r["kind"]) for r in tracked if r["source"] in ("", source.name)
-                        and (r["kind"] == "disk" or source.supports_machines)]  # Machines and CPUs
+                        and (r["kind"] == "disk" or source.supports_machines)]  # Machines and Parts
                 for query, kind in work:
                     for listing in source.search(query, kind):
                         counts[kind] += self._record(source, listing, kind, hunt_id)
@@ -303,6 +307,8 @@ class App:
             facts = read_disk(listing.title, listing.condition)
         elif kind == "cpu":
             facts = read_cpu(listing.title, listing.condition)
+        elif kind == "ram":
+            facts = read_ram(listing.title, listing.condition)
         else:
             facts = read_machine(listing.title, listing.description, listing.condition)
         if facts is None:
@@ -317,6 +323,11 @@ class App:
         costs, problem = cost_breakdown(listing, self.fx, source.foreign, self.router, penalties)
         # unknown shipping or place is a missing fact; a pickup beyond the limit is a disqualifier (rejected)
         landed = None if problem else costs["total"]
+        # ponytail: a fixed floor; a real bulk lot under RAM_MIN_NOK_PER_GB is read as one stick and ranks too dear.
+        # Lower the floor as used DDR4 prices fall
+        if (kind == "ram" and landed and facts.gb_per_stick and facts.sticks > 1
+                and landed / (facts.gb_per_stick * facts.sticks) < RAM_MIN_NOK_PER_GB):
+            facts_json["sticks"] = 1
         return {"facts": facts_json, "missing": [problem] if problem in ("shipping", "location") else [],
                 "qualifies": facts.qualifies and landed is not None, "landed_nok": landed, "costs": costs,
                 "capacity_tb": facts.capacity_tb if kind == "disk" else None}
@@ -382,6 +393,7 @@ class App:
                 f'<td>{"" if landed is None else f"{landed:,.0f}"}</td>'
                 f'<td>{"" if per is None else f"{per:,.0f}"}</td></tr>')
         body = "".join(body)
+        unit = {"cpu": "CPU", "ram": "GB"}.get(kind, "TB")
         fault = "".join(f'<p class="fault" data-fault="{_e(n)}">Source fault: <b>{_e(n)}</b> {_e(m)}</p>' for n, m in faults)
         return f"""<!doctype html><html><head><meta charset="utf-8"><title>Search: {_e(query)}</title>
 {STYLE}</head><body>
@@ -389,7 +401,7 @@ class App:
 <form method="post" action="/track"><input type="hidden" name="q" value="{_e(query)}">
 <input type="hidden" name="kind" value="{_e(kind)}"><button>Track this query</button> (every Hunt will run it)</form>
 <p>{len(rows)} results, {sum(r["qualifies"] for r in rows)} qualify. Scored with the same rules as a Hunt; nothing is saved.</p>
-<table><tr><th>Source</th><th>Listing</th><th>Verdict</th><th>Landed NOK</th><th>NOK per {'CPU' if kind == 'cpu' else 'TB'}</th></tr>{body}</table>
+<table><tr><th>Source</th><th>Listing</th><th>Verdict</th><th>Landed NOK</th><th>NOK per {_e(unit)}</th></tr>{body}</table>
 </body></html>"""
 
     def history_page(self):
@@ -418,7 +430,7 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
         build_head = "".join(f'<th><a href="/?sort={k}">{_e(label)}</a></th>' for k, (label, _) in BUILD_SORT.items())
         last = self.store.last_hunt()
         disks, machines, unreadable = self.store.best_disks(), self.store.best_listings("machine"), self.store.unreadable()
-        cpus = self.store.best_listings("cpu")
+        cpus, rams = self.store.best_listings("cpu"), self.store.best_listings("ram")
         disk_rows = "".join(
             '<tr data-listing="{id}" data-nok-per-tb="{npt:.2f}"{attrs}><td><a href="{url}">{title}</a>{risk}{note}</td>'
             '<td>{cap:g} TB</td><td>{cond}</td><td>{where}</td><td>{landed:,.0f}</td><td>{npt:,.0f}</td></tr>'.format(
@@ -444,6 +456,15 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
                 model=_e(f["model"]), count=_e(f["count"]), where=_where(r), landed=float(r["landed_nok"]),
                 attrs=state[0], note=state[1] + _breakdown(r))
             for r in cpus for f in [r["facts"]] for state in [_row_state(r)])
+        ram_rows = "".join(
+            '<tr data-ram="{id}" data-nok-per-gb="{per:.2f}"{attrs}><td>{link}{note}</td><td>{type}</td>'
+            '<td>{sticks} &times; {gb} GB</td><td>{speed}</td><td>{where}</td><td>{landed:,.0f}</td><td>{per:,.0f}</td>'
+            '</tr>'.format(
+                id=_e(r["source_id"]), per=float(r["landed_nok"]) / (f["gb_per_stick"] * f["sticks"]), link=_link(r),
+                type=_e(f["type"]), sticks=_e(f["sticks"]), gb=_e(f["gb_per_stick"]),
+                speed=_e(f"{f['speed']} MT/s" if f["speed"] else "?"),
+                where=_where(r), landed=float(r["landed_nok"]), attrs=state[0], note=state[1] + _breakdown(r))
+            for r in rams for f in [r["facts"]] for state in [_row_state(r)])
         unreadable_rows = "".join(
             '<tr data-unreadable="{id}" data-missing="{missing}"><td>{kind}</td><td>{src}</td>'
             '<td><a href="{url}">{title}</a></td><td>{labels}</td></tr>'.format(
@@ -485,6 +506,8 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
                               f"<th>Landed NOK</th></tr>{machine_rows}</table>"),
             ("Best CPUs", "<table><tr><th>CPU</th><th>Platform</th><th>Model</th><th>Count</th><th>Where</th>"
                           f"<th>Landed NOK</th><th>NOK per CPU</th></tr>{cpu_rows}</table>"),
+            ("Best RAM", "<table><tr><th>RAM</th><th>Type</th><th>Size</th><th>Speed</th><th>Where</th>"
+                         f"<th>Landed NOK</th><th>NOK per GB</th></tr>{ram_rows}</table>"),
             ("Could not read", "<table><tr><th>Kind</th><th>Source</th><th>Listing</th><th>Missing</th></tr>"
                                f"{unreadable_rows}</table>")])
         return f"""<!doctype html><html><head><meta charset="utf-8"><title>Deal Finder</title>
@@ -496,10 +519,10 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
 <p>{per_source} &middot; <a href="/history">Price history</a></p>
 <form method="get" action="/search"><input name="q" size="30" placeholder="e.g. exos x20 or r740xd" required
 maxlength="{MAX_QUERY_CHARS}"> <select name="kind"><option value="disk">Disks</option><option value="machine">Machines</option>
-<option value="cpu">CPUs</option></select> <button>Search every Source now</button></form>
+<option value="cpu">CPUs</option><option value="ram">RAM</option></select> <button>Search every Source now</button></form>
 <details><summary>{len(tracked)} Tracked queries run by every Hunt</summary>
 <p><b>Disks:</b> {tracked_list["disk"]}</p><p><b>Machines:</b> {tracked_list["machine"]}</p>
-<p><b>CPUs:</b> {tracked_list["cpu"]}</p></details>
+<p><b>CPUs:</b> {tracked_list["cpu"]}</p><p><b>RAM:</b> {tracked_list["ram"]}</p></details>
 <p>Landed cost = price + shipping or pickup trip from Sandefjord ({PICKUP_NOK_PER_KM} NOK/km, max {PICKUP_MAX_MINUTES} min one way) + import VAT + Penalties (unknown PSU, caddies, controller or rails are charged; a Machine without CPUs pays {PENALTY_NOK["cpu"]} NOK, and RAM below {RAM_TARGET_GB} GB costs {RAM_NOK_PER_GB} NOK per missing GB).
 AliExpress Disks are High-risk (+20%); their shipping is an estimate and their condition is new unless the title says otherwise.</p>
 {tabs}
@@ -563,7 +586,7 @@ AliExpress Disks are High-risk (+20%); their shipping is an estimate and their c
                         return
                     picked = clean_query(form.get("q", [""])[0], form.get("kind", [""])[0])
                     if picked is None:
-                        self.send_error(400, "query and kind (disk, machine or cpu) required")
+                        self.send_error(400, "query and kind (disk, machine, cpu or ram) required")
                         return
                     app.store.track(*picked)
                     self._redirect("/?hunt=tracked")
@@ -576,7 +599,7 @@ AliExpress Disks are High-risk (+20%); their shipping is an estimate and their c
                 notice, sort = query.get("hunt", [None])[0], query.get("sort", ["score"])[0]
                 picked = clean_query(query.get("q", [""])[0], query.get("kind", [""])[0])
                 if url.path == "/search" and picked is None:
-                    self.send_error(400, "query and kind (disk, machine or cpu) required")
+                    self.send_error(400, "query and kind (disk, machine, cpu or ram) required")
                     return
                 routes = {"/": ("text/html; charset=utf-8", lambda: app.page(notice, sort)),
                           "/search": ("text/html; charset=utf-8", lambda: app.search_page(*picked)),

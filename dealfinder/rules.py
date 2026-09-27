@@ -148,7 +148,16 @@ _LFF_WORD = re.compile(r"\blff\b|3[.,]5\s?(\"|”|''|tommer|inch)", re.I)
 _SFF_CHASSIS = re.compile(r"\bsff\b|2[.,]5\s?[\"”']?\s?(?:sas\s+)?(?:backplane|bays?|diskplasser|diskslot\w*|front)", re.I)
 
 _RAM_TOTAL = re.compile(r"(\d{2,4})\s?gb\b\s*(?:ddr\d|ram|ecc|minne|memory|rdimm|micron|total)", re.I)
-_RAM_PRODUCT = re.compile(r"(\d{1,2})\s?[x×*]\s?(\d{1,3})\s?gb\b(?=[^\n]{0,25}(?:ddr|ram|dimm|ecc|minne|memory|brikker|pc[34]))", re.I)
+_STICK_SIZES = {4, 8, 16, 32, 64, 128}  # GB; a "256 GB" alone is a total of unknown sticks, "(2x 480GB)" SSDs
+# "8x16GB DDR4", or right after a total: "128GB (8x16GB)"
+_RAM_PRODUCT = re.compile(r"(\d{1,2})\s?[x×*]\s?(\d{1,3})\s?gb\b"
+                          r"(?=\)|[^\n]{0,25}(?:ddr|ram|dimm|ecc|minne|memory|brikker|pc[34]))", re.I)
+# a speed in MT/s: "DDR4-2400", "2400MHz", "2933MT/s", "2666V", "PC4-2400T", or a PC rating "PC4-19200";
+# not a CPU model "E5-2666 v3" or a PSU "1600W"
+_SPEED = re.compile(r"(?<![\w.,])(?<!e5-)(\d{4,5})(?=\s?(?:mhz|mt/?s)|[a-z]{0,2}\b)(?!\s?w\b)", re.I)
+_PC_RATING = {8500: 1066, 10600: 1333, 12800: 1600, 14900: 1866, 17000: 2133, 19200: 2400, 21300: 2666, 23400: 2933,
+              25600: 3200}
+_SPEEDS = set(_PC_RATING.values())
 _CPU_WORD, _RAM_WORD = r"(?:cpus?|prosessor\w*|processors?)", r"(?:ram|memory|minne|dimms?)"
 
 
@@ -196,6 +205,7 @@ class MachineFacts:
     amd: bool
     bays_35: int | None
     ram_gb: int | None       # 0 = the Listing says no RAM, None = not stated
+    ram_sticks: dict | None  # {"count", "gb", "speed" (MT/s or None)} of the installed sticks, None = not stated
     cpu: bool | None         # False = the Listing says no CPU or barebones, None = not stated
     sockets: int
     cpu_model: str | None    # normalised like read_cpu ("E5-2680 v4"), None = not stated
@@ -258,7 +268,7 @@ def _bays_35(model, text):
 
 def _ram_in(text):
     totals = [int(m[1]) for m in _RAM_TOTAL.finditer(text)]
-    totals += [int(m[1]) * int(m[2]) for m in _RAM_PRODUCT.finditer(text)]
+    totals += [int(m[1]) * int(m[2]) for m in _RAM_PRODUCT.finditer(text) if int(m[2]) in _STICK_SIZES]
     totals = [t for t in totals if 8 <= t <= 3072]
     return max(totals) if totals else None
 
@@ -272,6 +282,25 @@ def _ram_gb(title, text):
     found = _ram_in(title)
     found = found if found is not None else _ram_in(text)
     return 0 if found is None and _NO_RAM.search(text) else found
+
+
+def _speed(text):
+    """The one DDR speed in MT/s stated in `text`, None when none or several."""
+    found = {_PC_RATING.get(n, n) for n in map(int, _SPEED.findall(text))} & _SPEEDS
+    return found.pop() if len(found) == 1 else None
+
+
+def _ram_sticks(title, text, ram_gb):
+    """{count, gb, speed} of the installed sticks, title first; only sticks that add up to ram_gb count, so another
+    server listed further down the description is not read. None when not stated."""
+    found = [(int(m[1]), int(m[2]), _speed(where[max(0, m.start() - 40):m.end() + 40]))
+             for where in (title, text) for m in _RAM_PRODUCT.finditer(where)  # text starts with the title
+             if int(m[2]) in _STICK_SIZES and int(m[1]) * int(m[2]) == ram_gb]
+    if not found:
+        return None
+    count, gb, _ = found[0]
+    # the same sticks may be named twice, the speed only once: "128 GB RAM (2x 64GB)" ... "128GB DDR4-2400T (2x 64GB)"
+    return {"count": count, "gb": gb, "speed": next((s for c, g, s in found if (c, g) == (count, gb) and s), None)}
 
 
 def _cpu(title, text):
@@ -366,8 +395,10 @@ def read_machine(title, description, condition):
     if missing and not ruled_out:
         return Unreadable(missing)
     cpu_model, cpu_count = _cpu_installed(title, text)
+    ram_gb = _ram_gb(title, text)
     return MachineFacts(
-        vendor=vendor, model=model, generation=generation, amd=amd, bays_35=bays, ram_gb=_ram_gb(title, text), cpu=_cpu(title, text),
+        vendor=vendor, model=model, generation=generation, amd=amd, bays_35=bays, ram_gb=ram_gb,
+        ram_sticks=_ram_sticks(title, text, ram_gb), cpu=_cpu(title, text),
         sockets=_sockets(vendor, model, text), cpu_model=cpu_model, cpu_count=cpu_count,
         ecc=True,  # PowerEdge, ProLiant and Supermicro server boards take ECC RDIMMs only
         psu_count=_psu_count(text), caddies_35=_caddies_35(text), controller=_controller(text),
@@ -457,3 +488,82 @@ def read_cpu(title, condition):
     count = max(1, int(next(g for g in n.groups() if g))) if n else 2 if _PAIR.search(title) else 1  # not "lot of 0"
     return CpuFacts(vendor="amd" if re.search(r"\bepyc\b|\bamd\b", title, re.I) else "intel", model=model,
                     platform=platform, count=count, working=working)
+
+
+# ---- RAM ------------------------------------------------------------------------------------------------------
+
+_RAM_TEXT = re.compile(r"dimm|\bram\b|minne|memory|\bddr[2-5]|\bpc[2-5]l?-|registered|registrert", re.I)
+# desktop, laptop, NAS or unbuffered memory, or a whole computer: not a server RAM Listing
+_NOT_RAM = re.compile(
+    r"udimm|unbuffered|so-?dimm|\blaptop|notebook|bærbar|\b(?:200|204|260)-?pin|vengeance|hyperx|\bfury\b|g\.?skill"
+    r"|ripjaws|trident|ballistix|dominator|\brgb\b|non[-\s]?ecc|\bi[3579]\b|ryzen|\b\d+\s?tb\b|\b[1-4]u\b|\bnas\b"
+    r"|\bidrac|kjerner|\bcores?\b|motherboard|mainboard|hovedkort", re.I)
+_WORKSTATION = re.compile(r"workstation|precision|\bz[468]\d0\b", re.I)
+_RAM_GB = re.compile(r"(?<![\w.,])(\d{1,3})\s?gb\b(?!\s?/\s?s)", re.I)
+# "4x 16GB", "4 x 16GB", or "8GB(X4)"
+_STICKS_X = re.compile(r"(?<![\w.,])(\d{1,2})\s?[x×*]\s?(\d{1,3})\s?gb\b"
+                       r"|(?<![\w.,])(\d{1,3})\s?gb\s?\(?[x×*]\s?(\d{1,2})\b", re.I)
+# "8x Samsung", "8 stk", "4 pcs.", "× 4 st.", "kit of 8", "lot of 4"; not "1x 2Rx4" or "Dual Rank x4", nor stock on hand:
+# "(4 pcs available)", "10 stk på lager", "har 12 stk"
+_STICK_COUNT = re.compile(
+    r"(?<![\w.,/-])(?<!har\s)(\d{1,2})\s?(?:[x×*](?!\s?\d)|stk\b|pcs\b|pieces\b|st\.)"
+    r"(?!\s*(?:available|tilgjengelig|på\s+lager|ledig))"
+    r"|(?<!\w)[x×]\s?(\d{1,2})\s?(?:st|stk|pcs)\b|\b(?:kit|lot|set|sett)\s+(?:of|med|på)\s+(\d{1,2})\b", re.I)
+# the price is for one stick, whatever count the title names.
+# ponytail: without these words the count is trusted, so a finn.no "10x Samsung 32GB" priced per stick reads as
+# 10 sticks at a tenth of the real NOK per GB; a NOK-per-GB floor would catch it if such Listings top Best RAM
+_PER_STICK = re.compile(r"\bpris\s+per\s+st\w*|\bpr\.?\s+st(?:k|ykk)\b"
+                        r"|\bper\s+(?:stk|stykk|brikke|modul|stick|module|piece)\b|\beach\b", re.I)
+_DDR = re.compile(r"\bddr\s?([2-5])(?!\d)|\bpc([2-5])l?-", re.I)
+# labels: "PC4-2400T-R" / "PC4-17000R" registered, "PC3-14900L" / "PC4-2133P-LD0" load reduced
+_LRDIMM = re.compile(r"lrdimm|load[\s-]?reduced|\bpc[34]l?-\d{4,5}[a-z]{0,2}-?l", re.I)
+_RDIMM = re.compile(r"(?<!l)rdimm|registered|registrert|\breg\b|\bpc[34]l?-\d{4,5}[a-z]{0,2}-?r", re.I)
+
+
+@dataclass
+class RamFacts:
+    gb_per_stick: int | None
+    sticks: int              # sticks this one Listing sells
+    ddr: int | None          # DDR generation
+    type: str | None         # "RDIMM" or "LRDIMM"
+    speed: int | None        # MT/s
+    ecc: bool
+    working: bool
+
+    @property
+    def qualifies(self):
+        return self.working and self.ddr == 4 and self.ecc and self.type is not None and self.gb_per_stick is not None
+
+
+def read_ram(title, condition):
+    """Facts for a RAM Listing, Unreadable when the stick size, DDR generation or type is missing, None when it is
+    not server RAM (desktop, laptop or unbuffered memory, a whole server or PC)."""
+    if not _RAM_TEXT.search(title) or _NOT_RAM.search(title) or _CPU_TEXT.search(title) or _cpus(title):
+        return None
+    if _WORKSTATION.search(title) and not _FOR_SERVER.search(title):
+        return None  # a whole workstation; "RAM for Dell Precision T7810" is RAM
+    server = _model(title, title) or _SERVER_TEXT.search(title)
+    if server and not (_FOR_SERVER.search(title) or _PART_NOUN.search(title) or _STARTS_AS_PART.search(title)):
+        return None  # a whole server in a RAM search; "HPE 32GB ... DL380 Gen9" and "... for Dell R730" are RAM
+    product = next(((int(m[1] or m[4]), int(m[2] or m[3])) for m in _STICKS_X.finditer(title)
+                    if int(m[2] or m[3]) in _STICK_SIZES and 1 <= int(m[1] or m[4]) <= 32), None)  # not "32x2 GB"
+    if product:
+        sticks, gb = product
+    else:
+        n = _STICK_COUNT.search(title)
+        sticks = max(1, int(next(g for g in n.groups() if g))) if n else 2 if _PAIR.search(title) else 1
+        sizes = {int(s) for s in _RAM_GB.findall(title)}
+        sizes = {s for s in sizes if s * sticks in sizes} or sizes  # "kit of 4 16GB 64GB": 16 per stick
+        sizes &= _STICK_SIZES
+        gb = sizes.pop() if len(sizes) == 1 else None
+    sticks = 1 if _PER_STICK.search(title) else sticks
+    gens = {int(a or b) for a, b in _DDR.findall(title)}
+    ddr = gens.pop() if len(gens) == 1 else None
+    ram_type = "LRDIMM" if _LRDIMM.search(title) else "RDIMM" if _RDIMM.search(title) else None
+    working = condition != "for_parts" and not _FAULTY.search(title)
+    missing = [name for name, value in (("gb_per_stick", gb), ("ddr", ddr), ("type", ram_type)) if value is None]
+    # a known disqualifying fact decides it: rejected, not "could not read" (DDR3 is readable, only DDR4 qualifies)
+    if missing and working and ddr in (None, 4):
+        return Unreadable(missing)
+    return RamFacts(gb_per_stick=gb, sticks=sticks, ddr=ddr, type=ram_type, speed=_speed(title),
+                    ecc=ram_type is not None or bool(re.search(r"\becc\b", title, re.I)), working=working)

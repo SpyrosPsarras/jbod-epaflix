@@ -817,6 +817,84 @@ class CpusEndToEnd(unittest.TestCase):
         self.assertIn('data-tracked="cpu:e5-2680 v4"', self.page)
 
 
+class RamEndToEnd(unittest.TestCase):
+    """Seam 1: RAM Listings from eBay UK and finn.no land on the Best RAM tab at their Landed cost per GB."""
+
+    @classmethod
+    def setUpClass(cls):
+        items = [_ebay_item("r1", "SK Hynix 32GB DDR4 2400MHz PC4-2400T ECC REG Server RAM DIMM HMA84GR7MFR4N-UH",
+                            125.49, 3.98),
+                 _ebay_item("r2", "Crucial 32GB 2x16GB DDR4-2133 RDIMM ECC Registered 288-Pin CT16G4RFD4213", 63.10, 2.70),
+                 _ebay_item("r3", "Dell R730 server 128GB RAM", 150, 20),                                   # a server
+                 _ebay_item("r4", "32GB DDR4 ECC RAM", 40, 0)]                                              # RDIMM?
+        cls.filters = []
+
+        def ebay(url, headers=None, data=None):
+            if "oauth2/token" in url:
+                return {"access_token": "t", "expires_in": 7200}
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(url).query)
+            cls.filters.append((q.get("category_ids"), q["filter"][0]))
+            return {"itemSummaries": items if q.get("category_ids") == ["11210"] else []}
+
+        def finn(url):
+            q = urllib.parse.parse_qs(url.split("?", 1)[1])
+            docs = [_doc(60, "Samsung 128GB (4x32GB) DDR4-3200MHz ECC RDIMM serverminne PC4-25600", 6000, 59.9, 10.7,
+                         ["shipping_exists", "seller_pays_shipping"]),
+                    _doc(61, "Samsung 32GB x 10 stk DDR4 RDIMM", 1600, 59.9, 10.7,             # priced per stick
+                         ["shipping_exists", "seller_pays_shipping"])]
+            docs = docs if q["q"] == ["rdimm"] and q["condition"] == ["3", "4"] else []
+            blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
+            return f"<script>{blob}</script>"
+
+        cls.pg = _pg()
+        cls.app = App(cls.pg.get_uri(), [EbaySource("id", "secret", fetch=ebay), FinnSource(fetch=finn, pause=0)],
+                      fx=RATES.__getitem__, disk_queries={"ebay_uk": []}, machine_queries=["r730xd"],
+                      cpu_queries={"ebay_uk": []}, ram_queries={"ebay_uk": ["ddr4 ecc rdimm 32gb"], "finn": ["rdimm"]},
+                      pause=0, router=fake_router)
+        cls.app.hunt()
+        cls.page = cls.app.page()
+        cls.rows = [(i, float(n)) for i, n in re.findall(r'data-ram="([^"]+)" data-nok-per-gb="([\d.]+)"', cls.page)]
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.pg.cleanup()
+
+    def test_best_ram_shows_landed_nok_per_gb_sorted(self):
+        one = (125.49 + 3.98) * RATES["GBP"] * 1.25 / 32          # eBay: price + shipping + VAT, one 32 GB stick
+        pair = (63.10 + 2.70) * RATES["GBP"] * 1.25 / 32          # one Listing, 2 x 16 GB
+        self.assertEqual([i for i, _ in self.rows], ["r2", "60", "61", "r1"])
+        rows = dict(self.rows)
+        self.assertAlmostEqual(rows["r1"], one, places=1)
+        self.assertAlmostEqual(rows["r2"], pair, places=1)
+        self.assertAlmostEqual(rows["60"], 6000 / 128, places=1)  # finn: free shipping, no VAT
+        self.assertIn("<td>RDIMM</td><td>4 &times; 32 GB</td><td>3200 MT/s</td>", self.page)
+        self.assertIn("<td>RDIMM</td><td>2 &times; 16 GB</td><td>2133 MT/s</td>", self.page)
+
+    def test_ten_sticks_under_the_nok_per_gb_floor_count_as_one(self):
+        self.assertAlmostEqual(dict(self.rows)["61"], 1600 / 32, places=1)  # not 1600 / 320 = 5 NOK per GB
+        row = self.page.split('data-ram="61"', 1)[1].split("</tr>", 1)[0]
+        self.assertIn("<td>1 &times; 32 GB</td>", row)
+        self.assertEqual(next(r["facts"]["sticks"] for r in self.app.store.best_listings("ram") if r["source_id"] == "61"), 1)
+
+    def test_server_in_a_ram_search_is_not_listed_and_unreadable_ram_is(self):
+        self.assertNotIn("r3", dict(self.rows))
+        self.assertNotIn('data-unreadable="r3"', self.page)
+        self.assertIn('data-unreadable="r4" data-missing="type"', self.page)
+
+    def test_ebay_ram_search_uses_its_category_and_price_range(self):
+        self.assertIn((["11210"], "buyingOptions:{FIXED_PRICE},deliveryCountry:NO,price:[5..1500],priceCurrency:GBP"),
+                      self.filters)
+        self.assertIn('dealfinder_listings{source="ebay_uk",kind="ram",state="qualified"} 2', self.app.metrics())
+
+    def test_search_and_track_accept_ram(self):
+        page = self.app.search_page("rdimm", "ram")
+        self.assertIn('data-result="60" data-qualifies="1"', page)
+        self.assertIn("<th>NOK per GB</th>", page)
+        self.assertRegex(page.split('data-result="60"', 1)[1].split("</tr>", 1)[0], r"<td>6,000</td><td>47</td>")
+        self.assertIn('<option value="ram">RAM</option>', self.page)
+        self.assertIn('data-tracked="ram:rdimm"', self.page)
+
+
 class SearchAndTrack(unittest.TestCase):
     """Seam 1: Search every Source now, Track the query, and the next Hunt runs it."""
 
@@ -879,6 +957,8 @@ class SearchAndTrack(unittest.TestCase):
             self.assertIn((q, "disk"), tracked)
         for q in ("e5-2680 v4", "xeon gold 6130", "epyc 7302", "xeon e5", "epyc"):
             self.assertIn((q, "cpu"), tracked)
+        for q in ("ddr4 ecc rdimm 16gb", "ddr4 ecc rdimm 32gb", "ddr4 lrdimm 64gb", "ddr4 ecc", "rdimm"):
+            self.assertIn((q, "ram"), tracked)
         before = len(self.app.store.tracked())
         App(self.pg.get_uri(), self.sources, fx=RATES.__getitem__, disk_queries={"finn": ["other"]}, pause=0,
             router=fake_router)  # a restart must not re-seed
@@ -1002,7 +1082,7 @@ class AliExpressHighRisk(unittest.TestCase):
             detail = app.store.last_hunt()["detail"]
             self.assertFalse(detail["aliexpress"]["ok"])
             self.assertIn("ALIEXPRESS_APP_KEY", detail["aliexpress"]["error"])
-            self.assertEqual(detail["finn"], {"ok": True, "disk": 0, "machine": 1, "cpu": 0})
+            self.assertEqual(detail["finn"], {"ok": True, "disk": 0, "machine": 1, "cpu": 0, "ram": 0})
             page = app.page()
             self.assertIn('data-fault="aliexpress"', page)
             self.assertIn('data-machine="1"', page)
@@ -1062,7 +1142,7 @@ class AliExpressHighRisk(unittest.TestCase):
                       router=fake_router)
             app.hunt()
             self.assertEqual(seen, ["nothing", "exos 18tb"])
-            self.assertEqual(app.store.last_hunt()["detail"]["aliexpress"], {"ok": True, "disk": 1, "machine": 0, "cpu": 0})
+            self.assertEqual(app.store.last_hunt()["detail"]["aliexpress"], {"ok": True, "disk": 1, "machine": 0, "cpu": 0, "ram": 0})
         finally:
             pg.cleanup()
         bad = AliExpressSource("key", "secret", fetch=lambda url: {"aliexpress_affiliate_product_query_response": {
@@ -1074,12 +1154,12 @@ class AliExpressHighRisk(unittest.TestCase):
         pg = _pg()
         try:
             App(pg.get_uri(), [], fx=RATES.__getitem__, disk_queries={"finn": ["exos"]}, machine_queries=["r730xd"],
-                cpu_queries={"finn": []})  # a database from before CPUs
+                cpu_queries={"finn": []}, ram_queries={"finn": []})  # a database from before CPUs and RAM
             app = App(pg.get_uri(), [], fx=RATES.__getitem__, disk_queries={"finn": ["other"], "aliexpress": ["x20"]},
-                      machine_queries=["r740"], cpu_queries={"finn": ["xeon e5"]})
+                      machine_queries=["r740"], cpu_queries={"finn": ["xeon e5"]}, ram_queries={"finn": ["rdimm"]})
             got = {(r["query"], r["kind"], r["source"]) for r in app.store.tracked()}
             self.assertEqual(got, {("exos", "disk", "finn"), ("r730xd", "machine", ""), ("x20", "disk", "aliexpress"),
-                                   ("xeon e5", "cpu", "finn")})
+                                   ("xeon e5", "cpu", "finn"), ("rdimm", "ram", "finn")})
         finally:
             pg.cleanup()
 
@@ -1156,7 +1236,8 @@ class PriceHistory(unittest.TestCase):
 
     def test_sections_are_tabs_with_sticky_headers(self):
         for html, labels in ((self.page, ["Best Build per week", "Disks, NOK per TB", "Machines, NOK"]),
-                             (self.app.page(), ["Builds", "Best Disks", "Best Machines", "Best CPUs", "Could not read"])):
+                             (self.app.page(), ["Builds", "Best Disks", "Best Machines", "Best CPUs", "Best RAM",
+                                              "Could not read"])):
             self.assertEqual(re.findall(r'<label for="tab\d">([^<]+)</label>', html), labels)
             self.assertEqual(html.count("<section>"), len(labels))
             self.assertEqual(html.count('name="tab" id="tab0" checked'), 1)

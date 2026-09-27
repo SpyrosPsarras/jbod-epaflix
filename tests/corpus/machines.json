@@ -18,7 +18,12 @@
    "sockets": 2,
    "cpu_model": "E5-2680 v4",
    "cpu_count": 2,
-   "platform": "LGA2011-3"
+   "platform": "LGA2011-3",
+   "ram_sticks": {
+    "count": 2,
+    "gb": 64,
+    "speed": 2400
+   }
   }
  },
  {
@@ -37,7 +42,12 @@
    "controller": "hba",
    "rails": null,
    "cpu_model": "E5-2650 v3",
-   "cpu_count": 2
+   "cpu_count": 2,
+   "ram_sticks": {
+    "count": 8,
+    "gb": 16,
+    "speed": null
+   }
   }
  },
  {
@@ -51,7 +61,12 @@
    "bays_35": 16,
    "ram_gb": 384,
    "controller": "hba",
-   "working": true
+   "working": true,
+   "ram_sticks": {
+    "count": 12,
+    "gb": 32,
+    "speed": 2400
+   }
   }
  },
  {
@@ -102,7 +117,8 @@
    "qualifies": false,
    "model": "R730",
    "generation": 13,
-   "bays_35": 0
+   "bays_35": 0,
+   "ram_sticks": null
   }
  },
  {
@@ -758,6 +774,91 @@
    "qualifies": true,
    "cpu_model": "E5-2640 v4",
    "cpu_count": 2
+  }
+ },
+ {
+  "note": "sticks and speed in the title (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x LFF 2x E5-2650 v4 8x16GB DDR4-2400",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "ram_gb": 128,
+   "ram_sticks": {
+    "count": 8,
+    "gb": 16,
+    "speed": 2400
+   }
+  }
+ },
+ {
+  "note": "total then sticks in brackets, PC rating speed (synthetic)",
+  "title": "Dell PowerEdge R730 8x LFF 128GB (4x32GB) PC4-19200",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "ram_gb": 128,
+   "ram_sticks": {
+    "count": 4,
+    "gb": 32,
+    "speed": 2400
+   }
+  }
+ },
+ {
+  "note": "title total wins; sticks of another server in the description do not add up to it (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x LFF 64GB RAM",
+  "description": "Other items from our shop: HP ProLiant DL380 Gen9 2U 2xE5-2680 V4 8x16GB DDR4 RAM",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "ram_gb": 64,
+   "ram_sticks": null
+  }
+ },
+ {
+  "note": "no RAM: no sticks (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x LFF No RAM",
+  "description": "Was 8x16GB DDR4 RAM, removed",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "ram_gb": 0,
+   "ram_sticks": null
+  }
+ },
+ {
+  "note": "F1: '(2x 480GB)' SSDs are not RAM sticks (synthetic)",
+  "title": "Dell R730xd 12x LFF 128GB RAM (2x 480GB)",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "ram_gb": 128,
+   "ram_sticks": null
+  }
+ },
+ {
+  "note": "F1: '(2x 600GB)' disks are not RAM sticks (synthetic)",
+  "title": "Dell R730xd 12LFF 64GB RAM, 2x 1.2TB SAS (2x 600GB)",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "ram_gb": 64,
+   "ram_sticks": null
+  }
+ },
+ {
+  "note": "F1: '(1x 240GB)' SSD is not a RAM stick (synthetic)",
+  "title": "Dell R730xd 12x LFF 64GB RAM H730 (1x 240GB)",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "ram_gb": 64,
+   "ram_sticks": null
   }
  }
 ]
