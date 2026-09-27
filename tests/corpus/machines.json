@@ -105,7 +105,8 @@
    "model": "R730xd",
    "bays_35": 0,
    "cpu_model": "E5-2650 v3",
-   "cpu_count": 2
+   "cpu_count": 2,
+   "heatsinks": null
   }
  },
  {
@@ -445,7 +446,8 @@
    "model": "R730",
    "bays_35": 8,
    "ram_gb": 0,
-   "cpu": false
+   "cpu": false,
+   "heatsinks": 2
   }
  },
  {
@@ -462,7 +464,8 @@
    "sockets": 2,
    "cpu_model": null,
    "cpu_count": 0,
-   "platform": "LGA2011-3"
+   "platform": "LGA2011-3",
+   "heatsinks": 0
   }
  },
  {
@@ -476,7 +479,8 @@
    "ram_gb": 0,
    "cpu": true,
    "cpu_model": "E5-2687W v3",
-   "cpu_count": 2
+   "cpu_count": 2,
+   "heatsinks": 2
   }
  },
  {
@@ -501,7 +505,8 @@
   "expect": {
    "qualifies": true,
    "cpu": true,
-   "ram_gb": 128
+   "ram_gb": 128,
+   "heatsinks": null
   }
  },
  {
@@ -565,7 +570,8 @@
    "qualifies": true,
    "bays_35": 8,
    "cpu": false,
-   "ram_gb": 0
+   "ram_gb": 0,
+   "heatsinks": 2
   }
  },
  {
@@ -575,7 +581,8 @@
   "condition": "used",
   "expect": {
    "cpu": false,
-   "ram_gb": 0
+   "ram_gb": 0,
+   "heatsinks": 2
   }
  },
  {
@@ -859,6 +866,194 @@
    "qualifies": true,
    "ram_gb": 64,
    "ram_sticks": null
+  }
+ },
+ {
+  "note": "singular 'with CPU Cooler' is one, taken literally (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x LFF No CPU with CPU Cooler",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "heatsinks": 1,
+   "cpu": false
+  }
+ },
+ {
+  "note": "'no heatsinks' in the title is none, and still a Machine (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x LFF no heatsinks",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "heatsinks": 0
+  }
+ },
+ {
+  "note": "'uten kjøler' is none (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x LFF uten kjøler",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "heatsinks": 0
+  }
+ },
+ {
+  "note": "'without heatsinks' is none (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x LFF without heatsinks",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "heatsinks": 0
+  }
+ },
+ {
+  "note": "'no HS' is none (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x LFF No CPU No RAM no HS",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "heatsinks": 0,
+   "cpu": false
+  }
+ },
+ {
+  "note": "'2x heatsink' in a Machine title is two, and still a Machine (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x LFF 2x E5-2680 v4 2x heatsink",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "heatsinks": 2,
+   "cpu_count": 2
+  }
+ },
+ {
+  "note": "heatsinks counted in the description when the title is silent (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x LFF",
+  "description": "No CPU. 2x heatsinks included. Rails included.",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "heatsinks": 2
+  }
+ },
+ {
+  "note": "silent: not stated (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x LFF 128GB",
+  "description": "2x 750W PSU. Dell HBA330.",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "heatsinks": null
+  }
+ },
+ {
+  "note": "'med heatsinks' plural gives no number (synthetic)",
+  "title": "HPE ProLiant DL380 Gen9 12x LFF",
+  "description": "Selges med heatsinks, uten CPU.",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "heatsinks": null
+  }
+ },
+ {
+  "note": "a heatsink fan is a part, not a Machine (review of #33)",
+  "title": "Dell PowerEdge R730xd LFF heatsink fan",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "'12x' names the fans, not a heatsink count: a part (review of #33)",
+  "title": "Dell PowerEdge R730xd 12x LFF CPU Heatsink Fans",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "a heatsink and fan is a part (review of #33)",
+  "title": "Dell PowerEdge R730 heatsink and fan",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "a GPU heatsink is a part (review of #33)",
+  "title": "Dell PowerEdge R730xd GPU heatsink",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "a CPU and heatsink kit is a part (review of #33)",
+  "title": "Dell R730 R730XD 2nd Dual CPU & Heatsink Kit E5-2620v3",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "'HS PSU' is hot-swap PSUs, not heatsinks (review of #33)",
+  "title": "Dell PowerEdge R730xd 12x LFF 2x HS PSU",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "heatsinks": null
+  }
+ },
+ {
+  "note": "'HS 800W' is hot-swap PSUs (review of #33)",
+  "title": "HPE DL380 Gen9 12x LFF 2x HS 800W",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "heatsinks": null
+  }
+ },
+ {
+  "note": "'HS SAS' is hot-swap disks (review of #33)",
+  "title": "Dell PowerEdge R730xd 12x LFF 8x HS SAS",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "heatsinks": null
+  }
+ },
+ {
+  "note": "'2xHS' before a controller is heatsinks (review of #33)",
+  "title": "Dell PowerEdge R730xd 12x LFF No CPU No RAM 2xHS P840",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "heatsinks": 2
+  }
+ },
+ {
+  "note": "'2x HS' at the end is heatsinks (review of #33)",
+  "title": "Dell PowerEdge R730xd 12x LFF 2x HS",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "heatsinks": 2
   }
  }
 ]

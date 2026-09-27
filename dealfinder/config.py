@@ -42,6 +42,10 @@ EBAY_SEARCH = {
     # "Server Memory (RAM)" (checked 27 Sep 2026: 32 GB RDIMM from £50, 8x64 GB kits under £1,500). Browse takes one
     # category; "Memory (RAM)" 170083 holds a similar share of RDIMMs among desktop and laptop sticks
     "ram": ("11210", (5, 1500)),
+    # server heatsinks sit in "Server Fans & Cooling Systems" 168074 and "CPU Fans & Heatsinks" 131486 (checked
+    # 27 Sep 2026: each holds only part of "r730 heatsink", 12 and 18 of 54), so no category; the reader drops
+    # the laptop coolers and fans. R730 and DL380 Gen9 heatsinks from about £9, the £2 floor keeps them in reach
+    "heatsink": (None, (2, 150)),
 }
 
 # per Source: eBay returns only the 100 cheapest per query, so its queries name a capacity; finn.no search is
@@ -80,8 +84,16 @@ RAM_QUERIES = {
 # lowest believable Landed NOK per GB for used DDR4 RDIMM (16 GB DDR4-2133 lands at 9-13, 27 Sep 2026); below it a
 # multi-stick Listing is priced per stick ("32GB x 10 stk" for 1,500 NOK) and counts as one stick
 RAM_MIN_NOK_PER_GB = 8
-# DISK_QUERIES, MACHINE_QUERIES, CPU_QUERIES and RAM_QUERIES are only the starting Tracked queries, copied into the
-# database for each (kind, Source) group that has none yet; after that the page's Track button adds more (#8, #12)
+# heatsinks (ticket #33): one eBay query per common Machine family; finn.no is small, so generic words
+HEATSINK_QUERIES = {
+    "ebay_uk": ["r730 heatsink", "r730xd heatsink", "r740 heatsink", "r740xd heatsink", "r630 heatsink",
+                "dl380 gen9 heatsink", "dl380 gen10 heatsink", "dl360 gen9 heatsink", "r540 heatsink",
+                "supermicro 2u heatsink"],
+    "finn": ["kjøleribbe server", "heatsink", "kjøler dell", "kjøler hp"],
+}
+# DISK_QUERIES, MACHINE_QUERIES, CPU_QUERIES, RAM_QUERIES and HEATSINK_QUERIES are only the starting Tracked queries,
+# copied into the database for each (kind, Source) group that has none yet; after that the page's Track button adds
+# more (#8, #12)
 
 # CPU socket per Machine platform (amd, generation); 16th Gen and newer (DDR5) are not supported: None.
 # Vendor does not change the socket: a 13th Gen PowerEdge, ProLiant Gen9 and Supermicro X10 are all LGA2011-3

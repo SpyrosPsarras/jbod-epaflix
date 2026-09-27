@@ -1,0 +1,505 @@
+[
+ {
+  "note": "eBay 125758551913",
+  "title": "Dell (YY2R8) PowerEdge R730, R730XD Heatsink (0YY2R8)",
+  "condition": "refurbished",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "R730",
+    "R730xd"
+   ],
+   "count": 1
+  }
+ },
+ {
+  "note": "eBay 406461940344",
+  "title": "Dell Poweredge R730 R730XD  Low Profile Heatsink - 8K3F3 08K3F3",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "R730",
+    "R730xd"
+   ],
+   "count": 1
+  }
+ },
+ {
+  "note": "'2 x' is a count; R7910 is a workstation no Machine is (eBay 403617322088)",
+  "title": "2 x Dell Poweredge R730 R730XD R7910 CPU Processor Cooling Heatsink YY2R8 0YY2R8",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "R730",
+    "R730xd",
+    "R7910"
+   ],
+   "count": 2
+  }
+ },
+ {
+  "note": "'LOT OF 2' is a count (eBay 237054247622)",
+  "title": "LOT OF 2 YY2R8 Dell PowerEdge R730 R730XD Heatsink 0YY2R8 Pulled",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "R730",
+    "R730xd"
+   ],
+   "count": 2
+  }
+ },
+ {
+  "note": "'4LFF Midplane' is not a server's bays (eBay 147370564765)",
+  "title": "Dell (8K3F3) PowerEdge R730xd 4LFF Midplane Low-Profile Heatsink (08K3F3)",
+  "condition": "refurbished",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "R730xd"
+   ],
+   "count": 1
+  }
+ },
+ {
+  "note": "'Cooler' with a model is a heatsink; '/XD' alone is not read (eBay 407217268933)",
+  "title": "CPU Cooler DELL 0YY2R8 For POWEREDGE R730/XD",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "R730"
+   ],
+   "count": 1
+  }
+ },
+ {
+  "note": "'4x' bulk lot fitting four models (eBay 178372667511)",
+  "title": "4x Dell Server CPU Heatsink Copper 075YCN PowerEdge R630 R640 R730 R740 Bulk Lot",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "R630",
+    "R640",
+    "R730",
+    "R740"
+   ],
+   "count": 4
+  }
+ },
+ {
+  "note": "heatsink with cage for 14th Gen (eBay 335932796922)",
+  "title": "C6R9H 0F8NV CPU Heatsink for DELL Poweredge Server R640 R740 R740XD With Cage",
+  "condition": "new",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "R640",
+    "R740",
+    "R740xd"
+   ],
+   "count": 1
+  }
+ },
+ {
+  "note": "'1U' is a height, not a count (eBay 168352720466)",
+  "title": "Dell Cooling Heatsink 1U For PowerEdge R740 R740XD 412-AAIU",
+  "condition": "new",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "R740",
+    "R740xd"
+   ],
+   "count": 1
+  }
+ },
+ {
+  "note": "HP models sharing one Gen: DL388 is the China variant (eBay 406386164205)",
+  "title": "NEW HP ProLiant DL380 DL388 G9/Gen9 V3 V4 CPU Heatsink 777290-001 747608-001",
+  "condition": "new",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "DL380 Gen9",
+    "DL388 Gen9"
+   ],
+   "count": 1
+  }
+ },
+ {
+  "note": "'DL380/388 G9' (eBay 256598773197)",
+  "title": "Original For DL380/DL388 Gen9 High Power CPU Heat Sink 747607-001 777291-001",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "DL380 Gen9",
+    "DL388 Gen9"
+   ],
+   "count": 1
+  }
+ },
+ {
+  "note": "'up to E5-2660V3' is a limit, not a CPU sold with it (eBay 403650594133)",
+  "title": "HP 777290-001 ProLiant DL380 Gen9 Standard 105W Heatsink up to E5-2660V3",
+  "condition": "refurbished",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "DL380 Gen9"
+   ],
+   "count": 1
+  }
+ },
+ {
+  "note": "heatsink and fans CPU kit is a heatsink (eBay 164864005357)",
+  "title": "New HP DL380 G9 Gen9 Xeon CPU Kit, Heatsink 747608-001 & 2 Fans 777285-001",
+  "condition": "new",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "DL380 Gen9"
+   ],
+   "count": 1
+  }
+ },
+ {
+  "note": "'Gen 9' with a space (eBay 147454404103)",
+  "title": "HP Proliant Dl380 Gen 9 Cpu Heatsink P/N: 777290-001",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "DL380 Gen9"
+   ],
+   "count": 1
+  }
+ },
+ {
+  "note": "Supermicro heatsinks fit every Supermicro (eBay 377378309210)",
+  "title": "Supermicro SNK-P0048AP4 2U Active CPU Heat Sink Socket LGA2011 X9/X10 2U Servers",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "Supermicro"
+   ],
+   "count": 1
+  }
+ },
+ {
+  "note": "'Super Micro SNK-P' (eBay 176641657943)",
+  "title": "Super Micro SNK-P0047P Server Heat Sink 1U/2U 2011 Pin X79, X99 Universal",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "Supermicro"
+   ],
+   "count": 1
+  }
+ },
+ {
+  "note": "kjøleribbe in Norwegian, '2 stk' (finn 433624847)",
+  "title": "2 stk Performance kjøleribbe til HP ML350 Gen10",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "ML350 Gen10"
+   ],
+   "count": 2
+  }
+ },
+ {
+  "note": "CPU-kjøler / Heatsink (finn 464683222)",
+  "title": "HPE CPU-kjøler / Heatsink til DL380 Gen9 – 747608-001 / 777290-001",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "DL380 Gen9"
+   ],
+   "count": 1
+  }
+ },
+ {
+  "note": "finn 464682213",
+  "title": "HPE High Performance Heatsink til DL380 Gen9 – 747607-001 / 777291-001",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "DL380 Gen9"
+   ],
+   "count": 1
+  }
+ },
+ {
+  "note": "'2x' before the vendor (synthetic)",
+  "title": "2x Dell R740 heatsink 0KN2PJ",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "R740"
+   ],
+   "count": 2
+  }
+ },
+ {
+  "note": "a heatsink naming two models (synthetic)",
+  "title": "Dell PowerEdge R730 R730xd Heatsink 0YY2R8",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "R730",
+    "R730xd"
+   ],
+   "count": 1
+  }
+ },
+ {
+  "note": "'pair' is two (synthetic)",
+  "title": "Pair of HP DL360 Gen9 heatsinks 775403-001",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "DL360 Gen9"
+   ],
+   "count": 2
+  }
+ },
+ {
+  "note": "for parts is rejected (synthetic)",
+  "title": "Dell R730 heatsink 0YY2R8 bent fins",
+  "condition": "for_parts",
+  "expect": {
+   "qualifies": false,
+   "working": false
+  }
+ },
+ {
+  "note": "server heatsink with no model: could not read (synthetic)",
+  "title": "Dell PowerEdge server CPU heatsink",
+  "condition": "used",
+  "expect": {
+   "unreadable": [
+    "fits"
+   ]
+  }
+ },
+ {
+  "note": "trap: fan only",
+  "title": "Dell R730 fan 0HR6C",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "trap: 'Heatsink Fans' are fans (eBay 186466810832)",
+  "title": "New For Dell R740XD R740 Server CPU Heatsink Fans 0N5T36 N5T36",
+  "condition": "new",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "trap: thermal paste",
+  "title": "Arctic MX-4 thermal paste 4g for CPU",
+  "condition": "new",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "trap: GPU heatsink",
+  "title": "NVIDIA Tesla K80 GPU heatsink for Dell R730",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "trap: desktop cooler",
+  "title": "Noctua NH-U12S LGA1151 heatsink",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "trap: whole server with heatsinks",
+  "title": "Dell R730 2x E5-2680 v4 2x heatsink 64GB",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "trap: CPU alone",
+  "title": "E5-2680 v4",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "trap: CPU and heatsink kit (eBay 127075597960)",
+  "title": "Dell R730 R730XD 2nd Dual CPU & Heatsink Kit Intel Xeon E5-2620v3 2.40GHz 0YY2R8",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "trap: a Machine saying it has none",
+  "title": "Dell PowerEdge R730xd 12x LFF no heatsinks",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "trap: Samsung NP-R730 laptop (eBay 134453829616)",
+  "title": "Samsung R730 NP-R730 CPU Cooling Heatsink + Fan BA62-00516A ",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "trap: heatsink bracket (eBay 405714396607)",
+  "title": "Lot XPDVP CPU Heatsink Cage Holder For Dell PowerEdge T340 T440 T640 R640 R740",
+  "condition": "new",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "trap: socket no Machine takes (eBay 236606988971)",
+  "title": "Supermicro SNK-P0083P 2U Passive CPU Heatsink SP5 Socket",
+  "condition": "new",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "trap: SSD heatsink (finn 477236135)",
+  "title": "Samsung 990 PRO 1TB M.2 NVMe SSD med heatsink",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "trap: loose heatsink with no server word (finn 401613285)",
+  "title": "Kjøleribbe/radiator/heatsink",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "trap: desktop kjøler (finn 473235346)",
+  "title": "HP Omen CPU kjøler",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "trap: kjøler with vifte (finn 477236899)",
+  "title": "HP CPU-kjøler med Foxconn-vifte – 4-pin",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "'CPUs GPU' says what it cools, it is no GPU heatsink (review of #33)",
+  "title": "8K3F3 Dell R730 R730xd Low Profile 1U Heatsink all V3 V4 CPUs GPU",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "R730",
+    "R730xd"
+   ],
+   "count": 1
+  }
+ },
+ {
+  "note": "'w/Bracket' comes with the heatsink (review of #33)",
+  "title": "HP DL380 Gen10 G10 High Performance Heatsink 875071-001 839275-001 w/Bracket",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "DL380 Gen10"
+   ],
+   "count": 1
+  }
+ },
+ {
+  "note": "a GPU heatsink is not a CPU heatsink (review of #33)",
+  "title": "Dell PowerEdge R730xd GPU heatsink",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "a Quadro heatsink is a GPU part (synthetic)",
+  "title": "Dell R730 Quadro P4000 heatsink",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "Gen10 Plus is LGA4189, no Gen10 Machine takes it (review of #33)",
+  "title": "HPE DL380 G10 Gen10 Plus Heatsink P14903-001",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "'Heatsink Server Fan' is a listing category; the Radiator is a heatsink (AliExpress, related item on 1005005806461788)",
+  "title": "Original CN-0YY2R8 Radiator FOR PowerEdge R730 R730XD Heatsink Server Fan 0YY2R8 YY2R8",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "fits": [
+    "R730",
+    "R730xd"
+   ],
+   "count": 1
+  }
+ },
+ {
+  "note": "a server fan with no heatsink word (eBay 275733530523)",
+  "title": "HK9PH Dell PowerEdge R730/R730XD Server Fan",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "'G10 Plus' wording is Gen10 Plus (LGA4189), not a Gen10 heatsink (eBay, live 27 Sep)",
+  "title": "Heatsink For HPE DL380 G10 Gen10 G10 Plus P14903-001",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ }
+]

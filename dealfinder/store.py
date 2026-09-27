@@ -91,7 +91,8 @@ ALTER TABLE hunts ADD COLUMN IF NOT EXISTS best_build jsonb;
 _SOURCE_OK = """
     h.finished IS NOT NULL AND (s.value->>'ok')::boolean
     AND coalesce((s.value->>'disk')::int, 0) + coalesce((s.value->>'machine')::int, 0)
-        + coalesce((s.value->>'cpu')::int, 0) + coalesce((s.value->>'ram')::int, 0) > 0
+        + coalesce((s.value->>'cpu')::int, 0) + coalesce((s.value->>'ram')::int, 0)
+        + coalesce((s.value->>'heatsink')::int, 0) > 0
 """
 _FRESH = f"""
 WITH fresh AS (
@@ -282,7 +283,8 @@ class Store:
             """, (limit,)).fetchall()
 
     def best_listings(self, kind, limit=50):
-        """Ranked Machines, CPUs or RAM, cheapest first; a CPU Listing ranks by NOK per CPU, RAM by NOK per GB."""
+        """Ranked Machines or Parts, cheapest first; a CPU or heatsink Listing ranks by NOK per unit, RAM by NOK
+        per GB."""
         with self._conn() as c:
             return c.execute(_RANKED + f"""
                 SELECT l.source, l.source_id, title, url, facts, landed_nok, location, pickup_only, l.costs,

@@ -17,6 +17,7 @@ import urllib.request
 import pgserver
 
 from dealfinder.app import App, next_hunt_delay
+from dealfinder.config import PICKUP_NOK_PER_KM
 from dealfinder.costs import DailyFx
 from dealfinder.rules import Unreadable, read_disk
 from dealfinder.sources import AliExpressSource, EbaySource, FinnSource
@@ -841,7 +842,8 @@ class RamEndToEnd(unittest.TestCase):
             docs = [_doc(60, "Samsung 128GB (4x32GB) DDR4-3200MHz ECC RDIMM serverminne PC4-25600", 6000, 59.9, 10.7,
                          ["shipping_exists", "seller_pays_shipping"]),
                     _doc(61, "Samsung 32GB x 10 stk DDR4 RDIMM", 1600, 59.9, 10.7,             # priced per stick
-                         ["shipping_exists", "seller_pays_shipping"])]
+                         ["shipping_exists", "seller_pays_shipping"]),
+                    _doc(62, "10x Samsung 32GB DDR4 2666MHz ECC RDIMM", 1700, 59.9, 10.7)]    # per stick, pickup
             docs = docs if q["q"] == ["rdimm"] and q["condition"] == ["3", "4"] else []
             blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
             return f"<script>{blob}</script>"
@@ -862,7 +864,7 @@ class RamEndToEnd(unittest.TestCase):
     def test_best_ram_shows_landed_nok_per_gb_sorted(self):
         one = (125.49 + 3.98) * RATES["GBP"] * 1.25 / 32          # eBay: price + shipping + VAT, one 32 GB stick
         pair = (63.10 + 2.70) * RATES["GBP"] * 1.25 / 32          # one Listing, 2 x 16 GB
-        self.assertEqual([i for i, _ in self.rows], ["r2", "60", "61", "r1"])
+        self.assertEqual([i for i, _ in self.rows], ["r2", "60", "61", "r1", "62"])
         rows = dict(self.rows)
         self.assertAlmostEqual(rows["r1"], one, places=1)
         self.assertAlmostEqual(rows["r2"], pair, places=1)
@@ -875,6 +877,12 @@ class RamEndToEnd(unittest.TestCase):
         row = self.page.split('data-ram="61"', 1)[1].split("</tr>", 1)[0]
         self.assertIn("<td>1 &times; 32 GB</td>", row)
         self.assertEqual(next(r["facts"]["sticks"] for r in self.app.store.best_listings("ram") if r["source_id"] == "61"), 1)
+
+    def test_a_pickup_trip_does_not_lift_a_per_stick_price_over_the_floor(self):
+        # 1700 + 952 NOK trip = 2652 NOK = 8.3 NOK per GB over 320 GB, but 1700 / 320 = 5.3 is under the floor
+        self.assertAlmostEqual(dict(self.rows)["62"], (1700 + 2 * 119 * PICKUP_NOK_PER_KM) / 32, places=1)
+        row = self.page.split('data-ram="62"', 1)[1].split("</tr>", 1)[0]
+        self.assertIn("<td>1 &times; 32 GB</td>", row)
 
     def test_server_in_a_ram_search_is_not_listed_and_unreadable_ram_is(self):
         self.assertNotIn("r3", dict(self.rows))
@@ -893,6 +901,81 @@ class RamEndToEnd(unittest.TestCase):
         self.assertRegex(page.split('data-result="60"', 1)[1].split("</tr>", 1)[0], r"<td>6,000</td><td>47</td>")
         self.assertIn('<option value="ram">RAM</option>', self.page)
         self.assertIn('data-tracked="ram:rdimm"', self.page)
+
+
+class HeatsinksEndToEnd(unittest.TestCase):
+    """Seam 1: heatsink Listings from eBay UK and finn.no land on the Heatsinks tab with the models they fit."""
+
+    @classmethod
+    def setUpClass(cls):
+        items = [_ebay_item("h1", "Dell (YY2R8) PowerEdge R730, R730XD Heatsink (0YY2R8)", 20.00, 0),
+                 _ebay_item("h2", "2 x Dell Poweredge R730 R730XD R7910 CPU Processor Cooling Heatsink YY2R8 0YY2R8",
+                            36.00, 0),
+                 _ebay_item("h3", "Dell R730 fan 0HR6C", 10, 2),                                        # a fan
+                 _ebay_item("h4", "Dell R730 2x E5-2680 v4 2x heatsink 64GB", 100, 20),                 # a server
+                 _ebay_item("h5", "Dell PowerEdge server CPU heatsink", 5, 0)]                          # which model?
+        cls.filters = []
+
+        def ebay(url, headers=None, data=None):
+            if "oauth2/token" in url:
+                return {"access_token": "t", "expires_in": 7200}
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(url).query)
+            cls.filters.append((q.get("category_ids"), q["filter"][0]))
+            return {"itemSummaries": items if "price:[2..150]" in q["filter"][0] else []}
+
+        def finn(url):
+            q = urllib.parse.parse_qs(url.split("?", 1)[1])
+            docs = [_doc(70, "2 stk Performance kjøleribbe til HP ML350 Gen10", 800, 59.9, 10.7,
+                         ["shipping_exists", "seller_pays_shipping"])]
+            docs = docs if q["q"] == ["kjøleribbe server"] and q["condition"] == ["3", "4"] else []
+            blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
+            return f"<script>{blob}</script>"
+
+        cls.pg = _pg()
+        cls.app = App(cls.pg.get_uri(), [EbaySource("id", "secret", fetch=ebay), FinnSource(fetch=finn, pause=0)],
+                      fx=RATES.__getitem__, disk_queries={"ebay_uk": []}, machine_queries=["r730xd"],
+                      cpu_queries={"ebay_uk": []}, ram_queries={"ebay_uk": []},
+                      heatsink_queries={"ebay_uk": ["r730 heatsink"], "finn": ["kjøleribbe server"]},
+                      pause=0, router=fake_router)
+        cls.app.hunt()
+        cls.page = cls.app.page()
+        cls.rows = [(i, float(n)) for i, n in
+                    re.findall(r'data-heatsink="([^"]+)" data-nok-per-heatsink="([\d.]+)"', cls.page)]
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.pg.cleanup()
+
+    def test_heatsinks_show_fits_count_and_landed_nok_sorted_per_heatsink(self):
+        one = 20.00 * RATES["GBP"] * 1.25                         # eBay: price + free shipping + VAT
+        self.assertEqual([i for i, _ in self.rows], ["h2", "h1", "70"])
+        rows = dict(self.rows)
+        self.assertAlmostEqual(rows["h1"], one, places=1)
+        self.assertAlmostEqual(rows["h2"], 36.00 * RATES["GBP"] * 1.25 / 2, places=1)  # one Listing, 2 heatsinks
+        self.assertAlmostEqual(rows["70"], 800 / 2, places=2)    # finn: free shipping, no VAT
+        self.assertIn(f"<td>R730, R730xd</td><td>1</td><td>ebay_uk</td><td>{one:,.0f}</td>", self.page)
+        self.assertIn("<td>R730, R730xd, R7910</td><td>2</td>", self.page)
+        self.assertIn("<td>ML350 Gen10</td><td>2</td>", self.page)
+
+    def test_fan_and_server_in_a_heatsink_search_are_not_listed_and_unreadable_heatsinks_are(self):
+        for iid in ("h3", "h4"):
+            self.assertNotIn(iid, dict(self.rows))
+            self.assertNotIn(f'data-unreadable="{iid}"', self.page)
+        self.assertIn('data-unreadable="h5" data-missing="fits"', self.page)
+        self.assertIn("Machine model it fits", self.page)
+
+    def test_ebay_heatsink_search_uses_no_category_and_its_price_range(self):
+        self.assertIn((None, "buyingOptions:{FIXED_PRICE},deliveryCountry:NO,price:[2..150],priceCurrency:GBP"),
+                      self.filters)
+        self.assertIn('dealfinder_listings{source="ebay_uk",kind="heatsink",state="qualified"} 2', self.app.metrics())
+
+    def test_search_and_track_accept_heatsinks(self):
+        page = self.app.search_page("kjøleribbe server", "heatsink")
+        self.assertIn('data-result="70" data-qualifies="1"', page)
+        self.assertIn("<th>NOK per heatsink</th>", page)
+        self.assertRegex(page.split('data-result="70"', 1)[1].split("</tr>", 1)[0], r"<td>800</td><td>400</td>")
+        self.assertIn('<option value="heatsink">Heatsinks</option>', self.page)
+        self.assertIn('data-tracked="heatsink:r730 heatsink"', self.page)
 
 
 class SearchAndTrack(unittest.TestCase):
@@ -959,6 +1042,9 @@ class SearchAndTrack(unittest.TestCase):
             self.assertIn((q, "cpu"), tracked)
         for q in ("ddr4 ecc rdimm 16gb", "ddr4 ecc rdimm 32gb", "ddr4 lrdimm 64gb", "ddr4 ecc", "rdimm"):
             self.assertIn((q, "ram"), tracked)
+        for q in ("r730 heatsink", "r730xd heatsink", "r740 heatsink", "dl380 gen9 heatsink", "dl380 gen10 heatsink",
+                  "kjøleribbe server", "kjøler hp"):
+            self.assertIn((q, "heatsink"), tracked)
         before = len(self.app.store.tracked())
         App(self.pg.get_uri(), self.sources, fx=RATES.__getitem__, disk_queries={"finn": ["other"]}, pause=0,
             router=fake_router)  # a restart must not re-seed
@@ -1082,7 +1168,8 @@ class AliExpressHighRisk(unittest.TestCase):
             detail = app.store.last_hunt()["detail"]
             self.assertFalse(detail["aliexpress"]["ok"])
             self.assertIn("ALIEXPRESS_APP_KEY", detail["aliexpress"]["error"])
-            self.assertEqual(detail["finn"], {"ok": True, "disk": 0, "machine": 1, "cpu": 0, "ram": 0})
+            self.assertEqual(detail["finn"], {"ok": True, "disk": 0, "machine": 1, "cpu": 0, "ram": 0,
+                                              "heatsink": 0})
             page = app.page()
             self.assertIn('data-fault="aliexpress"', page)
             self.assertIn('data-machine="1"', page)
@@ -1142,7 +1229,8 @@ class AliExpressHighRisk(unittest.TestCase):
                       router=fake_router)
             app.hunt()
             self.assertEqual(seen, ["nothing", "exos 18tb"])
-            self.assertEqual(app.store.last_hunt()["detail"]["aliexpress"], {"ok": True, "disk": 1, "machine": 0, "cpu": 0, "ram": 0})
+            self.assertEqual(app.store.last_hunt()["detail"]["aliexpress"],
+                             {"ok": True, "disk": 1, "machine": 0, "cpu": 0, "ram": 0, "heatsink": 0})
         finally:
             pg.cleanup()
         bad = AliExpressSource("key", "secret", fetch=lambda url: {"aliexpress_affiliate_product_query_response": {
@@ -1154,12 +1242,15 @@ class AliExpressHighRisk(unittest.TestCase):
         pg = _pg()
         try:
             App(pg.get_uri(), [], fx=RATES.__getitem__, disk_queries={"finn": ["exos"]}, machine_queries=["r730xd"],
-                cpu_queries={"finn": []}, ram_queries={"finn": []})  # a database from before CPUs and RAM
+                cpu_queries={"finn": []}, ram_queries={"finn": []},
+                heatsink_queries={"finn": []})  # a database from before Parts
             app = App(pg.get_uri(), [], fx=RATES.__getitem__, disk_queries={"finn": ["other"], "aliexpress": ["x20"]},
-                      machine_queries=["r740"], cpu_queries={"finn": ["xeon e5"]}, ram_queries={"finn": ["rdimm"]})
+                      machine_queries=["r740"], cpu_queries={"finn": ["xeon e5"]}, ram_queries={"finn": ["rdimm"]},
+                      heatsink_queries={"finn": ["heatsink"]})
             got = {(r["query"], r["kind"], r["source"]) for r in app.store.tracked()}
             self.assertEqual(got, {("exos", "disk", "finn"), ("r730xd", "machine", ""), ("x20", "disk", "aliexpress"),
-                                   ("xeon e5", "cpu", "finn"), ("rdimm", "ram", "finn")})
+                                   ("xeon e5", "cpu", "finn"), ("rdimm", "ram", "finn"),
+                                   ("heatsink", "heatsink", "finn")})
         finally:
             pg.cleanup()
 
@@ -1237,7 +1328,7 @@ class PriceHistory(unittest.TestCase):
     def test_sections_are_tabs_with_sticky_headers(self):
         for html, labels in ((self.page, ["Best Build per week", "Disks, NOK per TB", "Machines, NOK"]),
                              (self.app.page(), ["Builds", "Best Disks", "Best Machines", "Best CPUs", "Best RAM",
-                                              "Could not read"])):
+                                              "Heatsinks", "Could not read"])):
             self.assertEqual(re.findall(r'<label for="tab\d">([^<]+)</label>', html), labels)
             self.assertEqual(html.count("<section>"), len(labels))
             self.assertEqual(html.count('name="tab" id="tab0" checked'), 1)

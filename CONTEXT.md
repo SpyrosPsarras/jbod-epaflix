@@ -15,7 +15,7 @@ A working 3.5" enterprise or NAS hard drive of at least 14TB.
 _Avoid_: Drive, HDD (alone)
 
 **Part**:
-A CPU, RAM or Heatsink Listing that completes a Machine. Only CPUs and RAM are searched so far.
+A CPU, RAM or Heatsink Listing that completes a Machine. A heatsink Listing names the Machine models it fits.
 _Avoid_: Component, add-on
 
 **Build**:
@@ -25,7 +25,7 @@ _Avoid_: Deal, bundle, combo
 ### Where it comes from
 
 **Listing**:
-One offer for a Machine, Disks, CPUs or RAM on a Source, at one moment in time.
+One offer for a Machine, Disks, CPUs, RAM or heatsinks on a Source, at one moment in time.
 _Avoid_: Ad, item, offer
 
 **Source**:

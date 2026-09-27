@@ -121,7 +121,7 @@ _FOR_SERVER = re.compile(
     r"\b(til|for|passer\s+til|passer|kompatibel\s+med|compatible\s+with|fits|suitable\s+for)\s+(\S+\s+){0,3}?"
     r"(dell|hpe?|poweredge|proliant|supermicro|[rt]\d{3}|dl\d{3}|ml\d{3}|gen\s?\d{1,2})\b", re.I)
 _PART_NOUN = re.compile(
-    r"fan\s?cage|\bvifte|heatsink|kjøler|\bbezel|batteri|battery|\briser\b|blindblende|blank\s+cover|drive\s?cage"
+    r"fan\s?cage|\bvifte|\bbezel|batteri|battery|\briser\b|blindblende|blank\s+cover|drive\s?cage"
     r"|backplane|hovedkort|motherboard|mainboard|\bkabel\b|\bcable\b|rack\s?rails|rail\s?kit|\bjbod\b|diskhylle"
     r"|disk\s?shelf|\bvrtx\b|scania|\btekno\b|italeri|byggesett|samlermodell|smartmemory|\brdimm\b", re.I)
 _STARTS_AS_PART = re.compile(r"^\W*(?:\S+\s+){0,2}?\d{1,4}\s?(?:gb|w)\b", re.I)  # "HPE 32GB ...", "500 W Power ..."
@@ -179,6 +179,18 @@ def _absent(noun):
 
 
 _NO_RAM, _NO_CPU = _absent(_RAM_WORD), _absent(_CPU_WORD)
+# "heatsink", "heat sink", "kjøleribbe", "HS" ("2xHS"); "cooler" and "kjøler" also name desktop and laptop coolers
+# bare "HS" before a PSU, wattage, bays or disks means hot-swap: "2x HS PSU", "2x HS 800W", "8x HS SAS"
+_HS_BARE = r"(?<![a-wyz])hs\b(?!\s*(?:psu|power|\d{3,4}\s?w|bays?|sas|sata|lff|sff|caddies|drives?)\b)"
+_HS_STRONG = re.compile(rf"heat\s?-?sinks?|kjøleribb\w*|{_HS_BARE}", re.I)
+_HS_WORD = rf"(?:{_HS_STRONG.pattern}|coolers?\b|kjøler(?:e|en|ne)?\b)"
+_NO_HS = _absent(_HS_WORD)
+_HS_BETWEEN = r"(?:(?:cpu|high|performance|standard|std|low|profile|dell|hpe?)[\s-]+){0,3}"
+# "2xHS", "2x Cooler", "2 stk kjøler"
+_HS_COUNT = re.compile(rf"(?<![\w.,])(\d)\s?(?:[x×*]|stk\.?|pcs)?\s?{_HS_BETWEEN}{_HS_WORD}", re.I)
+_HS_ONE = re.compile(rf"\b(?:with|w/|med|inkl\w*\.?|incl\w*\.?)\s*{_HS_BETWEEN}"
+                     rf"(?:heat\s?-?sink\b|{_HS_BARE}|cooler\b|kjøler(?:en)?\b|kjøleribbe\b)", re.I)  # singular only
+_HS_PART = re.compile(r"heat\s?-?sink|kjøler", re.I)  # a Machine part, unless it states a Machine fact
 _CPU_MODEL = re.compile(r"e5-?\s?2\d{3}|\bxeon\b|\b(?:bronze|silver|gold|platinum)\s?\d{4}|\bepyc\b", re.I)
 _PSU_COUNT = re.compile(r"(?<![\w.,])(\d)\s?[x×*]\s?(?:\S+\s+){0,2}?\d{3,4}\s?w\b|(?<![\w.,])(\d)\s?[x×*]?\s?psu\b", re.I)
 _PSU_TWO = re.compile(r"dual\s+psu|redundant\w*\s+(psu|power|strøm)|doble\s+strøm|2\s+strømforsyninger", re.I)
@@ -210,6 +222,7 @@ class MachineFacts:
     sockets: int
     cpu_model: str | None    # normalised like read_cpu ("E5-2680 v4"), None = not stated
     cpu_count: int | None    # CPUs installed: 0 = none, None = not stated
+    heatsinks: int | None    # CPU heatsinks included: 0 = none, None = not stated
     ecc: bool
     psu_count: int | None
     caddies_35: int | None
@@ -233,6 +246,11 @@ class MachineFacts:
         return PLATFORMS.get((self.amd, self.generation))
 
 
+def _dell_model(m):
+    """'R730xd' from a _DELL_MODEL match."""
+    return "".join(g or "" for g in m.groups()).upper().replace("XD", "xd")
+
+
 def _model(title, text):
     """(vendor, model, generation or None, amd) for a server named in the title, else None."""
     m = _HP_MODEL.search(title)
@@ -240,10 +258,9 @@ def _model(title, text):
         return "hpe", f"{m[1].upper()}{m[2]} Gen{m[3]}", _HP_GEN.get(int(m[3])), m[2] in ("325", "385")
     m = _DELL_MODEL.search(title)
     if m and _DELL_CONTEXT.search(text):
-        kind, d1, d2, d3, d4, suffix = m.groups()
-        model = f"{kind}{d1}{d2}{d3}{d4 or ''}{suffix or ''}".upper().replace("XD", "xd")
+        _, _, d2, d3, d4, _ = m.groups()
         amd = (d3 + d4) in ("15", "25") if d4 else d3 == "5"
-        return "dell", model, 10 + int(d2), amd
+        return "dell", _dell_model(m), 10 + int(d2), amd
     if _SUPERMICRO.search(title) and _SERVER_WORD.search(title):
         return "supermicro", "Supermicro", None, bool(re.search(r"\bepyc\b", text, re.I))
     return None
@@ -335,6 +352,21 @@ def _cpu_installed(title, text):
     return (None, 0) if _cpu(title, text) is False else (None, None)
 
 
+def _heatsinks(title, text):
+    """CPU heatsinks included, title first: the number stated ("2xHS", "2x Cooler"), 1 for a singular "with CPU
+    Cooler" (taken literally, even on a dual-socket Machine), 0 when the title says "no heatsinks" or barebones,
+    None when not stated. "with heatsinks" gives no number: None."""
+    for where in (title, text):  # text starts with the title
+        m = _HS_COUNT.search(where)
+        if m:
+            return int(m[1])
+        if _NO_HS.search(title):  # the title only: a "barebone No CPU" in a description is often another server
+            return 0
+        if _HS_ONE.search(where):
+            return 1
+    return None
+
+
 def _sockets(vendor, model, text):
     """Dell R1x0-R3x0/T1x0-T3x0 = 1; Dell AMD names the count in its third digit (R6415, R7515 = 1, R7425 = 2);
     HPE DL20/DL325/ML10/ML30/ML110 = 1; a Supermicro board X..S.. = 1 (X10SRi), X..D.. = 2; anything else 2."""
@@ -378,7 +410,9 @@ def _rails(text):
 def read_machine(title, description, condition):
     """Facts for a Machine Listing, Unreadable when a required fact is missing, None when it is not a server."""
     text = f"{title}\n{description or ''}"
-    if _FOR_SERVER.search(title) or _PART_NOUN.search(title) or _STARTS_AS_PART.search(title):
+    hs_part = _HS_PART.search(title) and not (_HS_COUNT.search(title) or _NO_HS.search(title) or _HS_ONE.search(title))
+    if (_FOR_SERVER.search(title) or _PART_NOUN.search(title) or hs_part or _STARTS_AS_PART.search(title)
+            or read_heatsink(title, condition) is not None):
         return None
     found = _model(title, text)
     if found is None:
@@ -400,6 +434,7 @@ def read_machine(title, description, condition):
         vendor=vendor, model=model, generation=generation, amd=amd, bays_35=bays, ram_gb=ram_gb,
         ram_sticks=_ram_sticks(title, text, ram_gb), cpu=_cpu(title, text),
         sockets=_sockets(vendor, model, text), cpu_model=cpu_model, cpu_count=cpu_count,
+        heatsinks=_heatsinks(title, text),
         ecc=True,  # PowerEdge, ProLiant and Supermicro server boards take ECC RDIMMs only
         psu_count=_psu_count(text), caddies_35=_caddies_35(text), controller=_controller(text),
         rails=_rails(text), working=condition != "for_parts" and not _MACHINE_FAULTY.search(title))
@@ -567,3 +602,63 @@ def read_ram(title, condition):
         return Unreadable(missing)
     return RamFacts(gb_per_stick=gb, sticks=sticks, ddr=ddr, type=ram_type, speed=_speed(title),
                     ecc=ram_type is not None or bool(re.search(r"\becc\b", title, re.I)), working=working)
+
+
+# ---- Heatsinks ------------------------------------------------------------------------------------------------
+
+_HS_ANY = re.compile(_HS_WORD, re.I)
+# desktop, laptop, GPU, SSD and board coolers, sockets no Machine takes (Gen10 Plus is LGA4189)
+_NOT_HS = re.compile(
+    r"noctua|cooler\s?master|\baio\b|tower\s?cooler|arctic|be\s?quiet|deepcool|thermalright|zalman|water|liquid"
+    r"|væske|lga\s?(?:115\d|1200|1700|1851|775)|\bam[2-5]\b|socket\s?(?:462|775)|\bsp5\b|lga\s?4677|\bg34\b"
+    r"|opteron|\b13[56]6\b|(?<!cpu\W)\bgpu\s?(?:heat\s?-?sinks?|coolers?)|quadro|\b[rg]tx\b|\bvga\b|graphics|nvidia"
+    r"|geforce|radeon|tesla|\bi[3579]\b|ryzen|laptop|notebook|bærbar|samsung|\bnp-|\bssd|nvme|m\.2|raspberry"
+    r"|\bg(?:en)?\s?10\s?(?:plus|\+)", re.I)
+# heatsink brackets and clips; "Heatsink ... w/Bracket" sells the heatsink
+_HS_MOUNT = re.compile(r"holder|bracket|\bclips?\b|clamp|mounting|\bbase\b", re.I)
+_WITH_END = re.compile(r"(?:w/|with|med|incl\w*\.?|inkl\w*\.?|\+|&)\s*$", re.I)
+_FAN = re.compile(r"(?<!server )\bfans?\b|vifte|blower", re.I)  # "Heatsink Server Fan" is a listing category
+_RACK_SERVER = re.compile(r"\brack\s?server\b", re.I)
+# a heatsink word with no Machine model is worth reading only with a server word; else an SSD or Raspberry Pi one
+_SERVER_CONTEXT = re.compile(r"server|poweredge|proliant|\bdell\b|\bhpe?\b|xeon|lga\s?(?:2011|3647|4189)", re.I)
+# "DL380 Gen9", and several models sharing one Gen: "DL380 DL388 G9", "DL380/388 Gen9"
+_HP_MODELS = re.compile(r"\b(dl|ml)\s?(\d{2,3})[a-z]?\b"
+                        r"(?=(?:[\s/,&+]+(?:(?:dl|ml)\s?)?\d{2,3}[a-z]?\b)*[\s/,&+-]*(?:gen\s?|g)(\d{1,2})\b)", re.I)
+_SUPERMICRO_HS = re.compile(r"super\s?micro|\bsnk-p\d", re.I)
+
+
+@dataclass
+class HeatsinkFacts:
+    fits: list      # Machine models, named like MachineFacts.model: "R730xd", "DL380 Gen9", "Supermicro"
+    count: int      # heatsinks this one Listing sells
+    working: bool
+
+    @property
+    def qualifies(self):
+        return self.working and bool(self.fits)
+
+
+def read_heatsink(title, condition):
+    """Facts for a CPU heatsink Listing, Unreadable when it names no Machine model, None when it is not a server
+    CPU heatsink (a fan, a whole server, a CPU, a desktop, laptop, GPU or SSD cooler)."""
+    mount = _HS_MOUNT.search(title)
+    if not _HS_ANY.search(title) or _NOT_HS.search(title) or mount and not _WITH_END.search(title[:mount.start()]):
+        return None
+    if _FAN.search(title) and not _KIT.search(title):
+        return None  # "R740 Heatsink Fans 0N5T36" is a fan; "Heatsink 747608-001 & 2 Fans CPU Kit" is a heatsink
+    cpus = [m for m, _, _ in _cpus(title) if not re.search(r"up\s+to\s*$", title[:m.start()], re.I)]
+    bays = any(int(m[1]) >= MIN_MACHINE_BAYS for rx in (_BAYS_35, _BAYS_25) for m in rx.finditer(title))
+    if (cpus or bays or _ram_in(title) or _NO_CPU.search(title) or _NO_RAM.search(title) or _NO_HS.search(title)
+            or _RACK_SERVER.search(title)):
+        return None  # a whole server, or a CPU with its heatsink; "Heatsink up to E5-2660V3" is a heatsink
+    # ponytail: fits names the models only, no part numbers (0YY2R8 = R730) and no socket or 1U/2U height, so a
+    # Supermicro heatsink fits every Supermicro. Read the socket (LGA2011, LGA3647) if Supermicro Builds get used
+    fits = {_dell_model(m) for m in _DELL_MODEL.finditer(title)}
+    fits |= {f"{m[1].upper()}{m[2]} Gen{m[3]}" for m in _HP_MODELS.finditer(title)}
+    fits |= {"Supermicro"} if _SUPERMICRO_HS.search(title) else set()
+    working = condition != "for_parts" and not _FAULTY.search(title)
+    if not fits:
+        return Unreadable(["fits"]) if working and _HS_STRONG.search(title) and _SERVER_CONTEXT.search(title) else None
+    n = _UNITS.search(title)
+    count = max(1, int(next(g for g in n.groups() if g))) if n else 2 if _PAIR.search(title) else 1
+    return HeatsinkFacts(fits=sorted(fits), count=count, working=working)
