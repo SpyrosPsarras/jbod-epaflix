@@ -29,7 +29,7 @@ ROUTE_FALLBACK = (1.3, 75)  # router down: straight-line km x 1.3 at 75 km/h (sh
 # Builds (ticket #6)
 TARGET_TIB = 40          # usable RAIDZ2 capacity a Build must reach
 POOL_OVERHEAD = 0.05     # ZFS metadata and slop taken off raw RAIDZ2 capacity
-CEILING_NOK = 35_000     # Builds above this Landed cost are hidden
+CEILING_NOK = 40_000     # Builds above this Landed cost are hidden (35,000 until complete Builds with real Parts)
 MIN_BUILD_DISKS = 4      # smallest RAIDZ2 layout considered
 BOOT_BAYS = 1            # one 3.5" bay kept for the boot SSD
 
