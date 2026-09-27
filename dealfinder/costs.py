@@ -3,8 +3,8 @@ import datetime
 import math
 import threading
 
-from .config import (FINN_SHIPPING_NOK, HOME_LAT_LON, PENALTY_NOK, PICKUP_MAX_MINUTES, PICKUP_NOK_PER_KM, RISK,
-                     ROUTE_FALLBACK, VAT)
+from .config import (FINN_SHIPPING_NOK, HOME_LAT_LON, PENALTY_NOK, PICKUP_MAX_MINUTES, PICKUP_NOK_PER_KM, RAM_NOK_PER_GB,
+                     RAM_TARGET_GB, RISK, ROUTE_FALLBACK, VAT)
 from .sources import http_json
 
 
@@ -53,6 +53,10 @@ def machine_penalties(facts):
             PENALTY_NOK["raid_only"] if facts["controller"] != "hba" else 0,
         ("no_rails" if facts["rails"] is False else "rails_unknown"):
             PENALTY_NOK["no_rails"] if facts["rails"] is not True else 0,
+        # .get: facts saved before CPU was read count as unknown until the next Hunt re-reads them
+        ("no_cpu" if facts.get("cpu") is False else "cpu_unknown"): PENALTY_NOK["cpu"] if facts.get("cpu") is not True else 0,
+        ("ram" if facts["ram_gb"] is not None else "ram_unknown"):
+            RAM_NOK_PER_GB * max(0, RAM_TARGET_GB - (facts["ram_gb"] or 0)),
     }
     return {k: v for k, v in penalties.items() if v}
 

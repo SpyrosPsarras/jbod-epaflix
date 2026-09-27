@@ -494,14 +494,21 @@ class PriceHistoryAndGone(unittest.TestCase):
 class PenaltiesAndRouting(unittest.TestCase):
     def test_machine_with_every_penalty(self):
         from dealfinder.costs import machine_penalties
-        facts = {"bays_35": 12, "caddies_35": 4, "psu_count": 1, "controller": "raid", "rails": False}
-        self.assertEqual(machine_penalties(facts),
-                         {"single_psu": 500, "caddies": 800, "raid_only": 500, "no_rails": 400})
-        unknown = {"bays_35": 8, "caddies_35": None, "psu_count": None, "controller": None, "rails": None}
+        facts = {"bays_35": 12, "caddies_35": 4, "psu_count": 1, "controller": "raid", "rails": False,
+                 "cpu": False, "ram_gb": 0}
+        self.assertEqual(machine_penalties(facts), {"single_psu": 500, "caddies": 800, "raid_only": 500,
+                                                    "no_rails": 400, "no_cpu": 500, "ram": 6400})
+        unknown = {"bays_35": 8, "caddies_35": None, "psu_count": None, "controller": None, "rails": None,
+                   "cpu": None, "ram_gb": None}
         self.assertEqual(machine_penalties(unknown), {"psu_unknown": 500, "caddies_unknown": 800,
-                                                      "controller_unknown": 500, "rails_unknown": 400})
-        clean = {"bays_35": 12, "caddies_35": 12, "psu_count": 2, "controller": "hba", "rails": True}
-        self.assertEqual(machine_penalties(clean), {})
+                                                      "controller_unknown": 500, "rails_unknown": 400,
+                                                      "cpu_unknown": 500, "ram_unknown": 6400})
+        clean = {"bays_35": 12, "caddies_35": 12, "psu_count": 2, "controller": "hba", "rails": True,
+                 "cpu": True, "ram_gb": 256}
+        self.assertEqual(machine_penalties(clean), {})  # RAM above 128 GB earns no credit
+        self.assertEqual(machine_penalties({**clean, "ram_gb": 64}), {"ram": 3200})
+        saved_before_cpu = {k: v for k, v in clean.items() if k != "cpu"}  # facts from an older Hunt
+        self.assertEqual(machine_penalties(saved_before_cpu), {"cpu_unknown": 500})
 
     def test_router_caches_osrm_and_falls_back_when_it_is_down(self):
         from dealfinder.costs import OsrmRouter
@@ -562,7 +569,7 @@ class PickupAndPenaltiesEndToEnd(unittest.TestCase):
             _doc(5, "Dell PowerEdge R730xd 12x LFF", 3300, 63.44, 10.43),
         ]
         descriptions = {
-            "1": "1x 750W PSU. PERC H710 RAID. 4x 3.5\" caddies. Rails følger ikke med.",
+            "1": "1x 750W PSU. PERC H710 RAID. 4x 3.5\" caddies. Rails følger ikke med. Ingen CPU. 32GB RAM.",
             "2": "Kun henting. Frakt kan ikke tilbys.",
             "3": "Ikke gratis frakt, hentes i Trondheim.",
             "4": "Fri frakt? Nei.",
@@ -578,9 +585,11 @@ class PickupAndPenaltiesEndToEnd(unittest.TestCase):
 
     def test_near_pickup_with_every_penalty(self):
         # 6,000 + trip 2 x 119 x 4 = 952 + PSU 500 + 8 missing caddies 800 + RAID-only 500 + no rails 400
-        self.assertAlmostEqual(float(self.rows["1"]), 6000 + 952 + 500 + 800 + 500 + 400, places=2)
+        # + no CPU 500 + RAM 32 of 128 GB: 96 x 50 = 4,800
+        self.assertAlmostEqual(float(self.rows["1"]), 6000 + 952 + 500 + 800 + 500 + 400 + 500 + 4800, places=2)
         page = self.app.page()
-        for part in ("pickup trip 952", "2nd PSU 500", "caddies 800", "HBA 500", "rails 400"):
+        for part in ("pickup trip 952", "2nd PSU 500", "caddies 800", "HBA 500", "rails 400", "CPUs 500",
+                     "RAM to 128 GB 4,800", "<td>32 GB</td>"):
             self.assertIn(part, page)
 
     def test_far_pickups_are_hidden_even_with_negated_shipping_words(self):
@@ -588,8 +597,11 @@ class PickupAndPenaltiesEndToEnd(unittest.TestCase):
             self.assertNotIn(fid, self.rows)
 
     def test_far_seller_with_free_shipping_is_shown_at_its_price(self):
-        # 3,300, free shipping, 12 caddies not stated 1,200, PSU / controller / rails not stated 500 + 500 + 400
-        self.assertAlmostEqual(float(self.rows["5"]), 3300 + 1200 + 500 + 500 + 400, places=2)
+        # 3,300, free shipping, 12 caddies not stated 1,200, PSU / controller / rails not stated 500 + 500 + 400,
+        # CPU not stated 500, RAM not stated: all 128 GB x 50 = 6,400
+        self.assertAlmostEqual(float(self.rows["5"]), 3300 + 1200 + 500 + 500 + 400 + 500 + 6400, places=2)
+        self.assertIn("CPUs (not stated) 500", self.app.page())
+        self.assertIn("RAM to 128 GB (not stated) 6,400", self.app.page())
 
 
 class FinnCoordinatesAreValidated(unittest.TestCase):
@@ -611,12 +623,12 @@ class BuildsEndToEnd(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        full = "2x 750W PSU. Dell HBA330. 12x 3.5\" caddies. Rails included."
+        full = "2x Xeon E5-2680 v4. 128GB RAM. 2x 750W PSU. Dell HBA330. 12x 3.5\" caddies. Rails included."
         # all docs share one place ("X"); Oslo pickups there share one 952 NOK trip
         machines = [_doc(1, "Dell PowerEdge R730xd 12x LFF", 6000, 59.91, 10.72),    # 6,952, every fact good
                     _doc(2, "Dell PowerEdge R730xd 12x LFF", 30000, 59.91, 10.72),   # 30,952 + disks > Ceiling
                     _doc(3, "Dell PowerEdge R730xd 12x LFF", 5000, 59.91, 10.72)]    # caddies not stated
-        descriptions = {"1": full, "2": full, "3": "2x 750W PSU. Dell HBA330. Rails included."}
+        descriptions = {"1": full, "2": full, "3": "2x Xeon E5-2680 v4. 128GB RAM. 2x 750W PSU. Dell HBA330. Rails included."}
         ship = ["shipping_exists", "seller_pays_shipping"]
         disks = ([_doc(10 + i, 'Seagate Exos X16 16TB 3.5" SATA', 1500 + i, 60.4, 5.5, ship) for i in range(6)]
                  + [_doc(20 + i, 'Seagate Exos X24 24TB 3.5" SATA', 2600, 60.4, 5.5, ship) for i in range(4)]
@@ -684,7 +696,7 @@ def _ebay_item(iid, title, price, ship, pct="99.8", score=5000):
 class EbayMachinesAndWeakSellers(unittest.TestCase):
     """Seam 1: eBay UK Machines are read by the same rules; weak sellers pay +10%; no freight to Norway = excluded."""
 
-    TEXT = "<p>2x 750W PSU</p><p>Dell HBA330</p><p>12x 3.5\" caddies</p><p>Rails included</p>"
+    TEXT = "<p>2x Xeon E5-2680 v4</p><p>128GB RAM</p><p>2x 750W PSU</p><p>Dell HBA330</p><p>12x 3.5\" caddies</p><p>Rails included</p>"
 
     @classmethod
     def setUpClass(cls):
@@ -822,7 +834,7 @@ class MarkAsBought(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.calls = []
-        full = "2x 750W PSU. Dell HBA330. 12x 3.5\" caddies. Rails included."
+        full = "2x Xeon E5-2680 v4. 128GB RAM. 2x 750W PSU. Dell HBA330. 12x 3.5\" caddies. Rails included."
         ship = ["shipping_exists", "seller_pays_shipping"]
         machines = [_doc(1, "Dell PowerEdge R730xd 12x LFF", 6000, 59.91, 10.72)]
         disks = [_doc(10 + i, 'Seagate Exos X16 16TB 3.5" SATA', 1500 + i, 60.4, 5.5, ship) for i in range(5)]
@@ -894,7 +906,7 @@ def _ali_response(products):
 class AliExpressHighRisk(unittest.TestCase):
     """Seam 1: without keys AliExpress is a Source fault and the rest run; with keys its Disks are High-risk."""
 
-    FULL = "2x 750W PSU. Dell HBA330. 12x 3.5\" caddies. Rails included."
+    FULL = "2x Xeon E5-2680 v4. 128GB RAM. 2x 750W PSU. Dell HBA330. 12x 3.5\" caddies. Rails included."
 
     def _finn(self):
         def fetch(url):
@@ -1003,7 +1015,7 @@ class PriceHistory(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.disk_price = 1500
-        full = "2x 750W PSU. Dell HBA330. 12x 3.5\" caddies. Rails included."
+        full = "2x Xeon E5-2680 v4. 128GB RAM. 2x 750W PSU. Dell HBA330. 12x 3.5\" caddies. Rails included."
         ship = ["shipping_exists", "seller_pays_shipping"]
 
         def fetch(url):
