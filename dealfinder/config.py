@@ -91,6 +91,9 @@ RAM_QUERIES = {
 # lowest believable Landed NOK per GB for used DDR4 RDIMM (16 GB DDR4-2133 lands at 9-13, 27 Sep 2026); below it a
 # multi-stick Listing is priced per stick ("32GB x 10 stk" for 1,500 NOK) and counts as one stick
 RAM_MIN_NOK_PER_GB = 8
+# lowest believable seller NOK per TB for a lot of used enterprise Disks (the cheapest single on sale was 185, eBay
+# 14 TB, 27 Sep 2026); below it a multi-disk title is priced per disk ("5 stk 16TB" for 3,000 NOK) and counts as one
+DISK_MIN_NOK_PER_TB = 100
 # heatsinks (ticket #33): one eBay query per common Machine family; finn.no is small, so generic words
 HEATSINK_QUERIES = {
     "ebay_uk": ["r730 heatsink", "r730xd heatsink", "r740 heatsink", "r740xd heatsink", "r630 heatsink",

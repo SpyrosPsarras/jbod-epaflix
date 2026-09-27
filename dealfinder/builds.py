@@ -108,11 +108,14 @@ def _pick(rows, need, trips, unit):
 
 def _pick_stock(rows, need, trips):
     """Disks: `need` units, each the cheapest next unit on sale given the trips already driven. A Listing sells up to
-    its stock ("_units"): the first unit at its Landed cost, each more at "_extra" (price, VAT and its own extra
-    shipping, no second trip). ([(row, units used, NOK)], NOK, trips), or None when too few are on sale.
+    "_units": the first unit at its Landed cost, each more at "_extra" (a single disk's price, VAT and its own extra
+    shipping, no second trip; 0 for the rest of a lot, which the first unit paid for).
+    ([(row, units used, NOK)], NOK, trips), or None when too few are on sale.
 
-    ponytail: greedy per unit, like _pick. One Listing that covers the whole need is tried too, so a seller whose
-    first unit is dear but whose extra units are cheap is not missed; a mix of two such sellers can be.
+    Two answers, the cheaper wins: a greedy one, unit by unit, that drives a Pickup trip once for several Listings at
+    one place; and an exact one over how many units each Listing supplies, which counts each Listing's trip on its own
+    (then recounted, so its NOK is what the owner pays). ponytail: a mix that needs both a shared trip and a lot can
+    be missed.
     """
     if sum(r["_units"] for r in rows) < need:
         return None
@@ -120,22 +123,34 @@ def _pick_stock(rows, need, trips):
     def first(r, trips):
         return r["_nok"] - r["_trip"] if r["_place"] in trips else r["_nok"]
 
-    def whole_nok(r):
-        return first(r, trips) + (need - 1) * r["_extra"]
-    whole = min((r for r in rows if r["_units"] >= need), key=whole_nok, default=None)
-    used, total, driven = {}, 0.0, set(trips)  # id(row) -> (row, units used, NOK)
-    for _ in range(need):
-        def unit_nok(r):
-            return r["_extra"] if id(r) in used else first(r, driven)
-        r = min((r for r in rows if id(r) not in used or used[id(r)][1] < r["_units"]), key=unit_nok)
-        nok = unit_nok(r)
-        _, n, so_far = used.get(id(r), (r, 0, 0.0))
-        used[id(r)] = (r, n + 1, so_far + nok)
-        total += nok
-        driven.add(r["_place"])
-    if whole and whole_nok(whole) < total:
-        return [(whole, need, whole_nok(whole))], whole_nok(whole), set(trips) | {whole["_place"]}
-    return list(used.values()), total, driven
+    def priced(counts):  # [(row, units)] -> ([(row, units, NOK)], NOK, trips), each place's trip driven once
+        picks, driven = [], set(trips)
+        for r, k in counts:
+            picks.append((r, k, first(r, driven) + (k - 1) * r["_extra"]))
+            driven.add(r["_place"])
+        return picks, sum(nok for _, _, nok in picks), driven
+
+    used = {}  # id(row) -> [row, units]
+    for left in range(need, 0, -1):
+        driven = set(trips) | {u[0]["_place"] for u in used.values()}
+
+        def per_unit(r):  # the next unit of a Listing already used, else a new one's NOK per unit it could supply
+            k = min(r["_units"], left)
+            return r["_extra"] if id(r) in used else (first(r, driven) + (k - 1) * r["_extra"]) / k
+        r = min((r for r in rows if id(r) not in used or used[id(r)][1] < r["_units"]), key=per_unit)
+        used.setdefault(id(r), [r, 0])[1] += 1
+    greedy = priced(used.values())
+    # exact: the cheapest units per unit count; singles need no search, the cheapest n of them are best
+    singles = sorted((r for r in rows if r["_units"] == 1), key=lambda r: first(r, trips))
+    best = {0: []}  # units -> [(row, units)], cheapest found, from Listings of several units
+    for r in (r for r in rows if r["_units"] > 1):
+        for have, counts in list(best.items()):
+            for k in range(1, min(r["_units"], need - have) + 1):
+                if have + k not in best or priced(counts + [(r, k)])[1] < priced(best[have + k])[1]:
+                    best[have + k] = counts + [(r, k)]
+    exact = min((priced(counts + [(r, 1) for r in singles[:need - have]]) for have, counts in best.items()
+                 if need - have <= len(singles)), key=lambda p: p[1])
+    return exact if exact[1] < greedy[1] else greedy
 
 
 def _complete(machine, cpus, rams, heatsinks, pick):
@@ -173,8 +188,8 @@ def _complete(machine, cpus, rams, heatsinks, pick):
 
 
 def best_build(machine, disks_by_capacity, parts, parts_nok, trips, pick):
-    """Cheapest Build for one completed Machine that reaches TARGET_TIB, or None. A Disk Listing supplies up to its
-    stock (eBay reads it; every other Listing is one disk)."""
+    """Cheapest Build for one completed Machine that reaches TARGET_TIB, or None. A Disk Listing supplies its lot, or
+    up to its stock (eBay reads it; every other single is one disk)."""
     max_disks = machine["facts"]["bays_35"] - BOOT_BAYS
     best = None
     for capacity, disks in disks_by_capacity.items():
@@ -199,9 +214,10 @@ def rank_builds(machines, disks, parts):
     for r in (*machines, *disks, *parts):  # once per row, not per comparison in _pick
         r["_nok"], r["_trip"] = float(r["landed_nok"]), (r.get("costs") or {}).get("pickup_trip", 0)
         r["_place"] = _trip_place(r)
-    for d in disks:  # a row saved before Disk stock has no count: one disk
-        d["_units"] = (d["facts"] or {}).get("count", 1)
-        d["_extra"] = float((d.get("costs") or {}).get("extra_unit", d["_nok"]))
+    for d in disks:  # a lot is bought whole: its extra disks cost nothing more. Rows saved before lots are one disk
+        lot, stock = d["facts"].get("count", 1), d["facts"].get("stock", 1)
+        d["_units"] = lot if lot > 1 else stock
+        d["_extra"] = 0.0 if lot > 1 else float((d.get("costs") or {}).get("extra_unit", d["_nok"]))
         by_capacity.setdefault(float(d["capacity_tb"]), []).append(d)
     for r in parts:
         f = r["facts"]

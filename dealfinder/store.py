@@ -134,7 +134,8 @@ _RANKED_WHERE = f"""
 
 
 def _history_key(kind, facts):
-    """(group key, units) of a qualifying Listing on the price history page. A Disk groups by capacity instead."""
+    """(group key, units) of a qualifying Listing on the price history page. A Disk groups by capacity instead; its
+    units are the disks of a lot."""
     if kind == "machine":
         return facts["model"], None
     if kind == "cpu":
@@ -143,7 +144,7 @@ def _history_key(kind, facts):
         return f"DDR{facts['ddr']} {facts['type']} {facts['gb_per_stick']} GB", facts["gb_per_stick"] * facts["sticks"]
     if kind == "heatsink":
         return ", ".join(facts["fits"]), facts["count"]
-    return None, None
+    return None, facts.get("count", 1)
 
 
 class Store:
@@ -236,7 +237,7 @@ class Store:
                 GROUP BY 1, 2, 3
             """, (kind,)).fetchall()
         with self._conn() as c:
-            series = {"disk": weekly("disk", "capacity_tb::float", "landed_nok / capacity_tb"),
+            series = {"disk": weekly("disk", "capacity_tb::float", "landed_nok / (capacity_tb * coalesce(units, 1))"),
                       "machine": weekly("machine", "model", "landed_nok"),
                       **{kind: weekly(kind, "model", "landed_nok / units") for kind in ("cpu", "ram", "heatsink")}}
             builds = c.execute(f"""
@@ -255,7 +256,8 @@ class Store:
             rows = c.execute(f"""
                 SELECT kind, model, cap, percentile_cont(0.25) WITHIN GROUP (ORDER BY v) AS p25
                 FROM (SELECT kind, model, capacity_tb::float AS cap, source, source_id,
-                             min(landed_nok / CASE kind WHEN 'disk' THEN capacity_tb WHEN 'machine' THEN 1
+                             min(landed_nok / CASE kind WHEN 'disk' THEN capacity_tb * coalesce(units, 1)
+                                                        WHEN 'machine' THEN 1
                                                         ELSE units END) AS v
                       FROM price_observations
                       WHERE landed_nok IS NOT NULL AND seen_at > now() - interval '{int(HISTORY_WEEKS)} weeks'
@@ -360,7 +362,8 @@ class Store:
         with self._conn() as c:
             return c.execute(_FRESH + f"""
                 SELECT l.source, l.source_id, title, url, capacity_tb, condition, landed_nok, location, pickup_only,
-                       round(landed_nok / capacity_tb, 2) AS nok_per_tb, l.price, l.currency, p.prev_price, l.costs,
+                       round(landed_nok / (capacity_tb * coalesce((facts->>'count')::numeric, 1)), 2) AS nok_per_tb,
+                       (facts->>'count')::int AS count, l.price, l.currency, p.prev_price, l.costs,
                        l.last_seen < f.since AS gone, l.last_seen
                 FROM listings l JOIN fresh f ON f.source = l.source {_PREV}
                 WHERE kind = 'disk' AND {_RANKED_WHERE}

@@ -75,7 +75,7 @@ def fake_finn_fetch(url):
         docs = FINN["search"].get(url.split("?", 1)[1], [])
         blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
         return f"<html><script>{blob}</script></html>"
-    item = FINN["items"][url.rstrip("/").rsplit("/", 1)[1]]
+    item = FINN["items"].get(url.rstrip("/").rsplit("/", 1)[1], {"description": ""})  # recorded: Machines only
     paragraphs = "".join(f"<p>{htmllib.escape(line)}</p>" for line in (item["description"] or "").split("\n"))
     return f'<section data-testid="description"><div class="whitespace-pre-wrap">{paragraphs}</div></section>'
 
@@ -1030,17 +1030,17 @@ class EbayDiskStockEndToEnd(unittest.TestCase):
 
     def test_more_than_is_its_threshold_capped_per_buyer_and_unknown_extra_shipping_is_charged_again(self):
         g = self.stored("G")
-        self.assertEqual(g["facts"]["count"], 3)
+        self.assertEqual(g["facts"]["stock"], 3)
         self.assertAlmostEqual(g["costs"]["extra_unit"], float(g["landed_nok"]), places=2)
-        self.assertEqual(self.stored("A")["facts"]["count"], 10)
-        self.assertEqual(self.stored("B")["facts"]["count"], 1)
+        self.assertEqual(self.stored("A")["facts"]["stock"], 10)
+        self.assertEqual(self.stored("B")["facts"]["stock"], 1)
         self.assertNotIn("extra_unit", self.stored("B")["costs"])
 
     def test_item_calls_go_to_the_cheapest_qualifying_disks_and_a_failed_one_counts_one_disk(self):
         fetched = [u.rsplit("/", 1)[1] for u in self.calls if "/item/" in u]
         self.assertEqual(sorted(fetched), sorted("MBCDEFAGH"))
-        self.assertEqual(self.stored("H")["facts"]["count"], 1)
-        self.assertEqual(self.stored("I")["facts"]["count"], 1)
+        self.assertEqual(self.stored("H")["facts"]["stock"], 1)
+        self.assertEqual(self.stored("I")["facts"]["stock"], 1)
         self.assertIn('dealfinder_source_up{source="ebay_uk"} 1', self.app.metrics())
 
     def test_stock_is_read_once_a_day(self):
@@ -1048,7 +1048,56 @@ class EbayDiskStockEndToEnd(unittest.TestCase):
         with mock.patch("dealfinder.sources.EBAY_STOCK_LOOKUPS", 8):
             self.app.hunt()
         self.assertEqual([u.rsplit("/", 1)[1] for u in self.calls if "/item/" in u], ["H"])  # only the failed one
-        self.assertEqual(self.stored("A")["facts"]["count"], 10)
+        self.assertEqual(self.stored("A")["facts"]["stock"], 10)
+
+
+class FinnDiskLotsEndToEnd(unittest.TestCase):
+    """Seam 1: a title that names several disks ("4x 16TB") is one lot at its price; a lot priced per disk, in the
+    title, the description or under DISK_MIN_NOK_PER_TB, is one disk."""
+
+    @classmethod
+    def setUpClass(cls):
+        full = "2x Xeon E5-2680 v4. 128GB RAM. 2x 750W PSU. Dell HBA330. 12x 3.5\" caddies. Rails included."
+        ship = ["shipping_exists", "seller_pays_shipping"]
+        machines = [_doc(1, "Dell PowerEdge R730xd 12x LFF", 6000, 59.91, 10.72, ship)]
+        disks = [_doc(10, '4x Seagate Exos X16 16TB 3.5" SATA', 7000, 60.4, 5.5, ship),       # a lot: 1,750 a disk
+                 _doc(11, '4 stk Seagate Exos X16 16TB 3.5" SATA', 1400, 60.4, 5.5, ship),    # description: per disk
+                 _doc(12, '5 stk Seagate Exos X16 16TB 3.5" SATA', 1300, 60.4, 5.5, ship)]    # 16 NOK/TB: per disk
+        disks += [_doc(20 + i, 'Seagate Exos X16 16TB 3.5" SATA', 2000 + i, 60.4, 5.5, ship) for i in range(3)]
+        descriptions = {"1": full, "10": "Fire disker, selges samlet.", "11": "Fire like disker. Pris per stk.",
+                        "12": "Fem disker."}
+
+        def fetch(url):
+            if "/search?" in url:
+                q = urllib.parse.parse_qs(url.split("?", 1)[1])
+                docs = (machines if q["q"] == ["r730xd"] else disks) if q["condition"] == ["3", "4"] else []
+                blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
+                return f"<script>{blob}</script>"
+            return f'<section data-testid="description"><p>{descriptions[url.rsplit("/", 1)[1]]}</p></section>'
+
+        cls.pg = _pg()
+        cls.app = App(cls.pg.get_uri(), [FinnSource(fetch=fetch, pause=0)], fx=RATES.__getitem__,
+                      disk_queries={"finn": ["exos"]}, machine_queries=["r730xd"], pause=0, router=fake_router)
+        cls.app.hunt()
+        cls.page = cls.app.page()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.pg.cleanup()
+
+    def test_the_lot_and_the_cheapest_single_make_the_build(self):
+        # 5 disks: the lot of 4 (7,000) + the 1,300 single, not 5 singles at 1,300..2,002 (8,703 + fees)
+        row = re.search(r'<tr data-build="1" data-score="[\d.]+" data-landed="([\d.]+)">(.*?)</tr>', self.page, re.S)
+        self.assertAlmostEqual(float(row[1]), _shipped(6000) + _shipped(7000) + _shipped(1300), places=2)
+        self.assertEqual(sorted(re.findall(r'data-disk="(\d+)" data-count="(\d+)"', row[2])), [("10", "4"), ("12", "1")])
+        self.assertIn(f"4 used, {_shipped(7000):,.0f} NOK", row[2])
+
+    def test_best_disks_price_a_lot_per_disk_and_say_it_is_a_lot(self):
+        rows = dict(re.findall(r'data-listing="(\d+)" data-nok-per-tb="([\d.]+)"', self.page))
+        self.assertAlmostEqual(float(rows["10"]), round(_shipped(7000) / 64, 2), places=2)
+        self.assertAlmostEqual(float(rows["11"]), round(_shipped(1400) / 16, 2), places=2)
+        self.assertAlmostEqual(float(rows["12"]), round(_shipped(1300) / 16, 2), places=2)
+        self.assertIn("<td>4 &times; 16 TB</td>", self.page.split('data-listing="10"', 1)[1].split("</tr>", 1)[0])
 
 
 class PickStock(unittest.TestCase):
@@ -1057,6 +1106,12 @@ class PickStock(unittest.TestCase):
     @staticmethod
     def row(nok, units=1, extra=None):
         return {"_nok": nok, "_trip": 0, "_place": None, "_units": units, "_extra": nok if extra is None else extra}
+
+    def test_a_lot_is_taken_whole_before_dearer_singles(self):
+        lot, singles = self.row(6000, units=4, extra=0), [self.row(2000) for _ in range(5)]
+        picks, total, _ = _pick_stock([lot, *singles], 5, set())
+        self.assertEqual(total, 6000 + 2000)
+        self.assertEqual(sorted(n for _, n, _ in picks), [1, 4])
 
     def test_extra_units_follow_the_first_and_stock_is_a_limit(self):
         a, b, c = self.row(100, units=2, extra=40), self.row(90), self.row(95)

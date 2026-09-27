@@ -9,9 +9,9 @@ import urllib.parse
 from dataclasses import asdict, replace
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-from .config import (CEILING_NOK, CPU_QUERIES, DISK_QUERIES, HEATSINK_QUERIES, HISTORY_WEEKS, HUNT_INTERVAL_S,
-                     MACHINE_QUERIES, MAX_QUERY_CHARS, PICKUP_MAX_MINUTES, PICKUP_NOK_PER_KM, RAM_MIN_NOK_PER_GB,
-                     RAM_QUERIES, RAM_TARGET_GB, SOURCE_PAUSE_S, TARGET_TIB)
+from .config import (CEILING_NOK, CPU_QUERIES, DISK_MIN_NOK_PER_TB, DISK_QUERIES, HEATSINK_QUERIES, HISTORY_WEEKS,
+                     HUNT_INTERVAL_S, MACHINE_QUERIES, MAX_QUERY_CHARS, PICKUP_MAX_MINUTES, PICKUP_NOK_PER_KM,
+                     RAM_MIN_NOK_PER_GB, RAM_QUERIES, RAM_TARGET_GB, SOURCE_PAUSE_S, TARGET_TIB)
 from .builds import HIDDEN, Build, machine_needs, rank_builds
 from .costs import OsrmRouter, cost_breakdown, machine_penalties
 from .rules import Unreadable, priced_per_unit, read_cpu, read_disk, read_heatsink, read_machine, read_ram
@@ -23,7 +23,7 @@ KINDS = ("disk", "machine", "cpu", "ram", "heatsink")
 
 CONDITION_LABEL = {"new": "New", "refurbished": "Refurbished", "used": "Used", "for_parts": "For parts"}
 FACT_LABEL = {"capacity": "capacity", "form_factor": "3.5\" or 2.5\"", "disk_class": "Disk class",
-              "condition": "condition", "quantity": "single-unit price", "shipping": "shipping to Norway",
+              "condition": "condition", "quantity": "how many disks the price buys", "shipping": "shipping to Norway",
               "generation": "generation", "bays_35": "3.5\" bay count", "model": "CPU model", "platform": "CPU socket",
               "gb_per_stick": "GB per stick", "ddr": "DDR generation", "type": "RDIMM or LRDIMM",
               "fits": "Machine model it fits",
@@ -201,8 +201,9 @@ def _build_rows(builds, sort, can_buy=True):
                   f"{_link(r)}: {n} used, {nok:,.0f} NOK{_breakdown(r)}</li>" for r, n, nok in b.parts["parts"]]
         items += [f'<li data-disk="{_e(d["source_id"])}" data-count="{n}" data-nok="{nok:.2f}">Disk {_link(d)}: '
                   f"{n} used, {nok:,.0f} NOK{_breakdown(d)}"
-                  + (f'<br><small class="costs">each after the first {d["costs"]["extra_unit"]:,.0f}</small>'
-                     if n > 1 else "") + "</li>" for d, n, nok in b.disks]
+                  + (f'<br><small class="costs">each after the first {extra:,.0f}</small>'
+                     if n > 1 and (extra := (d["costs"] or {}).get("extra_unit")) else "") + "</li>"
+                  for d, n, nok in b.disks]
         rows.append(
             f'<tr data-build="{_e(m["source_id"])}" data-score="{b.score:.2f}" data-landed="{b.landed_nok:.2f}">'
             f"<td>{b.score:,.0f}</td><td>{b.landed_nok:,.0f}</td><td>{b.usable_tib:.1f}</td>"
@@ -223,7 +224,8 @@ def _per_unit(row):
     """Landed NOK per TB for a Disk, per CPU or heatsink for those Listings, per GB for RAM; None for a Machine or
     without a Landed cost."""
     f = row["facts"] or {}
-    unit = row["capacity_tb"] or f.get("count") or (f.get("gb_per_stick") or 0) * f.get("sticks", 0)
+    unit = (row["capacity_tb"] * f.get("count", 1) if row["capacity_tb"] else f.get("count")
+            or (f.get("gb_per_stick") or 0) * f.get("sticks", 0))
     return row["landed_nok"] / unit if row["landed_nok"] and unit else None
 
 
@@ -395,16 +397,22 @@ class App:
         facts_json = asdict(facts)
         # the readers see the title only; a price per unit stated in the description is applied here.
         # ponytail: a per-unit Listing supplies one unit, even when the seller has several ("Bare 4 igjen")
-        unit = {"cpu": "count", "ram": "sticks", "heatsink": "count"}.get(kind)
+        unit = {"disk": "count", "cpu": "count", "ram": "sticks", "heatsink": "count"}.get(kind)
         if unit and priced_per_unit(listing.description, listing.price):
             facts_json[unit] = 1
         penalties = machine_penalties(facts_json) if kind == "machine" and facts.bays_35 is not None else None
         costs, problem = cost_breakdown(listing, self.fx, source.foreign, self.router, kind, penalties)
         # unknown shipping or place is a missing fact; a pickup beyond the limit is a disqualifier (rejected)
         landed = None if problem else costs["total"]
-        if kind == "disk":  # a Disk Listing sells up to its stock; each unit after the first pays its own shipping
-            facts_json["count"] = listing.stock
-            if landed and listing.stock > 1:  # unknown extra shipping: charged in full again, never a fake bargain
+        if kind == "disk":
+            # a lot ("4x 16TB") is bought whole at its price; a single disk up to its stock, each unit after the first
+            # paying its own extra shipping (unknown: charged in full again, never a fake bargain).
+            # ponytail: a fixed floor, as for RAM: a lot under DISK_MIN_NOK_PER_TB is read as one disk
+            facts_json["stock"] = listing.stock
+            lot_tb = (facts.capacity_tb or 0) * facts_json["count"]
+            if facts_json["count"] > 1 and (not lot_tb or costs["price"] / lot_tb < DISK_MIN_NOK_PER_TB):
+                facts_json["count"] = 1
+            if landed and facts_json["count"] == 1 and listing.stock > 1:
                 more = replace(listing, shipping=listing.shipping if listing.extra_shipping is None
                                else listing.extra_shipping)
                 costs["extra_unit"] = cost_breakdown(more, self.fx, source.foreign, self.router, kind)[0]["total"]
@@ -528,9 +536,10 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
             return _row_state(r, per, _deal(deals, kind, r), unit.get(kind, "NOK"))
         disk_rows = "".join(
             '<tr data-listing="{id}" data-nok-per-tb="{npt:.2f}"{attrs}><td><a href="{url}">{title}</a>{note}</td>'
-            '<td>{cap:g} TB</td><td>{cond}</td><td>{where}</td><td>{landed:,.0f}</td><td>{npt:,.0f}</td></tr>'.format(
+            '<td>{lot}{cap:g} TB</td><td>{cond}</td><td>{where}</td><td>{landed:,.0f}</td><td>{npt:,.0f}</td></tr>'.format(
                 id=_e(r["source_id"]), npt=float(r["nok_per_tb"]), url=_e(_safe_url(r["url"])), title=_e(r["title"]),
-                cap=float(r["capacity_tb"]), cond=_e(CONDITION_LABEL.get(r["condition"], r["condition"] or "?")),
+                cap=float(r["capacity_tb"]), lot=f'{r["count"]} &times; ' if (r["count"] or 1) > 1 else "",
+                cond=_e(CONDITION_LABEL.get(r["condition"], r["condition"] or "?")),
                 where=_where(r), landed=float(r["landed_nok"]), attrs=st[0], note=st[1] + _breakdown(r))
             for r in disks for st in [state("disk", r, float(r["nok_per_tb"]))])
         machine_rows = "".join(

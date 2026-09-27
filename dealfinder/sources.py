@@ -147,8 +147,10 @@ class FinnSource:
     _search_url = "https://www.finn.no/recommerce/forsale/search"
     _buckets = (("new", ("1", "2")), ("used", ("3", "4")))  # 1 Helt ny, 2 Som ny, 3 Pent brukt, 4 Godt brukt
 
-    # a Part's description matters only for a price per unit, so only a Part whose title names several units is read
-    _PART_UNITS = {"cpu": (read_cpu, "count"), "ram": (read_ram, "sticks"), "heatsink": (read_heatsink, "count")}
+    # a Part's or Disk's description matters only for a price per unit, so only one whose title names several units
+    # is read
+    _PART_UNITS = {"disk": (read_disk, "count"), "cpu": (read_cpu, "count"), "ram": (read_ram, "sticks"),
+                   "heatsink": (read_heatsink, "count")}
 
     def __init__(self, fetch=http_text, pause=SOURCE_PAUSE_S):
         self._fetch, self._pause = fetch, pause
