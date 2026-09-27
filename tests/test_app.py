@@ -119,6 +119,11 @@ class HuntToPage(unittest.TestCase):
     def all_listings(self):
         return [it for v in FIXTURE.values() for it in v["itemSummaries"]]
 
+    def test_no_deals_without_earlier_weeks(self):
+        _, html = self.get("/")
+        self.assertGreater(len(self.rows()), 5)
+        self.assertNotIn('data-deal="1"', html)
+
     def test_best_disks_sorted_by_nok_per_tb(self):
         rows = self.rows()
         self.assertGreater(len(rows), 5)
@@ -1773,13 +1778,14 @@ class PriceHistory(unittest.TestCase):
             self.assertEqual(old, (f"{landed / units:,.0f}", f"{landed / units:,.0f}", "1"), key)
             self.assertEqual(new, old, key)
 
-    def test_listings_under_the_history_low_quartile_are_deals(self):
-        # 16 TB history: 1,500..1,900 last week, 1,200..1,600 now; 25th percentile of the ten = 1,425 (per TB, shipped)
+    def test_listings_under_the_lowest_price_of_earlier_weeks_are_deals(self):
+        # 16 TB: 1,500..1,900 last week, 1,200..1,600 now. Last week's low is 1,500 (per TB, shipped); this week's own
+        # prices are not history, or the low would be 1,200 and nothing would beat it
         page = self.main
         rows = dict(re.findall(r'<tr data-listing="(\d+)"([^>]*)>', page))
         self.assertEqual({i for i, attrs in rows.items() if 'data-deal="1"' in attrs}, {"10", "11", "12"})  # 1,200..1,400
         self.assertIn('data-drop="1" class="deal" data-deal="1"', rows["10"])  # a drop and a deal both show
-        self.assertIn(f"That's a deal: cheaper than 3 in 4 prices of the last 12 weeks (under {_shipped(1425) / 16:,.0f} NOK per TB)",
+        self.assertIn(f"That's a deal: under the lowest price of earlier weeks ({_shipped(1500) / 16:,.0f} NOK per TB)",
                       page)
         # one Listing per Machine model or Part is too little history for a deal price
         self.assertEqual(page.count('data-deal="1"'), 3)

@@ -79,7 +79,7 @@ A Listing that disappeared from its Source since the last Hunt, usually sold. Ke
 _Avoid_: Sold, expired, deleted
 
 **Deal**:
-A live ranked Listing whose Landed cost per unit (per TB, CPU, GB or heatsink; a Machine as a whole) is under the 25th percentile of its group's price history: same Disk capacity, Machine model or Part key, all Sources, the price history page's weeks. A group seen in fewer than 5 Listings has no Deals. Highlighted with "That's a deal".
+A live ranked Listing whose Landed cost per unit (per TB, CPU, GB or heatsink; a Machine as a whole) is under the lowest price its group had before the current week: same Disk capacity, Machine model or Part key, all Sources, within the price history page's weeks. A group seen in fewer than 5 Listings in those weeks has no Deals. Highlighted with "That's a deal".
 _Avoid_: Bargain, steal
 
 **Ceiling**:
