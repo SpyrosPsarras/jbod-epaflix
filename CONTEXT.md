@@ -14,6 +14,10 @@ _Avoid_: Host, box, server (alone), JBOD
 A working 3.5" enterprise or NAS hard drive of at least 14TB.
 _Avoid_: Drive, HDD (alone)
 
+**Part**:
+A CPU, RAM or Heatsink Listing that completes a Machine. Only CPUs are searched so far.
+_Avoid_: Component, add-on
+
 **Build**:
 One Machine plus enough same-capacity Disks to reach at least 40 TiB usable in RAIDZ2. The unit that gets ranked.
 _Avoid_: Deal, bundle, combo
@@ -21,7 +25,7 @@ _Avoid_: Deal, bundle, combo
 ### Where it comes from
 
 **Listing**:
-One offer for a Machine or Disks on a Source, at one moment in time.
+One offer for a Machine, Disks or CPUs on a Source, at one moment in time.
 _Avoid_: Ad, item, offer
 
 **Source**:

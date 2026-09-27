@@ -218,7 +218,7 @@ class FinnSourceRobustness(unittest.TestCase):
                 raise urllib.error.HTTPError(url, 404, "gone", {}, None)
             return '<section data-testid="description"><p>12x 3.5" LFF</p></section>'
 
-        listings = {l.source_id: l for l in FinnSource(fetch=fetch, pause=0).search("r730", details=True)}
+        listings = {l.source_id: l for l in FinnSource(fetch=fetch, pause=0).search("r730", "machine")}
         self.assertEqual(sorted(listings), ["2", "3"])            # the string and the list-coordinates doc are skipped
         self.assertIsNone(listings["2"].description)              # a non-finn URL is never fetched
         self.assertIsNone(listings["3"].description)              # a dead page leaves the description empty
@@ -228,14 +228,14 @@ class FinnSourceRobustness(unittest.TestCase):
 class _BrokenSource:
     name, foreign, supports_machines = "broken", False, False
 
-    def search(self, query, details=False):
+    def search(self, query, kind="disk"):
         raise RuntimeError("upstream page changed")
 
 
 class _EmptySource:
     name, foreign, supports_machines = "empty", False, False
 
-    def search(self, query, details=False):
+    def search(self, query, kind="disk"):
         return []
 
 
@@ -246,7 +246,7 @@ class _GatedSource(_EmptySource):
     def __init__(self):
         self.gate = threading.Event()
 
-    def search(self, query, details=False):
+    def search(self, query, kind="disk"):
         self.gate.wait(30)
         return []
 
@@ -746,6 +746,77 @@ class EbayMachinesAndWeakSellers(unittest.TestCase):
         self.assertEqual(sorted(fetched), ["1", "2", "5"])
 
 
+class CpusEndToEnd(unittest.TestCase):
+    """Seam 1: CPU Listings from eBay UK and finn.no land on the Best CPUs tab at their Landed cost per CPU."""
+
+    @classmethod
+    def setUpClass(cls):
+        items = [_ebay_item("c1", "Intel Xeon E5-2680 v4 SR2N7 2.4GHz 14 Core 28 Thread LGA2011-3 CPU", 19.36, 2.94),
+                 _ebay_item("c2", "2x Intel Xeon Gold 6130 SR3B9 2.10GHz 22MB L3 Cache 16-Core CPU Processor", 31.90, 2.94),
+                 _ebay_item("c3", "Dell PowerEdge R730 2x E5-2680 v4 128GB", 150, 20),                        # a server
+                 _ebay_item("c4", "Matched Pair Intel Xeon E5-2690 V4 E5-2680 V4 E5-2660 V4 E5-2650V4 LGA2011-3 CPU",
+                            22.79, 0)]                                                                      # which model?
+        cls.filters = []
+
+        def ebay(url, headers=None, data=None):
+            if "oauth2/token" in url:
+                return {"access_token": "t", "expires_in": 7200}
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(url).query)
+            cls.filters.append((q.get("category_ids"), q["filter"][0]))
+            return {"itemSummaries": items if q.get("category_ids") == ["164"] else []}
+
+        def finn(url):
+            q = urllib.parse.parse_qs(url.split("?", 1)[1])
+            docs = [_doc(50, "2 stk Intel Xeon E5-2690 v4, selges samlet eller hver for seg", 850, 59.9, 10.7,
+                         ["shipping_exists", "seller_pays_shipping"])]
+            docs = docs if q["q"] == ["xeon e5"] and q["condition"] == ["3", "4"] else []
+            blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
+            return f"<script>{blob}</script>"
+
+        cls.pg = _pg()
+        cls.app = App(cls.pg.get_uri(), [EbaySource("id", "secret", fetch=ebay), FinnSource(fetch=finn, pause=0)],
+                      fx=RATES.__getitem__, disk_queries={"ebay_uk": []}, machine_queries=["r730xd"],
+                      cpu_queries={"ebay_uk": ["e5-2680 v4"], "finn": ["xeon e5"]}, pause=0, router=fake_router)
+        cls.app.hunt()
+        cls.page = cls.app.page()
+        cls.rows = [(i, float(n)) for i, n in re.findall(r'data-cpu="([^"]+)" data-nok-per-cpu="([\d.]+)"', cls.page)]
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.pg.cleanup()
+
+    def test_best_cpus_show_landed_nok_per_cpu_sorted(self):
+        one = (19.36 + 2.94) * RATES["GBP"] * 1.25               # eBay: price + shipping + VAT
+        pair = (31.90 + 2.94) * RATES["GBP"] * 1.25 / 2          # one Listing, two CPUs
+        self.assertEqual([i for i, _ in self.rows], ["c2", "c1", "50"])
+        rows = dict(self.rows)
+        self.assertAlmostEqual(rows["c1"], one, places=1)
+        self.assertAlmostEqual(rows["c2"], pair, places=1)
+        self.assertAlmostEqual(rows["50"], 850 / 2, places=2)   # finn: free shipping, no VAT
+        for text in ("<td>LGA3647</td><td>Gold 6130</td><td>2</td>", "<td>LGA2011-3</td><td>E5-2680 v4</td><td>1</td>"):
+            self.assertIn(text, self.page)
+
+    def test_server_in_a_cpu_search_is_not_listed_and_unreadable_cpus_are(self):
+        self.assertNotIn("c3", dict(self.rows))
+        self.assertNotIn('data-unreadable="c3"', self.page)
+        self.assertIn('data-unreadable="c4" data-missing="model"', self.page)
+
+    def test_ebay_cpu_search_uses_its_category_and_price_range(self):
+        self.assertIn((["164"], "buyingOptions:{FIXED_PRICE},deliveryCountry:NO,price:[3..600],priceCurrency:GBP"),
+                      self.filters)
+        self.assertIn('dealfinder_listings{source="ebay_uk",kind="cpu",state="qualified"} 2', self.app.metrics())
+
+    def test_search_and_track_accept_cpus(self):
+        page = self.app.search_page("xeon e5", "cpu")
+        self.assertIn('data-result="50" data-qualifies="1"', page)
+        self.assertIn("<th>NOK per CPU</th>", page)
+        order = re.findall(r'data-result="([^"]+)" data-qualifies="1"', page)
+        self.assertEqual(order, ["c2", "c1", "50"])                  # ranked by NOK per CPU, like the tab
+        self.assertRegex(page.split('data-result="50"', 1)[1].split("</tr>", 1)[0], r"<td>850</td><td>425</td>")
+        self.assertIn('<option value="cpu">CPUs</option>', self.page)
+        self.assertIn('data-tracked="cpu:e5-2680 v4"', self.page)
+
+
 class SearchAndTrack(unittest.TestCase):
     """Seam 1: Search every Source now, Track the query, and the next Hunt runs it."""
 
@@ -806,6 +877,8 @@ class SearchAndTrack(unittest.TestCase):
             self.assertIn((q, "machine"), tracked)
         for q in ("exos 14tb", "exos 16tb", "exos 18tb", "exos 20tb"):
             self.assertIn((q, "disk"), tracked)
+        for q in ("e5-2680 v4", "xeon gold 6130", "epyc 7302", "xeon e5", "epyc"):
+            self.assertIn((q, "cpu"), tracked)
         before = len(self.app.store.tracked())
         App(self.pg.get_uri(), self.sources, fx=RATES.__getitem__, disk_queries={"finn": ["other"]}, pause=0,
             router=fake_router)  # a restart must not re-seed
@@ -929,7 +1002,7 @@ class AliExpressHighRisk(unittest.TestCase):
             detail = app.store.last_hunt()["detail"]
             self.assertFalse(detail["aliexpress"]["ok"])
             self.assertIn("ALIEXPRESS_APP_KEY", detail["aliexpress"]["error"])
-            self.assertEqual(detail["finn"], {"ok": True, "disk": 0, "machine": 1})
+            self.assertEqual(detail["finn"], {"ok": True, "disk": 0, "machine": 1, "cpu": 0})
             page = app.page()
             self.assertIn('data-fault="aliexpress"', page)
             self.assertIn('data-machine="1"', page)
@@ -989,7 +1062,7 @@ class AliExpressHighRisk(unittest.TestCase):
                       router=fake_router)
             app.hunt()
             self.assertEqual(seen, ["nothing", "exos 18tb"])
-            self.assertEqual(app.store.last_hunt()["detail"]["aliexpress"], {"ok": True, "disk": 1, "machine": 0})
+            self.assertEqual(app.store.last_hunt()["detail"]["aliexpress"], {"ok": True, "disk": 1, "machine": 0, "cpu": 0})
         finally:
             pg.cleanup()
         bad = AliExpressSource("key", "secret", fetch=lambda url: {"aliexpress_affiliate_product_query_response": {
@@ -1000,11 +1073,13 @@ class AliExpressHighRisk(unittest.TestCase):
     def test_a_new_source_gets_its_starting_queries_on_an_already_seeded_database(self):
         pg = _pg()
         try:
-            App(pg.get_uri(), [], fx=RATES.__getitem__, disk_queries={"finn": ["exos"]}, machine_queries=["r730xd"])
+            App(pg.get_uri(), [], fx=RATES.__getitem__, disk_queries={"finn": ["exos"]}, machine_queries=["r730xd"],
+                cpu_queries={"finn": []})  # a database from before CPUs
             app = App(pg.get_uri(), [], fx=RATES.__getitem__, disk_queries={"finn": ["other"], "aliexpress": ["x20"]},
-                      machine_queries=["r740"])
+                      machine_queries=["r740"], cpu_queries={"finn": ["xeon e5"]})
             got = {(r["query"], r["kind"], r["source"]) for r in app.store.tracked()}
-            self.assertEqual(got, {("exos", "disk", "finn"), ("r730xd", "machine", ""), ("x20", "disk", "aliexpress")})
+            self.assertEqual(got, {("exos", "disk", "finn"), ("r730xd", "machine", ""), ("x20", "disk", "aliexpress"),
+                                   ("xeon e5", "cpu", "finn")})
         finally:
             pg.cleanup()
 
@@ -1081,7 +1156,7 @@ class PriceHistory(unittest.TestCase):
 
     def test_sections_are_tabs_with_sticky_headers(self):
         for html, labels in ((self.page, ["Best Build per week", "Disks, NOK per TB", "Machines, NOK"]),
-                             (self.app.page(), ["Builds", "Best Disks", "Best Machines", "Could not read"])):
+                             (self.app.page(), ["Builds", "Best Disks", "Best Machines", "Best CPUs", "Could not read"])):
             self.assertEqual(re.findall(r'<label for="tab\d">([^<]+)</label>', html), labels)
             self.assertEqual(html.count("<section>"), len(labels))
             self.assertEqual(html.count('name="tab" id="tab0" checked'), 1)

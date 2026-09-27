@@ -14,7 +14,11 @@
    "psu_count": 2,
    "caddies_35": 6,
    "controller": "hba",
-   "rails": true
+   "rails": true,
+   "sockets": 2,
+   "cpu_model": "E5-2680 v4",
+   "cpu_count": 2,
+   "platform": "LGA2011-3"
   }
  },
  {
@@ -31,7 +35,9 @@
    "psu_count": 1,
    "caddies_35": 0,
    "controller": "hba",
-   "rails": null
+   "rails": null,
+   "cpu_model": "E5-2650 v3",
+   "cpu_count": 2
   }
  },
  {
@@ -82,7 +88,9 @@
   "expect": {
    "qualifies": false,
    "model": "R730xd",
-   "bays_35": 0
+   "bays_35": 0,
+   "cpu_model": "E5-2650 v3",
+   "cpu_count": 2
   }
  },
  {
@@ -108,7 +116,10 @@
    "generation": 12,
    "bays_35": 12,
    "psu_count": 2,
-   "rails": true
+   "rails": true,
+   "cpu_model": "E5-2620",
+   "cpu_count": 2,
+   "platform": null
   }
  },
  {
@@ -320,7 +331,11 @@
    "model": "R7415",
    "generation": 14,
    "amd": true,
-   "bays_35": 12
+   "bays_35": 12,
+   "sockets": 1,
+   "cpu_model": "EPYC 7351P",
+   "cpu_count": 1,
+   "platform": "SP3"
   }
  },
  {
@@ -364,7 +379,10 @@
    "qualifies": true,
    "vendor": "supermicro",
    "generation": 13,
-   "bays_35": 12
+   "bays_35": 12,
+   "sockets": 2,
+   "cpu_model": "E5-2650 v4",
+   "cpu_count": 2
   }
  },
  {
@@ -424,7 +442,11 @@
    "model": "DL380 Gen9",
    "bays_35": 12,
    "ram_gb": 0,
-   "cpu": false
+   "cpu": false,
+   "sockets": 2,
+   "cpu_model": null,
+   "cpu_count": 0,
+   "platform": "LGA2011-3"
   }
  },
  {
@@ -436,7 +458,9 @@
    "qualifies": true,
    "bays_35": 8,
    "ram_gb": 0,
-   "cpu": true
+   "cpu": true,
+   "cpu_model": "E5-2687W v3",
+   "cpu_count": 2
   }
  },
  {
@@ -448,7 +472,9 @@
    "qualifies": true,
    "bays_35": 12,
    "ram_gb": null,
-   "cpu": null
+   "cpu": null,
+   "cpu_model": null,
+   "cpu_count": null
   }
  },
  {
@@ -479,7 +505,9 @@
   "condition": "used",
   "expect": {
    "cpu": false,
-   "ram_gb": 0
+   "ram_gb": 0,
+   "cpu_model": null,
+   "cpu_count": 0
   }
  },
  {
@@ -560,6 +588,176 @@
   "condition": "used",
   "expect": {
    "ram_gb": null
+  }
+ },
+ {
+  "note": "R340 is single-socket; 'Xeon E-2124' is no model the CPU rules read (synthetic)",
+  "title": "Dell PowerEdge R340 4x 3.5\" LFF Xeon E-2124 16GB",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": false,
+   "sockets": 1,
+   "cpu_model": null,
+   "cpu_count": null
+  }
+ },
+ {
+  "note": "HPE DL20 is single-socket (synthetic)",
+  "title": "HPE ProLiant DL20 Gen10 4x LFF",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": false,
+   "model": "DL20 Gen10",
+   "sockets": 1
+  }
+ },
+ {
+  "note": "Dell AMD names its socket count: R7425 is dual (synthetic)",
+  "title": "Dell PowerEdge R7425 12x LFF 2x EPYC 7301",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "sockets": 2,
+   "cpu_model": "EPYC 7301",
+   "cpu_count": 2,
+   "platform": "SP3"
+  }
+ },
+ {
+  "note": "Supermicro X10SRi board is single-socket (synthetic)",
+  "title": "Supermicro 2U server X10SRi-F 8x 3.5\" LFF Xeon E5-2650 v3",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "vendor": "supermicro",
+   "sockets": 1,
+   "cpu_model": "E5-2650 v3",
+   "cpu_count": 1
+  }
+ },
+ {
+  "note": "Supermicro X10DRi board in the description is dual-socket (synthetic)",
+  "title": "Supermicro 2U server 12x 3.5\" LFF",
+  "description": "Board: X10DRi-T4+\n2x Intel Xeon E5-2650 v4\n128GB DDR4 ECC",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "sockets": 2,
+   "cpu_model": "E5-2650 v4",
+   "cpu_count": 2
+  }
+ },
+ {
+  "note": "'1x E5-2620 v3' is one CPU (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x LFF 1x E5-2620 v3 64GB RAM",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "sockets": 2,
+   "cpu_model": "E5-2620 v3",
+   "cpu_count": 1
+  }
+ },
+ {
+  "note": "A model named without a count is one CPU (synthetic)",
+  "title": "Dell PowerEdge R730 8x LFF Xeon E5-2650 v3 32GB RAM",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "cpu_model": "E5-2650 v3",
+   "cpu_count": 1
+  }
+ },
+ {
+  "note": "'Dual' is two CPUs (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x LFF Dual E5-2680 v4",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "cpu_model": "E5-2680 v4",
+   "cpu_count": 2
+  }
+ },
+ {
+  "note": "16th Gen has no supported platform (synthetic)",
+  "title": "Dell PowerEdge R760xd2 24x 3.5\" LFF",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "generation": 16,
+   "platform": null
+  }
+ },
+ {
+  "note": "F3: R340 takes a desktop-socket CPU: no Part platform (synthetic)",
+  "title": "Dell PowerEdge R340 4x 3.5\" LFF",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "sockets": 1,
+   "platform": null
+  }
+ },
+ {
+  "note": "F3: DL20 takes a desktop-socket CPU: no Part platform (synthetic)",
+  "title": "HPE ProLiant DL20 Gen10 4x LFF",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "sockets": 1,
+   "platform": null
+  }
+ },
+ {
+  "note": "F3: DL325 is single-socket EPYC (synthetic)",
+  "title": "HPE ProLiant DL325 Gen10 8x LFF",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "amd": true,
+   "sockets": 1,
+   "platform": "SP3"
+  }
+ },
+ {
+  "note": "F3: DL385 is dual-socket EPYC (synthetic)",
+  "title": "HPE ProLiant DL385 Gen10 12x LFF",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "amd": true,
+   "sockets": 2,
+   "platform": "SP3"
+  }
+ },
+ {
+  "note": "N1: 'x2' after the model is two CPUs (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x LFF E5-2680 v4 x2 128GB",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "cpu_model": "E5-2680 v4",
+   "cpu_count": 2
+  }
+ },
+ {
+  "note": "N1: '2 x 10-core' before the model is two CPUs (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x LFF 2 x 10-core E5-2640 v4",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "cpu_model": "E5-2640 v4",
+   "cpu_count": 2
   }
  }
 ]
