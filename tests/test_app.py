@@ -495,21 +495,18 @@ class PriceHistoryAndGone(unittest.TestCase):
 class PenaltiesAndRouting(unittest.TestCase):
     def test_machine_with_every_penalty(self):
         from dealfinder.costs import machine_penalties
+        # missing CPUs and RAM are no Penalty since #34: the Build buys them as Parts
         facts = {"bays_35": 12, "caddies_35": 4, "psu_count": 1, "controller": "raid", "rails": False,
                  "cpu": False, "ram_gb": 0}
         self.assertEqual(machine_penalties(facts), {"single_psu": 500, "caddies": 800, "raid_only": 500,
-                                                    "no_rails": 400, "no_cpu": 500, "ram": 6400})
+                                                    "no_rails": 400})
         unknown = {"bays_35": 8, "caddies_35": None, "psu_count": None, "controller": None, "rails": None,
                    "cpu": None, "ram_gb": None}
         self.assertEqual(machine_penalties(unknown), {"psu_unknown": 500, "caddies_unknown": 800,
-                                                      "controller_unknown": 500, "rails_unknown": 400,
-                                                      "cpu_unknown": 500, "ram_unknown": 6400})
+                                                      "controller_unknown": 500, "rails_unknown": 400})
         clean = {"bays_35": 12, "caddies_35": 12, "psu_count": 2, "controller": "hba", "rails": True,
                  "cpu": True, "ram_gb": 256}
-        self.assertEqual(machine_penalties(clean), {})  # RAM above 128 GB earns no credit
-        self.assertEqual(machine_penalties({**clean, "ram_gb": 64}), {"ram": 3200})
-        saved_before_cpu = {k: v for k, v in clean.items() if k != "cpu"}  # facts from an older Hunt
-        self.assertEqual(machine_penalties(saved_before_cpu), {"cpu_unknown": 500})
+        self.assertEqual(machine_penalties(clean), {})
 
     def test_router_caches_osrm_and_falls_back_when_it_is_down(self):
         from dealfinder.costs import OsrmRouter
@@ -585,12 +582,12 @@ class PickupAndPenaltiesEndToEnd(unittest.TestCase):
         cls.pg.cleanup()
 
     def test_near_pickup_with_every_penalty(self):
-        # 6,000 + trip 2 x 119 x 4 = 952 + PSU 500 + 8 missing caddies 800 + RAID-only 500 + no rails 400
-        # + no CPU 500 + RAM 32 of 128 GB: 96 x 50 = 4,800
-        self.assertAlmostEqual(float(self.rows["1"]), 6000 + 952 + 500 + 800 + 500 + 400 + 500 + 4800, places=2)
+        # 6,000 + trip 2 x 119 x 4 = 952 + PSU 500 + 8 missing caddies 800 + RAID-only 500 + no rails 400;
+        # "Ingen CPU" and 32 GB RAM are no Penalty since #34, the Build buys the CPUs and RAM as Parts
+        self.assertAlmostEqual(float(self.rows["1"]), 6000 + 952 + 500 + 800 + 500 + 400, places=2)
         page = self.app.page()
-        for part in ("pickup trip 952", "2nd PSU 500", "caddies 800", "HBA 500", "rails 400", "CPUs 500",
-                     "RAM to 128 GB 4,800", "<td>32 GB</td>"):
+        for part in ("pickup trip 952", "2nd PSU 500", "caddies 800", "HBA 500", "rails 400", "<td>32 GB</td>",
+                     "<td>2 CPU, 128 GB, 2 HS</td>"):
             self.assertIn(part, page)
 
     def test_far_pickups_are_hidden_even_with_negated_shipping_words(self):
@@ -598,11 +595,11 @@ class PickupAndPenaltiesEndToEnd(unittest.TestCase):
             self.assertNotIn(fid, self.rows)
 
     def test_far_seller_with_free_shipping_is_shown_at_its_price(self):
-        # 3,300, free shipping, 12 caddies not stated 1,200, PSU / controller / rails not stated 500 + 500 + 400,
-        # CPU not stated 500, RAM not stated: all 128 GB x 50 = 6,400
-        self.assertAlmostEqual(float(self.rows["5"]), 3300 + 1200 + 500 + 500 + 400 + 500 + 6400, places=2)
-        self.assertIn("CPUs (not stated) 500", self.app.page())
-        self.assertIn("RAM to 128 GB (not stated) 6,400", self.app.page())
+        # 3,300, free shipping, 12 caddies not stated 1,200, PSU / controller / rails not stated 500 + 500 + 400;
+        # CPU and RAM not stated are no Penalty since #34
+        self.assertAlmostEqual(float(self.rows["5"]), 3300 + 1200 + 500 + 500 + 400, places=2)
+        self.assertNotIn("CPUs (not stated)", self.app.page())
+        self.assertNotIn("RAM to 128 GB", self.app.page())
 
 
 class FinnCoordinatesAreValidated(unittest.TestCase):
@@ -672,7 +669,10 @@ class BuildsEndToEnd(unittest.TestCase):
         self.assertIn("5 &times; 16 TB", self.page)
 
     def test_machine_with_every_fact_good_gets_no_caddy_penalty(self):
+        # 2 CPUs and 128 GB stated, heatsinks come with the CPUs: no Parts needed, so none are on sale here
         self.assertAlmostEqual(self.rows()["1"], 6952 + 7250, places=2)
+        self.assertIn("<td>nothing</td>", self.page)
+        self.assertIn("+ Parts 0 +", self.page)
 
     def test_ceiling_hides_the_expensive_machine(self):
         self.assertEqual(sorted(self.rows()), ["1", "3"])
@@ -683,6 +683,172 @@ class BuildsEndToEnd(unittest.TestCase):
         for col in ("score", "landed", "usable", "machine", "disks", "sources"):
             self.assertIn(f'href="/?sort={col}"', self.page)
             self.assertIn('data-build="1"', self.app.page(sort=col))
+
+
+class CompleteBuildsEndToEnd(unittest.TestCase):
+    """Seam 1: each Build buys the CPUs, RAM and heatsinks its Machine lacks from Part Listings; a Build that cannot
+    be completed is hidden and counted per reason in /metrics."""
+
+    OK = ' 2x 750W PSU. Dell HBA330. 12x 3.5" caddies. Rails included.'  # no Penalty: Machine NOK = its price
+
+    @classmethod
+    def setUpClass(cls):
+        ship = ["shipping_exists", "seller_pays_shipping"]  # free shipping: Landed NOK = price
+        oslo = (59.91, 10.72)  # every doc's place is "X"; pickups there cost a 952 NOK trip, driven once
+        machines = [_doc(1, "Dell PowerEdge R730xd 12x LFF barebone", 3000, *oslo, ship),
+                    _doc(2, "Dell PowerEdge R730xd 12x LFF", 4000, *oslo, ship),
+                    _doc(3, "Dell PowerEdge R730xd 12x LFF", 4100, *oslo, ship),
+                    _doc(4, "Dell PowerEdge R730xd 12x LFF", 4200, *oslo, ship),
+                    _doc(5, "Dell PowerEdge R730xd 12x LFF", 4300, *oslo, ship),
+                    _doc(6, "Dell PowerEdge R7415 12x LFF", 4400, *oslo, ship),       # 1 socket, AMD SP3
+                    _doc(7, "Dell PowerEdge R730xd 12x LFF", 4500, *oslo),            # pickup, like CPU 44
+                    _doc(8, "Dell PowerEdge R750 12x LFF", 5000, *oslo, ship),        # 15th Gen: no LGA4189 on sale
+                    _doc(9, "Dell PowerEdge R760 12x LFF", 5000, *oslo, ship),        # 16th Gen: DDR5
+                    _doc(17, "Dell PowerEdge R7425 12x LFF", 4600, *oslo, ship),      # 2 sockets, AMD SP3
+                    _doc(18, "Dell PowerEdge R730xd 12x LFF", 4700, *oslo, ship)]     # LRDIMM installed
+        cls.descriptions = {"1": "Barebone." + cls.OK, "2": "1x Xeon E5-2650 v4. 128GB RAM." + cls.OK,
+                            "3": "2x Xeon E5-2680 v4. 4x16GB DDR4-2400 RAM." + cls.OK,
+                            "4": "2x Xeon E5-2680 v4. 64GB RAM." + cls.OK, "5": "Ingen CPU. 2x HS. 128GB RAM." + cls.OK,
+                            "6": "No CPU. 128GB RAM." + cls.OK, "7": "Ingen CPU. 2x HS. 128GB RAM." + cls.OK,
+                            "8": "No CPU. 2x HS. 128GB RAM." + cls.OK, "9": "No CPU. 128GB RAM." + cls.OK,
+                            "17": "No CPU. 2x HS. 128GB RAM." + cls.OK,
+                            "18": "2x Xeon E5-2680 v4. 4x16GB DDR4-2400 LRDIMM." + cls.OK}
+        cpus = [_doc(40, "Intel Xeon E5-2650 v4 CPU", 350, *oslo, ship),
+                _doc(41, "Intel Xeon E5-2660 v4 CPU", 300, *oslo, ship),     # with 40: 650, but two models
+                _doc(42, "2x Intel Xeon E5-2680 v4 CPU", 900, *oslo, ship),
+                _doc(43, "AMD EPYC 7351P 16-Core SP3 CPU", 700, *oslo, ship),
+                _doc(44, "2x Intel Xeon E5-2690 v4 CPU", 400, *oslo),         # pickup: 1,352, or 400 on a shared trip
+                _doc(46, "2x AMD EPYC 7351P SP3 CPU", 1000, *oslo, ship),     # "P": single-socket only
+                _doc(47, "2x AMD EPYC 7351 SP3 CPU", 1600, *oslo, ship),
+                _doc(48, "Intel Xeon E5-2680 v4 CPU", 400, *oslo, ship)]      # with 42: 1,300 for 3 CPUs
+        rams = [_doc(50, "4x 16GB DDR4-2400 ECC RDIMM", 1600, *oslo, ship),
+                _doc(51, "8x 16GB DDR4-2133 ECC RDIMM", 2000, *oslo, ship),
+                _doc(52, "2x 32GB DDR4-2400 ECC RDIMM", 900, *oslo, ship),   # with 53: 128 GB for 1,500, but mixed
+                _doc(53, "2x 32GB DDR4-2400 ECC LRDIMM", 600, *oslo, ship),
+                _doc(54, "16GB DDR4-2133 ECC RDIMM", 200, *oslo, ship),      # with 51: 2,200 for 9 sticks
+                _doc(55, "4x 16GB DDR4-2400 ECC LRDIMM", 1800, *oslo, ship)]
+        heatsinks = [_doc(60, "Dell PowerEdge R730 R730XD CPU Heatsink", 150, *oslo, ship),
+                     _doc(61, "2 x Dell PowerEdge R730 R730XD CPU Heatsink", 250, *oslo, ship),
+                     _doc(62, "Dell PowerEdge R7415 CPU Heatsink", 200, *oslo, ship)]
+        disks = [_doc(10 + i, 'Seagate Exos X16 16TB 3.5" SATA', 1500 + i, 60.4, 5.5, ship) for i in range(5)]  # 7,510
+        cls.docs = {"r730xd": machines, "exos": disks, "xeon": cpus, "rdimm": rams, "heatsink": heatsinks}
+
+        def fetch(url):
+            if "/search?" in url:
+                q = urllib.parse.parse_qs(url.split("?", 1)[1])
+                docs = cls.docs.get(q["q"][0], []) if q["condition"] == ["3", "4"] else []
+                blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
+                return f"<script>{blob}</script>"
+            text = cls.descriptions[url.rsplit("/", 1)[1]]
+            return f'<section data-testid="description"><p>{htmllib.escape(text)}</p></section>'
+
+        cls.pg = _pg()
+        cls.app = App(cls.pg.get_uri(), [FinnSource(fetch=fetch, pause=0)], fx=RATES.__getitem__,
+                      disk_queries={"finn": ["exos"]}, machine_queries=["r730xd"], cpu_queries={"finn": ["xeon"]},
+                      ram_queries={"finn": ["rdimm"]}, heatsink_queries={"finn": ["heatsink"]}, pause=0,
+                      router=fake_router)
+        cls.app.hunt()
+        cls.page = cls.app.page()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.pg.cleanup()
+
+    def build(self, mid):
+        """(Landed NOK, {Part Listing: count used}) of the Build for Machine `mid`, None when hidden."""
+        m = re.search(rf'<tr data-build="{mid}" data-score="[\d.]+" data-landed="([\d.]+)">(.*?)</tr>', self.page, re.S)
+        return m and (float(m[1]), {p: int(n) for p, n in re.findall(r'data-part="(\d+)" data-count="(\d+)"', m[2])})
+
+    def test_barebones_dual_socket_gets_two_same_model_cpus_a_full_set_and_two_heatsinks(self):
+        # 3,000 + a pair of E5-2680 v4 900 (not 40 + 41: two models; not single 48 then pair 42: 1,300)
+        # + 8x16GB DDR4-2133 2,000 (not 52 + 53: RDIMM with LRDIMM; not 54 then 51: 2,200) + a pair of heatsinks 250
+        # + 5 disks 7,510
+        self.assertEqual(self.build(1), (3000 + 900 + 2000 + 250 + 7510, {"42": 2, "51": 8, "61": 2}))
+        self.assertIn("Total 13,660 NOK = Machine 3,000 + Parts 3,150 + Disks 7,510", self.page)
+        details = self.page.split('data-build="1"', 1)[1].split("</tr>", 1)[0]
+        for fid in (42, 51, 61, 10, 14):
+            self.assertIn(f"https://www.finn.no/recommerce/forsale/item/{fid}", details)
+        self.assertIn('data-count="8" data-nok="2000.00">RAM', details)
+
+    def test_one_installed_cpu_gets_exactly_one_more_of_the_same_model(self):
+        # "1x E5-2650 v4": one E5-2650 v4 350 (not the cheaper E5-2660 v4) and a heatsink for it 150
+        self.assertEqual(self.build(2), (4000 + 350 + 150 + 7510, {"40": 1, "60": 1}))
+
+    def test_stated_sticks_are_topped_up_with_the_same_size_and_speed(self):
+        # "4x16GB DDR4-2400": 4 more 16 GB 2400 sticks (1,600); not 2133 sticks nor the cheaper 2x 32GB
+        self.assertEqual(self.build(3), (4100 + 1600 + 7510, {"50": 4}))
+
+    def test_a_stated_total_without_sticks_gets_a_full_new_set(self):
+        self.assertEqual(self.build(4), (4200 + 2000 + 7510, {"51": 8}))  # "64GB RAM": a new 128 GB set
+
+    def test_stated_heatsinks_are_not_bought_again(self):
+        self.assertEqual(self.build(5), (4300 + 900 + 7510, {"42": 2}))  # "2x HS": CPUs only
+
+    def test_single_socket_machine_gets_one_cpu(self):
+        self.assertEqual(self.build(6), (4400 + 700 + 200 + 7510, {"43": 1, "62": 1}))
+
+    def test_dual_socket_amd_gets_no_single_socket_p_cpus(self):
+        self.assertEqual(self.build(17), (4600 + 1600 + 7510, {"47": 2}))  # not the cheaper pair of 7351P (1,000)
+
+    def test_one_listing_covering_the_need_beats_a_cheaper_per_unit_start(self):
+        # the pair 42 (900) alone, not single 48 (400) + pair 42 = 1,300 for 3 CPUs; same for the RAM kit 51
+        self.assertEqual(self.build(5), (4300 + 900 + 7510, {"42": 2}))
+        self.assertEqual(self.build(4)[1], {"51": 8})
+
+    def test_stated_lrdimm_sticks_are_topped_up_with_lrdimm(self):
+        self.assertEqual(self.build(18), (4700 + 1800 + 7510, {"55": 4}))  # not the cheaper RDIMM kit 50
+
+    def test_hidden_counts_come_from_the_last_hunt_and_survive_a_restart(self):
+        app = App(self.pg.get_uri(), [], fx=RATES.__getitem__, pause=0, router=fake_router)  # a new pod, no Hunt
+        app.store.build_parts = lambda: 1 / 0  # /metrics must not rank
+        self.assertIn('dealfinder_builds_hidden{reason="no_cpu"} 1', app.metrics())
+        self.assertIn('dealfinder_builds_hidden{reason="platform"} 1', app.metrics())
+
+    def test_a_part_at_the_machine_pickup_place_shares_its_trip(self):
+        # the pickup pair (400 + 952 trip) loses to the shipped pair (900) for a shipped Machine, and wins at 400
+        # once the Machine's own pickup trip is driven
+        self.assertEqual(self.build(7), (4500 + 952 + 400 + 7510, {"44": 2}))
+        self.assertEqual(self.build(5)[1], {"42": 2})
+
+    def test_uncompletable_and_unsupported_machines_are_hidden_and_counted(self):
+        self.assertIsNone(self.build(8))  # no LGA4189 CPU on sale
+        self.assertIsNone(self.build(9))  # 16th Gen
+        metrics = self.app.metrics()
+        for reason, n in (("no_cpu", 1), ("platform", 1), ("no_ram", 0), ("no_heatsink", 0), ("ceiling", 0)):
+            self.assertIn(f'dealfinder_builds_hidden{{reason="{reason}"}} {n}', metrics)
+        # a pair of LGA4189 CPUs on sale completes Machine 8 ("2x HS" stated) and takes it off the count
+        self.docs["xeon"] = self.docs["xeon"] + [_doc(45, "2x Intel Xeon Gold 6330 CPU", 900, 59.91, 10.72,
+                                                      ["shipping_exists", "seller_pays_shipping"])]
+        try:
+            self.app.hunt()
+            self.assertIn('dealfinder_builds_hidden{reason="no_cpu"} 0', self.app.metrics())
+            self.assertIn('data-build="8"', self.app.page())
+        finally:
+            self.docs["xeon"] = self.docs["xeon"][:-1]
+            self.app.hunt()
+        self.assertIn('dealfinder_builds_hidden{reason="no_cpu"} 1', self.app.metrics())
+
+    def test_best_machines_show_needs_and_no_flat_cpu_ram_penalties(self):
+        rows = dict(re.findall(r'data-machine="(\d+)" data-landed="([\d.]+)"', self.page))
+        self.assertEqual(float(rows["1"]), 3000)  # barebones: no CPU/RAM Penalty in its Landed cost
+        for mid, needs in (("1", "2 CPU, 128 GB, 2 HS"), ("2", "1 CPU, 1 HS"), ("3", "64 GB"), ("5", "2 CPU"),
+                           ("9", "unsupported platform")):
+            row = self.page.split(f'data-machine="{mid}"', 1)[1].split("</tr>", 1)[0]
+            self.assertIn(f"<td>{needs}</td>", row)
+        for text in ("CPUs (not stated)", "RAM to 128 GB", "no_cpu", "ram_unknown"):
+            self.assertNotIn(text, self.page)
+
+    def test_mark_as_bought_records_the_parts(self):
+        try:
+            self.assertTrue(self.app.mark_bought("finn|1"))
+            build = self.app.store.bought()["build"]
+            self.assertEqual({(p["kind"], p["source_id"], p["count"]) for p in build["parts"]},
+                             {("cpu", "42", 2), ("ram", "51", 8), ("heatsink", "61", 2)})
+            self.assertAlmostEqual(build["landed_nok"], 13660, places=2)
+            self.assertIn("https://www.finn.no/recommerce/forsale/item/51", self.app.page())
+        finally:
+            with self.app.store._conn() as c:
+                c.execute("DELETE FROM purchases")
 
 
 def _ebay_item(iid, title, price, ship, pct="99.8", score=5000):

@@ -240,10 +240,14 @@ class MachineFacts:
 
     @property
     def platform(self):
-        """The CPU socket this Machine takes; None when unsupported (16th Gen and newer, a desktop socket) or unknown."""
-        if _DESKTOP_SOCKET.fullmatch(self.model) and not self.amd:
-            return None
-        return PLATFORMS.get((self.amd, self.generation))
+        return machine_platform(self.model, self.amd, self.generation)
+
+
+def machine_platform(model, amd, generation):
+    """The CPU socket a Machine takes; None when unsupported (16th Gen and newer, a desktop socket) or unknown."""
+    if _DESKTOP_SOCKET.fullmatch(model) and not amd:
+        return None
+    return PLATFORMS.get((amd, generation))
 
 
 def _dell_model(m):
@@ -308,16 +312,18 @@ def _speed(text):
 
 
 def _ram_sticks(title, text, ram_gb):
-    """{count, gb, speed} of the installed sticks, title first; only sticks that add up to ram_gb count, so another
-    server listed further down the description is not read. None when not stated."""
-    found = [(int(m[1]), int(m[2]), _speed(where[max(0, m.start() - 40):m.end() + 40]))
+    """{count, gb, speed, lrdimm} of the installed sticks, title first; only sticks that add up to ram_gb count, so
+    another server listed further down the description is not read. None when not stated."""
+    found = [(int(m[1]), int(m[2]), where[max(0, m.start() - 40):m.end() + 40])
              for where in (title, text) for m in _RAM_PRODUCT.finditer(where)  # text starts with the title
              if int(m[2]) in _STICK_SIZES and int(m[1]) * int(m[2]) == ram_gb]
     if not found:
         return None
     count, gb, _ = found[0]
+    same = [near for c, g, near in found if (c, g) == (count, gb)]
     # the same sticks may be named twice, the speed only once: "128 GB RAM (2x 64GB)" ... "128GB DDR4-2400T (2x 64GB)"
-    return {"count": count, "gb": gb, "speed": next((s for c, g, s in found if (c, g) == (count, gb) and s), None)}
+    return {"count": count, "gb": gb, "speed": next((s for near in same if (s := _speed(near))), None),
+            "lrdimm": any(_LRDIMM.search(near) for near in same)}
 
 
 def _cpu(title, text):
@@ -610,7 +616,8 @@ _HS_ANY = re.compile(_HS_WORD, re.I)
 # desktop, laptop, GPU, SSD and board coolers, sockets no Machine takes (Gen10 Plus is LGA4189)
 _NOT_HS = re.compile(
     r"noctua|cooler\s?master|\baio\b|tower\s?cooler|arctic|be\s?quiet|deepcool|thermalright|zalman|water|liquid"
-    r"|væske|lga\s?(?:115\d|1200|1700|1851|775)|\bam[2-5]\b|socket\s?(?:462|775)|\bsp5\b|lga\s?4677|\bg34\b"
+    r"|væske|lga\s?(?:115\d|1200|1366|1356|1700|1851|775)|\bam[2-5]\b|socket\s?(?:462|775)|\bsp5\b|lga\s?4677|\bg34\b"
+    r"|\bx8[a-z]"
     r"|opteron|\b13[56]6\b|(?<!cpu\W)\bgpu\s?(?:heat\s?-?sinks?|coolers?)|quadro|\b[rg]tx\b|\bvga\b|graphics|nvidia"
     r"|geforce|radeon|tesla|\bi[3579]\b|ryzen|laptop|notebook|bærbar|samsung|\bnp-|\bssd|nvme|m\.2|raspberry"
     r"|\bg(?:en)?\s?10\s?(?:plus|\+)", re.I)
@@ -625,6 +632,11 @@ _SERVER_CONTEXT = re.compile(r"server|poweredge|proliant|\bdell\b|\bhpe?\b|xeon|
 _HP_MODELS = re.compile(r"\b(dl|ml)\s?(\d{2,3})[a-z]?\b"
                         r"(?=(?:[\s/,&+]+(?:(?:dl|ml)\s?)?\d{2,3}[a-z]?\b)*[\s/,&+-]*(?:gen\s?|g)(\d{1,2})\b)", re.I)
 _SUPERMICRO_HS = re.compile(r"super\s?micro|\bsnk-p\d", re.I)
+# the socket family a Supermicro heatsink mounts on, from the socket or board generation ("2011 Pin", "X9/X10")
+_SUPERMICRO_SOCKET = ((re.compile(r"lga\s?2011|\b2011\b|\bx(?:9|10)", re.I), "LGA2011"),
+                      (re.compile(r"lga\s?3647|\bx11", re.I), "LGA3647"), (re.compile(r"lga\s?4189|\bx12", re.I), "LGA4189"))
+# not a count: dimensions "90x90x64mm" and Supermicro boards "X9", "X10DRi"
+_NOT_UNITS = re.compile(r"\b\d{2,3}\s?[x×*]\s?\d{2,3}(?:\s?[x×*]\s?\d{2,3})?(?:\s?mm)?\b|\bx(?:8|9|1[0-3])\w*", re.I)
 
 
 @dataclass
@@ -651,14 +663,17 @@ def read_heatsink(title, condition):
     if (cpus or bays or _ram_in(title) or _NO_CPU.search(title) or _NO_RAM.search(title) or _NO_HS.search(title)
             or _RACK_SERVER.search(title)):
         return None  # a whole server, or a CPU with its heatsink; "Heatsink up to E5-2660V3" is a heatsink
-    # ponytail: fits names the models only, no part numbers (0YY2R8 = R730) and no socket or 1U/2U height, so a
-    # Supermicro heatsink fits every Supermicro. Read the socket (LGA2011, LGA3647) if Supermicro Builds get used
+    # ponytail: fits names the models only, no part numbers (0YY2R8 = R730) and no 1U/2U height; a Supermicro
+    # heatsink fits by socket family ("Supermicro LGA2011"), one family or none
+    supermicro = _SUPERMICRO_HS.search(title)
+    families = {name for rx, name in _SUPERMICRO_SOCKET if rx.search(title)}
     fits = {_dell_model(m) for m in _DELL_MODEL.finditer(title)}
     fits |= {f"{m[1].upper()}{m[2]} Gen{m[3]}" for m in _HP_MODELS.finditer(title)}
-    fits |= {"Supermicro"} if _SUPERMICRO_HS.search(title) else set()
+    fits |= {f"Supermicro {families.pop()}"} if supermicro and len(families) == 1 else set()
     working = condition != "for_parts" and not _FAULTY.search(title)
     if not fits:
-        return Unreadable(["fits"]) if working and _HS_STRONG.search(title) and _SERVER_CONTEXT.search(title) else None
-    n = _UNITS.search(title)
+        return (Unreadable(["fits"]) if working and _HS_STRONG.search(title)
+                and (supermicro or _SERVER_CONTEXT.search(title)) else None)
+    n = _UNITS.search(_NOT_UNITS.sub(" ", title))
     count = max(1, int(next(g for g in n.groups() if g))) if n else 2 if _PAIR.search(title) else 1
     return HeatsinkFacts(fits=sorted(fits), count=count, working=working)

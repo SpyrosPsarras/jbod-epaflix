@@ -181,13 +181,13 @@
   }
  },
  {
-  "note": "Supermicro heatsinks fit every Supermicro (eBay 377378309210)",
+  "note": "Supermicro heatsinks fit by socket family (eBay 377378309210)",
   "title": "Supermicro SNK-P0048AP4 2U Active CPU Heat Sink Socket LGA2011 X9/X10 2U Servers",
   "condition": "used",
   "expect": {
    "qualifies": true,
    "fits": [
-    "Supermicro"
+    "Supermicro LGA2011"
    ],
    "count": 1
   }
@@ -199,7 +199,7 @@
   "expect": {
    "qualifies": true,
    "fits": [
-    "Supermicro"
+    "Supermicro LGA2011"
    ],
    "count": 1
   }
@@ -501,5 +501,35 @@
   "expect": {
    "ignored": true
   }
+ },
+ {
+  "note": "dimensions and the X9 board are not a count (reviewer, eBay)",
+  "title": "for Supermicro X9 SNK-P0048P 2U CPU Heatsink LGA 2011 LGA2011 Heat Sink 90x90x64",
+  "condition": "used",
+  "expect": {"qualifies": true, "fits": ["Supermicro LGA2011"], "count": 1}
+ },
+ {
+  "note": "an X8 board name is not 8 heatsinks (synthetic)",
+  "title": "Supermicro SNK-P0048P 2U CPU Heatsink X8/X9 LGA2011",
+  "condition": "used",
+  "expect": {"qualifies": true, "fits": ["Supermicro LGA2011"], "count": 1}
+ },
+ {
+  "note": "trap: LGA1366 X8 heatsink, a socket no Machine takes (reviewer, eBay)",
+  "title": "SNK-P0038P Supermicro 2U Passive CPU Heatsink LGA1366 X8",
+  "condition": "used",
+  "expect": {"ignored": true}
+ },
+ {
+  "note": "Supermicro LGA3647 family from the X11 board (synthetic)",
+  "title": "Supermicro SNK-P0067PS 1U Passive CPU Heatsink LGA3647 X11",
+  "condition": "used",
+  "expect": {"qualifies": true, "fits": ["Supermicro LGA3647"], "count": 1}
+ },
+ {
+  "note": "a Supermicro heatsink naming no socket cannot be matched (synthetic)",
+  "title": "Supermicro SNK-P0048P 2U Passive CPU Heatsink",
+  "condition": "used",
+  "expect": {"unreadable": ["fits"]}
  }
 ]

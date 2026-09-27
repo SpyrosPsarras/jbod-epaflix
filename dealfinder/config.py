@@ -11,10 +11,10 @@ PICKUP_NOK_PER_KM = 4              # fuel, tolls, wear; round trip
 PICKUP_MAX_MINUTES = 120           # one way; farther pickup-only Listings are hidden
 # finn.no search results do not publish the Fiks ferdig price; estimate for a heavy parcel
 FINN_SHIPPING_NOK = 400
-PENALTY_NOK = {"single_psu": 500, "caddy": 100, "raid_only": 500, "no_rails": 400,
-               "cpu": 500}  # a pair of E5-26xx v4: £23 on eBay UK + VAT (27 Sep 2026)
-RAM_TARGET_GB = 128   # RAM a Machine is priced up to; more earns no credit
-RAM_NOK_PER_GB = 50   # used DDR4 ECC RDIMM: finn.no 32 GB for 1,400-2,000 NOK, 4x32 GB for 6,000 (27 Sep 2026)
+PENALTY_NOK = {"single_psu": 500, "caddy": 100, "raid_only": 500, "no_rails": 400}
+RAM_TARGET_GB = 128   # RAM a Build is completed up to; more earns no credit
+# ponytail: DIMM slots per socket, assumed (R730/R740/DL380 have 12); read the model's real count if a Build hits it
+RAM_SLOTS_PER_SOCKET = 12
 # risk Penalties: a share of the Listing's price + shipping or pickup trip + VAT (ticket #11, #12)
 RISK = {"weak_seller": 0.10, "seller_unknown": 0.10, "high_risk": 0.20}
 WEAK_SELLER = (98.0, 50)  # eBay seller under 98% positive or under 50 ratings is weak
