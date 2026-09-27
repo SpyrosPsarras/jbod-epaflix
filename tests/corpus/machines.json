@@ -511,5 +511,55 @@
    "cpu": false,
    "ram_gb": null
   }
+ },
+ {
+  "note": "'0 RAM' in the title is no RAM, over a cross-promo 128GB (eBay, live 27 Sep)",
+  "title": "Dell PowerEdge R730 Rack Server 2U No CPU 2x Cooler 0 RAM 8x LFF 3.5 H330 Mini",
+  "description": "Other items from our shop:\nHP ProLiant DL380 Gen9 2U 2xE5-2680 V4 128GB RAM 12x LFF",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "bays_35": 8,
+   "cpu": false,
+   "ram_gb": 0
+  }
+ },
+ {
+  "note": "'No CPU RAM' without a separator means neither (eBay, live 27 Sep)",
+  "title": "HP ProLiant DL380 G9 Server No CPU RAM 2xHS P840 Controller 12Bay 3.5 + 2x2.5\"",
+  "description": "Other items from our shop:\nHP ProLiant DL380 Gen9 2U 2xE5-2680 V4 128GB RAM 12x LFF",
+  "condition": "used",
+  "expect": {
+   "cpu": false,
+   "ram_gb": 0
+  }
+ },
+ {
+  "note": "'2x E5-2680 v4 CPU RAM not included': the CPUs are there, the RAM is not",
+  "title": "Dell PowerEdge R730xd 12x LFF 2x E5-2680 v4 CPU RAM not included",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "cpu": true,
+   "ram_gb": 0
+  }
+ },
+ {
+  "note": "'0 DIMM slots free' is a slot count, not zero RAM",
+  "title": "Dell PowerEdge R730xd 12x LFF 0 DIMM slots free 256GB RAM",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "ram_gb": 256
+  }
+ },
+ {
+  "note": "'Slots 24/0 RAM 128GB' is not zero RAM",
+  "title": "Dell PowerEdge R730xd 12x LFF Slots 24/0 RAM 128GB",
+  "description": null,
+  "condition": "used",
+  "expect": {
+   "ram_gb": null
+  }
  }
 ]

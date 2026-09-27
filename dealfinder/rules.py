@@ -155,10 +155,16 @@ def _absent(noun):
     # after each noun: not "RAM 128GB", "RAM included" or "memory errors"
     faults = r"\s+(?:errors?|issues?|faults?|problems?|feil)"
     guard = rf"\b(?!\s*:?\s*\d+\s?(?:[x×*]\s?\d+\s?)?gb\b|\s+(?:included|inkl\w*)|{faults})"
-    join, word = r"\s*(?:/|&|,|\+|and|or|og|und|oder)\s*", f"(?:{_CPU_WORD}|{_RAM_WORD})"
-    obj = rf"(?:{word}{guard}{join})?{noun}{guard}(?:{join}{word}{guard})?(?!{join}{word}{faults})"
-    return re.compile(rf"\b(?:no|ingen|uten|ohne|without|w/o)[\s-]+{obj}"
-                      rf"|\b{obj}\s+(?:not\s+included|mangler|følger\s+ikke|medfølger\s+ikke)|\bbarebones?\b", re.I)
+    word = f"(?:{_CPU_WORD}|{_RAM_WORD})"
+
+    def obj(join):
+        return rf"(?:{word}{guard}{join})?{noun}{guard}(?:{join}{word}{guard})?(?!{join}{word}{faults})"
+    join = r"\s*(?:/|&|,|\+|and|or|og|und|oder)\s*"
+    # after "no", a bare space joins too: "No CPU RAM" means neither; "2x E5 CPU RAM not included" keeps its CPUs
+    join_or_space = rf"(?:{join}|\s+)"
+    return re.compile(rf"\b(?:no|ingen|uten|ohne|without|w/o)[\s-]+{obj(join_or_space)}"
+                      rf"|\b{obj(join)}\s+(?:not\s+included|mangler|følger\s+ikke|medfølger\s+ikke)|\bbarebones?\b"
+                      rf"|(?<![\w.,/])0\s?(?:gb\s?)?{noun}{guard}(?!\s+slots?)", re.I)  # "0 RAM", "0GB RAM"
 
 
 _NO_RAM, _NO_CPU = _absent(_RAM_WORD), _absent(_CPU_WORD)
