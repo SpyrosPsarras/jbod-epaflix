@@ -553,5 +553,15 @@
    "platform": "LGA2011-3",
    "count": 1
   }
+ },
+ {
+  "note": "'8 x 2.10 GHZ' is cores and clock, not 8 CPUs (eBay, live 27 Sep)",
+  "title": "Intel Xeon E5-2620 V4 / 8 x 2.10 GHZ / / LGA 2011-3 / 20MB / Processor",
+  "condition": "used",
+  "expect": {
+   "model": "E5-2620 v4",
+   "platform": "LGA2011-3",
+   "count": 1
+  }
  }
 ]

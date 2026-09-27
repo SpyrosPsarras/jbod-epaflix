@@ -395,9 +395,11 @@ _NOT_A_CPU = re.compile(
 _SERVER_TEXT = re.compile(r"thinksystem|primergy|\bucs\b|\bproliant\b", re.I)
 _BARE_SERVER = re.compile(r"(?<!\btil\s)(?<!\bfor\s)(?<!\bin\s)\bserver\b(?!/)", re.I)
 _KIT = re.compile(r"\bkit\b", re.I)  # "ProLiant DL360 Gen10 - Xeon Gold 6130 CPU 1 Kit" is a CPU, not a server
-# not "48x PCIe", "3x UPI", "2 x QPI" links, nor stock on hand: "(4 pcs available)"
-_UNITS = re.compile(r"(?<![\w.,/-])([1-9]\d?)\s?(?:[x×*]|pcs|pieces|stk|units|kit)(?!\s*(?:pci|upi|qpi|available))"
-                    r"|\bx\s?([2-8])\b"
+# not "48x PCIe", "3x UPI", "2 x QPI" links, cores and clock ("8 x 2.10 GHz", "8x cores"),
+# nor stock on hand: "(4 pcs available)"
+_UNITS = re.compile(r"(?<![\w.,/-])([1-9]\d?)\s?(?:[x×*]|pcs|pieces|stk|units|kit)"
+                    r"(?!\s*(?:pci|upi|qpi|available|cores?|kjerner|threads|\d+(?:[.,]\d+)?\s?ghz))"
+                     r"|\bx\s?([2-8])\b(?![.,]\d|\s?ghz)"
                     r"|\blot\s+of\s+(\d{1,2})\b", re.I)
 _PAIR = re.compile(r"\bpairs?\b|\b\w*par\b", re.I)  # "matchet prosessorpar"
 _SUPPORTED_SOCKETS = set(PLATFORMS.values())
