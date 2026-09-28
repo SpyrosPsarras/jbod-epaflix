@@ -55,7 +55,7 @@ _Avoid_: Error, alert
 ### How it is ranked
 
 **Landed cost**:
-The full NOK price of a Listing at the owner's door: price, shipping to Norway (an eBay Machine with no freight quote to Norway is excluded), 25% import VAT when the Source is abroad, the Pickup trip cost when the Listing is pickup-only, and the finn.no Trygg betaling buyer fee (estimated) when a finn.no Listing is shipped via Fiks ferdig, plus Penalties.
+The full NOK price of a Listing at the owner's door: price, shipping to Norway (an eBay Machine with no freight quote to Norway is excluded), 25% import VAT when the Source is abroad, the Pickup trip cost when the Listing is pickup-only, and the finn.no Trygg betaling buyer fee (estimated) when a finn.no Listing is shipped via Fiks ferdig (not for Rebuild IT, which sells through its own web shop), plus Penalties.
 _Avoid_: Price, total
 
 **Usable TiB**:

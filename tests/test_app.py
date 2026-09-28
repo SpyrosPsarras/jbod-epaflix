@@ -19,7 +19,7 @@ import pgserver
 from dealfinder.app import App, next_hunt_delay
 from dealfinder.builds import _pick_stock
 from dealfinder.config import PICKUP_NOK_PER_KM
-from dealfinder.costs import DailyFx
+from dealfinder.costs import DailyFx, cost_breakdown
 from dealfinder.rules import Unreadable, read_disk, read_machine
 from dealfinder.sources import EbaySource, FinnSource
 
@@ -278,6 +278,14 @@ class RebuildItStock(unittest.TestCase):
         self.assertTrue(listings["5"].pickup_only)
         source.search("16tb", "cpu")
         self.assertEqual(len(pages), 2)  # page 1 and the empty page 2, read once for both searches
+        # bought in the web shop: no Trygg betaling fee, shipped or not; a private seller shipping pays it
+        costs = {i: cost_breakdown(listings[i], lambda c: 1.0, False, lambda lat, lon: (120, 80), "disk")[0]
+                 for i in ("2", "3")}
+        self.assertEqual(costs["2"]["total"], 3499)
+        self.assertEqual(costs["3"]["total"], 865)  # 800 + the 65 NOK shipping estimate
+        listings["5"].shipping = 0.0
+        self.assertEqual(cost_breakdown(listings["5"], lambda c: 1.0, False, lambda lat, lon: (120, 80),
+                                        "disk")[0]["finn_fee"], 228.98)  # 29 + 6% of 3,333
 
     def test_unreadable_shop_drops_nothing(self):
         doc = {"id": 1, "heading": "Exos 16TB", "trade_type": "Til salgs", "price": {"amount": 3000},
