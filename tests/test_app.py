@@ -20,7 +20,7 @@ from dealfinder.app import App, next_hunt_delay
 from dealfinder.builds import _pick_stock
 from dealfinder.config import PICKUP_NOK_PER_KM
 from dealfinder.costs import DailyFx
-from dealfinder.rules import Unreadable, read_disk
+from dealfinder.rules import Unreadable, read_disk, read_machine
 from dealfinder.sources import EbaySource, FinnSource
 
 FIXTURES = pathlib.Path(__file__).parent / "fixtures"
@@ -368,20 +368,44 @@ class Scheduler(unittest.TestCase):
         self.assertEqual(next_hunt_delay(now - datetime.timedelta(hours=7), now, 6 * 3600), 0)
         self.assertEqual(next_hunt_delay(now - datetime.timedelta(hours=2), now, 6 * 3600), 4 * 3600)
 
-    def test_scheduler_starts_a_hunt_when_none_has_run(self):
+    def test_a_first_start_does_not_hunt(self):
         pg = _pg()
         try:
             app = App(pg.get_uri(), [_EmptySource()], fx=RATES.__getitem__, disk_queries={"empty": ["x"]}, pause=0)
             stop = threading.Event()
-            worker = threading.Thread(target=app.run_scheduler, args=(stop,), daemon=True)
+            worker = threading.Thread(target=app.run_scheduler, args=(stop,), kwargs={"interval": 60}, daemon=True)
             worker.start()
+            threading.Event().wait(0.5)
+            stop.set()
+            worker.join(5)
+            self.assertIsNone(app.store.last_hunt())
+        finally:
+            pg.cleanup()
+
+    def test_a_restart_with_a_hunt_overdue_waits_one_interval(self):
+        pg = _pg()
+        try:
+            app = App(pg.get_uri(), [_EmptySource()], fx=RATES.__getitem__, disk_queries={"empty": ["x"]}, pause=0)
+            app.hunt()
+            with app.store._conn() as c:
+                c.execute("UPDATE hunts SET started = now() - interval '7 hours'")
+
+            def hunts():
+                with app.store._conn() as c:
+                    return len(c.execute("SELECT id FROM hunts").fetchall())
+            stop = threading.Event()
+            worker = threading.Thread(target=app.run_scheduler, args=(stop,), kwargs={"interval": 1.5, "retry": 0.05},
+                                      daemon=True)
+            worker.start()
+            threading.Event().wait(0.7)
+            self.assertEqual(hunts(), 1)  # overdue, but a restart does not start a Hunt
             for _ in range(100):
-                if app.store.last_hunt():
+                if hunts() == 2:
                     break
                 threading.Event().wait(0.05)
             stop.set()
             worker.join(5)
-            self.assertIsNotNone(app.store.last_hunt())
+            self.assertEqual(hunts(), 2)  # one interval after the restart
             self.assertFalse(worker.is_alive())
         finally:
             pg.cleanup()
@@ -967,6 +991,107 @@ class EbayMachinesAndWeakSellers(unittest.TestCase):
     def test_item_text_fetched_only_when_the_title_does_not_rule_the_machine_out(self):
         fetched = [u.rsplit("/", 1)[1] for u in self.calls if "/item/" in u]
         self.assertEqual(sorted(fetched), ["1", "2", "5"])
+
+
+class EbayVariationMachines(unittest.TestCase):
+    """A variation Machine is read per configuration: the search shows one under the title of all."""
+
+    TITLE = "Dell PowerEdge R730xd 12-Bay Configurable 2x E5-2600 v3 v4 256GB DDR4 H730P LOT"
+
+    def test_each_configuration_is_its_own_listing_with_its_price_specs_and_link(self):
+        def variation(vid, price, memory, ssd):
+            it = _ebay_item(f"v1|G|{vid}", self.TITLE, price, 66)
+            it["itemWebUrl"] = f"https://www.ebay.co.uk/itm/G?var={vid}"
+            it["shortDescription"] = "12 x 3.5in LFF hot-swap front bays"
+            it["localizedAspects"] = [{"name": "Processor", "value": "2x 6-Core E5-2620 v3"},
+                                      {"name": "Memory", "value": memory}, {"name": "SSD", "value": ssd},
+                                      {"name": "Brand", "value": "Dell"}]
+            return it
+        group = {"items": [variation("21", 169, "NO MEMORY", "NO DISKS"),
+                           variation("22", 289, "NO MEMORY", "2x 960GB SSD"),   # read alike 21, dearer: dropped
+                           variation("23", 400, "64GB DDR4", "NO DISKS"),
+                           variation("24", 3000, "256GB DDR4", "NO DISKS")],   # over the search's range
+                 "commonDescriptions": [{"description": "<p>Dell HBA330</p>", "itemIds": ["v1|G|21", "v1|G|22",
+                                                                                        "v1|G|23", "v1|G|24"]}]}
+        calls = []
+
+        def fetch(url, headers=None, data=None):
+            calls.append(url)
+            if "oauth2/token" in url:
+                return {"access_token": "t", "expires_in": 7200}
+            if "get_items_by_item_group" in url:
+                return group
+            return {"itemSummaries": [_ebay_item("v1|G|22", self.TITLE, 289, 66)]}
+
+        source = EbaySource("id", "secret", fetch=fetch)
+        found = {l.source_id: l for l in source.search("r730xd", "machine")}
+        self.assertEqual(sorted(found), ["v1|G|21", "v1|G|23"])
+        cheap, dear = found["v1|G|21"], found["v1|G|23"]
+        self.assertEqual((cheap.price, cheap.url), (169, "https://www.ebay.co.uk/itm/G?var=21"))
+        self.assertNotIn("256GB", cheap.title)
+        self.assertTrue(cheap.title.endswith(" DDR4 H730P LOT (NO MEMORY, NO DISKS)"))  # only the choices that vary
+        self.assertEqual(read_machine(cheap.title, cheap.description, cheap.condition).ram_gb, 0)
+        self.assertEqual(read_machine(dear.title, dear.description, dear.condition).ram_gb, 64)
+        self.assertEqual(read_machine(dear.title, dear.description, dear.condition).controller, "hba")
+        source.search("r730xd 12 bay", "machine")  # a second query in the same Hunt reuses the group
+        self.assertEqual(sum("get_items_by_item_group" in u for u in calls), 1)
+        self.assertFalse([u for u in calls if "/item/v1" in u])  # the group carries the text: no item call
+
+    def test_a_processor_choice_replaces_the_cpu_in_the_group_title(self):
+        def variation(vid, price, cpu):
+            it = _ebay_item(f"v1|G|{vid}", 'Dell PowerEdge R730xd 12x 3.5" 2x E5-2680 v4 128GB DDR4', price, 66)
+            it["localizedAspects"] = [{"name": "Processor", "value": cpu}]
+            return it
+        group = {"items": [variation("1", 300, "2x E5-2620 v3"), variation("2", 500, "2x E5-2680 v4")]}
+
+        def fetch(url, headers=None, data=None):
+            if "oauth2/token" in url:
+                return {"access_token": "t", "expires_in": 7200}
+            if "get_items_by_item_group" in url:
+                return group
+            return {"itemSummaries": [variation("1", 300, "")]}
+        found = {l.source_id: read_machine(l.title, l.description, l.condition)
+                 for l in EbaySource("id", "secret", fetch=fetch).search("r730xd", "machine")}
+        self.assertEqual({k: (f.cpu_model, f.ram_gb) for k, f in found.items()},
+                         {"v1|G|1": ("E5-2620 v3", 128), "v1|G|2": ("E5-2680 v4", 128)})
+
+    def test_a_memory_choice_next_to_a_disk_choice_drops_the_title_ram(self):
+        def variation(vid, price, option, drives):
+            it = _ebay_item(f"v1|G|{vid}", self.TITLE, price, 66)
+            it["localizedAspects"] = [{"name": "Option", "value": option}, {"name": "Drives", "value": drives}]
+            it["shortDescription"] = "12 x 3.5in LFF hot-swap front bays"
+            return it
+        group = {"items": [variation("1", 200, "64GB", "NO DISKS"), variation("2", 300, "64GB", "2x 960GB SSD"),
+                           variation("3", 900, "256GB DDR4", "NO DISKS")]}
+
+        def fetch(url, headers=None, data=None):
+            if "oauth2/token" in url:
+                return {"access_token": "t", "expires_in": 7200}
+            if "get_items_by_item_group" in url:
+                return group
+            return {"itemSummaries": [variation("1", 200, "", "")]}
+        found = {l.source_id: read_machine(l.title, l.description, l.condition).ram_gb
+                 for l in EbaySource("id", "secret", fetch=fetch).search("r730xd", "machine")}
+        self.assertEqual(found, {"v1|G|1": None, "v1|G|3": 256})  # a bare "64GB": not stated, never the title's 256
+
+    def test_no_group_call_for_a_ruled_out_machine_or_a_disk_and_a_failed_group_once_per_hunt(self):
+        calls = []
+
+        def fetch(url, headers=None, data=None):
+            calls.append(url)
+            if "oauth2/token" in url:
+                return {"access_token": "t", "expires_in": 7200}
+            if "get_items_by_item_group" in url:
+                raise urllib.error.HTTPError(url, 500, "boom", None, None)
+            return {"itemSummaries": [_ebay_item("v1|G|22", self.TITLE, 289, 66),
+                                      _ebay_item("v1|S|1", 'Dell PowerEdge R730xd 24x 2.5" SFF', 200, 66),
+                                      _ebay_item("v1|D|1", 'Seagate Exos X16 16TB 3.5" SATA HDD', 190, 20)]}
+        source = EbaySource("id", "secret", fetch=fetch)
+        self.assertNotIn("v1|G|22", [l.source_id for l in source.search("r730xd", "machine")])  # no trusted price
+        source.search("r730xd 12 bay", "machine")
+        self.assertEqual(len(source.search("exos 16tb", "disk")), 3)
+        groups = [u for u in calls if "get_items_by_item_group" in u]
+        self.assertEqual(groups, [source._group_url + "?item_group_id=G"])
 
 
 class EbayDiskStockEndToEnd(unittest.TestCase):

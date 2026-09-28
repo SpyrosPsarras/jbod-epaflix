@@ -25,7 +25,7 @@ _Avoid_: Bundle, combo (a Deal is one Listing)
 ### Where it comes from
 
 **Listing**:
-One offer for a Machine, Disks, CPUs, RAM or heatsinks on a Source, at one moment in time.
+One offer for a Machine, Disks, CPUs, RAM or heatsinks on a Source, at one moment in time. Each configuration of an eBay Machine sold as variations ("choose your configuration") is its own Listing, with its own price, specs and link; of configurations the rules read alike, only the cheapest is kept.
 _Avoid_: Ad, item, offer
 
 **Source**:
@@ -37,7 +37,7 @@ A round trip by car from Sandefjord to a pickup-only seller. Costs 4 NOK/km and 
 _Avoid_: Collection, travel
 
 **Hunt**:
-One pass over every Source that refreshes Listings and re-ranks Builds. Runs every 6 hours on its own, or when started by hand.
+One pass over every Source that refreshes Listings and re-ranks Builds. Runs every 6 hours on its own, or when started by hand. A restart never starts one: a Hunt overdue at start-up runs 6 hours later, unless started by hand.
 _Avoid_: Scan, crawl, job, run
 
 **Search**:
