@@ -392,6 +392,10 @@ class App:
             facts = read_machine(listing.title, listing.description, listing.condition)
         if facts is None:
             return None
+        if listing.price <= 0 and not isinstance(facts, Unreadable) and not facts.qualifies:
+            # "make an offer", but a known fact already rules it out (DDR3 RAM, a 12th Gen server): rejected
+            return {"facts": asdict(facts), "missing": [], "qualifies": False, "capacity_tb": None,
+                    "landed_nok": None, "costs": None}
         if listing.price <= 0:  # "make an offer": no price to rank
             facts = Unreadable((facts.missing if isinstance(facts, Unreadable) else []) + ["price"])
         if isinstance(facts, Unreadable):
