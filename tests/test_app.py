@@ -1248,7 +1248,10 @@ class RamEndToEnd(unittest.TestCase):
                          ["shipping_exists", "seller_pays_shipping"]),
                     _doc(61, "Samsung 32GB x 10 stk DDR4 RDIMM", 1600, 59.9, 10.7,             # priced per stick
                          ["shipping_exists", "seller_pays_shipping"]),
-                    _doc(62, "10x Samsung 32GB DDR4 2666MHz ECC RDIMM", 1700, 59.9, 10.7)]    # per stick, pickup
+                    _doc(62, "10x Samsung 32GB DDR4 2666MHz ECC RDIMM", 1700, 59.9, 10.7),    # per stick, pickup
+                    # "make an offer" (price 0): DDR3 is rejected (finn.no 477346469), DDR4 cannot be read
+                    _doc(63, "16GB DDR3 ECC RDIMM PC3-14900R – SK Hynix & Samsung – 95 stk totalt", 0, 59.9, 10.7),
+                    _doc(64, "Samsung 32GB DDR4 ECC RDIMM", 0, 59.9, 10.7)]
             docs = docs if q["q"] == ["rdimm"] and q["condition"] == ["3", "4"] else []
             blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
             return f"<script>{blob}</script>"
@@ -1294,6 +1297,11 @@ class RamEndToEnd(unittest.TestCase):
         self.assertNotIn("r3", dict(self.rows))
         self.assertNotIn('data-unreadable="r3"', self.page)
         self.assertIn('data-unreadable="r4" data-missing="type"', self.page)
+
+    def test_make_an_offer_ram_is_rejected_when_its_facts_rule_it_out(self):
+        self.assertNotIn('data-unreadable="63"', self.page)
+        self.assertIn('data-unreadable="64" data-missing="price"', self.page)
+        self.assertNotIn("63", dict(self.rows))
 
     def test_ebay_ram_search_uses_its_category_and_price_range(self):
         self.assertIn((["11210"], "buyingOptions:{FIXED_PRICE},deliveryCountry:NO,price:[5..1500],priceCurrency:GBP"),
