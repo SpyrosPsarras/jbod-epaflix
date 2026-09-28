@@ -75,7 +75,7 @@ A Listing whose text does not state every fact the rules need (for a Machine: mo
 _Avoid_: Unknown, unparsed, bad listing
 
 **Gone Listing**:
-A Listing that disappeared from its Source since the last Hunt, usually sold. Kept greyed out for 7 days with its last price.
+A Listing that disappeared from its Source since the last Hunt, usually sold. Kept greyed out for 7 days with its last price. A finn.no Listing from Rebuild IT counts as disappeared when its web shop (rebuildit.no) shows that product sold out, because Rebuild IT leaves sold-out Listings up on finn.no. Its other Listings ship, free from 1,000 NOK.
 _Avoid_: Sold, expired, deleted
 
 **Deal**:

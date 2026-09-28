@@ -244,6 +244,54 @@ class FinnSourceRobustness(unittest.TestCase):
         self.assertFalse(any(u.startswith("file:") for u in fetched))
 
 
+class RebuildItStock(unittest.TestCase):
+    """A Rebuild IT finn ad its web shop shows sold out is dropped (so it goes Gone); the rest ship from the shop."""
+
+    def test_sold_out_dropped_in_stock_ships(self):
+        def ad(i, heading, price, shop="Rebuild IT"):
+            return {"id": i, "heading": heading, "trade_type": "Til salgs", "price": {"amount": price},
+                    "organisation_name": shop, "coordinates": {"lat": 59.8, "lon": 10.4}}
+        docs = [ad(1, 'WD Gold Enterprise-Class 18TB 3.5" HDD', 3333),     # sold out in the shop
+                ad(2, "WUH721818ALE6L4  WD Ultrastar 18TB", 3499),         # in stock (one of two variants)
+                ad(3, "Seagate Exos 16TB", 800),                           # in stock, under the free-shipping total
+                ad(4, "Toshiba MG08 16TB", 3000),                          # not in the shop: kept
+                ad(5, 'WD Gold Enterprise-Class 18TB 3.5" HDD', 3333, None)]  # a private seller: untouched
+        blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
+        shop = [{"title": 'WD Gold Enterprise-Class 18TB 3.5" HDD', "variants": [{"available": False}]},
+                {"title": 'WD Gold Enterprise-Class 18TB 3.5" HDD', "variants": [{"available": False}]},
+                {"title": "wuh721818ale6l4 wd ultrastar 18TB", "variants": [{"available": False}, {"available": True}]},
+                {"title": "Seagate Exos 16TB", "variants": [{"available": True}]}]
+        pages = []
+
+        def fetch(url):
+            if "rebuildit.no" in url:
+                pages.append(url)
+                return json.dumps({"products": shop if url.endswith("page=1") else []})
+            return f"<script>{blob}</script>" if "/search?" in url else ""
+
+        source = FinnSource(fetch=fetch, pause=0)
+        listings = {l.source_id: l for l in source.search("18tb", "cpu")}  # "cpu": no item pages for these titles
+        self.assertEqual(sorted(listings), ["2", "3", "4", "5"])
+        self.assertEqual((listings["2"].shipping, listings["2"].pickup_only), (0.0, False))
+        self.assertEqual((listings["3"].shipping, listings["3"].pickup_only), (None, False))  # Fiks ferdig estimate
+        self.assertFalse(listings["4"].pickup_only)
+        self.assertTrue(listings["5"].pickup_only)
+        source.search("16tb", "cpu")
+        self.assertEqual(len(pages), 2)  # page 1 and the empty page 2, read once for both searches
+
+    def test_unreadable_shop_drops_nothing(self):
+        doc = {"id": 1, "heading": "Exos 16TB", "trade_type": "Til salgs", "price": {"amount": 3000},
+               "organisation_name": "Rebuild IT"}
+        blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": [doc]}}}]}).encode()).decode()
+
+        def fetch(url):
+            if "rebuildit.no" in url:
+                raise urllib.error.URLError("down")
+            return f"<script>{blob}</script>"
+
+        self.assertEqual([l.source_id for l in FinnSource(fetch=fetch, pause=0).search("exos", "cpu")], ["1"])
+
+
 class _BrokenSource:
     name, foreign = "broken", False
 

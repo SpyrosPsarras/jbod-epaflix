@@ -11,8 +11,8 @@ import urllib.request
 from dataclasses import dataclass
 from html.parser import HTMLParser
 
-from .config import (EBAY_GROUP_MAX_AGE_S, EBAY_SEARCH, EBAY_STOCK_LOOKUPS, EBAY_STOCK_MAX_AGE_S, SOURCE_PAUSE_S,
-                     WEAK_SELLER)
+from .config import (EBAY_GROUP_MAX_AGE_S, EBAY_SEARCH, EBAY_STOCK_LOOKUPS, EBAY_STOCK_MAX_AGE_S,
+                     REBUILDIT_FREE_SHIPPING_NOK, REBUILDIT_MAX_AGE_S, SOURCE_PAUSE_S, WEAK_SELLER)
 from .rules import _CPU_NAME, Unreadable, read_cpu, read_disk, read_heatsink, read_machine, read_ram
 
 log = logging.getLogger("dealfinder.sources")
@@ -145,6 +145,14 @@ def _coordinate(value, limit):
     return number if math.isfinite(number) and abs(number) <= limit else None
 
 
+REBUILDIT = "Rebuild IT"  # finn's organisation_name for the shop
+_REBUILDIT_PAGE = "https://www.rebuildit.no/products.json?limit=250&page={}"  # Shopify: the whole catalog, paged
+
+
+def _title_key(title):
+    return " ".join(title.lower().split())
+
+
 class FinnSource:
     """finn.no Torget: the search page embeds its results as base64 JSON; item pages carry the full description.
 
@@ -164,6 +172,44 @@ class FinnSource:
     def __init__(self, fetch=http_text, pause=SOURCE_PAUSE_S):
         self._fetch, self._pause = fetch, pause
         self._descriptions = {}  # source_id -> Part text; one Listing shows up under several Part queries
+        self._shop = (0.0, {})  # (read at, Rebuild IT title key -> in stock)
+
+    def _shop_stock(self):
+        """Rebuild IT's web shop, title key -> any variant in stock; {} when it cannot be read, so no Listing is dropped.
+
+        ponytail: the whole catalog (~8,000 products, 32 pages) per read, at most once an hour, failed or not;
+        a Listing whose title the shop does not carry is kept.
+        """
+        if time.time() - self._shop[0] < REBUILDIT_MAX_AGE_S:
+            return self._shop[1]
+        stock = {}
+        try:
+            for page in range(1, 101):
+                time.sleep(self._pause)
+                products = json.loads(self._fetch(_REBUILDIT_PAGE.format(page)))["products"]
+                if not products:
+                    break
+                for p in products:
+                    key = _title_key(p["title"])
+                    stock[key] = stock.get(key, False) or any(v.get("available") is True for v in p["variants"])
+        except (OSError, http.client.HTTPException, AttributeError, KeyError, TypeError, ValueError) as exc:
+            log.warning("Rebuild IT shop stock unavailable: %s", exc)
+            stock = {}
+        self._shop = (time.time(), stock)
+        return stock
+
+    def _rebuildit(self, listings):
+        """Drops Rebuild IT Listings its web shop shows sold out (so they go Gone); the rest ship."""
+        if not any(l.seller == REBUILDIT for l in listings):
+            return listings
+        stock = self._shop_stock()
+        kept = [l for l in listings if l.seller != REBUILDIT or stock.get(_title_key(l.title), True)]
+        for listing in kept:
+            if listing.seller == REBUILDIT:
+                listing.pickup_only = False
+                if listing.price >= REBUILDIT_FREE_SHIPPING_NOK:
+                    listing.shipping = 0.0
+        return kept
 
     def search(self, query, kind="disk"):
         listings, seen = [], set()
@@ -179,6 +225,7 @@ class FinnSource:
                 if listing and listing.source_id not in seen:
                     seen.add(listing.source_id)
                     listings.append(listing)
+        listings = self._rebuildit(listings)
         read, unit = self._PART_UNITS.get(kind, (None, None))
         for listing in listings:
             if kind == "machine":
@@ -233,7 +280,7 @@ class FinnSource:
             url=doc.get("canonical_url") or f"https://www.finn.no/recommerce/forsale/item/{doc['id']}",
             price=float(doc["price"]["amount"]), currency=doc["price"].get("currency_code") or "NOK",
             shipping=0.0 if "seller_pays_shipping" in flags else None, shipping_currency="NOK",
-            condition=condition, seller=None,
+            condition=condition, seller=doc.get("organisation_name"),  # a shop's name; private sellers have none
             location=doc.get("location"), lat=lat if lon is not None else None, lon=lon if lat is not None else None,
             pickup_only="shipping_exists" not in flags,
         )
