@@ -5,7 +5,7 @@ import threading
 
 from .config import (FINN_BUYER_FEE, FINN_SHIPPING_NOK, HOME_LAT_LON, PENALTY_NOK, PICKUP_MAX_MINUTES,
                      PICKUP_NOK_PER_KM, RISK, ROUTE_FALLBACK, VAT)
-from .sources import http_json
+from .sources import REBUILDIT, http_json
 
 
 class OsrmRouter:
@@ -60,9 +60,12 @@ def machine_penalties(facts):
 def cost_breakdown(listing, fx, foreign, router, kind, penalties=None):
     """(breakdown, problem). breakdown holds each NOK part and `total`; problem is None, "shipping" (unknown
     for a foreign Source), "location" (pickup-only without a place) or "too_far" (over the pickup limit).
-    `kind` picks the finn.no shipping estimate; a finn.no Listing that ships pays the Trygg betaling fee."""
+    `kind` picks the finn.no shipping estimate; a finn.no Listing that ships pays the Trygg betaling fee, except one
+    from Rebuild IT, which is bought in its own web shop."""
     parts = {"price": round(listing.price * fx(listing.currency), 2)}
     estimate, fee = FINN_SHIPPING_NOK[kind], round(FINN_BUYER_FEE[0] + FINN_BUYER_FEE[1] * parts["price"], 2)
+    if listing.seller == REBUILDIT:
+        fee = 0
     problem, trip = None, None
     if not foreign and listing.lat is not None and listing.lon is not None:
         km, minutes = router(listing.lat, listing.lon)

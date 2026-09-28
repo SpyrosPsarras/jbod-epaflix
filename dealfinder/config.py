@@ -61,6 +61,11 @@ EBAY_STOCK_MAX_AGE_S = 24 * 3600
 # the configurations of a variation Machine Listing, one group call each: shared by the queries of one Hunt, read
 # again by the next
 EBAY_GROUP_MAX_AGE_S = 3600
+# Rebuild IT (Asker) mirrors its web shop on finn.no and leaves sold-out ads up (a WD Gold 18TB ad from 2022, sold out
+# in the shop, 28 Sep 2026). Its finn ads are checked against the shop's stock, read at most once an hour, and ship
+# from the shop, free from this order total (rebuildit.no footer, 28 Sep 2026)
+REBUILDIT_MAX_AGE_S = 3600
+REBUILDIT_FREE_SHIPPING_NOK = 1000
 
 # per Source: eBay returns only the 100 cheapest per query, so its queries name a capacity; finn.no search is
 # token based ("16tb" misses "16 tb") and small, so family words find more there

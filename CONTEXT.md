@@ -55,7 +55,7 @@ _Avoid_: Error, alert
 ### How it is ranked
 
 **Landed cost**:
-The full NOK price of a Listing at the owner's door: price, shipping to Norway (an eBay Machine with no freight quote to Norway is excluded), 25% import VAT when the Source is abroad, the Pickup trip cost when the Listing is pickup-only, and the finn.no Trygg betaling buyer fee (estimated) when a finn.no Listing is shipped via Fiks ferdig, plus Penalties.
+The full NOK price of a Listing at the owner's door: price, shipping to Norway (an eBay Machine with no freight quote to Norway is excluded), 25% import VAT when the Source is abroad, the Pickup trip cost when the Listing is pickup-only, and the finn.no Trygg betaling buyer fee (estimated) when a finn.no Listing is shipped via Fiks ferdig (not for Rebuild IT, which sells through its own web shop), plus Penalties.
 _Avoid_: Price, total
 
 **Usable TiB**:
@@ -75,7 +75,7 @@ A Listing whose text does not state every fact the rules need (for a Machine: mo
 _Avoid_: Unknown, unparsed, bad listing
 
 **Gone Listing**:
-A Listing that disappeared from its Source since the last Hunt, usually sold. Kept greyed out for 7 days with its last price.
+A Listing that disappeared from its Source since the last Hunt, usually sold. Kept greyed out for 7 days with its last price. A finn.no Listing from Rebuild IT counts as disappeared when its web shop (rebuildit.no) shows that product sold out, because Rebuild IT leaves sold-out Listings up on finn.no. Its other Listings ship, free from 1,000 NOK.
 _Avoid_: Sold, expired, deleted
 
 **Deal**:
