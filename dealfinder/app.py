@@ -308,12 +308,16 @@ class App:
         return self._hunt_lock.locked()
 
     def run_scheduler(self, stop=None, interval=HUNT_INTERVAL_S, retry=60):
-        """Start a Hunt whenever one is due, forever (or until `stop` is set)."""
+        """Start a Hunt whenever one is due, forever (or until `stop` is set). A restart never starts one: a Hunt
+        overdue at start-up waits one interval from then, and Hunt now starts one sooner."""
         stop = stop or threading.Event()
+        boot = datetime.datetime.now(datetime.timezone.utc)
         while not stop.is_set():
             try:
-                now = datetime.datetime.now(datetime.timezone.utc)
-                if stop.wait(next_hunt_delay(self.store.last_started(), now, interval)):
+                now, last = datetime.datetime.now(datetime.timezone.utc), self.store.last_started()
+                if last is None or (boot - last).total_seconds() >= interval:
+                    last = boot
+                if stop.wait(next_hunt_delay(last, now, interval)):
                     break
                 self.start_hunt()
             except Exception:  # e.g. Postgres failover: the scheduler must outlive it, or Hunts stop silently

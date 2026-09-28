@@ -11,8 +11,9 @@ import urllib.request
 from dataclasses import dataclass
 from html.parser import HTMLParser
 
-from .config import EBAY_SEARCH, EBAY_STOCK_LOOKUPS, EBAY_STOCK_MAX_AGE_S, SOURCE_PAUSE_S, WEAK_SELLER
-from .rules import Unreadable, read_cpu, read_disk, read_heatsink, read_machine, read_ram
+from .config import (EBAY_GROUP_MAX_AGE_S, EBAY_SEARCH, EBAY_STOCK_LOOKUPS, EBAY_STOCK_MAX_AGE_S, SOURCE_PAUSE_S,
+                     WEAK_SELLER)
+from .rules import _CPU_NAME, Unreadable, read_cpu, read_disk, read_heatsink, read_machine, read_ram
 
 log = logging.getLogger("dealfinder.sources")
 
@@ -71,6 +72,13 @@ class _PlainText(HTMLParser):
 
     def handle_data(self, data):
         self.parts.append(data)
+
+
+def _plain(html):
+    """The text of an eBay item description, one line per paragraph."""
+    parser = _PlainText()
+    parser.feed(html)
+    return re.sub(r"\n\s*\n+", "\n", "".join(parser.parts)).strip()
 
 
 class _DescriptionText(HTMLParser):
@@ -240,6 +248,18 @@ _EBAY_CONDITION = {
 }
 
 
+# ponytail: a memory choice with neither a size nor the word ("Full spec") under a generic aspect name is not seen, so
+# the group title's RAM stays; read the group's "Memory"-like aspects by value if such sellers show up
+_MEMORY_CHOICE = re.compile(r"memory|\bram\b|\b\d+\s?gb\b(?!\s*(?:ssd|hdd|sas|sata|nvme|disks?|drives?)\b)", re.I)
+_CPU_WITH_COUNT = re.compile(rf"(?:(?<![\w.,])\d\s?[x×*]\s?)?(?:{_CPU_NAME.pattern})", re.I)
+
+
+def _ruled_out(listing):
+    """True when a Machine's title alone rules it out (24x 2.5", 12th Gen, not a server): no item call for it."""
+    facts = read_machine(listing.title, None, listing.condition)
+    return facts is None or (not isinstance(facts, Unreadable) and not facts.qualifies)
+
+
 class EbaySource:
     """eBay UK via the Browse API: Buy It Now, ships to Norway, marketplace EBAY_GB."""
 
@@ -248,12 +268,14 @@ class EbaySource:
     _token_url = "https://api.ebay.com/identity/v1/oauth2/token"
     _search_url = "https://api.ebay.com/buy/browse/v1/item_summary/search"
     _item_url = "https://api.ebay.com/buy/browse/v1/item/"
+    _group_url = "https://api.ebay.com/buy/browse/v1/item/get_items_by_item_group"
 
     def __init__(self, client_id, client_secret, fetch=http_json):
         self._basic = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
         self._fetch = fetch
         self._token, self._token_expiry = None, 0.0
         self._descriptions = {}  # itemId -> text; one Listing shows up under several Machine queries
+        self._groups = {}  # item group id -> (read at, its configurations as Listings)
         self._stock = {}  # itemId -> (read at, stock, extra shipping); one Disk shows up under several queries
 
     def _auth(self):
@@ -277,24 +299,87 @@ class EbaySource:
         if category:
             params["category_ids"] = category
         r = self._fetch(f"{self._search_url}?{urllib.parse.urlencode(params)}", self._headers())
-        listings, lookups = [], EBAY_STOCK_LOOKUPS if kind == "disk" else 0
+        listings, lookups, groups = [], EBAY_STOCK_LOOKUPS if kind == "disk" else 0, set()
         for it in r.get("itemSummaries", []):
             try:
-                listing = self._listing(it)
+                found, ids = [self._listing(it)], it["itemId"].split("|")
+                # a variation Machine ("v1|<item>|<variation>") is read per configuration; the search shows one
+                if details and len(ids) == 3 and ids[2] != "0" and not _ruled_out(found[0]):
+                    found = [] if ids[1] in groups else self._variations(ids[1], low, high)
+                    groups.add(ids[1])
             except (AttributeError, KeyError, TypeError, ValueError):  # one malformed item must not drop the Source
                 log.warning("skipping malformed eBay item %s", it.get("itemId") if isinstance(it, dict) else it)
                 continue
-            if details and listing.shipping is None:
-                continue  # a Machine with no freight price to Norway cannot be bought from here: excluded
-            if details:
-                listing.description = self._description(listing)
-            # results come cheapest first: only the cheapest Disks that can be ranked are worth an item call
-            if lookups and listing.shipping is not None and getattr(
-                    read_disk(listing.title, listing.condition), "qualifies", False):
-                lookups -= 1
-                listing.stock_read, listing.stock, listing.extra_shipping = self._read_stock(listing)
-            listings.append(listing)
+            for listing in found:
+                if details and listing.shipping is None:
+                    continue  # a Machine with no freight price to Norway cannot be bought from here: excluded
+                if details and listing.description is None:  # a configuration carries its group's text
+                    listing.description = self._description(listing)
+                # results come cheapest first: only the cheapest Disks that can be ranked are worth an item call
+                if lookups and listing.shipping is not None and getattr(
+                        read_disk(listing.title, listing.condition), "qualifies", False):
+                    lookups -= 1
+                    listing.stock_read, listing.stock, listing.extra_shipping = self._read_stock(listing)
+                listings.append(listing)
         return listings
+
+    def _variations(self, group_id, low, high):
+        """The configurations of one variation Machine in the search's price range, one Listing each, titled with
+        the choices that set it apart. The group title names one configuration ("256GB" over a "NO MEMORY" one at
+        £169), so when the choices state memory or a CPU, the title's GB sizes or CPU models are dropped and the
+        choice states them; a choice of a bare "64GB" then reads as RAM not stated, never as the title's 256GB.
+        Of configurations the rules read alike (they differ in SSDs only), the cheapest is kept. [] when the group
+        cannot be read.
+
+        ponytail: a group is read at most once an hour, however many queries find it, failed or not; the whole group
+        (240 configurations, 3 MB) comes back in one response, no paging.
+        """
+        cached = self._groups.get(group_id)
+        if cached and time.time() - cached[0] < EBAY_GROUP_MAX_AGE_S:
+            return cached[1]
+        if len(self._groups) > 500:  # ponytail: crude bound, as for descriptions
+            self._groups.clear()
+        best = {}
+        try:
+            group = self._fetch(f"{self._group_url}?{urllib.parse.urlencode({'item_group_id': group_id})}",
+                                self._headers())
+            items = [i for i in group.get("items") or [] if isinstance(i, dict)]
+            texts = {}
+            for d in group.get("commonDescriptions") or []:
+                texts.update(dict.fromkeys(d.get("itemIds") or [], _plain(d.get("description") or "")))
+        except (OSError, http.client.HTTPException, AttributeError, TypeError, ValueError) as exc:
+            log.warning("eBay item group %s unavailable: %s", group_id, exc)  # skipped: no price to trust
+            self._groups[group_id] = (time.time(), [])  # not asked again by the other queries of this Hunt
+            return []
+        aspects = [{a.get("name"): a.get("value") for a in i.get("localizedAspects") or [] if isinstance(a, dict)}
+                   for i in items]
+        varying = [n for n in dict.fromkeys(k for a in aspects for k in a) if len({a.get(n) for a in aspects}) > 1]
+        # what the choices state, by aspect name or by value: "Memory", "RAM", "NO MEMORY", "64GB"; not "960GB SSD"
+        stated = [str(n) for n in varying] + [str(a[n]) for a in aspects for n in varying if a.get(n)]
+        memory = any(_MEMORY_CHOICE.search(v) for v in stated)
+        stated = " ".join(stated)
+        cpu = re.search(r"processor|\bcpu", stated, re.I) or _CPU_NAME.search(stated)
+        for it, chosen in zip(items, aspects):
+            try:
+                listing = self._listing(it)
+                if not low <= listing.price <= high:
+                    continue
+                if memory:
+                    listing.title = re.sub(r"\b\d+\s?gb\b", "", listing.title, flags=re.I)
+                if cpu:
+                    listing.title = _CPU_WITH_COUNT.sub("", listing.title)  # "2x E5-2680 v4" whole, not "2x 128GB"
+                choice = ", ".join(str(chosen[n]) for n in varying if chosen.get(n))
+                listing.title = " ".join(listing.title.split()) + (f" ({choice})" if choice else "")
+                # "" = read, none: no item call per configuration for a group without text
+                listing.description = "\n".join(filter(None, (it.get("shortDescription"), texts.get(it.get("itemId")))))
+                key = (repr(read_machine(listing.title, listing.description, listing.condition)), listing.shipping)
+            except (AttributeError, KeyError, TypeError, ValueError):
+                log.warning("skipping malformed eBay item %s in group %s", it.get("itemId"), group_id)
+                continue
+            if key not in best or listing.price < best[key].price:
+                best[key] = listing
+        self._groups[group_id] = (time.time(), list(best.values()))
+        return self._groups[group_id][1]
 
     def seed_stock(self, known):
         """Stock read before this process started, [(source_id, read at, stock, extra shipping)], from the store."""
@@ -335,17 +420,14 @@ class EbaySource:
         ponytail: title-first saves the 5,000-call daily Browse quota; a title that rules a Machine out
         (24x 2.5", 12th Gen) is trusted over its description.
         """
-        facts = read_machine(listing.title, None, listing.condition)
-        if facts is None or (not isinstance(facts, Unreadable) and not facts.qualifies):
+        if _ruled_out(listing):
             return None
         if listing.source_id not in self._descriptions:
             if len(self._descriptions) > 5000:  # ponytail: crude bound; texts are refetched after a reset
                 self._descriptions.clear()
             try:
                 item = self._fetch(self._item_url + urllib.parse.quote(listing.source_id), self._headers())
-                parser = _PlainText()
-                parser.feed(item.get("description") or "")
-                text = re.sub(r"\n\s*\n+", "\n", "".join(parser.parts)).strip()
+                text = _plain(item.get("description") or "")
                 self._descriptions[listing.source_id] = "\n".join(filter(None, (item.get("shortDescription"), text)))
             except (OSError, http.client.HTTPException, ValueError, AttributeError) as exc:  # one dead item must not end the Source
                 log.warning("eBay item %s unavailable: %s", listing.source_id, exc)
@@ -360,9 +442,11 @@ class EbaySource:
             risk = "weak_seller" if pct < WEAK_SELLER[0] or ratings < WEAK_SELLER[1] else None
         except (KeyError, TypeError, ValueError):
             risk = "seller_unknown"  # an unknown rating is charged like a weak one
+        var = it["itemId"].rsplit("|", 1)[-1]  # the link opens the configuration that was priced, not the default
+        url = it.get("itemWebUrl", "").split("?")[0]
         return Listing(
             source=self.name, source_id=it["itemId"], title=it["title"],
-            url=it.get("itemWebUrl", "").split("?")[0],
+            url=f"{url}?var={var}" if var.isascii() and var.isdigit() and var != "0" else url,
             price=float(it["price"]["value"]), currency=it["price"]["currency"],
             shipping=float(ship["value"]) if "value" in ship else None,
             shipping_currency=ship.get("currency"),

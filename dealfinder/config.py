@@ -58,6 +58,9 @@ EBAY_SEARCH = {
 # searches and item calls together: 11 Disk queries x 20 is at most 220 item calls a day, Hunts or not
 EBAY_STOCK_LOOKUPS = 20
 EBAY_STOCK_MAX_AGE_S = 24 * 3600
+# the configurations of a variation Machine Listing, one group call each: shared by the queries of one Hunt, read
+# again by the next
+EBAY_GROUP_MAX_AGE_S = 3600
 
 # per Source: eBay returns only the 100 cheapest per query, so its queries name a capacity; finn.no search is
 # token based ("16tb" misses "16 tb") and small, so family words find more there
