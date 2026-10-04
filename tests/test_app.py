@@ -605,6 +605,7 @@ class PenaltiesAndRouting(unittest.TestCase):
         clean = {"bays_35": 12, "caddies_35": 12, "psu_count": 2, "controller": "hba", "rails": True,
                  "cpu": True, "ram_gb": 256}
         self.assertEqual(machine_penalties(clean), {})
+        self.assertEqual(machine_penalties({**clean, "psu_count": 0}), {"no_psu": 1000})  # both PSUs bought
 
     def test_router_caches_osrm_and_falls_back_when_it_is_down(self):
         from dealfinder.costs import OsrmRouter
@@ -973,6 +974,33 @@ class CompleteBuildsEndToEnd(unittest.TestCase):
             self.assertIn(f"<td>{needs}</td>", row)
         for text in ("CPUs (not stated)", "RAM to 128 GB", "no_cpu", "ram_unknown"):
             self.assertNotIn(text, self.page)
+
+    def test_best_machines_rank_by_completed_cost_and_uncompletable_last(self):
+        rows = re.findall(r'<tr data-machine="(\d+)" data-landed="[\d.]+"(?: data-completed="([\d.]+)")?(.*?)</tr>',
+                          self.page, re.S)
+        order = [mid for mid, _, _ in rows]
+        completed = {mid: float(c) for mid, c, _ in rows if c}
+        # the barebones is the cheapest Landed (3,000) but not completed: + CPUs 900 + RAM 2,000 + heatsinks 250
+        self.assertEqual(completed["1"], _shipped(3000) + _shipped(900) + _shipped(2000) + _shipped(250))
+        self.assertEqual(completed["2"], _shipped(4000) + _shipped(350) + _shipped(150))  # 1 CPU + 1 heatsink
+        self.assertEqual(completed["7"], 4500 + 952 + 400)  # its Parts share the Machine's pickup trip
+        self.assertEqual(list(completed.values()), sorted(completed.values()))
+        self.assertLess(order.index("2"), order.index("1"))
+        self.assertEqual(set(order[-2:]), {"8", "9"})  # no LGA4189 CPU on sale, 16th Gen: no Completed cost
+        cells = {mid: rest for mid, _, rest in rows}
+        self.assertIn("<td>no CPU on sale</td>", cells["8"])
+        self.assertIn(f"{_shipped(4000):,.0f} + parts {_shipped(350) + _shipped(150):,.0f}", cells["2"])
+
+    def test_a_ranking_saved_before_completed_cost_shows_landed_order(self):
+        with self.app.store._conn() as c:  # the ranking row an older version wrote: no machines column value
+            c.execute("UPDATE ranking SET machines = NULL")
+        try:
+            page = self.app.page()
+            self.assertNotIn("data-completed=", page)
+            landed = [float(n) for n in re.findall(r'<tr data-machine="\d+" data-landed="([\d.]+)"', page)]
+            self.assertEqual(landed, sorted(landed))
+        finally:
+            self.app.rank(self.app.store.last_hunt()["id"])
 
     def test_mark_as_bought_records_the_parts(self):
         try:

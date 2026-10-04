@@ -97,6 +97,8 @@ CREATE TABLE IF NOT EXISTS ranking (
     hunt_id bigint NOT NULL,
     builds  jsonb NOT NULL
 );
+-- per Machine, the NOK of the Parts it lacks or why it cannot be completed, for Best Machines
+ALTER TABLE ranking ADD COLUMN IF NOT EXISTS machines jsonb;
 """
 
 
@@ -274,11 +276,19 @@ class Store:
                             "ORDER BY id DESC LIMIT 1").fetchone()
             return row["best_build"] if row else None
 
-    def set_ranking(self, hunt_id, builds):
-        """The shown Builds (JSON-ready dicts) ranked from the Listings of Hunt `hunt_id`."""
+    def set_ranking(self, hunt_id, builds, machines):
+        """The shown Builds (JSON-ready dicts) and the per-Machine completion, ranked from the Listings of Hunt
+        `hunt_id`."""
         with self._conn() as c:
-            c.execute("INSERT INTO ranking (hunt_id, builds) VALUES (%s, %s) ON CONFLICT (one) DO UPDATE SET "
-                      "hunt_id = EXCLUDED.hunt_id, builds = EXCLUDED.builds", (hunt_id, json.dumps(builds, default=float)))
+            c.execute("INSERT INTO ranking (hunt_id, builds, machines) VALUES (%s, %s, %s) ON CONFLICT (one) DO UPDATE "
+                      "SET hunt_id = EXCLUDED.hunt_id, builds = EXCLUDED.builds, machines = EXCLUDED.machines",
+                      (hunt_id, json.dumps(builds, default=float), json.dumps(machines)))
+
+    def ranking_machines(self):
+        """{"source|id": Parts NOK or the reason it cannot be completed} of the last ranking, {} before one."""
+        with self._conn() as c:
+            row = c.execute("SELECT machines FROM ranking").fetchone()
+            return (row["machines"] or {}) if row else {}
 
     def ranking(self):
         """The stored Builds as dicts, [] before the first ranking."""

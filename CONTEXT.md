@@ -63,8 +63,12 @@ Capacity of the Build's RAIDZ2 pool: (disk count − 2) × disk size in TiB, min
 _Avoid_: Capacity, space
 
 **Penalty**:
-NOK added to a Build's Landed cost for a known weakness: the real cost to fix it (single PSU +500, per missing caddy +100, RAID-only controller +500, no rails +400; missing CPUs and RAM are bought as Parts instead) or a risk surcharge on the money paid to that seller (weak eBay seller under 98% positive or under 50 ratings +10%, an unstated rating counts as weak).
+NOK added to a Build's Landed cost for a known weakness: the real cost to fix it (+500 per PSU short of two: single PSU +500, no PSU +1,000, unstated count +500; per missing caddy +100, RAID-only controller +500, no rails +400; missing CPUs and RAM are bought as Parts instead) or a risk surcharge on the money paid to that seller (weak eBay seller under 98% positive or under 50 ratings +10%, an unstated rating counts as weak).
 _Avoid_: Deduction, malus
+
+**Completed cost**:
+A Machine's Landed cost plus the cheapest CPUs, RAM and heatsinks on sale that it lacks, the same Parts its Build buys. Best Machines ranks by it, so a bare chassis does not beat a full server just by missing Parts. A Machine whose Parts are not on sale has none and ranks last.
+_Avoid_: Full price, total
 
 **Score**:
 Landed cost of a Build divided by its Usable TiB. Lower is better.

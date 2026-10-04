@@ -1067,5 +1067,54 @@
   "description": "2x Xeon E5-2680 v4. 64GB (4x16GB) DDR4-2400 LRDIMM.",
   "condition": "used",
   "expect": {"ram_gb": 64, "ram_sticks": {"count": 4, "gb": 16, "speed": 2400, "lrdimm": true}}
+ },
+ {
+  "note": "Ingen PSU: no PSU is a stated fact, both are bought (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x 3.5\" LFF",
+  "description": "Ingen PSU. 2x Xeon E5-2680 v4.",
+  "condition": "used",
+  "expect": {"qualifies": true, "psu_count": 0}
+ },
+ {
+  "note": "PSUs not included in English (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x 3.5\" LFF",
+  "description": "Power supplies not included. 2x Xeon E5-2680 v4.",
+  "condition": "used",
+  "expect": {"qualifies": true, "psu_count": 0}
+ },
+ {
+  "note": "a stated PSU count wins over a stray 'no power supply' note (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x 3.5\" LFF",
+  "description": "2x 750W PSU. No power supply cables.",
+  "condition": "used",
+  "expect": {"qualifies": true, "psu_count": 2}
+ },
+ {
+  "note": "dual PSU stated in words wins over 'no power supply cables' (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x 3.5\" LFF",
+  "description": "Dual PSU. No power supply cables included.",
+  "condition": "used",
+  "expect": {"qualifies": true, "psu_count": 2}
+ },
+ {
+  "note": "single PSU stated in words wins over 'PSU missing cable' (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x 3.5\" LFF",
+  "description": "Single PSU. PSU missing cable.",
+  "condition": "used",
+  "expect": {"qualifies": true, "psu_count": 1}
+ },
+ {
+  "note": "a missing PSU cable is not a missing PSU (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x 3.5\" LFF",
+  "description": "No PSU cables. Uten strømkabel. PSU missing cord. PSU missing power cord. Uten strømforsyningskabler. No power supply issues. Ingen PSU feil. PSU missing a power cord. PSU missing its power cable.",
+  "condition": "used",
+  "expect": {"qualifies": true, "psu_count": null}
+ },
+ {
+  "note": "no PSUs in Norwegian plural (synthetic)",
+  "title": "Dell PowerEdge R730xd 12x 3.5\" LFF",
+  "description": "Selges uten strømforsyninger og disker",
+  "condition": "used",
+  "expect": {"qualifies": true, "psu_count": 0}
  }
 ]

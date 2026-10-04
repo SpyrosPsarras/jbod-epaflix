@@ -208,6 +208,12 @@ _CPU_MODEL = re.compile(r"e5-?\s?2\d{3}|\bxeon\b|\b(?:bronze|silver|gold|platinu
 _PSU_COUNT = re.compile(r"(?<![\w.,])(\d)\s?[x×*]\s?(?:\S+\s+){0,2}?\d{3,4}\s?w\b|(?<![\w.,])(\d)\s?[x×*]?\s?psu\b", re.I)
 _PSU_TWO = re.compile(r"dual\s+psu|redundant\w*\s+(psu|power|strøm)|doble\s+strøm|2\s+strømforsyninger", re.I)
 _PSU_ONE = re.compile(r"single\s+psu|\b1\s+psu\b", re.I)
+_PSU_WORD = r"(?:psus?|power\s+suppl(?:y|ies)|strømforsyning(?:er|en|ene)?)\b"
+# the phrase must end its clause: "no PSU cables", "PSU missing a power cord", "no power supply issues" do not count
+_CLAUSE_END = r"(?=[ \t]*(?:$|[\n.,;:!/)&]|(?:and|og|or|eller)\b))"
+_PSU_NONE = re.compile(rf"\b(?:no|ingen|uten|without)\s+{_PSU_WORD}{_CLAUSE_END}"
+                       rf"|\b{_PSU_WORD}\s+(?:not\s+included|missing|mangler|følger\s+ikke|medfølger\s+ikke){_CLAUSE_END}",
+                       re.I)
 _CADDY_NONE = re.compile(
     r"\b(no|ingen|uten|without)\s+(disk\s?)?(caddies|caddy|trays?|skuffer|diskrammer|rammer)\b"
     r"|\b(caddies|disk\s?trays?|trays|skuffer|diskrammer)\s+(følger\s+ikke|medfølger\s+ikke|not\s+included|mangler)", re.I)
@@ -404,7 +410,9 @@ def _psu_count(text):
         return int(m[1] or m[2])
     if _PSU_TWO.search(text):
         return 2
-    return 1 if _PSU_ONE.search(text) else None
+    if _PSU_ONE.search(text):
+        return 1
+    return 0 if _PSU_NONE.search(text) else None  # a stated count wins over a stray "no PSU"
 
 
 def _caddies_35(text):

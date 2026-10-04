@@ -209,8 +209,10 @@ def best_build(machine, disks_by_capacity, parts, parts_nok, trips, pick):
 
 
 def rank_builds(machines, disks, parts):
-    """(the cheapest Build per Machine, {HIDDEN reason: Machines without a shown Build}); the page sorts them."""
+    """(the cheapest Build per Machine, {HIDDEN reason: Machines without a shown Build}, the Parts NOK or reason
+    per Machine); the page sorts them."""
     by_capacity, hidden, builds, cpus, rams, heatsinks = {}, dict.fromkeys(HIDDEN, 0), [], {}, {}, {}
+    completed = {}  # "source|id" -> NOK of the Parts the Machine lacks, or the HIDDEN reason it cannot be completed
     for r in (*machines, *disks, *parts):  # once per row, not per comparison in _pick
         r["_nok"], r["_trip"] = float(r["landed_nok"]), (r.get("costs") or {}).get("pickup_trip", 0)
         r["_place"] = _trip_place(r)
@@ -237,10 +239,11 @@ def rank_builds(machines, disks, parts):
         return memo[key]
     for m in machines:
         done = _complete(m, cpus, rams, heatsinks, pick)
+        completed[f"{m['source']}|{m['source_id']}"] = done if isinstance(done, str) else round(done[1], 2)
         if isinstance(done, str):
             hidden[done] += 1
         elif (b := best_build(m, by_capacity, *done, pick)) and b.landed_nok > CEILING_NOK:
             hidden["ceiling"] += 1
         elif b:
             builds.append(b)
-    return builds, hidden
+    return builds, hidden, completed

@@ -17,7 +17,7 @@ FINN_SHIPPING_NOK = {"machine": 400, "disk": 65, "cpu": 65, "ram": 65, "heatsink
 # Trygg betaling, the buyer fee on every finn.no Fiks ferdig purchase: (fixed NOK, share of the price). An ESTIMATE
 # fitted to one checkout (77 NOK on 800 NOK, 27 Sep 2026); finn.no does not publish the formula
 FINN_BUYER_FEE = (29, 0.06)
-PENALTY_NOK = {"single_psu": 500, "caddy": 100, "raid_only": 500, "no_rails": 400}
+PENALTY_NOK = {"psu": 500, "caddy": 100, "raid_only": 500, "no_rails": 400}  # "psu": per PSU short of two
 RAM_TARGET_GB = 128   # RAM a Build is completed up to; more earns no credit
 # ponytail: DIMM slots per socket, assumed (R730/R740/DL380 have 12); read the model's real count if a Build hits it
 RAM_SLOTS_PER_SOCKET = 12
