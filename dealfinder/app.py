@@ -30,7 +30,8 @@ FACT_LABEL = {"capacity": "capacity", "form_factor": "3.5\" or 2.5\"", "disk_cla
               "price": "price (make an offer)", "location": "pickup place"}
 COST_LABEL = {"shipping": "shipping", "shipping_estimate": "shipping (est.)", "finn_fee": "Trygg betaling (est.)",
               "pickup_trip": "pickup trip",
-              "vat": "VAT", "single_psu": "2nd PSU", "caddies": "caddies", "raid_only": "HBA", "no_rails": "rails",
+              "vat": "VAT", "single_psu": "2nd PSU", "no_psu": "2 PSUs", "caddies": "caddies", "raid_only": "HBA",
+              "no_rails": "rails",
               "psu_unknown": "2nd PSU (not stated)", "caddies_unknown": "caddies (not stated)",
               "controller_unknown": "HBA (controller not stated)", "rails_unknown": "rails (not stated)",
               "weak_seller": "weak seller +10%", "seller_unknown": "seller rating not stated +10%"}
@@ -166,6 +167,20 @@ def _needs(facts):
     ram = n["ram"] or {}
     return ", ".join(text for text, value in ((f"{n['cpu']} CPU", n["cpu"]), (f"{ram.get('gb')} GB", ram),
                                               (f"{n['heatsink']} HS", n["heatsink"])) if value) or "nothing"
+
+
+CANNOT_COMPLETE = {"no_cpu": "no CPU on sale", "no_ram": "no RAM on sale", "no_heatsink": "no heatsink on sale",
+                   "platform": "unsupported platform"}
+
+
+def _completed(row, parts):
+    """(data attribute, Completed NOK cell) of a Machine: its Landed cost + the Parts it lacks (`parts`, NOK), or why
+    the Parts cannot be bought. A Machine with no ranking yet shows '?'."""
+    if not isinstance(parts, (int, float)):
+        return "", _e(CANNOT_COMPLETE.get(parts, "?"))
+    landed = float(row["landed_nok"])
+    return (f' data-completed="{landed + parts:.2f}"',
+            f'{landed + parts:,.0f}<br><small class="costs">{landed:,.0f} + parts {parts:,.0f}</small>')
 
 
 def _link(row):
@@ -368,8 +383,8 @@ class App:
         Listings change only in a Hunt, so this runs once per Hunt, and at start-up for new rules."""
         start = time.monotonic()
         try:
-            builds, hidden = rank_builds(*self.store.build_parts())
-            self.store.set_ranking(hunt_id, [asdict(b) for b in builds])
+            builds, hidden, completed = rank_builds(*self.store.build_parts())
+            self.store.set_ranking(hunt_id, [asdict(b) for b in builds], completed)
         except Exception as exc:  # the page keeps the last ranking and says so, until a ranking succeeds
             self.ranking_error = f"hunt {hunt_id}: {exc}"[:300]
             raise
@@ -542,7 +557,19 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
         builds = self.builds()
         build_head = "".join(f'<th><a href="/?sort={k}">{_e(label)}</a></th>' for k, (label, _) in BUILD_SORT.items())
         last = self.store.last_hunt()
-        disks, machines, unreadable = self.store.best_disks(), self.store.best_listings("machine"), self.store.unreadable()
+        # cheapest completed first (Landed + the Parts it lacks); a Machine that cannot be completed, or has no ranking
+        # yet, goes after the rest by Landed cost. ponytail: sorted here, all Machines, no SQL limit; fine at hundreds
+        parts = self.store.ranking_machines()
+
+        def machine_parts(r):
+            return parts.get(f"{r['source']}|{r['source_id']}")
+
+        def completed_first(r):
+            p = machine_parts(r)
+            done = isinstance(p, (int, float))
+            return r["gone"], not done, float(r["landed_nok"]) + (p if done else 0)
+        machines = sorted(self.store.best_listings("machine", None), key=completed_first)[:50]
+        disks, unreadable = self.store.best_disks(), self.store.unreadable()
         cpus, rams = self.store.best_listings("cpu"), self.store.best_listings("ram")
         heatsinks = self.store.best_listings("heatsink")
         deals = self.store.deal_prices()
@@ -559,14 +586,16 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
                 where=_where(r), landed=float(r["landed_nok"]), attrs=st[0], note=st[1] + _breakdown(r))
             for r in disks for st in [state("disk", r, float(r["nok_per_tb"]))])
         machine_rows = "".join(
-            '<tr data-machine="{id}" data-landed="{landed:.2f}"{attrs}><td><a href="{url}">{title}</a>{note}</td><td>{model}</td>'
-            '<td>{gen}th</td><td>{bays}</td><td>{ram}</td><td>{psu}</td><td>{caddies}</td><td>{ctrl}</td>'
-            '<td>{rails}</td><td>{needs}</td><td>{where}</td><td>{landed:,.0f}</td></tr>'.format(
+            '<tr data-machine="{id}" data-landed="{landed:.2f}"{done[0]}{attrs}><td><a href="{url}">{title}</a>{note}</td>'
+            '<td>{model}</td><td>{gen}th</td><td>{bays}</td><td>{ram}</td><td>{psu}</td><td>{caddies}</td><td>{ctrl}</td>'
+            '<td>{rails}</td><td>{needs}</td><td>{where}</td><td>{landed:,.0f}</td><td>{done[1]}</td></tr>'.format(
                 id=_e(r["source_id"]), landed=float(r["landed_nok"]), url=_e(_safe_url(r["url"])), title=_e(r["title"]),
                 model=_e(f["model"]), gen=_e(f["generation"]), bays=_e(f["bays_35"]),
-                ram=_e("?" if f["ram_gb"] is None else f"{f['ram_gb']} GB"), psu=_e(f["psu_count"] or "?"),
+                ram=_e("?" if f["ram_gb"] is None else f"{f['ram_gb']} GB"),
+                psu=_e("?" if f["psu_count"] is None else f["psu_count"]),
                 caddies=_e("?" if f["caddies_35"] is None else f["caddies_35"]), ctrl=_e(f["controller"] or "?"),
-                rails=_yes_no(f["rails"]), needs=_e(_needs(f)), where=_where(r), attrs=st[0], note=st[1] + _breakdown(r))
+                rails=_yes_no(f["rails"]), needs=_e(_needs(f)), where=_where(r), attrs=st[0], note=st[1] + _breakdown(r),
+                done=_completed(r, machine_parts(r)))
             for r in machines for f in [r["facts"]] for st in [state("machine", r, float(r["landed_nok"]))])
         cpu_rows = "".join(
             '<tr data-cpu="{id}" data-nok-per-cpu="{per:.2f}"{attrs}><td>{link}{note}</td><td>{platform}</td>'
@@ -633,10 +662,13 @@ needs a few weeks of data. The last {HISTORY_WEEKS} weeks are shown.</p>
                        f"<table><tr>{build_head}<th></th><th>Details</th></tr>{_build_rows(builds, sort, bought is None)}</table>"),
             ("Best Disks", "<table><tr><th>Disk</th><th>Capacity</th><th>Condition</th><th>Where</th>"
                            f"<th>Landed NOK</th><th>NOK per TB</th></tr>{disk_rows}</table>"),
-            ("Best Machines", '<table><tr><th>Machine</th><th>Model</th><th>Gen</th><th>3.5" bays</th><th>RAM</th>'
+            ("Best Machines", "<p>Cheapest Completed NOK first: Landed NOK plus the cheapest CPUs, RAM (to"
+                              f" {RAM_TARGET_GB} GB) and heatsinks on sale that the Machine needs. Machines whose Parts"
+                              " cannot be bought come last.</p>"
+                              '<table><tr><th>Machine</th><th>Model</th><th>Gen</th><th>3.5" bays</th><th>RAM</th>'
                               '<th>PSUs</th><th>3.5" caddies</th><th>Controller</th><th>Rails</th><th>Needs</th>'
                               '<th>Where</th>'
-                              f"<th>Landed NOK</th></tr>{machine_rows}</table>"),
+                              f"<th>Landed NOK</th><th>Completed NOK</th></tr>{machine_rows}</table>"),
             ("Best CPUs", "<table><tr><th>CPU</th><th>Platform</th><th>Model</th><th>Count</th><th>Where</th>"
                           f"<th>Landed NOK</th><th>NOK per CPU</th></tr>{cpu_rows}</table>"),
             ("Best RAM", "<table><tr><th>RAM</th><th>Type</th><th>Size</th><th>Speed</th><th>Where</th>"

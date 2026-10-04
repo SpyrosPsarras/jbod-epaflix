@@ -45,9 +45,10 @@ def machine_penalties(facts):
     empty 3.5" bay; the Build optimizer (#6) recounts it for a Build as max(0, disks + 1 boot - caddies) x 100.
     """
     missing_caddies = max(0, facts["bays_35"] - (facts["caddies_35"] or 0))
-    penalties = {
-        ("single_psu" if facts["psu_count"] == 1 else "psu_unknown"):
-            PENALTY_NOK["single_psu"] if (facts["psu_count"] or 1) < 2 else 0,
+    psus = facts["psu_count"]
+    penalties = {  # two PSUs wanted; an unstated count is charged like one, the usual case
+        {0: "no_psu", 1: "single_psu"}.get(psus, "psu_unknown"):
+            PENALTY_NOK["psu"] * max(0, 2 - (1 if psus is None else psus)),
         ("caddies" if facts["caddies_35"] is not None else "caddies_unknown"): PENALTY_NOK["caddy"] * missing_caddies,
         ("raid_only" if facts["controller"] == "raid" else "controller_unknown"):
             PENALTY_NOK["raid_only"] if facts["controller"] != "hba" else 0,
