@@ -4,7 +4,7 @@ import json
 from psycopg.rows import dict_row
 from psycopg_pool import ConnectionPool
 
-from .config import GONE_DAYS, HISTORY_WEEKS
+from .config import DISK_QUERY_UPDATE, GONE_DAYS, HISTORY_WEEKS
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS listings (
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS tracked_queries (
     added  timestamptz NOT NULL DEFAULT clock_timestamp(),
     PRIMARY KEY (query, kind, source)
 );
--- the Build the owner bought; any row stops all Hunts for good (ticket #10)
+-- any purchase row stops all Hunts for good (ticket #10)
 CREATE TABLE IF NOT EXISTS purchases (
     one    boolean PRIMARY KEY DEFAULT true CHECK (one),  -- at most one row: bought once, for good
     bought timestamptz NOT NULL DEFAULT now(),
@@ -75,30 +75,20 @@ CREATE TABLE IF NOT EXISTS hunts (
     ok       boolean,
     detail   jsonb
 );
--- price history (#13): each observation's Landed cost (NULL unless the Listing qualified) and each Hunt's best
--- Build; recorded from this version on, earlier observations have the seller price only
+-- price history (#13): each observation's Landed cost (NULL unless the Listing qualified);
+-- recorded from this version on, earlier observations have the seller price only
 ALTER TABLE price_observations ADD COLUMN IF NOT EXISTS landed_nok numeric;
 -- what the Listing was when observed, so a later retitle or disqualification does not move old prices
 ALTER TABLE price_observations ADD COLUMN IF NOT EXISTS capacity_tb numeric;
 ALTER TABLE price_observations ADD COLUMN IF NOT EXISTS model text;
-ALTER TABLE hunts ADD COLUMN IF NOT EXISTS best_build jsonb;
--- Machines without a shown Build per reason, from each Hunt's ranking, for /metrics (#34)
-ALTER TABLE hunts ADD COLUMN IF NOT EXISTS builds_hidden jsonb;
--- Part price history: each observation's kind, and for a Part its group key (in `model`) and the units its
--- Landed cost is divided by (CPUs, GB of RAM, heatsinks)
+-- RAM price history: each observation's kind, its group key (in `model`) and the units its
+-- Landed cost is divided by (GB of RAM)
 ALTER TABLE price_observations ADD COLUMN IF NOT EXISTS kind text;
 ALTER TABLE price_observations ADD COLUMN IF NOT EXISTS units numeric;
 -- a removed Source
 DELETE FROM tracked_queries WHERE source = 'aliexpress';
 DELETE FROM listings WHERE source = 'aliexpress';
--- the shown Builds, ranked once per Hunt (and at start-up) so a page load does not rank; one row
-CREATE TABLE IF NOT EXISTS ranking (
-    one     boolean PRIMARY KEY DEFAULT true CHECK (one),
-    hunt_id bigint NOT NULL,
-    builds  jsonb NOT NULL
-);
--- per Machine, the NOK of the Parts it lacks or why it cannot be completed, for Best Machines
-ALTER TABLE ranking ADD COLUMN IF NOT EXISTS machines jsonb;
+CREATE TABLE IF NOT EXISTS query_updates (name text PRIMARY KEY);
 """
 
 
@@ -107,9 +97,7 @@ ALTER TABLE ranking ADD COLUMN IF NOT EXISTS machines jsonb;
 # the Listings from its last good Hunt, and the banner says so (ticket #7).
 _SOURCE_OK = """
     h.finished IS NOT NULL AND (s.value->>'ok')::boolean
-    AND coalesce((s.value->>'disk')::int, 0) + coalesce((s.value->>'machine')::int, 0)
-        + coalesce((s.value->>'cpu')::int, 0) + coalesce((s.value->>'ram')::int, 0)
-        + coalesce((s.value->>'heatsink')::int, 0) > 0
+    AND coalesce((s.value->>'disk')::int, 0) + coalesce((s.value->>'ram')::int, 0) > 0
 """
 _FRESH = f"""
 WITH fresh AS (
@@ -138,14 +126,8 @@ _RANKED_WHERE = f"""
 def _history_key(kind, facts):
     """(group key, units) of a qualifying Listing on the price history page. A Disk groups by capacity instead; its
     units are the disks of a lot."""
-    if kind == "machine":
-        return facts["model"], None
-    if kind == "cpu":
-        return facts["model"], facts["count"]
     if kind == "ram":
         return f"DDR{facts['ddr']} {facts['type']} {facts['gb_per_stick']} GB", facts["gb_per_stick"] * facts["sticks"]
-    if kind == "heatsink":
-        return ", ".join(facts["fits"]), facts["count"]
     return None, facts.get("count", 1)
 
 
@@ -164,22 +146,19 @@ class Store:
     def migrate(self):
         with self._conn() as c:
             c.execute(SCHEMA)
-            # observations from before Part history carry no kind: key the Parts from their Listing's facts, then
-            # give every other one its Listing's kind.
-            # ponytail: current facts stand in for the observed ones (those Hunts were hours old); a Part that no
-            # longer qualifies stays out of history
             old = c.execute("""
                 SELECT o.source, o.source_id, o.hunt_id, l.kind, l.facts
                 FROM price_observations o JOIN listings l USING (source, source_id)
                 WHERE o.kind IS NULL AND o.landed_nok IS NOT NULL AND l.qualifies
-                  AND l.kind IN ('cpu', 'ram', 'heatsink')""").fetchall()
+                  AND l.kind = 'ram'""").fetchall()
             c.cursor().executemany(
                 "UPDATE price_observations SET kind = %s, model = %s, units = %s "
                 "WHERE source = %s AND source_id = %s AND hunt_id = %s",
                 [(r["kind"], *_history_key(r["kind"], r["facts"]), r["source"], r["source_id"], r["hunt_id"])
                  for r in old])
             c.execute("""UPDATE price_observations o SET kind = l.kind FROM listings l
-                         WHERE o.kind IS NULL AND l.source = o.source AND l.source_id = o.source_id""")
+                         WHERE o.kind IS NULL AND l.kind IN ('disk', 'ram')
+                           AND l.source = o.source AND l.source_id = o.source_id""")
 
     def start_hunt(self):
         with self._conn() as c:
@@ -190,15 +169,16 @@ class Store:
             c.execute("UPDATE hunts SET finished = now(), ok = %s, detail = %s WHERE id = %s",
                       (ok, json.dumps(detail), hunt_id))
 
-    def seed_tracked(self, rows):
-        """Insert the starting Tracked queries (query, kind, source) for each (kind, source) group that has
-        none yet: the first start, and the first start after a new Source is added."""
+    def seed_tracked(self, rows, additions=()):
+        """Seed empty (kind, Source) groups, plus the 12TB/all-class additions once per database."""
         with self._conn() as c, c.transaction():
             have = {(r["kind"], r["source"]) for r in c.execute("SELECT DISTINCT kind, source FROM tracked_queries")}
-            for query, kind, source in rows:
-                if (kind, source) not in have:
-                    c.execute("INSERT INTO tracked_queries (query, kind, source) VALUES (%s, %s, %s) "
-                              "ON CONFLICT DO NOTHING", (query, kind, source))
+            seed = [row for row in rows if (row[1], row[2]) not in have]
+            if additions and c.execute("INSERT INTO query_updates VALUES (%s) "
+                                       "ON CONFLICT DO NOTHING RETURNING name", (DISK_QUERY_UPDATE,)).fetchone():
+                seed.extend(additions)
+            c.cursor().executemany("INSERT INTO tracked_queries (query, kind, source) VALUES (%s, %s, %s) "
+                                   "ON CONFLICT DO NOTHING", seed)
 
     def track(self, query, kind):
         with self._conn() as c:
@@ -207,25 +187,11 @@ class Store:
 
     def tracked(self):
         with self._conn() as c:
-            return c.execute("SELECT query, kind, source FROM tracked_queries ORDER BY added, query").fetchall()
-
-    def set_best_build(self, hunt_id, best, hidden):
-        """The Hunt's best Build (None when no Build is shown) and its hidden counts."""
-        with self._conn() as c:
-            c.execute("UPDATE hunts SET best_build = %s, builds_hidden = %s WHERE id = %s",
-                      (json.dumps(best) if best else None, json.dumps(hidden), hunt_id))
-
-    def latest_builds_hidden(self):
-        with self._conn() as c:
-            row = c.execute("SELECT builds_hidden FROM hunts WHERE builds_hidden IS NOT NULL "
-                            "ORDER BY id DESC LIMIT 1").fetchone()
-            return row["builds_hidden"] if row else None
+            return c.execute("SELECT query, kind, source FROM tracked_queries "
+                             "WHERE kind IN ('disk', 'ram') ORDER BY added, query").fetchall()
 
     def history(self):
-        """Weekly lowest and median Landed cost of qualifying Listings over HISTORY_WEEKS weeks, each Listing
-        counted once per week at its lowest price: ({kind: rows}, best Build per week). Disk rows are per capacity
-        and Source in NOK per TB, Machine rows per model and Source in NOK, Part rows per key and Source in NOK per
-        CPU, GB or heatsink."""
+        """Weekly lowest and median Landed NOK per TB for Disks and per GB for RAM."""
         since = f"now() - interval '{int(HISTORY_WEEKS)} weeks'"
         def weekly(kind, key, value):  # each Listing once per week, at its lowest price, grouped by `key`
             return c.execute(f"""
@@ -239,15 +205,8 @@ class Store:
                 GROUP BY 1, 2, 3
             """, (kind,)).fetchall()
         with self._conn() as c:
-            series = {"disk": weekly("disk", "capacity_tb::float", "landed_nok / (capacity_tb * coalesce(units, 1))"),
-                      "machine": weekly("machine", "model", "landed_nok"),
-                      **{kind: weekly(kind, "model", "landed_nok / units") for kind in ("cpu", "ram", "heatsink")}}
-            builds = c.execute(f"""
-                SELECT DISTINCT ON (week) date_trunc('week', started)::date AS week, best_build
-                FROM hunts WHERE best_build IS NOT NULL AND started > {since}
-                ORDER BY week, (best_build->>'score')::float
-            """).fetchall()
-        return series, builds
+            return {"disk": weekly("disk", "capacity_tb::float", "landed_nok / (capacity_tb * coalesce(units, 1))"),
+                    "ram": weekly("ram", "model", "landed_nok / units")}
 
     def deal_prices(self, min_listings=5):
         """{(kind, key): the lowest per-unit Landed cost of its earlier weeks}: the price a live Listing must beat to
@@ -258,54 +217,23 @@ class Store:
             rows = c.execute(f"""
                 SELECT kind, model, capacity_tb::float AS cap,
                        min(landed_nok / CASE kind WHEN 'disk' THEN capacity_tb * coalesce(units, 1)
-                                                  WHEN 'machine' THEN 1
                                                   ELSE units END)::float AS low
                 FROM price_observations
-                WHERE landed_nok IS NOT NULL AND seen_at > now() - interval '{int(HISTORY_WEEKS)} weeks'
+                WHERE kind IN ('disk', 'ram') AND landed_nok IS NOT NULL AND seen_at > now() - interval '{int(HISTORY_WEEKS)} weeks'
                   AND seen_at < date_trunc('week', now())
                   AND CASE kind WHEN 'disk' THEN capacity_tb IS NOT NULL ELSE model IS NOT NULL AND
-                                                 (kind = 'machine' OR units IS NOT NULL) END
+                                                 units IS NOT NULL END
                 GROUP BY 1, 2, 3 HAVING count(DISTINCT source || '|' || source_id) >= %s
             """, (min_listings,)).fetchall()
         return {(r["kind"], r["cap"] if r["kind"] == "disk" else r["model"]): r["low"] for r in rows}
 
-    def latest_best_build(self):
-        """The best Build of the latest ranked Hunt; None when that Hunt showed no Build."""
+    def record_purchase(self):
         with self._conn() as c:
-            row = c.execute("SELECT best_build FROM hunts WHERE best_build IS NOT NULL OR builds_hidden IS NOT NULL "
-                            "ORDER BY id DESC LIMIT 1").fetchone()
-            return row["best_build"] if row else None
-
-    def set_ranking(self, hunt_id, builds, machines):
-        """The shown Builds (JSON-ready dicts) and the per-Machine completion, ranked from the Listings of Hunt
-        `hunt_id`."""
-        with self._conn() as c:
-            c.execute("INSERT INTO ranking (hunt_id, builds, machines) VALUES (%s, %s, %s) ON CONFLICT (one) DO UPDATE "
-                      "SET hunt_id = EXCLUDED.hunt_id, builds = EXCLUDED.builds, machines = EXCLUDED.machines",
-                      (hunt_id, json.dumps(builds, default=float), json.dumps(machines)))
-
-    def ranking_machines(self):
-        """{"source|id": Parts NOK or the reason it cannot be completed} of the last ranking, {} before one."""
-        with self._conn() as c:
-            row = c.execute("SELECT machines FROM ranking").fetchone()
-            return (row["machines"] or {}) if row else {}
-
-    def ranking(self):
-        """The stored Builds as dicts, [] before the first ranking."""
-        with self._conn() as c:
-            row = c.execute("SELECT builds FROM ranking").fetchone()
-            return row["builds"] if row else []
-
-    def record_purchase(self, build):
-        """True when recorded; False when a Build was already bought."""
-        with self._conn() as c:
-            return c.execute("INSERT INTO purchases (build) VALUES (%s) ON CONFLICT DO NOTHING",
-                             (json.dumps(build),)).rowcount == 1
+            return c.execute("INSERT INTO purchases (build) VALUES ('{}') ON CONFLICT DO NOTHING").rowcount == 1
 
     def bought(self):
-        """The recorded purchase {bought, build}, or None while hunting."""
         with self._conn() as c:
-            return c.execute("SELECT bought, build FROM purchases").fetchone()
+            return c.execute("SELECT bought FROM purchases").fetchone()
 
     def route_get(self, lat, lon):
         with self._conn() as c:
@@ -379,31 +307,17 @@ class Store:
                 ORDER BY gone, nok_per_tb, landed_nok LIMIT %s
             """, (limit,)).fetchall()
 
-    def best_listings(self, kind, limit=50):
-        """Ranked Machines or Parts, cheapest first; a CPU or heatsink Listing ranks by NOK per unit, RAM by NOK
-        per GB."""
+    def best_ram(self, limit=50):
+        """RAM ranked by Landed NOK per GB."""
         with self._conn() as c:
             return c.execute(_FRESH + f"""
                 SELECT l.source, l.source_id, title, url, facts, landed_nok, location, pickup_only, l.costs,
                        l.price, l.currency, p.prev_price, l.last_seen < f.since AS gone, l.last_seen
                 FROM listings l JOIN fresh f ON f.source = l.source {_PREV}
-                WHERE kind = %s AND {_RANKED_WHERE}
-                ORDER BY gone, landed_nok / coalesce((facts->>'count')::numeric,
-                                                     (facts->>'gb_per_stick')::numeric * (facts->>'sticks')::numeric, 1),
+                WHERE kind = 'ram' AND {_RANKED_WHERE}
+                ORDER BY gone, landed_nok / ((facts->>'gb_per_stick')::numeric * (facts->>'sticks')::numeric),
                          landed_nok LIMIT %s
-            """, (kind, limit)).fetchall()
-
-    def build_parts(self):
-        """Live (not Gone) qualified Machines, Disks and Parts (CPU, RAM, heatsink), the inputs of the Build optimizer."""
-        with self._conn() as c:
-            rows = c.execute(_FRESH + """
-                SELECT l.source, source_id, kind, title, url, facts, capacity_tb, landed_nok, location,
-                       pickup_only, costs
-                FROM listings l JOIN fresh f ON f.source = l.source
-                WHERE qualifies AND landed_nok IS NOT NULL AND last_seen >= f.since
-            """).fetchall()
-        return ([r for r in rows if r["kind"] == "machine"], [r for r in rows if r["kind"] == "disk"],
-                [r for r in rows if r["kind"] in ("cpu", "ram", "heatsink")])
+            """, (limit,)).fetchall()
 
     def stock_read(self, source):
         """[(source_id, read at, stock, extra shipping)] of the Disks whose stock `source` read; the Source skips
@@ -418,7 +332,7 @@ class Store:
             return c.execute(_FRESH + """
                 SELECT l.source, source_id, kind, title, url, missing
                 FROM listings l JOIN fresh f ON f.source = l.source
-                WHERE cardinality(missing) > 0 AND last_seen >= f.since
+                WHERE kind IN ('disk', 'ram') AND cardinality(missing) > 0 AND last_seen >= f.since
                 ORDER BY kind DESC, l.source, title LIMIT %s
             """, (limit,)).fetchall()
 
@@ -431,5 +345,5 @@ class Store:
                             ELSE 'rejected' END AS state,
                        count(*) AS n
                 FROM listings l JOIN fresh f ON f.source = l.source
-                WHERE last_seen >= f.since GROUP BY 1, 2, 3
+                WHERE kind IN ('disk', 'ram') AND last_seen >= f.since GROUP BY 1, 2, 3
             """).fetchall()

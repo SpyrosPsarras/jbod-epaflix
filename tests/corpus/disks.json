@@ -81,7 +81,6 @@
   "condition": "used",
   "expect": {
    "unreadable": [
-    "disk_class",
     "form_factor"
    ]
   }
@@ -188,11 +187,11 @@
   "condition": "new"
  },
  {
-  "note": "below 14TB",
+  "note": "12TB minimum qualifies",
   "title": "Seagate EXOS X16 12TB 7200RPM SATA 6Gb/s 256MB Cache 3.5\" HDD ST12000NM001G-",
   "expect": {
    "capacity_tb": 12,
-   "qualifies": false
+   "qualifies": true
   },
   "condition": "new"
  },
@@ -343,8 +342,7 @@
   "title": "16TB hard drive tested working",
   "expect": {
    "unreadable": [
-    "form_factor",
-    "disk_class"
+    "form_factor"
    ]
   },
   "condition": "used"
@@ -391,12 +389,12 @@
   "condition": "used"
  },
  {
-  "note": "desktop class rejected",
+  "note": "desktop class qualifies",
   "title": "Seagate BarraCuda 16TB 3.5\" SATA desktop hard drive",
   "expect": {
    "capacity_tb": 16,
    "disk_class": "desktop",
-   "qualifies": false
+   "qualifies": true
   },
   "condition": "new"
  },
@@ -435,12 +433,12 @@
   }
  },
  {
-  "note": "small lot is rejected, not unreadable (live finn)",
+  "note": "12TB lot qualifies (live finn)",
   "title": "2 stk Exos X16 12TB SATA disker",
   "condition": "used",
   "expect": {
    "capacity_tb": 12,
-   "qualifies": false
+   "qualifies": true
   }
  },
  {
@@ -453,12 +451,13 @@
   }
  },
  {
-  "note": "several small capacities are rejected (live finn)",
+  "note": "several capacities including 12TB are unreadable (live finn)",
   "title": "Harddisker 4TB / 10TB / 12TB –  Seagate Exos/Barracuda, HGST",
   "condition": "used",
   "expect": {
-   "capacity_tb": 12,
-   "qualifies": false
+   "unreadable": [
+    "capacity"
+   ]
   }
  },
  {
@@ -468,6 +467,73 @@
   "expect": {
    "form_factor": "2.5",
    "qualifies": false
+  }
+ },
+ {
+  "note": "10TB is too small (synthetic)",
+  "title": "Exos 10TB 3.5\"",
+  "condition": "used",
+  "expect": {
+   "qualifies": false
+  }
+ },
+ {
+  "note": "11TB is too small (synthetic)",
+  "title": "HDD 11TB 3.5\"",
+  "condition": "used",
+  "expect": {
+   "qualifies": false
+  }
+ },
+ {
+  "note": "WD Purple surveillance qualifies (synthetic)",
+  "title": "WD Purple 12TB",
+  "condition": "used",
+  "expect": {
+   "qualifies": true
+  }
+ },
+ {
+  "note": "Barracuda desktop qualifies (synthetic)",
+  "title": "Seagate Barracuda 12TB 3.5\"",
+  "condition": "used",
+  "expect": {
+   "qualifies": true
+  }
+ },
+ {
+  "note": "class need not be stated (synthetic)",
+  "title": "12TB SATA hard disk 3.5\"",
+  "condition": "used",
+  "expect": {
+   "qualifies": true
+  }
+ },
+ {
+  "note": "12TB SFF rejected (synthetic)",
+  "title": "12TB SAS 2.5\" enterprise",
+  "condition": "used",
+  "expect": {
+   "qualifies": false
+  }
+ },
+ {
+  "note": "12TB USB rejected (synthetic)",
+  "title": "12TB external USB hard disk",
+  "condition": "used",
+  "expect": {
+   "qualifies": false
+  }
+ },
+ {
+  "note": "finn Purple lot states aggregate capacity (live finn)",
+  "title": "60 TB lagring | 5x 12TB Western Digital Purple disker | WD121PURZ",
+  "condition": "used",
+  "expect": {
+   "capacity_tb": 12,
+   "count": 5,
+   "form_factor": "3.5",
+   "qualifies": true
   }
  }
 ]

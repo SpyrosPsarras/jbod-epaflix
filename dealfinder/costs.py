@@ -1,9 +1,9 @@
-"""Landed cost in NOK, Pickup trips, Penalties and the daily exchange rate."""
+"""Landed cost in NOK, Pickup trips, seller risk and the daily exchange rate."""
 import datetime
 import math
 import threading
 
-from .config import (FINN_BUYER_FEE, FINN_SHIPPING_NOK, HOME_LAT_LON, PENALTY_NOK, PICKUP_MAX_MINUTES,
+from .config import (FINN_BUYER_FEE, FINN_SHIPPING_NOK, HOME_LAT_LON, PICKUP_MAX_MINUTES,
                      PICKUP_NOK_PER_KM, RISK, ROUTE_FALLBACK, VAT)
 from .sources import REBUILDIT, http_json
 
@@ -38,27 +38,7 @@ def _great_circle_km(lat1, lon1, lat2, lon2):
     return 6371 * math.acos(min(1, math.sin(p1) * math.sin(p2) + math.cos(p1) * math.cos(p2) * math.cos(dl)))
 
 
-def machine_penalties(facts):
-    """Penalty NOK per weakness, keyed so the page can tell a stated weakness from an unknown one.
-
-    An unknown fact is charged like a missing one, so omitting it never pays. The caddy Penalty counts every
-    empty 3.5" bay; the Build optimizer (#6) recounts it for a Build as max(0, disks + 1 boot - caddies) x 100.
-    """
-    missing_caddies = max(0, facts["bays_35"] - (facts["caddies_35"] or 0))
-    psus = facts["psu_count"]
-    penalties = {  # two PSUs wanted; an unstated count is charged like one, the usual case
-        {0: "no_psu", 1: "single_psu"}.get(psus, "psu_unknown"):
-            PENALTY_NOK["psu"] * max(0, 2 - (1 if psus is None else psus)),
-        ("caddies" if facts["caddies_35"] is not None else "caddies_unknown"): PENALTY_NOK["caddy"] * missing_caddies,
-        ("raid_only" if facts["controller"] == "raid" else "controller_unknown"):
-            PENALTY_NOK["raid_only"] if facts["controller"] != "hba" else 0,
-        ("no_rails" if facts["rails"] is False else "rails_unknown"):
-            PENALTY_NOK["no_rails"] if facts["rails"] is not True else 0,
-    }
-    return {k: v for k, v in penalties.items() if v}
-
-
-def cost_breakdown(listing, fx, foreign, router, kind, penalties=None):
+def cost_breakdown(listing, fx, foreign, router, kind):
     """(breakdown, problem). breakdown holds each NOK part and `total`; problem is None, "shipping" (unknown
     for a foreign Source), "location" (pickup-only without a place) or "too_far" (over the pickup limit).
     `kind` picks the finn.no shipping estimate; a finn.no Listing that ships pays the Trygg betaling fee, except one
@@ -93,7 +73,7 @@ def cost_breakdown(listing, fx, foreign, router, kind, penalties=None):
     if foreign:
         parts["vat"] = round((parts["price"] + parts.get("shipping", 0) + parts.get("shipping_estimate", 0)) * VAT, 2)
     money = ("price", "shipping", "shipping_estimate", "finn_fee", "pickup_trip", "vat")
-    parts["penalties"] = dict(penalties or {})
+    parts["penalties"] = {}
     if listing.risk:  # a share of the money paid to that seller
         parts["penalties"][listing.risk] = round(RISK[listing.risk] * sum(parts.get(k, 0) for k in money), 2)
     parts["total"] = round(sum(parts.get(k, 0) for k in money) + sum(parts["penalties"].values()), 2)

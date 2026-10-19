@@ -1,31 +1,23 @@
 # Deal Finder
 
-Finds and ranks the cheapest way to buy a storage server and disks for epaflix, until the owner buys.
+Finds and ranks the cheapest compatible Disks and RAM for epaflix's Dell R730XD LFF, until the owner marks the purchase as Bought. The server has 12 front 3.5" bays, two rear 2.5" bays and 128 GB RAM; the owner plans a RAIDZ2 pool of 12TB Disks, grown one Disk at a time.
 
 ## Language
 
 ### What is bought
 
-**Machine**:
-A server that holds all pool disks internally: Dell 13th Gen or newer (or an HP/Supermicro equivalent), at least 8× 3.5" LFF bays, ECC RAM, working.
-_Avoid_: Host, box, server (alone), JBOD
-
 **Disk**:
-A working 3.5" enterprise or NAS hard drive of at least 14TB.
+A working, genuine 3.5" SATA or SAS hard drive of at least 12TB, of any class, including enterprise, NAS, desktop, surveillance or an unstated class. External USB enclosures and 2.5" disks do not qualify.
 _Avoid_: Drive, HDD (alone)
 
-**Part**:
-A CPU, RAM or Heatsink Listing that completes a Machine. A heatsink Listing names the Machine models it fits.
-_Avoid_: Component, add-on
-
-**Build**:
-One Machine, plus the Parts it lacks (a CPU of one model in every socket, RAM up to 128 GB, a heatsink for every added CPU), plus enough same-capacity Disks to reach at least 40 TiB usable in RAIDZ2. One Disk Listing can supply several of those Disks: a lot ("4x 16TB") whole at its price, or a single disk up to the stock eBay states or a finn text priced per disk states ("Selger 4 stk. Pris per stk"); each Disk after the first pays its price, extra shipping and VAT or fee again. The unit that gets ranked. A Build whose Parts are not on sale is hidden.
-_Avoid_: Bundle, combo (a Deal is one Listing)
+**RAM**:
+Working DDR4 ECC RDIMM or LRDIMM server memory for the R730XD, sold as individual sticks or a lot.
+_Avoid_: Part, component, add-on
 
 ### Where it comes from
 
 **Listing**:
-One offer for a Machine, Disks, CPUs, RAM or heatsinks on a Source, at one moment in time. Each configuration of an eBay Machine sold as variations ("choose your configuration") is its own Listing, with its own price, specs and link; of configurations the rules read alike, only the cheapest is kept.
+One offer for Disks or RAM on a Source, at one moment in time. A Disk Listing sells a whole lot at its stated price, or one Disk at a per-Disk price with any stated stock.
 _Avoid_: Ad, item, offer
 
 **Source**:
@@ -37,7 +29,7 @@ A round trip by car from Sandefjord to a pickup-only seller. Costs 4 NOK/km and 
 _Avoid_: Collection, travel
 
 **Hunt**:
-One pass over every Source that refreshes Listings and re-ranks Builds. Runs every 6 hours on its own, or when started by hand. A restart never starts one: a Hunt overdue at start-up runs 6 hours later, unless started by hand.
+One pass over every Source that refreshes Disk and RAM Listings, every 6 hours or when started by hand. A restart never starts one: a Hunt overdue at start-up runs 6 hours later, unless started by hand.
 _Avoid_: Scan, crawl, job, run
 
 **Search**:
@@ -55,40 +47,24 @@ _Avoid_: Error, alert
 ### How it is ranked
 
 **Landed cost**:
-The full NOK price of a Listing at the owner's door: price, shipping to Norway (an eBay Machine with no freight quote to Norway is excluded), 25% import VAT when the Source is abroad, the Pickup trip cost when the Listing is pickup-only, and the finn.no Trygg betaling buyer fee (estimated) when a finn.no Listing is shipped via Fiks ferdig (not for Rebuild IT, which sells through its own web shop), plus Penalties.
+The full NOK price of a Listing at the owner's door: price, shipping to Norway, 25% import VAT when the Source is abroad, the Pickup trip cost when applicable, the estimated finn.no Trygg betaling buyer fee when shipped via Fiks ferdig, and any Seller-risk surcharge. Rebuild IT sells through its own web shop and pays no Trygg betaling fee; Disks rank by Landed cost per TB, RAM by Landed cost per GB, cheapest first.
 _Avoid_: Price, total
 
-**Usable TiB**:
-Capacity of the Build's RAIDZ2 pool: (disk count − 2) × disk size in TiB, minus pool overhead.
-_Avoid_: Capacity, space
-
-**Penalty**:
-NOK added to a Build's Landed cost for a known weakness: the real cost to fix it (+500 per PSU short of two: single PSU +500, no PSU +1,000, unstated count +500; per missing caddy +100, RAID-only controller +500, no rails +400; missing CPUs and RAM are bought as Parts instead) or a risk surcharge on the money paid to that seller (weak eBay seller under 98% positive or under 50 ratings +10%, an unstated rating counts as weak).
-_Avoid_: Deduction, malus
-
-**Completed cost**:
-A Machine's Landed cost plus the cheapest CPUs, RAM and heatsinks on sale that it lacks, the same Parts its Build buys. Best Machines ranks by it, so a bare chassis does not beat a full server just by missing Parts. A Machine whose Parts are not on sale has none and ranks last.
-_Avoid_: Full price, total
-
-**Score**:
-Landed cost of a Build divided by its Usable TiB. Lower is better.
-_Avoid_: Rating, rank value
+**Seller-risk surcharge**:
+An extra 10% of the money paid to that seller, including price, shipping or Pickup trip, VAT and fee, for an eBay seller under 98% positive or under 50 ratings. An unstated rating also earns the surcharge.
+_Avoid_: Penalty, deduction, malus
 
 **Unreadable Listing**:
-A Listing whose text does not state every fact the rules need (for a Machine: model, generation, 3.5" bay count, working condition; for a Disk: capacity, 3.5" form factor, enterprise/NAS class, condition), or that has no price. Shown under "Could not read", never ranked. A Listing whose known facts already rule it out (a 2TB drive, a 12th Gen server) is rejected instead.
+A Listing missing a price or facts the rules need: Disk capacity, 3.5" form factor and condition, or RAM stick size, DDR generation and RDIMM/LRDIMM type. Shown under "Could not read", never ranked; a known disqualifying fact, such as a 10TB Disk, rejects it instead.
 _Avoid_: Unknown, unparsed, bad listing
 
 **Gone Listing**:
-A Listing that disappeared from its Source since the last Hunt, usually sold. Kept greyed out for 7 days with its last price. A finn.no Listing from Rebuild IT counts as disappeared when its web shop (rebuildit.no) shows that product sold out, because Rebuild IT leaves sold-out Listings up on finn.no. Its other Listings ship, free from 1,000 NOK.
+A Listing that disappeared from its Source since the last successful Hunt, kept greyed out for 7 days with its last price. A Rebuild IT Listing disappears when its web shop shows it sold out, because its finn.no Listings may remain online; its in-stock Listings ship, free from 1,000 NOK.
 _Avoid_: Sold, expired, deleted
 
 **Deal**:
-A live ranked Listing whose Landed cost per unit (per TB, CPU, GB or heatsink; a Machine as a whole) is under the lowest price its group had before the current week: same Disk capacity, Machine model or Part key, all Sources, within the price history page's weeks. A group seen in fewer than 5 Listings in those weeks has no Deals. Highlighted with "That's a deal".
+A live ranked Listing whose Landed cost per TB or GB is below the lowest price its group had before the current week, across all Sources within the price history page's weeks. The group is the same Disk capacity or RAM DDR generation, type and stick size; fewer than 5 Listings gives no Deals. Only a Listing below that earlier lowest price shows "That's a deal".
 _Avoid_: Bargain, steal
-
-**Ceiling**:
-The highest Build Landed cost that is shown: 40,000 NOK. Builds above it are hidden.
-_Avoid_: Budget, limit
 
 **Bought**:
 The owner's manual signal that the purchase is done. After it, Hunts stop.
