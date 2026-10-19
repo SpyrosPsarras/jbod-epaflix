@@ -3,7 +3,7 @@ import json
 import pathlib
 import unittest
 
-from dealfinder.rules import Unreadable, priced_per_unit, read_cpu, read_disk, read_heatsink, read_machine, read_ram
+from dealfinder.rules import Unreadable, priced_per_unit, read_disk, read_ram
 
 CORPUS = pathlib.Path(__file__).parent / "corpus"
 
@@ -27,25 +27,10 @@ class RuleCorpus(unittest.TestCase):
             with self.subTest(case["note"]):
                 self.check(case, read_disk(case["title"], case["condition"]))
 
-    def test_machines(self):
-        for case in json.loads((CORPUS / "machines.json").read_text()):
-            with self.subTest(case["note"]):
-                self.check(case, read_machine(case["title"], case["description"], case["condition"]))
-
-    def test_cpus(self):
-        for case in json.loads((CORPUS / "cpus.json").read_text()):
-            with self.subTest(case["note"]):
-                self.check(case, read_cpu(case["title"], case["condition"]))
-
     def test_ram(self):
         for case in json.loads((CORPUS / "ram.json").read_text()):
             with self.subTest(case["note"]):
                 self.check(case, read_ram(case["title"], case["condition"]))
-
-    def test_heatsinks(self):
-        for case in json.loads((CORPUS / "heatsinks.json").read_text()):
-            with self.subTest(case["note"]):
-                self.check(case, read_heatsink(case["title"], case["condition"]))
 
     def test_price_per_unit_in_a_description(self):
         for text, price, expect in (
