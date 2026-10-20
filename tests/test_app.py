@@ -541,6 +541,42 @@ class PriceHistoryAndGone(unittest.TestCase):
             pg.cleanup()
 
 
+class SmrReclassification(unittest.TestCase):
+    def test_hunt_rejects_a_previously_qualifying_disk(self):
+        pg = _pg()
+        try:
+            item = _ebay_item("v1|smr|0", "WD 14TB 3.5 SATA HDD", 100, 10)
+
+            def fetch(url, headers=None, data=None):
+                if "oauth2/token" in url:
+                    return {"access_token": "t", "expires_in": 7200}
+                if "/item/" in url:
+                    return {}
+                return {"itemSummaries": [item]}
+
+            app = App(pg.get_uri(), [EbaySource("id", "secret", fetch=fetch)], fx=RATES.__getitem__,
+                      disk_queries={"ebay_uk": ["q"]}, ram_queries={}, pause=0)
+            app.hunt()
+            self.assertIn(item["itemId"], {r["source_id"] for r in app.store.best_disks()})
+            item["title"] = "WD HSH721414ALE6M0 14TB 3.5 SATA HDD"
+
+            app.hunt()
+
+            with app.store._conn() as c:
+                row = c.execute("SELECT qualifies, facts, missing FROM listings WHERE source_id = %s",
+                                (item["itemId"],)).fetchone()
+            self.assertIs(row["qualifies"], False)
+            self.assertIs(row["facts"]["smr"], True)
+            self.assertEqual(row["missing"], [])
+            self.assertNotIn(item["itemId"], {r["source_id"] for r in app.store.best_disks()})
+            self.assertNotIn('data-listing="v1|smr|0"', app.page())
+            search = app.search_page("q", "disk")
+            self.assertIn('data-result="v1|smr|0" data-qualifies="0"', search)
+            self.assertIn("Rejected by the rules", search)
+        finally:
+            pg.cleanup()
+
+
 class Routing(unittest.TestCase):
 
     def test_router_caches_osrm_and_falls_back_when_it_is_down(self):
