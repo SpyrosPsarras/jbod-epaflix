@@ -28,6 +28,49 @@ class RuleCorpus(unittest.TestCase):
                 self.check(case, read_disk(case["title"], case["condition"],
                                            category_id=case.get("category_id"), aspects=case.get("aspects")))
 
+    def test_smr_disk_titles_are_rejected(self):
+        for title in (
+                "WD HSH721414ALE6M0 14TB 7.2K LFF AF HOST MANAGED SMR SATA HDD *Read Description*",
+                "HGST Ultrastar HC620 14TB SATA", "WD HSH721414ALE6M0 14TB 3.5 SATA",
+                "HGST HSH721415 14TB HDD", "Seagate 14TB SMR 3.5 HDD",
+                "14TB HM-SMR HDD", "14TB DM-SMR HDD", "14TB host managed HDD",
+                "14TB host-managed HDD", "14TB host aware HDD", "14TB host-aware HDD",
+                "14TB zoned HDD", "14TB HM_SMR HDD", "14TB hostmanaged HDD",
+                "12TB / 14TB SMR HDD"):
+            with self.subTest(title=title):
+                facts = read_disk(title, "used")
+                self.assertIsNotNone(facts)
+                self.assertNotIsInstance(facts, Unreadable)
+                self.assertIs(facts.smr, True)
+                self.assertIs(facts.qualifies, False)
+
+    def test_non_smr_disk_titles_still_qualify(self):
+        for title in ("WD Red Plus 12TB CMR NAS HDD", "IronWolf 12TB 3.5 HDD non-SMR",
+                      "12TB 3.5 HDD not SMR", "12TB 3.5 HDD no SMR", "12TB 3.5 HDD ikke SMR",
+                      "12TB 3.5 HDD CMR not SMR", "12TB 3.5 HDD CMR / SMR",
+                      "Seagate ST14000NM000E 14TB 3.5 HDD", "12TB 3.5 HDD SMR-free"):
+            with self.subTest(title=title):
+                facts = read_disk(title, "used")
+                self.assertIs(facts.smr, False)
+                self.assertIs(facts.qualifies, True)
+
+    def test_smr_aspects_reject_only_in_disk_category(self):
+        for value in ("SMR", "host managed", "host-managed", "host aware", "zoned",
+                      "HSH721414ALE6M0", "Ultrastar DC HC620", ["SATA", "HM-SMR"],
+                      "HM_SMR", "hostmanaged"):
+            with self.subTest(value=value):
+                aspects = {"Recording Technology": value}
+                facts = read_disk("12TB 3.5 HDD", "used", category_id="56083", aspects=aspects)
+                self.assertIs(facts.smr, True)
+                self.assertIs(facts.qualifies, False)
+                for category in (None, "11211", 56083):
+                    self.assertTrue(read_disk("12TB 3.5 HDD", "used", category_id=category,
+                                              aspects=aspects).qualifies)
+        for value in ("CMR", "non-SMR", "not SMR", "no SMR", "ikke SMR", "SMR-free"):
+            with self.subTest(value=value):
+                self.assertTrue(read_disk("12TB 3.5 HDD", "used", category_id="56083",
+                                          aspects={"Recording Technology": value}).qualifies)
+
     def test_ram(self):
         for case in json.loads((CORPUS / "ram.json").read_text()):
             with self.subTest(case["note"]):

@@ -19,6 +19,9 @@ _NOT_DISK = re.compile(
     r"|\b(?:dvr|nvr|security)\s+(?:recorder|kits?)\b|\bno\s+hdd\b|\bmedia\s+player\b"
     r"|\bgaming[ -]?pc\b|\bg-raid\b|\brog\s+ally\b|\blenovo\s+go\b", re.I)
 _DISK_WORD = re.compile(r"\bhdd\b|hard\s?(disk|drive)|harddisk|festplatte|\bdisk\b", re.I)
+_SMR = re.compile(r"\b(?:[hd]m[ _-])?smr\b|\bhost[ _-]*(?:managed|aware)\b|\bzoned\b", re.I)
+_NOT_SMR = re.compile(r"\bcmr\b|\b(?:non|not|no|ikke)[ -]+smr\b|\bsmr[ -]+free\b", re.I)
+_SMR_MODEL = re.compile(r"\bhsh72\w*|\bhc620\b", re.I)
 _QUANTITY = re.compile(r"\blot\b|\b[2-9]\d?\s?x\s|\b\d+\s?(pcs|pieces|stk)\b", re.I)
 _FF_35 = re.compile(r"(?<![\d.,])3[.,]5(?!\d)|\blff\b|8[.,]9\s?cm", re.I)
 _FF_25 = re.compile(r"(?<![\d.,])2[.,]5(?!\d)(?!\s?(gbe?|gbit|g\b|l\b))|\bsff\b", re.I)
@@ -70,11 +73,12 @@ class DiskFacts:
     working: bool
     genuine: bool
     count: int = 1  # disks this one Listing sells as one lot, at its one price ("4x 16TB")
+    smr: bool = False
 
     @property
     def qualifies(self):
         return (self.capacity_tb is not None and self.capacity_tb >= MIN_DISK_TB and self.form_factor == "3.5"
-                and self.working and self.genuine)
+                and self.working and self.genuine and not self.smr)
 
 
 def _disk_class(title):
@@ -147,6 +151,8 @@ def read_disk(title, condition, aspects=None, category_id=None):
     """
     if category_id != "56083":
         aspects = None
+    smr = any(_SMR_MODEL.search(text) or _SMR.search(text) and not _NOT_SMR.search(text)
+              for text in [title, *_aspect_values(aspects)])
     sizes = _disk_sizes(title)
     if _NOT_DISK.search(title) or _ACCESSORY.search(title):
         return None
@@ -189,9 +195,9 @@ def read_disk(title, condition, aspects=None, category_id=None):
         missing.append("quantity")  # names several disks, but not how many the price buys ("lot", "10 stk på lager")
     too_small = bool(sizes) and max(sizes) < MIN_DISK_TB
     # a known disqualifying fact decides it: rejected, not "could not read"
-    ruled_out = (too_small or form_factor in ("2.5", "external")
+    ruled_out = (smr or too_small or form_factor in ("2.5", "external")
                  or bool(_NON_GENUINE.search(title)) or condition == "for_parts" or bool(_FAULTY.search(title)))
-    if conflicts and not too_small:
+    if conflicts and not (too_small or smr):
         return Unreadable(list(dict.fromkeys(conflicts + missing)))
     if missing and not ruled_out:
         return Unreadable(missing)
@@ -203,6 +209,7 @@ def read_disk(title, condition, aspects=None, category_id=None):
         working=condition != "for_parts" and not _FAULTY.search(title),
         genuine=not _NON_GENUINE.search(title),
         count=count,
+        smr=smr,
     )
 
 
