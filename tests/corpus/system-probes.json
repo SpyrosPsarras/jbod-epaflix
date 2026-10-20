@@ -1,0 +1,422 @@
+[
+  {
+    "kind": "system",
+    "title": "Hikvision 16 Channel NVR with 16TB HDD",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Hikvision DS-7616NI-K2 NVR 4K 16TB HDD",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Synology DS918+ with 4x 12TB HDD",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "QNAP TS-453 4-bay NAS with 16TB HDD",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "HP ProLiant Microserver Gen10 with 4x 14TB HDD",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Dell PowerEdge R730xd 12x 12TB HDD server",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Synology DS1821+ med 8x 16TB",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Unraid server inkl 6x 14TB",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "TrueNAS build with 5x 18TB disks",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "QNAP TS-873 8-bay 96TB",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Dell R720 med 12x 12TB SAS",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "TrueNAS server 8x 14TB HDD",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "JBOD disk shelf with 12x 12TB",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Dell R720xd 12x 12TB SAS 3.5",
+    "baseline_verdict": "qualifies"
+  },
+  {
+    "kind": "disk",
+    "title": "WD Purple 12TB HDD DVR",
+    "baseline_verdict": "qualifies"
+  },
+  {
+    "kind": "disk",
+    "title": "Seagate SkyHawk 16TB HDD for DVR NVR",
+    "baseline_verdict": "qualifies"
+  },
+  {
+    "kind": "disk",
+    "title": "WD Red Plus 12TB NAS HDD",
+    "baseline_verdict": "qualifies"
+  },
+  {
+    "kind": "disk",
+    "title": "IronWolf 16TB NAS hard drive",
+    "baseline_verdict": "qualifies"
+  },
+  {
+    "kind": "disk",
+    "title": "Dell 12TB SAS HDD for PowerEdge R730xd",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "disk",
+    "title": "HPE 12TB SAS HDD for ProLiant DL380",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "disk",
+    "title": "Seagate Exos X16 16TB for NAS and server",
+    "baseline_verdict": "qualifies"
+  },
+  {
+    "kind": "disk",
+    "title": "WD Ultrastar 14TB server pull",
+    "baseline_verdict": "qualifies"
+  },
+  {
+    "kind": "disk",
+    "title": "Dell PowerEdge 12TB 7.2K SAS HDD caddy",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "disk",
+    "title": "HPE ProLiant 14TB SAS LFF HDD",
+    "baseline_verdict": "qualifies"
+  },
+  {
+    "kind": "disk",
+    "title": "HP 12TB SAS 12G LFF HDD ProLiant",
+    "baseline_verdict": "qualifies"
+  },
+  {
+    "kind": "disk",
+    "title": "HPE 14TB SAS 3.5 HDD ProLiant Gen9",
+    "baseline_verdict": "qualifies"
+  },
+  {
+    "kind": "disk",
+    "title": "Dell 12TB 7.2K SAS 3.5 HDD PowerEdge R730xd",
+    "baseline_verdict": "qualifies"
+  },
+  {
+    "kind": "disk",
+    "title": "DELL POWEREDGE 14TB 12Gb/s SAS 3.5\" HDD",
+    "baseline_verdict": "qualifies"
+  },
+  {
+    "kind": "disk",
+    "title": "Toshiba 16TB NAS disk til Synology",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "disk",
+    "title": "16TB HDD fra Synology DS918+",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "disk",
+    "title": "12TB HDD pulled from Synology DS918+",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "disk",
+    "title": "Toshiba 16TB HDD - used in QNAP TS-453",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "disk",
+    "title": "Toshiba N300 14TB NAS HDD - Bays 1-8",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "disk",
+    "title": "WD Red Plus 12TB NAS 2-bay recommended",
+    "baseline_verdict": "qualifies"
+  },
+  {
+    "kind": "disk",
+    "title": "WD Red Pro 16TB NAS hard drive with 3 year warranty, tested HDD",
+    "baseline_verdict": "qualifies"
+  },
+  {
+    "kind": "disk",
+    "title": "Seagate IronWolf Pro 12TB NAS 3.5 med 2 års garanti HDD",
+    "baseline_verdict": "qualifies"
+  },
+  {
+    "kind": "system",
+    "title": "Synology DS918+ with 4x WD120EFAX 12TB",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Plex server with 4x WD120EFAX 12TB",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Server 8x ST12000DM0007 12TB",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "PowerEdge R730xd 12x WUS721414ALE6L4 14TB",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Unraid server with HUH721212ALE600 12TB x6",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Dell T440 tower with 8x WD140EDGZ 14TB",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "TrueNAS server WD180EDGZ x8 18TB",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Dell PowerEdge R720xd with 12x Toshiba N300 14TB disk",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "NAS with 4x Toshiba X300 14TB",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "QNAP TS-453 med 4x Toshiba MG Series 16TB",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "HP Microserver 4x HAS5300-16T 16TB",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Hikvision NVR 4x D4-VS07-12000 12TB",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Synology DS918+ med 4x 12TB",
+    "description": "Diskene er WD Red Plus",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Dell PowerEdge R730xd 12x 12TB HDD server",
+    "aspects": {"MPN": "ST12000NM0027"},
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Dell PowerEdge R730xd 12x 12TB HDD server",
+    "description": "2x Xeon E5-2637 v4 3.5GHz",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Unraid server 6x 14TB",
+    "description": "2.5GbE nettverk, 3.5 GHz",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Synology DS918+ med 4x 12TB",
+    "description": "Diskene har gått i 3,5 år",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "QNAP TS-453 4x 14TB",
+    "description": "Pris 3,5k",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "QNAP TS-453 4x 14TB",
+    "description": "4-bay NAS for 3.5\" disker",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Dell R730xd 12x 12TB",
+    "description": "12 stk 12TB 3,5\" SAS disker",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Synology DS1821+ 8x 16TB HDD",
+    "aspects": {"Form Factor": "3.5 in"},
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Hikvision 16 Channel NVR with 16TB HDD",
+    "description": "3.5\" WD Purple",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "disk",
+    "title": "Toshiba 16TB HDD",
+    "description": "Brukt i 2,5 år",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Synology DS918+ NAS 48TB",
+    "category_id": "175706",
+    "aspects": {"Form Factor": "3.5 in"},
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Synology DS918+ with 16TB HDD",
+    "category_id": "175706",
+    "aspects": {"Form Factor": "3.5 in"},
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Synology DS420+ NAS 4-Bay 16TB",
+    "category_id": "175706",
+    "aspects": {"Form Factor": "3.5 in"},
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "QNAP TS-453 NAS with 14TB",
+    "category_id": "175706",
+    "aspects": {"Form Factor": "3.5 in", "Formfaktor": "3,5 Zoll"},
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Dell PowerEdge R730xd server 12TB",
+    "category_id": "11211",
+    "aspects": {"Form Factor": "3.5 in"},
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "HP ProLiant DL380 Gen9 server 12 bay 16TB",
+    "category_id": "11211",
+    "aspects": {"Form Factor": "3.5 in"},
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Supermicro 36 bay 12TB server",
+    "category_id": "11211",
+    "aspects": {"Form Factor": "3.5 in"},
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Hikvision 16 Channel NVR with 16TB HDD",
+    "category_id": "88754",
+    "aspects": {"Form Factor": "3.5 in"},
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "JBOD 24 bay 12TB disk shelf",
+    "category_id": "11211",
+    "aspects": {"Form Factor": "3.5 in"},
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "NetApp DS4246 with 24 12TB drives",
+    "category_id": "11211",
+    "aspects": {"Form Factor": "3.5 in"},
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Mini PC 16TB HDD",
+    "category_id": "179",
+    "aspects": {"Form Factor": "3.5 in"},
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Unraid server 14TB",
+    "category_id": "11211",
+    "aspects": {"Form Factor": "3.5 in"},
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Synology DS918+ NAS med 3.5\" disk",
+    "description": "4x 12TB",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Dell R730xd LFF server HDD",
+    "description": "12x 12TB disker",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Dell PowerEdge R730xd 12 x 3.5\" HDD",
+    "description": "12TB disker",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "Server med 3,5\" HDD",
+    "description": "12TB",
+    "baseline_verdict": "unreadable"
+  },
+  {
+    "kind": "system",
+    "title": "NAS 3.5\" HDD",
+    "description": "16TB WD Red",
+    "baseline_verdict": "unreadable"
+  }
+]
