@@ -691,9 +691,1494 @@
    "type": "RDIMM"
   }
  },
- {"note": "per unit: '4x 16Gb DDR4 2400 ECC RDIMM pris per srk' (synthetic; srk: finn 471846605 description)", "title": "4x 16Gb DDR4 2400 ECC RDIMM pris per srk", "condition": "used", "expect": {"gb_per_stick": 16, "sticks": 1, "qualifies": true}},
- {"note": "per unit: '4x 16GB DDR4 ECC RDIMM per stick' (synthetic; srk: finn 471846605 description)", "title": "4x 16GB DDR4 ECC RDIMM per stick", "condition": "used", "expect": {"gb_per_stick": 16, "sticks": 1, "qualifies": true}},
- {"note": "per unit: '4x 16GB DDR4 ECC RDIMM per module' (synthetic; srk: finn 471846605 description)", "title": "4x 16GB DDR4 ECC RDIMM per module", "condition": "used", "expect": {"gb_per_stick": 16, "sticks": 1, "qualifies": true}},
- {"note": "per unit: '4x 16GB DDR4 ECC RDIMM pr stk' (synthetic; srk: finn 471846605 description)", "title": "4x 16GB DDR4 ECC RDIMM pr stk", "condition": "used", "expect": {"gb_per_stick": 16, "sticks": 1, "qualifies": true}},
- {"note": "per unit: '4x 16GB DDR4 ECC RDIMM per brikke' (synthetic; srk: finn 471846605 description)", "title": "4x 16GB DDR4 ECC RDIMM per brikke", "condition": "used", "expect": {"gb_per_stick": 16, "sticks": 1, "qualifies": true}}
+ {
+  "note": "per unit: '4x 16Gb DDR4 2400 ECC RDIMM pris per srk' (synthetic; srk: finn 471846605 description)",
+  "title": "4x 16Gb DDR4 2400 ECC RDIMM pris per srk",
+  "condition": "used",
+  "expect": {
+   "gb_per_stick": 16,
+   "sticks": 1,
+   "qualifies": true
+  }
+ },
+ {
+  "note": "per unit: '4x 16GB DDR4 ECC RDIMM per stick' (synthetic; srk: finn 471846605 description)",
+  "title": "4x 16GB DDR4 ECC RDIMM per stick",
+  "condition": "used",
+  "expect": {
+   "gb_per_stick": 16,
+   "sticks": 1,
+   "qualifies": true
+  }
+ },
+ {
+  "note": "per unit: '4x 16GB DDR4 ECC RDIMM per module' (synthetic; srk: finn 471846605 description)",
+  "title": "4x 16GB DDR4 ECC RDIMM per module",
+  "condition": "used",
+  "expect": {
+   "gb_per_stick": 16,
+   "sticks": 1,
+   "qualifies": true
+  }
+ },
+ {
+  "note": "per unit: '4x 16GB DDR4 ECC RDIMM pr stk' (synthetic; srk: finn 471846605 description)",
+  "title": "4x 16GB DDR4 ECC RDIMM pr stk",
+  "condition": "used",
+  "expect": {
+   "gb_per_stick": 16,
+   "sticks": 1,
+   "qualifies": true
+  }
+ },
+ {
+  "note": "per unit: '4x 16GB DDR4 ECC RDIMM per brikke' (synthetic; srk: finn 471846605 description)",
+  "title": "4x 16GB DDR4 ECC RDIMM per brikke",
+  "condition": "used",
+  "expect": {
+   "gb_per_stick": 16,
+   "sticks": 1,
+   "qualifies": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/187667611326",
+  "title": "1Pcs Suitable for 16G 2RX8 2666 ECC REG HMA82GR7AFR8N-VK server memory DDR4",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/187667611326",
+  "source": "ebay_uk",
+  "source_id": "v1|187667611326|0",
+  "category_id": "11210",
+  "aspects": {
+   "Brand": "Unbranded",
+   "Type": "DDR4 SDRAM",
+   "Total Capacity": "16 GB",
+   "Capacity per Module": "16 GB",
+   "MPN": "HMA82GR7AFR8N-VK",
+   "Memory Features": "ECC Memory"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/397176996855",
+  "title": "1Pcs Suitable for 16G 2RX8 2666 ECC REG HMA82GR7AFR8N-VK server memory DDR4",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/397176996855",
+  "source": "ebay_uk",
+  "source_id": "v1|397176996855|0",
+  "category_id": "11210",
+  "aspects": {
+   "Brand": "Unbranded",
+   "Type": "DDR4 SDRAM",
+   "Total Capacity": "16 GB",
+   "Capacity per Module": "16 GB",
+   "MPN": "HMA82GR7AFR8N-VK",
+   "Memory Features": "ECC Memory"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/357784690769",
+  "title": "1Pcs Suitable for 16G 2RX8 2666 ECC REG HMA82GR7AFR8N-VK server memory DDR4",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/357784690769",
+  "source": "ebay_uk",
+  "source_id": "v1|357784690769|0",
+  "category_id": "11210",
+  "aspects": {
+   "Brand": "Unbranded",
+   "Type": "DDR4 SDRAM",
+   "Total Capacity": "16 GB",
+   "Capacity per Module": "16 GB",
+   "MPN": "HMA82GR7AFR8N-VK",
+   "Memory Features": "ECC Memory"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/389121381125",
+  "title": "1Pcs Suitable for 16G 2RX8 2666 ECC REG HMA82GR7AFR8N-VK server memory DDR4",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/389121381125",
+  "source": "ebay_uk",
+  "source_id": "v1|389121381125|0",
+  "category_id": "11210",
+  "aspects": {
+   "Brand": "Unbranded",
+   "Type": "DDR4 SDRAM",
+   "Total Capacity": "16 GB",
+   "Capacity per Module": "16 GB",
+   "MPN": "HMA82GR7AFR8N-VK",
+   "Memory Features": "ECC Memory"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/147274826969",
+  "title": "HPE HP 64GB DDR4 PC4 2666V ECC Ram MTA72ASS8G72LZ Server HP 840759-091 Micron",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/147274826969",
+  "source": "ebay_uk",
+  "source_id": "v1|147274826969|0",
+  "category_id": "11210",
+  "aspects": {
+   "Total Capacity": "64 GB",
+   "Capacity per Module": "64 GB",
+   "MPN": "840759-091, MTA72ASS8G72LZ",
+   "Memory Features": "ECC Memory",
+   "Brand": "Micron",
+   "Form Factor": "LRDIMM",
+   "Type": "DDR4 SDRAM",
+   "Number of Modules": "1",
+   "Unit Type": "Unit",
+   "Number of Pins": "288",
+   "Model": "MTA72ASS8G72LZ",
+   "Unit Quantity": "1",
+   "Bus Speed": "PC4-2666V"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 64,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "LRDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/224440224485",
+  "title": "Hynix 64GB 4Rx4 PC4-2400T DDR4 HMAA8GL7AMR4N-UH HMAA8GL7MMR4N-UH Memory RAM",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/224440224485",
+  "source": "ebay_uk",
+  "source_id": "v1|224440224485|0",
+  "category_id": "170083",
+  "aspects": {
+   "Country of Origin": "United States",
+   "Total Capacity": "64 GB",
+   "Custom Bundle": "No",
+   "ECC Type": "ECC Load Reduced (LRDIMM)",
+   "MPN": "HMAA8GL7MMR4N-UH, HMAA8GL7AMR4N-UH",
+   "Item Length": "133mm",
+   "Memory Features": "ECC Memory",
+   "Form Factor": "LRDIMM",
+   "Unit Type": "Unit",
+   "Manufacturer Warranty": "Lifetime",
+   "Voltage": "1.2v",
+   "Item Height": "30mm",
+   "Number of Pins": "288",
+   "Unit Quantity": "1",
+   "Item Width": "3mm",
+   "Capacity per Module": "64 GB",
+   "Rank": "4DRx4 (4rx4)",
+   "Designed For": "Dell HP-Compaq Apple Intel IBM-Lenovo Toshiba Acer Asus Sony",
+   "Modified Item": "No",
+   "Brand": "Hynix",
+   "Type": "DDR4 SDRAM",
+   "Number of Modules": "1",
+   "Model": "HMAA8GL7MMR4N-UH HMAA8GL7AMR4N-UH",
+   "Frequency": "2400MHz",
+   "Bus Speed": "PC4-19200 (DDR4-2400)",
+   "SKU": "EB19-A188"
+  },
+  "shipping": 15.03,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 64,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "LRDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/206631840551",
+  "title": "MICRON 64GB 4DRX4 PC4-2666V DDR4 SERVER MEMORY MTA72ASS8G72LZ-2G6D2",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/206631840551",
+  "source": "ebay_uk",
+  "source_id": "v1|206631840551|0",
+  "category_id": "11210",
+  "aspects": {
+   "Brand": "Micron",
+   "Form Factor": "DIMM",
+   "Type": "DDR4 SDRAM",
+   "Number of Modules": "1",
+   "Total Capacity": "64 GB",
+   "Capacity per Module": "64GB",
+   "Number of Pins": "288",
+   "MPN": "MTA72ASS8G72LZ-2G6D2",
+   "Bus Speed": "PC4-21300 (DDR4-2666)",
+   "Memory Features": "ECC Memory"
+  },
+  "shipping": 18.39,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 64,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "LRDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/227243116010?var=526443028412",
+  "title": "MTA9ASF1G72PZ-2G6D1 MICRON DDR4 8GB 1RX8 PC4-21333 ECC Server Reg 8/16/24/32 Gb",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/227243116010?var=526443028412",
+  "source": "ebay_uk",
+  "source_id": "v1|227243116010|526443028412",
+  "category_id": "11210",
+  "aspects": {
+   "Total Capacity": "8 GB",
+   "Brand": "Micron",
+   "Form Factor": "RDIMM",
+   "Type": "DDR4 SDRAM",
+   "Capacity per Module": "8 GB",
+   "Model": "Micron MTA9ASF1G72PZ-2G6D1",
+   "MPN": "MTA9ASF1G72PZ-2G6D1",
+   "Bus Speed": "PC4-21300 (DDR4-2666)",
+   "Country of Origin": "China",
+   "Memory Features": "ECC Memory"
+  },
+  "shipping": 16.54,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 8,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/227243116010?var=526443028413",
+  "title": "MTA9ASF1G72PZ-2G6D1 MICRON DDR4 8GB 1RX8 PC4-21333 ECC Server Reg 8/16/24/32 Gb",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/227243116010?var=526443028413",
+  "source": "ebay_uk",
+  "source_id": "v1|227243116010|526443028413",
+  "category_id": "11210",
+  "aspects": {
+   "Total Capacity": "16 GB",
+   "Brand": "Micron",
+   "Form Factor": "RDIMM",
+   "Type": "DDR4 SDRAM",
+   "Capacity per Module": "8 GB",
+   "Model": "Micron MTA9ASF1G72PZ-2G6D1",
+   "MPN": "MTA9ASF1G72PZ-2G6D1",
+   "Bus Speed": "PC4-21300 (DDR4-2666)",
+   "Country of Origin": "China",
+   "Memory Features": "ECC Memory"
+  },
+  "shipping": 16.54,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 8,
+   "sticks": 2,
+   "ddr": 4,
+   "type": "RDIMM"
+  },
+  "listing_facts": {
+   "sticks": 2
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/960070468560",
+  "title": "NEW Dell SNP29GM8C/64G A8711890 4DRx4 64GB DDR4 PC4-2400T ECC Server RAM Memory",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/960070468560",
+  "source": "ebay_uk",
+  "source_id": "v1|960070468560|0",
+  "category_id": "11210",
+  "aspects": {
+   "Total Capacity": "64 GB",
+   "Capacity per Module": "64 GB",
+   "MPN": "SNP29GM8C/64G A8711890",
+   "Memory Features": "ECC Memory, Registered",
+   "Brand": "Dell",
+   "Form Factor": "RDIMM",
+   "Type": "DDR4 SDRAM",
+   "Number of Modules": "1",
+   "Manufacturer Warranty": "3 Years",
+   "Model": "FC4130 FC630 FC830 M630 M830 R630,R930 R630 R730 R7910",
+   "Number of Pins": "288",
+   "Bus Speed": "PC4-19200 (DDR4-2400)"
+  },
+  "shipping": 7.52,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 64,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "LRDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/128087790262",
+  "title": "NEW Dell SNP29GM8C/64G A8711890 4DRx4 64GB DDR4 PC4-2400T ECC Server RAM Memory",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/128087790262",
+  "source": "ebay_uk",
+  "source_id": "v1|128087790262|0",
+  "category_id": "11210",
+  "aspects": {
+   "Total Capacity": "64 GB",
+   "Capacity per Module": "64 GB",
+   "MPN": "SNP29GM8C/64G A8711890",
+   "Memory Features": "ECC Memory, Registered",
+   "Brand": "Dell",
+   "Form Factor": "RDIMM",
+   "Type": "DDR4 SDRAM",
+   "Number of Modules": "1",
+   "Manufacturer Warranty": "3 Years",
+   "Model": "FC4130 FC630 FC830 M630 M830 R630,R930 R630 R730 R7910",
+   "Number of Pins": "288",
+   "Bus Speed": "PC4-19200 (DDR4-2400)"
+  },
+  "shipping": 7.52,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 64,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "LRDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/318752317438",
+  "title": "NEW Dell SNP29GM8C/64G A8711890 4DRx4 64GB DDR4 PC4-2400T ECC Server RAM Memory",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/318752317438",
+  "source": "ebay_uk",
+  "source_id": "v1|318752317438|0",
+  "category_id": "11210",
+  "aspects": {
+   "Brand": "Dell",
+   "Form Factor": "RDIMM",
+   "Type": "DDR4 SDRAM",
+   "Total Capacity": "64 GB",
+   "Number of Modules": "1",
+   "Capacity per Module": "64 GB",
+   "Manufacturer Warranty": "3 Years",
+   "Model": "FC4130 FC630 FC830 M630 M830 R630,R930 R630 R730 R7910",
+   "Number of Pins": "288",
+   "MPN": "SNP29GM8C/64G A8711890",
+   "Bus Speed": "PC4-19200 (DDR4-2400)",
+   "Memory Features": "ECC Memory, Registered"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 64,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "LRDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/168596621458",
+  "title": "NEW Dell SNP29GM8C/64G A8711890 4DRx4 64GB DDR4 PC4-2400T ECC Server RAM Memory",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/168596621458",
+  "source": "ebay_uk",
+  "source_id": "v1|168596621458|0",
+  "category_id": "11210",
+  "aspects": {
+   "Brand": "Dell",
+   "Form Factor": "RDIMM",
+   "Type": "DDR4 SDRAM",
+   "Total Capacity": "64 GB",
+   "Number of Modules": "1",
+   "Capacity per Module": "64 GB",
+   "Manufacturer Warranty": "3 Years",
+   "Model": "FC4130 FC630 FC830 M630 M830 R630,R930 R630 R730 R7910",
+   "Number of Pins": "288",
+   "MPN": "SNP29GM8C/64G A8711890",
+   "Bus Speed": "PC4-19200 (DDR4-2400)",
+   "Memory Features": "ECC Memory, Registered"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 64,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "LRDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/920031821547",
+  "title": "NEW Dell SNP29GM8C/64G A8711890 4DRx4 64GB DDR4 PC4-2400T ECC Server RAM Memory",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/920031821547",
+  "source": "ebay_uk",
+  "source_id": "v1|920031821547|0",
+  "category_id": "11210",
+  "aspects": {
+   "Brand": "Dell",
+   "Form Factor": "RDIMM",
+   "Type": "DDR4 SDRAM",
+   "Total Capacity": "64 GB",
+   "Number of Modules": "1",
+   "Capacity per Module": "64 GB",
+   "Manufacturer Warranty": "3 Years",
+   "Model": "FC4130 FC630 FC830 M630 M830 R630,R930 R630 R730 R7910",
+   "Number of Pins": "288",
+   "MPN": "SNP29GM8C/64G A8711890",
+   "Bus Speed": "PC4-19200 (DDR4-2400)",
+   "Memory Features": "ECC Memory, Registered"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 64,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "LRDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/318719895597",
+  "title": "New Lenovo / IBM 95Y4811 95Y4812 95Y4814 64GB 4DRX4 DDR4 PC4-2133P Server Memory",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/318719895597",
+  "source": "ebay_uk",
+  "source_id": "v1|318719895597|0",
+  "category_id": "11210",
+  "aspects": {
+   "Total Capacity": "64 GB",
+   "Capacity per Module": "64 GB",
+   "MPN": "95Y4811 95Y4812 95Y4814",
+   "Memory Features": "ECC Memory, Registered",
+   "Brand": "Lenovo",
+   "Form Factor": "LRDIMM",
+   "Type": "DDR4 SDRAM",
+   "Number of Modules": "1",
+   "Manufacturer Warranty": "3 Years",
+   "Model": "95Y4811 95Y4812 95Y4814",
+   "Number of Pins": "288",
+   "Bus Speed": "PC4-17000 (DDR4-2133)",
+   "Country of Origin": "China"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 64,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "LRDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/358631888026",
+  "title": "PC4-2400T NEW Dell SNP29GM8C/64G A8711890 4DRx4 64GB DDR4 ECC Server RAM",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/358631888026",
+  "source": "ebay_uk",
+  "source_id": "v1|358631888026|0",
+  "category_id": "11210",
+  "aspects": {
+   "Brand": "Dell",
+   "Form Factor": "RDIMM",
+   "Type": "DDR4 SDRAM",
+   "Total Capacity": "64 GB",
+   "Number of Modules": "1",
+   "Capacity per Module": "64 GB",
+   "Manufacturer Warranty": "3 Years",
+   "Model": "FC4130 FC630 FC830 M630 M830 R630,R930 R630 R730 R7910",
+   "Number of Pins": "288",
+   "MPN": "SNP29GM8C/64G A8711890",
+   "Bus Speed": "PC4-19200 (DDR4-2400)",
+   "Memory Features": "ECC Memory, Registered"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 64,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "LRDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/287569931818",
+  "title": "SK Hynix 16GB (2x 8GB) ECC PC4 DDR4 2400T 2400Mhz HMA81GR7MFR8N Ram. Tested",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/287569931818",
+  "source": "ebay_uk",
+  "source_id": "v1|287569931818|0",
+  "category_id": "11210",
+  "aspects": {
+   "Brand": "SK hynix",
+   "Form Factor": "RDIMM",
+   "Type": "ECC RAM",
+   "Total Capacity": "16 GB",
+   "Number of Modules": "2",
+   "Capacity per Module": "8 GB",
+   "Number of Pins": "288",
+   "Model": "HMA81GR7MFR8N",
+   "Bus Speed": "PC4-19200 (DDR4-2400)",
+   "Memory Features": "ECC Memory",
+   "Country of Origin": "China"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 8,
+   "sticks": 2,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/168214935991",
+  "title": "SK hynix HMA42GR7AFR4N-TF TD AB 16GB DDR4-2133 ECC DDR4 RAM",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/168214935991",
+  "source": "ebay_uk",
+  "source_id": "v1|168214935991|0",
+  "category_id": "11210",
+  "aspects": {
+   "Busgeschwindigkeit": "PC4-17000 (DDR4-2133)",
+   "Herstellernummer": "HMA42GR7AFR4N-TF TD AB",
+   "Marke": "SK hynix",
+   "Produktart": "DDR4 SDRAM",
+   "Anzahl der Pins": "288",
+   "Gesamtkapazität": "16 GB",
+   "Anzahl der Module": "1",
+   "Speicher-Eigenschaften": "ECC-Speicher, Registered",
+   "Formfaktor": "RDIMM",
+   "Kapazität pro Modul": "16 GB"
+  },
+  "shipping": 16.86,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/287643493146?var=589529508392",
+  "title": "SK hynix Memory Server DDR4 ECC REG RDIMM 8GB 16GB 2133 2400 2666MHz X99",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/287643493146?var=589529508392",
+  "source": "ebay_uk",
+  "source_id": "v1|287643493146|589529508392",
+  "category_id": "11210",
+  "aspects": {
+   "Capacité mémoire": "8 Go 1Rx4 2133 MHz",
+   "Fréquence": "2133 MHz ou 2400 MHz ou 2666 MHz",
+   "Marque": "SK hynix",
+   "Garantie": "Garantie à vie",
+   "Type de mémoire": "DDR4 ECC REG RDIMM",
+   "Tension": "1.2 V",
+   "Application": "Serveur",
+   "Dissipateur": "Non",
+   "Interface": "288 broches"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 8,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/358656561077",
+  "title": "SNP29GM8C NEW Dell A8711890 4DRx4 64GB DDR4 PC4-2400T ECC Server RAM Memory New",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/358656561077",
+  "source": "ebay_uk",
+  "source_id": "v1|358656561077|0",
+  "category_id": "11210",
+  "aspects": {
+   "Brand": "Dell",
+   "Form Factor": "RDIMM",
+   "Type": "DDR4 SDRAM",
+   "Total Capacity": "64 GB",
+   "Number of Modules": "1",
+   "Capacity per Module": "64 GB",
+   "Manufacturer Warranty": "3 Years",
+   "Model": "FC4130 FC630 FC830 M630 M830 R630,R930 R630 R730 R7910",
+   "Number of Pins": "288",
+   "MPN": "SNP29GM8C/64G A8711890",
+   "Bus Speed": "PC4-19200 (DDR4-2400)",
+   "Memory Features": "ECC Memory, Registered"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 64,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "LRDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/358562136573",
+  "title": "SNP29GM8C/64G A8711890 NEW Dell 4DRx4 64GB DDR4 PC4-2400T ECC Server RAM Memory",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/358562136573",
+  "source": "ebay_uk",
+  "source_id": "v1|358562136573|0",
+  "category_id": "11210",
+  "aspects": {
+   "Brand": "Dell",
+   "Form Factor": "RDIMM",
+   "Type": "DDR4 SDRAM",
+   "Total Capacity": "64 GB",
+   "Number of Modules": "1",
+   "Capacity per Module": "64 GB",
+   "Manufacturer Warranty": "3 Years",
+   "Model": "FC4130 FC630 FC830 M630 M830 R630,R930 R630 R730 R7910",
+   "Number of Pins": "288",
+   "MPN": "SNP29GM8C/64G A8711890",
+   "Bus Speed": "PC4-19200 (DDR4-2400)",
+   "Memory Features": "ECC Memory, Registered"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 64,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "LRDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/168453242710",
+  "title": "Samsung 16GB DDR4 2400MHz PC4-2400T 19200 ECC Server Memory RAM M393A2G40EB1-CRC",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/168453242710",
+  "source": "ebay_uk",
+  "source_id": "v1|168453242710|0",
+  "category_id": "11210",
+  "aspects": {
+   "Unit Type": "Unit",
+   "Model": "SERVER ONLY",
+   "Country of Origin": "Korea, South",
+   "Memory Features": "ECC Memory, Registered, Fully Buffered",
+   "Number of Pins": "288",
+   "Brand": "Samsung",
+   "Bus Speed": "PC4-19200 (DDR4-2400)",
+   "Total Capacity": "16 GB",
+   "Form Factor": "RDIMM",
+   "Capacity per Module": "16 GB",
+   "Type": "ECC RAM",
+   "Number of Modules": "1",
+   "MPN": "M393A2G40EB1-CRC",
+   "EAN": "0800953188547"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/227269579659",
+  "title": "ddr4 ecc 16gb",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/227269579659",
+  "source": "ebay_uk",
+  "source_id": "v1|227269579659|0",
+  "category_id": "11210",
+  "aspects": {
+   "Marke": "Computer Memory Solutions",
+   "Produktart": "ECC RAM",
+   "Speicher-Eigenschaften": "ECC-Speicher",
+   "Formfaktor": "DIMM",
+   "Anzahl der Einheiten": "4",
+   "Kapazität pro Modul": "16 GB"
+  },
+  "shipping": 5.48,
+  "price": 200,
+  "listing_verdict": "unreadable",
+  "expect": {
+   "unreadable": [
+    "type"
+   ]
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/479086850",
+  "title": "128 GB DDR4 SK hynix (8× 16 GB)",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/479086850",
+  "source": "finn",
+  "source_id": "479086850",
+  "description": "128 GB DDR4-2133 ECC SK hynix (8× 16 GB) 5000kr for alle 8 ellers 700kr per pinne. Registrert ECC-minne til Xeon E5 v3/v4: HPE Gen9, Dell R730, Supermicro X10 m.fl. DDR4 er dyrt om dagen, dette er 128 GB til en brøkdel av nypris. Fungerer som det skal. Sendes trygt med Fiks ferdig, eller hentes i stavanger. ",
+  "price": 5000,
+  "shipping": 0,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 8,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/455277766",
+  "title": "16GB DDR4 RAM - 12 stk",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/455277766",
+  "source": "finn",
+  "source_id": "455277766",
+  "description": "Crucial 16GB DDR4-2666 ECC RDIMM Serverminne (ct16g4rfd8266) Merk: Er server minne så passer ikke til vanlig pcer Vært veldig lite brukt. I topp stand. Pris er pr stk ",
+  "price": 1900,
+  "shipping": 0,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/478459160",
+  "title": "32 GB RAM for Synology Rackstation",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/478459160",
+  "source": "finn",
+  "source_id": "478459160",
+  "description": "Selger 2 stk Samsung 16 GB DDR4-2133 ECC UDIMM. Legg merke til at dette er 288 pins UDIMM ECC. Se spesifikasjon på bilde og du må sjekke hva denne type minne passer til om du ikke skal oppgradere din Synology NAS server. Disse selges samlet. NY PRIS 6500,- ",
+  "price": 6500,
+  "shipping": 0,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/442675837",
+  "title": "32GB DDR4 ECC pc2400 Lenovo/SK Hynix",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/442675837",
+  "source": "finn",
+  "source_id": "442675837",
+  "description": "Selger 32GB DDR4 ECC pc2400 Lenovo/SK Hynix minnebrukker. Disse er plukket fra en lenovo server FRU: 46w0833 Pris er pr stk. Har flere liggende enn på bildet ",
+  "price": 1500,
+  "shipping": 0,
+  "listing_verdict": "unreadable",
+  "expect": {
+   "unreadable": [
+    "type"
+   ]
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/475607405",
+  "title": "32GB DDR4 ECC RAM",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/475607405",
+  "source": "finn",
+  "source_id": "475607405",
+  "description": "Selger 3 stk DDRAM av type: SK Hynix HMA84GR7MFR4N-UH 32GB 2400MHz DDR4 RDIMM RAM Priser: For 1 brikke: 1500 kr For 2 brikker: 2900 kr (1450 per stk) For 3 brikker: 4200 kr (1400 per stk) Merk: Dette er server-RAM, skjekk at de passer ditt hovedkort før du kjøper. ",
+  "price": 1400,
+  "shipping": 0,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  },
+  "listing_facts": {
+   "sticks": 1
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/399338331",
+  "title": "32GB PC3L Samsung 12800L LRDIMM x 8",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/399338331",
+  "source": "finn",
+  "source_id": "399338331",
+  "description": "8 stk 32GB PC3L 12800L RDIMMs selges samlet. Originale Samsung brikker p/n M386B4g70DM0-YK04Q ",
+  "price": 3000,
+  "shipping": 0,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": false
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/478216970",
+  "title": "32Gb DDR4 2400 ECC RAM brikker",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/478216970",
+  "source": "finn",
+  "source_id": "478216970",
+  "description": "7x 32Gb DDR4 2400 ECC 3x Micron + 4x Kingston Pris per stk. ",
+  "price": 1500,
+  "shipping": 0,
+  "listing_verdict": "unreadable",
+  "expect": {
+   "unreadable": [
+    "type"
+   ]
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/475599337",
+  "title": "4x16gb RAM DDR4 PC4-2666V",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/475599337",
+  "source": "finn",
+  "source_id": "475599337",
+  "description": "64GB (4x16GB) DDR4 2666 ECC RDIMM - SK Hynix / Lenovo ThinkSystem Selger 4 stk 16GB DDR4-2666 ECC Registered serverminne, totalt 64GB. Tatt ut av en fungerende Lenovo-server, alle fire testet og virket ved uttak. Spesifikasjoner: - SK Hynix HMA82GR7AFR4N-VK - 16GB per modul, 4 moduler = 64GB totalt - 1Rx4 PC4-2666V-RC2-11 (DDR4-2666 / PC4-21300) - ECC Registered (RDIMM), 288-pin, 1.20V - Lenovo FRU: 01DE972 / OPT: 7X77A01302 - Produsert 2018-02-28 VIKTIG: Dette er registrert serverminne (RDIMM) og fungerer IKKE i vanlige hjemme-PC-er. Krever serverplattform med Xeon eller EPYC - f.eks. LGA3647, LGA2011-3 eller tilsvarende. Sjekk hovedkortet ditt før kjøp. Selges samlet eller parvis. Kan hentes i Trondheim eller sendes med Fiks ferdig. ",
+  "price": 3500,
+  "shipping": 0,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 4,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/453469295",
+  "title": "64GB Minne (Prisen er for begge)",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/453469295",
+  "source": "finn",
+  "source_id": "453469295",
+  "description": "Server / Workstation (ECC) RAM selges. Type: DDR4 Størrelse: 64GB (2x32GB) Funksjonalitet: ECC Hastighet: 2400 MHz / Mbps Model nummer: m393a4k40bb1 Merke: Saumsung Disse kan passe til Xeon, Epyc og Threadripper Brikkene er testet og fungerer slik dem skal. ",
+  "price": 2500,
+  "shipping": 0,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 2,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/458649165",
+  "title": "64GB Samsung DDR4 ECC Serverminne 2933Y",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/458649165",
+  "source": "finn",
+  "source_id": "458649165",
+  "description": "Selger 64GB Samsung serverminne, modell M386A8K40CM2-CVF. Spesifikasjon: 4DRx4 PC4-2933Y. 4 stk tilgjengelig. Pris er per stykk. ",
+  "price": 3000,
+  "shipping": 0,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 64,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "LRDIMM"
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/454820206",
+  "title": "768 GB (24 x 32 GB) Micron DDR4 ECC Server RAM",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/454820206",
+  "source": "finn",
+  "source_id": "454820206",
+  "description": "24x32GB Micron, 2Rx4, DDR4-2666 (PC4-2666V / PC4-21300) selges samlet eller hver for seg GI BUD ",
+  "price": 1500,
+  "shipping": 0,
+  "listing_verdict": "unreadable",
+  "expect": {
+   "unreadable": [
+    "type"
+   ]
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/475338965",
+  "title": "DDR3 ecc 8gb ram + noe DDR2",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/475338965",
+  "source": "finn",
+  "source_id": "475338965",
+  "description": "God del ecc / server ram. Alle selges som funksjonelle - ok. Visst ein ønsker alt, så enda lavere samlet pris. Pose med div 8gb ddr2 brikker. 75kr /stk. PC12800 - 2stk PC10600 - 18stk PC8500 - 12stk 1stk - 16gb PC8500 - 175.- Kan sendes mot porto ",
+  "price": 75,
+  "shipping": 0,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": false
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/477338883",
+  "title": "Dell PowerEdge VRTX – 2× M630 – 384 GB RAM",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/477338883",
+  "source": "finn",
+  "source_id": "477338883",
+  "description": "Selger en komplett Dell PowerEdge VRTX-løsning med to M630-blader, 384 GB ECC RAM, SSD/HDD-lagring, 10GbE, Fibre Channel og avansert fjernadministrasjon. Passer godt til VMware, Proxmox, virtualisering, homelab, labmiljø Dell PowerEdge VRTX chassis Dell PowerEdge VRTX CMC Enterprise License – utløper aldri Redundant CMC CMC Failover Ready CMC firmware 3.40 VRTX 10GbE switch 10 GbE KR Fabric Originale rackskinner mangler. PowerEdge M630 – server 1 2 × Intel Xeon E5-2670 v3 @ 2.30 GHz 24 kjerner / 48 tråder 128 GB DDR4 ECC Registered RAM 8 × 16 GB DDR4-2133 Dual Rank Broadcom 10GbE 4-port 57840S-k bNDC PCIe bypass iDRAC8 Enterprise Har kjørt VMware ESXi PowerEdge M630 – server 2 2 × Intel Xeon E5-2670 v3 @ 2.30 GHz 24 kjerner / 48 tråder 256 GB DDR4 ECC Registered RAM 16 × 16 GB DDR4-2133 Dual Rank Broadcom 10GbE 4-port 57840S-k bNDC PCIe bypass iDRAC8 Enterprise Lagring 16 × 372 GB SSD 10 × ca. 1,09 TB HDD Ca. 5,95 TB rå SSD-kapasitet Ca. 10,9 TB rå HDD-kapasitet Totalt ca. 16,85 TB rå fysisk kapasitet SSD hot spare Nettverk / Fibre Channel VRTX 10GbE switch R1-2210 VRTX 10Gb Switch 2 × QLogic QLE2562 8 Gb Fibre Channel Dual Channel ",
+  "price": 25000,
+  "shipping": 0,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/476319649",
+  "title": "Kingston KTH-PL426S8/16G 16GB DDR4 2666MHz RAM-modul",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/476319649",
+  "source": "finn",
+  "source_id": "476319649",
+  "description": "Selger en Kingston KTH-PL426S8/16G 16GB DDR4 2666MHz RAM-modul til PC/Server. Sitter i original plastemballasje med etiketter som viser spesifikasjonene tydelig. ECC minne ment til servere eller annen bruk Går for minst 9000 på prisjakt, selges billig grunnet at serveren det ble kjøpt for hadde SO-DIMM minne og ikke DIMM ",
+  "price": 2000,
+  "shipping": 0,
+  "listing_verdict": "unreadable",
+  "expect": {
+   "unreadable": [
+    "type"
+   ]
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/476989466",
+  "title": "Micron 8 GB (2x4 GB) DDR4 3200MHz – Lenovo OEM",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/476989466",
+  "source": "finn",
+  "source_id": "476989466",
+  "description": "Selger to like Micron DDR4 RAM-brikker fra Lenovo-maskin med samlet kapasitet på 8 GB. Brikkene selges samlet. Selges som avbildet. Spesifikasjoner: * Produsent: Micron * Kapasitet: 8 GB totalt (2 x 4 GB) * Minnetype: DDR4 * Hastighet: 3200 MHz / PC4-3200AA * Timing: CL22 * Spenning: 1,20 V * Tilkobling: 288-pinners UDIMM for stasjonær PC * Single-rank 1Rx16 og non-ECC * Modellnummer: MTA4ATF51264AZ-3G2E1 * Lenovo FRU: 5M30Z71654 ",
+  "price": 350,
+  "shipping": 0,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/474111976",
+  "title": "Micron 8GB PC4-19200 DDR4-2400MHz rambrikke",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/474111976",
+  "source": "finn",
+  "source_id": "474111976",
+  "description": "Ram/rambrikke til bærbar MTA8ATF1G64HZ-2G3H1R Micron 8GB PC4-19200 DDR4-2400MHz non-ECC Unbuffered CL17 260-Pin For mer info google navnet. ",
+  "price": 300,
+  "shipping": 0,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/477684393",
+  "title": "RAM DDR4 256GB ECC Server 2666 PC4",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/477684393",
+  "source": "finn",
+  "source_id": "477684393",
+  "description": "32GB DDR4 PC4 ECC 2666 Server RAM 8x32GB moduler Totalt DDR4 RAM ECC 256GB Kan sendes! --- Spesifikasjoner --- - 32GB kapasitet - DDR4 ECC Reaistered (RDIMM - 2666 MHz (PC4-21300 - 2Rx4 Testet og fungerer som den skal Alle modulene er like og har de samme spesifikasionene som den som er vist på bildet. Bildet er kun til referanse. Passer til servere og workstations som støtter ECC RDIMM. ",
+  "price": 14000,
+  "shipping": 0,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 8,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/478833028",
+  "title": "SK Hynix 16GB DDR4 2666 MHz Server RAM (R-036)",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/478833028",
+  "source": "finn",
+  "source_id": "478833028",
+  "description": "Selger server- og workstation-minne av typen SK Hynix 16GB 2Rx8 PC4-2666V-RE1-11. SK Hynix 16GB 2Rx8 PC4-2666V-RE1-11: Produsent: SK Hynix Kapasitet: 16 GB Formfaktor: RDIMM (Registered DIMM) Rank: 2Rx8 (Dual Rank x8) Modultype: ECC-registrert RAM, egnet for servere og arbeidsstasjoner som støtter ECC og RDIMM Datahastighet: DDR4-2666, 2666 MHz Kompatibilitet: Passer best i servere eller arbeidsstasjoner som støtter DDR4 ECC-registrert minne. Pris: 600 kr per stk. Frakt: Minnebrikkene sendes for kjøpers regning, og vil bli forsvarlig pakket før sending. FiksFerdig kan benyttes for enkel og trygg levering. Mitt ref: R-036 ",
+  "price": 600,
+  "shipping": 0,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/477620997",
+  "title": "SK Hynix 8GB DDR4 2133 MHz Server RAM (R-017)",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/477620997",
+  "source": "finn",
+  "source_id": "477620997",
+  "description": "Selger server- og workstation-minne av typen SK Hynix 8GB 2Rx8 PC4-2133P-RE0-10. SK Hynix 8GB 2Rx8 PC4-2133P-RE0-10: Produsent: SK Hynix Kapasitet: 8 GB Formfaktor: RDIMM (Registered DIMM) Rank: 2Rx8 (Dual Rank x8) Modultype: ECC-registrert RAM, egnet for servere og arbeidsstasjoner som støtter ECC og RDIMM Datahastighet: DDR4-2133, 2133 MHz Kompatibilitet: Passer best i servere eller arbeidsstasjoner som støtter DDR4 ECC-registrert minne. Pris: 250 kr per stk. Frakt: Minnebrikkene sendes for kjøpers regning, og vil bli forsvarlig pakket før sending. FiksFerdig kan benyttes for enkel og trygg levering. 5+ stk tilgjengelig. Mitt ref: R-017 ",
+  "price": 250,
+  "shipping": 0,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 8,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/477281727",
+  "title": "Samsung 16GB (2x8GB) DDR4-2666MHz",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/477281727",
+  "source": "finn",
+  "source_id": "477281727",
+  "description": "Som nye. Spesifikasjoner: - SODIMM - non-ECC - 260Pin - Unbuffered - 1.2V - PC4-21300V-S - CL19 ",
+  "price": 700,
+  "shipping": 0,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/477282616",
+  "title": "Samsung 16GB (2x8GB) DDR4-2666MHz",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/477282616",
+  "source": "finn",
+  "source_id": "477282616",
+  "description": "Som nye. Spesifikasjoner (per brikke): - Kapasitet: 8 GB - Antall moduler: 1 - Formfaktor: SODIMM 260-pin - Hastighet: 2666MHz - Bus Speed: PC4-21300 - CAS Latency: CL19 - Dataintegritetskontroll: Ikke-ECC - Registrert eller bufret: Ikke-bufret - Rank: Single Rank - Spenning: 1.2 V ",
+  "price": 750,
+  "shipping": 0,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/477280342",
+  "title": "Samsung 16GB (2x8GB) DDR4-3200MHz",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/477280342",
+  "source": "finn",
+  "source_id": "477280342",
+  "description": "Som nye. Spesifikasjoner (per brikke): - Capacity 8GB - DDR4-3200 (1600 MHz) - 260Pin - SO-DIMM - 1Gx64 -Unbuffered - Non-ECC - JEDEC - 30mm (høyde) - 1,2V ",
+  "price": 850,
+  "shipping": 0,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/478034230",
+  "title": "Samsung 8GB DDR4 2133 MHz Server RAM (R-061)",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/478034230",
+  "source": "finn",
+  "source_id": "478034230",
+  "description": "Selger server- og workstation-minne av typen Samsung 8GB 1Rx4 PC4-2133P-RC0-10-MB1. Samsung 8GB 1Rx4 PC4-2133P-RC0-10-MB1: Produsent: Samsung Kapasitet: 8 GB Formfaktor: RDIMM (Registered DIMM) Rank: 1Rx4 (Single Rank x4) Modultype: ECC-registrert RAM, egnet for servere og arbeidsstasjoner som støtter ECC og RDIMM Datahastighet: DDR4-2133, 2133 MHz Kompatibilitet: Passer best i servere eller arbeidsstasjoner som støtter DDR4 ECC-registrert minne. Pris: 250 kr per stk. Frakt: Minnebrikkene sendes for kjøpers regning, og vil bli forsvarlig pakket før sending. FiksFerdig kan benyttes for enkel og trygg levering. 10+ stk tilgjengelig. Mitt ref: R-061 ",
+  "price": 250,
+  "shipping": 0,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 8,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/447515571",
+  "title": "Samsung RAM ddr4 32GB 4x8 moduler",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/447515571",
+  "source": "finn",
+  "source_id": "447515571",
+  "description": "Samsung RAM-minnemoduler av typen DDR4. 2133P 4x 8GB DDR4 brikker til totalt 32GB Disse har vært brukt i simulator, derfor ikke brukt like ofte som for eksempel en gaming pc eller server. Selges på grunn av overgang Xeon som krever ECC minne Kan sendes ",
+  "price": 1500,
+  "shipping": 0,
+  "listing_verdict": "unreadable",
+  "expect": {
+   "unreadable": [
+    "type"
+   ]
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/472215141",
+  "title": "Samsung registrert server minne",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/472215141",
+  "source": "finn",
+  "source_id": "472215141",
+  "description": "18 stk - 8GB PC3-12800R 11-11-E2-D3 50 kr pr stk 8 stk - 16GB PC3-12800R 11-12-E2-D4 100 kr pr stk Rabatt ved kjøp av en haug. 🙂 ",
+  "price": 100,
+  "shipping": 0,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": false
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/475444902",
+  "title": "Selger 192GB HPE / SK hynix minne, 12 x 16GB PC4-2666",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/475444902",
+  "source": "finn",
+  "source_id": "475444902",
+  "description": "Pga bytte av minne i server har jeg til salgs 192GB HPE / SK hynix minne, 12 x 16GB PC4-2666. Dette er originalt HPE branded minne, og har sittet i en Proliant Gen10 server. Selges for 700,- per brikke eller 7000,- samlet. Ta kontakt ved interesse, kan sendes over hele Norge mot forhåndsbetaling av vare samt Norgespakke. Se mine mange tilbakemeldinger for en trygg handel. ",
+  "price": 7000,
+  "shipping": 0,
+  "listing_verdict": "unreadable",
+  "expect": {
+   "unreadable": [
+    "type"
+   ]
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/462654595",
+  "title": "Selges: pris per stykk;Samsung 32x2 GB DDR4 ECC RDIMM RAM – M393A4K40BB1",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/462654595",
+  "source": "finn",
+  "source_id": "462654595",
+  "description": "LES HELE ANNONSEN: Selger pent brukt Samsung M393A4K40BB1 RAM-brikke. Dette er stabilt serverminne som passer godt til homelab, virtualisering, NAS, Proxmox, VMware, Hyper-V, databaser og servere/workstations som støtter registered ECC DDR4. Spesifikasjoner: PRIS PR BRIKKE 32 GB per brikke DDR4 ECC Registered RDIMM 2400 MT/s / PC4-19200 2Rx4 / dual rank 1,2 V 288-pin DIMM CL17 Merk: Dette er server-RAM, ikke vanlig desktop-RAM. Sjekk at hovedkort/server støtter ECC RDIMM/Registered DDR4 før kjøp. Brikkene er pent brukt og selges samlet eller enkeltvis. Perfekt for oppgradering av server, lab-miljø eller virtualiseringshost. ",
+  "price": 1250,
+  "shipping": 0,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/462653276",
+  "title": "Selges: pris per stykk;Samsung 32x2 GB DDR4 ECC RDIMM RAM – M393A4K40BB1",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/462653276",
+  "source": "finn",
+  "source_id": "462653276",
+  "description": "LES HELE ANNONSEN:Selger flere pent brukte Samsung M393A4K40BB1 RAM-brikker. Dette er stabilt serverminne som passer godt til homelab, virtualisering, NAS, Proxmox, VMware, Hyper-V, databaser og servere/workstations som støtter registered ECC DDR4. Spesifikasjoner: PRIS PR BRIKKE, kan selge for lavere hvis samlet 32 GB per brikke DDR4 ECC Registered RDIMM 2400 MT/s / PC4-19200 2Rx4 / dual rank 1,2 V 288-pin DIMM CL17 Merk: Dette er server-RAM, ikke vanlig desktop-RAM. Sjekk at hovedkort/server støtter ECC RDIMM/Registered DDR4 før kjøp. Brikkene er pent brukt og selges samlet eller enkeltvis. Perfekt for oppgradering av server, lab-miljø eller virtualiseringshost. ",
+  "price": 1280,
+  "shipping": 0,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 32,
+   "sticks": 1,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/479133382",
+  "title": "Synology D4ES01-16G – original 16 GB DDR4 ECC RAM",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/479133382",
+  "source": "finn",
+  "source_id": "479133382",
+  "description": "Selger en original Synology 16 GB ECC-minnemodul, modell D4ES01-16G. Kjøpt ny hos Dustin i 2023 og brukt i en Synology DS923+. Fungerer som den skal. Dette er original Synology RAM, ikke en tredjepartsmodul. Kvittering fra Dustin kan fremvises. Modulen selges i forbindelse med salg av NAS-en. NAS-en annonseres også separat som en DS923+ med totalt 20 GB RAM og 500 GB harddisk. Dersom minnemodulen selges separat, leveres NAS-en med originale 4 GB RAM. Det er derfor også mulig å kjøpe NAS og minnemodul samlet. Pris: 3 500 kr ",
+  "price": 3500,
+  "shipping": 0,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/452264310",
+  "title": "Synology D4ES01-2G original RAM 2GB",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/452264310",
+  "source": "finn",
+  "source_id": "452264310",
+  "description": "Selger en ubrukt minnebrikke med original Synology RAM. Modell: D4ES01-2G Specs: 2GB / 2666MHz / DDR4 ECC Unbuffered SODIMM. Fulgte opprinnelig med en Synology RS822+ NAS-enhet. Kompatibilitet: Bekreftet DS723+ / DS923+ / RS822+ / RS822RP+ men ikke sjekket ev. andre modeller. ",
+  "price": 150,
+  "shipping": 0,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/449207072",
+  "title": "Synology D4ES02-8G DDR4 3200 8GB ECC RAM-modul",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/449207072",
+  "source": "finn",
+  "source_id": "449207072",
+  "description": "Originalminne fra Synology. Denne er tatt fra en Synology Disk Station, da jeg oppgraderte direkte til 2x16 GB. Nypris er ca. 7100,-. Åpen for seriøse bud. Søkeord: RAM Minne Synology NAS D4ES02-8G Minnemodul 8 GB 1 x 8 GB DDR4 ECC ",
+  "price": 4400,
+  "shipping": 0,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/455301586",
+  "title": "Uåpnet og ubrukt 1stk 32GB DIMM Kingston SSM RAM DDR4-3200 SC",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/455301586",
+  "source": "finn",
+  "source_id": "455301586",
+  "description": "Uåpnet og ubrukt RAM. 32 GB (Single Channel), DIMM 288-pin, DDR4, 3200 MHz / PC4-25600, CL22, 1.2 V, Dual Ranked, ikke-bufret, non-ECC - Kingston SSM (system-specific memory). Se mer hos f.eks. Proshop.no: https://www.proshop.no/RAM/Kingston-SSM-RAM-DDR4-3200-SC-32GB/2926512 Ta kontakt hvis du har spørsmål. ",
+  "price": 3986,
+  "shipping": 0,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "Samsung registered model (synthetic)",
+  "title": "16GB DDR4 ECC RAM M393A2G40EB1",
+  "condition": "used",
+  "expect": {
+   "gb_per_stick": 16,
+   "type": "RDIMM",
+   "qualifies": true
+  }
+ },
+ {
+  "note": "Samsung load reduced model (synthetic)",
+  "title": "64GB DDR4 ECC RAM M386A8K40CM2",
+  "condition": "used",
+  "expect": {
+   "gb_per_stick": 64,
+   "type": "LRDIMM",
+   "qualifies": true
+  }
+ },
+ {
+  "note": "Samsung unbuffered model (synthetic)",
+  "title": "16GB DDR4 ECC RAM M391A2K43BB1",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "hynix registered model (synthetic)",
+  "title": "16G DDR4 ECC RAM HMA82GR7AFR4N",
+  "condition": "used",
+  "expect": {
+   "gb_per_stick": 16,
+   "type": "RDIMM",
+   "qualifies": true
+  }
+ },
+ {
+  "note": "hynix load reduced model (synthetic)",
+  "title": "64GB DDR4 ECC RAM HMAA8GL7AMR4N",
+  "condition": "used",
+  "expect": {
+   "type": "LRDIMM",
+   "qualifies": true
+  }
+ },
+ {
+  "note": "Micron registered model (synthetic)",
+  "title": "16GB DDR4 ECC RAM MTA18ASF2G72PDZ",
+  "condition": "used",
+  "expect": {
+   "type": "RDIMM",
+   "qualifies": true
+  }
+ },
+ {
+  "note": "Micron unbuffered model (synthetic)",
+  "title": "8GB DDR4 RAM MTA8ATF1G64HZ",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "Crucial registered model (synthetic)",
+  "title": "16GB DDR4 ECC RAM CT16G4RFD8266",
+  "condition": "used",
+  "expect": {
+   "type": "RDIMM",
+   "qualifies": true
+  }
+ },
+ {
+  "note": "quad rank DDR4 at 2400 (synthetic)",
+  "title": "64GB DDR4 4Rx4 2400 RAM",
+  "condition": "used",
+  "expect": {
+   "type": "LRDIMM",
+   "qualifies": true
+  }
+ },
+ {
+  "note": "PC3L without a hyphen is DDR3 (synthetic)",
+  "title": "32GB PC3L Samsung RAM",
+  "condition": "used",
+  "expect": {
+   "ddr": 3,
+   "qualifies": false
+  }
+ },
+ {
+  "note": "mixed older DDR generations are rejected (synthetic)",
+  "title": "DDR3 ECC 8GB RAM DDR2",
+  "condition": "used",
+  "expect": {
+   "qualifies": false
+  }
+ },
+ {
+  "note": "whole VRTX server is not RAM (synthetic)",
+  "title": "Dell PowerEdge VRTX 384 GB RAM",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "description fills RAM type (synthetic)",
+  "title": "16GB DDR4 ECC RAM",
+  "condition": "used",
+  "description": "16GB DDR4 Registered RAM",
+  "expect": {
+   "type": "RDIMM",
+   "qualifies": true
+  }
+ },
+ {
+  "note": "title beats description contradiction (synthetic)",
+  "title": "16GB DDR4 RDIMM RAM",
+  "condition": "used",
+  "description": "32GB DDR4 RDIMM RAM",
+  "expect": {
+   "qualifies": true,
+   "gb_per_stick": 16,
+   "ddr": 4,
+   "type": "RDIMM"
+  }
+ },
+ {
+  "note": "aspects fill missing RAM facts (synthetic)",
+  "category_id": "11210",
+  "title": "Server RAM",
+  "condition": "used",
+  "aspects": {
+   "Capacity per Module": "16 GB",
+   "Number of Modules": "4",
+   "RAM Form Factor": "RDIMM",
+   "Type": "DDR4"
+  },
+  "expect": {
+   "gb_per_stick": 16,
+   "sticks": 4,
+   "type": "RDIMM",
+   "ddr": 4,
+   "qualifies": true
+  }
+ },
+ {
+  "note": "model type beats aspects (synthetic)",
+  "category_id": "11210",
+  "title": "64GB DDR4 ECC RAM M386A8K40CM2",
+  "condition": "used",
+  "aspects": {
+   "Form Factor": "RDIMM"
+  },
+  "expect": {
+   "type": "LRDIMM",
+   "qualifies": true
+  }
+ }
 ]

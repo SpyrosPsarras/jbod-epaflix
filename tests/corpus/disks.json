@@ -367,16 +367,56 @@
   },
   "condition": "used"
  },
- {"note": "'4x 16TB' is a lot of 4 (synthetic)", "title": "4x 16TB Seagate Exos X16 3.5\" SATA", "condition": "used",
-  "expect": {"capacity_tb": 16, "count": 4, "qualifies": true}},
- {"note": "'5 stk ... pris per stk' is priced per disk (synthetic)", "title": "5 stk Exos X18 18TB 3.5\" pris per stk",
-  "condition": "used", "expect": {"capacity_tb": 18, "count": 1, "qualifies": true}},
- {"note": "'10 stk på lager' is stock, not a lot: how many the price buys is unknown (synthetic, finn phrasing)",
-  "title": "Seagate Exos X16 16TB 3.5\" 10 stk på lager", "condition": "used", "expect": {"unreadable": ["quantity"]}},
- {"note": "'(4 pcs available)' is stock, not a lot (synthetic)", "title": "Seagate Exos 16TB 3.5\" (4 pcs available)",
-  "condition": "used", "expect": {"unreadable": ["quantity"]}},
- {"note": "a single disk is one (synthetic)", "title": "Seagate Exos X20 20TB 3.5\" SATA", "condition": "used",
-  "expect": {"capacity_tb": 20, "count": 1, "qualifies": true}},
+ {
+  "note": "'4x 16TB' is a lot of 4 (synthetic)",
+  "title": "4x 16TB Seagate Exos X16 3.5\" SATA",
+  "condition": "used",
+  "expect": {
+   "capacity_tb": 16,
+   "count": 4,
+   "qualifies": true
+  }
+ },
+ {
+  "note": "'5 stk ... pris per stk' is priced per disk (synthetic)",
+  "title": "5 stk Exos X18 18TB 3.5\" pris per stk",
+  "condition": "used",
+  "expect": {
+   "capacity_tb": 18,
+   "count": 1,
+   "qualifies": true
+  }
+ },
+ {
+  "note": "'10 stk på lager' is stock, not a lot: how many the price buys is unknown (synthetic, finn phrasing)",
+  "title": "Seagate Exos X16 16TB 3.5\" 10 stk på lager",
+  "condition": "used",
+  "expect": {
+   "unreadable": [
+    "quantity"
+   ]
+  }
+ },
+ {
+  "note": "'(4 pcs available)' is stock, not a lot (synthetic)",
+  "title": "Seagate Exos 16TB 3.5\" (4 pcs available)",
+  "condition": "used",
+  "expect": {
+   "unreadable": [
+    "quantity"
+   ]
+  }
+ },
+ {
+  "note": "a single disk is one (synthetic)",
+  "title": "Seagate Exos X20 20TB 3.5\" SATA",
+  "condition": "used",
+  "expect": {
+   "capacity_tb": 20,
+   "count": 1,
+   "qualifies": true
+  }
+ },
  {
   "note": "nas class qualifies",
   "title": "Seagate IronWolf 16TB NAS 3.5\" SATA internal hard drive ST16000VN001",
@@ -534,6 +574,3656 @@
    "count": 5,
    "form_factor": "3.5",
    "qualifies": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/278369523201",
+  "title": "**READ** Toshiba MG08ACA16TE 16TB 7.2K 512M 3.5\" SATA Enterprise",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/278369523201",
+  "source": "ebay_uk",
+  "source_id": "v1|278369523201|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "Toshiba",
+   "Compatible With": "PC",
+   "Type": "Internal Desktop Drive",
+   "Manufacturer Warranty": "1 Year",
+   "Color": "Silver",
+   "Storage Format": "HDD Only",
+   "MPN": "MG08ACA16TE",
+   "Country of Origin": "Philippines"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/358898371068",
+  "title": "02PX524 02YC072 Lenovo V5000E V5000 12TB 12Gb SAS 3.5 Hard Drive HDD New",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/358898371068",
+  "source": "ebay_uk",
+  "source_id": "v1|358898371068|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "Lenovo",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "3 Years",
+   "Color": "Silver",
+   "Model": "02PX524 02YC072",
+   "MPN": "02PX524 02YC072",
+   "Storage Capacity": "12 TB",
+   "Interface": "SAS",
+   "Country of Origin": "China"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/358684008527",
+  "title": "0B47063 WD Ultrastar Dc Ha340 WUS721212BLE6L4 Hard Drive Data Center Internal ~D~",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/358684008527",
+  "source": "ebay_uk",
+  "source_id": "v1|358684008527|0",
+  "category_id": "162",
+  "aspects": {
+   "Herstellernummer": "0B47063",
+   "Marke": "Western Digital",
+   "Produktart": "Zubehör",
+   "Modell": "0B47063",
+   "Kompatibel mit": "Western Digital",
+   "MPN": "0B47063",
+   "Ursprungsland": "China",
+   "EAN": "0829686009318"
+  },
+  "shipping": 46.35,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/147327149509",
+  "title": "0B47749 WD Ultrastar Dc Hc555 SAS Hard Drive Serial Attached SCSI (SAS) ~D~",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/147327149509",
+  "source": "ebay_uk",
+  "source_id": "v1|147327149509|0",
+  "category_id": "162",
+  "aspects": {
+   "Herstellernummer": "0B47749",
+   "Marke": "Western Digital",
+   "Produktart": "Zubehör",
+   "Modell": "0B47749",
+   "Kompatibel mit": "Western Digital",
+   "MPN": "0B47749",
+   "Ursprungsland": "China",
+   "EAN": "0829686009363"
+  },
+  "shipping": 46.35,
+  "price": 200,
+  "listing_verdict": "unreadable",
+  "expect": {
+   "unreadable": [
+    "capacity"
+   ]
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/147624704614",
+  "title": "0F38357 WD Ultrastar DC HC550 WUH721816AL5204 Hard Drive Serial Attached SCS ~D~",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/147624704614",
+  "source": "ebay_uk",
+  "source_id": "v1|147624704614|0",
+  "category_id": "162",
+  "aspects": {
+   "Marke": "Western Digital",
+   "Herstellernummer": "0F38357",
+   "MPN": "0F38357",
+   "Produktart": "Zubehör",
+   "Modell": "0F38357",
+   "Kompatibel mit": "Western Digital",
+   "Ursprungsland": "China",
+   "EAN": "8717306633307"
+  },
+  "shipping": 46.35,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/147480838547",
+  "title": "0F38652 WD Ultrastar DC HC560 3.5 SAS Hard Drive Serial Attached SCSI (SAS) ~D~",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/147480838547",
+  "source": "ebay_uk",
+  "source_id": "v1|147480838547|0",
+  "category_id": "162",
+  "aspects": {
+   "Marke": "Western Digital",
+   "Herstellernummer": "0F38652",
+   "MPN": "0F38652",
+   "Produktart": "Zubehör",
+   "Modell": "0F38652",
+   "Kompatibel mit": "Western Digital",
+   "Ursprungsland": "China",
+   "EAN": "8592978391447"
+  },
+  "shipping": 46.35,
+  "price": 200,
+  "listing_verdict": "unreadable",
+  "expect": {
+   "unreadable": [
+    "capacity"
+   ]
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/147639958810",
+  "title": "0F38785 WD Ultrastar DC HC560 Hard Drive SATA/s 3.5 8.9cm Serial ATA ~D~",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/147639958810",
+  "source": "ebay_uk",
+  "source_id": "v1|147639958810|0",
+  "category_id": "162",
+  "aspects": {
+   "Marke": "Western Digital",
+   "Herstellernummer": "0F38785",
+   "MPN": "0F38785",
+   "Produktart": "Zubehör",
+   "Modell": "0F38785",
+   "Kompatibel mit": "Western Digital",
+   "Ursprungsland": "China",
+   "EAN": "8592978389734"
+  },
+  "shipping": 46.35,
+  "price": 200,
+  "listing_verdict": "unreadable",
+  "expect": {
+   "unreadable": [
+    "capacity"
+   ]
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/318719220441",
+  "title": "12TB HPE 881779-B21 882397-001 3.5\" SAS 12Gb 7.2K LFF SC SERVER HDD Hard Drives",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/318719220441",
+  "source": "ebay_uk",
+  "source_id": "v1|318719220441|0",
+  "category_id": "56083",
+  "aspects": {
+   "Compatible With": "PC",
+   "Color": "Silver",
+   "Custom Bundle": "No",
+   "MPN": "881779-B21, 882397-001",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "HPE",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Read Speed": "500MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "1 Year",
+   "Model": "881779-B21",
+   "Transfer Rate": "150 Mbps",
+   "Storage Format": "AIT/SAIT",
+   "Features": "Hot Plug Support, Hot Swap",
+   "Storage Capacity": "12 TB",
+   "Interface": "SAS",
+   "Country of Origin": "China",
+   "Product Line": "Barracuda",
+   "Cache": "256 MB"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/168585264459",
+  "title": "1PCS 005053485 005053486 EMC D3-VS07-12000 12T 12G SAS Unity Hard Drive HDD New",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/168585264459",
+  "source": "ebay_uk",
+  "source_id": "v1|168585264459|0",
+  "category_id": "56083",
+  "aspects": {
+   "Color": "Silver",
+   "MPN": "005053485 005053486",
+   "Rotation Speed": "1000 RPM",
+   "Brand": "EMC",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Read Speed": "500MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "1 Year",
+   "Model": "005053485 005053486",
+   "Transfer Rate": "40 Mbps",
+   "Storage Format": "AIT/SAIT",
+   "Features": "Adaptive Memory Technology",
+   "Storage Capacity": "12 TB",
+   "Interface": "SAS",
+   "Country of Origin": "Thailand",
+   "Product Line": "Barracuda",
+   "Cache": "128 MB"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/168585317630",
+  "title": "1PCS 09HXK6 Dell HUH721212AL5200 12TB 401-ABHX 3.5'' 512e SAS 7.2K 12Gbps Hard",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/168585317630",
+  "source": "ebay_uk",
+  "source_id": "v1|168585317630|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "Dell",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "09HXK6",
+   "MPN": "HUH721212AL5200",
+   "Storage Capacity": "12TB",
+   "Interface": "SAS",
+   "Country of Origin": "Thailand",
+   "Rotation Speed": "7200RPM"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/168578802021",
+  "title": "1PCS D4 VS07 12000 EMC D4-VS07-12000 005053214 005053215 12Gb NL SAS 12TB Hard",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/168578802021",
+  "source": "ebay_uk",
+  "source_id": "v1|168578802021|0",
+  "category_id": "56083",
+  "aspects": {
+   "Compatible With": "Server",
+   "Color": "Silver",
+   "MPN": "005053214 005053215",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "EMC",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Manufacturer Warranty": "1 Year",
+   "Model": "D4-VS07-12000",
+   "Features": "Adaptive Memory Technology",
+   "Storage Capacity": "12 TB",
+   "Interface": "SAS",
+   "Cache": "128 MB"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/318751836062",
+  "title": "1PCS New ST12000NM001G Seagate Exos X16 12TB 512E 3.5\" SATA Enterprise HDD Hard",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/318751836062",
+  "source": "ebay_uk",
+  "source_id": "v1|318751836062|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "Unbranded",
+   "Type": "Internal Desktop Drive",
+   "Country of Origin": "China"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/318745838181",
+  "title": "1PCS ST14000NM000J Compatibe Seagate Exos X18 14 TB SATA 6Gb S 256 MB 7200 Rpm",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/318745838181",
+  "source": "ebay_uk",
+  "source_id": "v1|318745838181|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "Unbranded",
+   "Type": "Internal Desktop Drive",
+   "Country of Origin": "China"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 14,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/187416848703",
+  "title": "1PCS Seagate 16TB ST16000NM001G Exos X16 512e 6Gb 3.5 SATA Enterprise Hard Drive",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/187416848703",
+  "source": "ebay_uk",
+  "source_id": "v1|187416848703|0",
+  "category_id": "56083",
+  "aspects": {
+   "Country of Origin": "Thailand",
+   "Form Factor": "3.5 in",
+   "Brand": "Seagate",
+   "Type": "Internal Desktop Drive",
+   "Interface": "SATA III",
+   "Compatible With": "PC",
+   "Model": "ST16000NM001G",
+   "Storage Capacity": "16 TB",
+   "Drive Type(s) Supported": "HDD",
+   "Rotation Speed": "7200RPM",
+   "Cache": "256MB",
+   "Manufacturer Warranty": "Other: See Item Description"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/168578517517",
+  "title": "1PCS Toshiba MG09 Enterprise Toshiba 18TB 7200RPM 512e 3.5\" SATA Enterprise Des",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/168578517517",
+  "source": "ebay_uk",
+  "source_id": "v1|168578517517|0",
+  "category_id": "56083",
+  "aspects": {
+   "Compatible With": "PC, Mac",
+   "Color": "Silver",
+   "MPN": "MG09ACA18TE",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "Toshiba",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "Toshiba MG09 Enterprise",
+   "Storage Format": "HDD Only",
+   "Features": "Low Noise Level, Hot Plug Support",
+   "Storage Capacity": "18 TB",
+   "Interface": "SATA III",
+   "Country of Origin": "Philippines"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/127396054462?var=428836929190",
+  "title": "1TB 6TB 8TB 12TB 14TB 22TB 28TB LFF SATA3 6G HDD Enterprise Grade Hard Drive lot",
+  "condition": "refurbished",
+  "url": "https://www.ebay.co.uk/itm/127396054462?var=428836929190",
+  "source": "ebay_uk",
+  "source_id": "v1|127396054462|428836929190",
+  "category_id": "56083",
+  "aspects": {
+   "Storage Size": "1TB (LFF 3.5in) SATA-3 6G 7.2K HDD",
+   "Brand": "Major Brand",
+   "Type": "Internal Desktop Drive"
+  },
+  "shipping": 38.0,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": false,
+   "capacity_tb": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/389606644791",
+  "title": "1pcs Seagate IronWolf Pro ST16000NT001 16TB 7200RPM 256MB 6Gb/s SATA 3.5\" HDD",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/389606644791",
+  "source": "ebay_uk",
+  "source_id": "v1|389606644791|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "ST16000NT001",
+   "Type": "ST16000NT001"
+  },
+  "shipping": 37.58,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/256887282961?var=557432397854",
+  "title": "200PCS DXD9H X7K8W Tray Caddy Adhesive Stickers Labels FOR DELL G14 HDD Stickers",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/256887282961?var=557432397854",
+  "source": "ebay_uk",
+  "source_id": "v1|256887282961|557432397854",
+  "category_id": "158816",
+  "aspects": {
+   "MPN": "22TB SAS 12GB 7.2K",
+   "Brand": "Unbranded",
+   "Color": "Black",
+   "Compatible Drive Size": "2.5 in Drive, 3.5 in Drive, 5.25 in Drive",
+   "Features": "Dustproof",
+   "Type": "Caddy"
+  },
+  "shipping": 3.0,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/317096925634?var=615568147196",
+  "title": "200PCS DXD9H X7K8W Tray Caddy Adhesive Stickers Labels FOR DELL G14 HDD Stickers",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/317096925634?var=615568147196",
+  "source": "ebay_uk",
+  "source_id": "v1|317096925634|615568147196",
+  "category_id": "158816",
+  "aspects": {
+   "MPN": "10TB SATA 6GB 7.2K",
+   "Brand": "Unbranded",
+   "Color": "Black",
+   "Type": "Soft",
+   "Country of Origin": "China"
+  },
+  "shipping": 5.25,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/186996832091?var=695031544050",
+  "title": "200PCS DXD9H X7K8W Tray Caddy Adhesive Stickers Labels FOR DELL G14 HDD Stickers",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/186996832091?var=695031544050",
+  "source": "ebay_uk",
+  "source_id": "v1|186996832091|695031544050",
+  "category_id": "158816",
+  "aspects": {
+   "MPN": "10TB SAS 12GB 7.2K",
+   "Brand": "Dell",
+   "Color": "Black",
+   "Compatible Drive Size": "2.5 in Drive, 3.5 in Drive",
+   "Country/Region of Manufacture": "China",
+   "Interface": "NVME, SAS, SATA",
+   "Material": "Rigid Plastic",
+   "Type": "Stickers Labels",
+   "Unit Quantity": "200pcs"
+  },
+  "shipping": 5.25,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/256887282961?var=557432397861",
+  "title": "200PCS DXD9H X7K8W Tray Caddy Adhesive Stickers Labels FOR DELL G14 HDD Stickers",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/256887282961?var=557432397861",
+  "source": "ebay_uk",
+  "source_id": "v1|256887282961|557432397861",
+  "category_id": "158816",
+  "aspects": {
+   "MPN": "14TB SAS 12GB 7.2K",
+   "Brand": "Unbranded",
+   "Color": "Black",
+   "Compatible Drive Size": "2.5 in Drive, 3.5 in Drive, 5.25 in Drive",
+   "Features": "Dustproof",
+   "Type": "Caddy"
+  },
+  "shipping": 3.0,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/317096925634?var=615568147207",
+  "title": "200PCS DXD9H X7K8W Tray Caddy Adhesive Stickers Labels FOR DELL G14 HDD Stickers",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/317096925634?var=615568147207",
+  "source": "ebay_uk",
+  "source_id": "v1|317096925634|615568147207",
+  "category_id": "158816",
+  "aspects": {
+   "MPN": "22TB SAS 12GB 7.2K",
+   "Brand": "Unbranded",
+   "Color": "Black",
+   "Type": "Soft",
+   "Country of Origin": "China"
+  },
+  "shipping": 5.25,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/186996832091?var=695031544056",
+  "title": "200PCS DXD9H X7K8W Tray Caddy Adhesive Stickers Labels FOR DELL G14 HDD Stickers",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/186996832091?var=695031544056",
+  "source": "ebay_uk",
+  "source_id": "v1|186996832091|695031544056",
+  "category_id": "158816",
+  "aspects": {
+   "MPN": "22TB SAS 12GB 7.2K",
+   "Brand": "Dell",
+   "Color": "Black",
+   "Compatible Drive Size": "2.5 in Drive, 3.5 in Drive",
+   "Country/Region of Manufacture": "China",
+   "Interface": "NVME, SAS, SATA",
+   "Material": "Rigid Plastic",
+   "Type": "Stickers Labels",
+   "Unit Quantity": "200pcs"
+  },
+  "shipping": 5.25,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/277065718224?var=2560363563142",
+  "title": "200PCS DXD9H X7K8W Tray Caddy Adhesive Stickers Labels For DELL G14 HDD Stickers",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/277065718224?var=2560363563142",
+  "source": "ebay_uk",
+  "source_id": "v1|277065718224|2560363563142",
+  "category_id": "158816",
+  "aspects": {
+   "MPN": "10TB SATA 6GB 7.2K",
+   "Brand": "Unbranded",
+   "Color": "Black",
+   "Type": "Soft"
+  },
+  "shipping": 5.25,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/277065718224?var=2560363563153",
+  "title": "200PCS DXD9H X7K8W Tray Caddy Adhesive Stickers Labels For DELL G14 HDD Stickers",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/277065718224?var=2560363563153",
+  "source": "ebay_uk",
+  "source_id": "v1|277065718224|2560363563153",
+  "category_id": "158816",
+  "aspects": {
+   "MPN": "22TB SAS 12GB 7.2K",
+   "Brand": "Unbranded",
+   "Color": "Black",
+   "Type": "Soft"
+  },
+  "shipping": 5.25,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/157962621084",
+  "title": "4K Media Player, MYPIN HDMI MP4 Player Support 14TB HDD/ HA0324, Black",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/157962621084",
+  "source": "ebay_uk",
+  "source_id": "v1|157962621084|0",
+  "category_id": "117042",
+  "aspects": {
+   "Color": "black",
+   "ItemHeight": "70",
+   "ItemLength": "188",
+   "ItemWeight": "433",
+   "ItemWidth": "158",
+   "Manufacturer": "mypin",
+   "Model": "ha 0324",
+   "PackageHeight": "72",
+   "PackageLength": "188",
+   "PackageWeight": "480",
+   "PackageWidth": "157",
+   "PartNumber": "ha 0284",
+   "Size": "ha 0324",
+   "Brand": "MYPIN",
+   "MPN": "HA0284",
+   "Type": "NA",
+   "EAN": "NA"
+  },
+  "shipping": 18.92,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/168783266047",
+  "title": "8 Channel 3K Lite H.265+ Security DVR Recorder, Hybrid 5-In-1, NO HDD",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/168783266047",
+  "source": "ebay_uk",
+  "source_id": "v1|168783266047|0",
+  "category_id": "88754",
+  "aspects": {
+   "Connectivity Technology": "HDMI, USB, VGA",
+   "Compatible Devices": "Camera, Desktop, Smartphone, Tablet",
+   "Memory Storage Capacity": "10 TB",
+   "Hard-Drive Size": "10 TB",
+   "Number of Channels": "8",
+   "Media Format Digital Video": "H.265+, H.264",
+   "Audio Input": "RCA",
+   "Video Input": "AHD, CVI, CVBS, IP Input",
+   "Software Update Supported to Date": "unknown",
+   "Item Dimensions L x W x H": "8.66\"L x 8.38\"W x 1.73\"H",
+   "Item Weight": "3.3 pounds",
+   "Model Number": "AU-DW81KD000-V3-OP",
+   "Unit Count": "1 Count",
+   "Item Highlight": "CCTV DVR with AI Human/Vehicle Detection for Surveillance Camera,",
+   "Number of Items": "1",
+   "Number of Packs": "1",
+   "Built-In Media": "1X 3.2 ft/1 m Ethernet Cable, 1X 3K Lite DVR with NO Hard Drive,",
+   "Mfr Part Number": "N81R",
+   "Warranty Description": "2 year",
+   "Product Dimensions": "8.66\"L x 8.38\"W x 1.73\"H",
+   "UPC": "7445025288270"
+  },
+  "shipping": 26.97,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/407253955696",
+  "title": "8 Channel 3K Lite H.265+ Security DVR Recorder, Hybrid 5-in-1, No HDD, CCTV",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/407253955696",
+  "source": "ebay_uk",
+  "source_id": "v1|407253955696|0",
+  "category_id": "88754",
+  "aspects": {
+   "Compatible Brand": "ANNKE",
+   "Number of Cameras Included": "1",
+   "Items Included": "Camera",
+   "MPN": "N81R",
+   "Smart Home Compatibility": "Amazon Alexa",
+   "Brand": "Unbranded",
+   "Type": "Surveillance DVR Kits",
+   "Number of Channels": "8",
+   "Number of Zones": "8",
+   "Maximum Resolution": "1920x1080",
+   "Model": "Atomic Beam Cop Cam",
+   "Connectivity": "HDMI Standard",
+   "Features": "AI Human/Vehicle Detection",
+   "Storage Capacity": "10TB",
+   "Smart Home Protocol": "Wi-Fi",
+   "Operating Sound Rating": "90 dB",
+   "Power": "30 W",
+   "Surveillance Technology": "CCTV",
+   "Location": "Outdoor & Indoor"
+  },
+  "shipping": 34.1,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/298694518666",
+  "title": "8 Channel 3K Lite H.265+ Security DVR Recorder, Hybrid 5-in-1, No HDD, CCTV",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/298694518666",
+  "source": "ebay_uk",
+  "source_id": "v1|298694518666|0",
+  "category_id": "88754",
+  "aspects": {
+   "Brand": "Unbranded",
+   "Compatible Brand": "Camera, Desktop, Smartphone, Tablet",
+   "Type": "Surveillance DVR Kits",
+   "Number of Zones": "8",
+   "Maximum Resolution": "unknown",
+   "Model": "AU-DW81KD000-V3-OP",
+   "Connectivity": "HDMI, USB, VGA",
+   "Features": "CCTV DVR with AI Human/Vehicle Detection for Surve",
+   "Storage Capacity": "10 TB",
+   "Surveillance Technology": "H.265+, H.264"
+  },
+  "shipping": 34.1,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/158337727637",
+  "title": "8 Channel 3K Lite H.265+ Security DVR Recorder, Hybrid 5-in-1, No HDD, CCTV",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/158337727637",
+  "source": "ebay_uk",
+  "source_id": "v1|158337727637|0",
+  "category_id": "88754",
+  "aspects": {
+   "Compatible Brand": "Camera, Desktop, Smartphone, Tablet",
+   "Number of Cameras Included": "1",
+   "Items Included": "1X 3.2 ft/1 m Ethernet Cable, 1X 3K Lite DVR with",
+   "Brand": "Unbranded",
+   "Type": "Surveillance DVR Kits",
+   "Number of Channels": "8",
+   "Maximum Resolution": "10 TB",
+   "Model": "AU-DW81KD000-V3-OP",
+   "Connectivity": "HDMI, USB, VGA",
+   "Features": "Supports 8CH Analog and 2CH IP Cameras, Easy Remot",
+   "Surveillance Technology": "CCTV DVR with AI Human/Vehicle Detection for Surve"
+  },
+  "shipping": 34.1,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/398353588305",
+  "title": "8 Channel 3K Lite H.265+ Security DVR Recorder, Hybrid 5-in-1, No HDD, CCTV",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/398353588305",
+  "source": "ebay_uk",
+  "source_id": "v1|398353588305|0",
+  "category_id": "88754",
+  "aspects": {
+   "Brand": "Unbranded",
+   "Type": "Surveillance DVR Kits",
+   "Number of Channels": "8",
+   "Number of Zones": "8",
+   "Items Included": "1X 3.2 ft/1 m Ethernet Cable, 1X 3K Lite DVR with",
+   "Model": "AU-DW81KD000-V3-OP",
+   "Connectivity": "HDMI, USB, VGA",
+   "MPN": "N81R",
+   "Features": "CCTV DVR with AI Human/Vehicle Detection for Surve",
+   "Storage Capacity": "10 TB",
+   "Surveillance Technology": "H.265+, H.264"
+  },
+  "shipping": 34.1,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/366622178163",
+  "title": "8 Channel 3K Lite H.265+ Security DVR Recorder, Hybrid 5-in-1, No HDD, CCTV",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/366622178163",
+  "source": "ebay_uk",
+  "source_id": "v1|366622178163|0",
+  "category_id": "88754",
+  "aspects": {
+   "Brand": "Unbranded",
+   "Type": "Surveillance DVR Kits",
+   "Number of Channels": "8",
+   "Number of Zones": "8",
+   "Items Included": "1X 3.2 ft/1 m Ethernet Cable, 1X 3K Lite DVR with",
+   "Model": "AU-DW81KD000-V3-OP",
+   "Connectivity": "HDMI, USB, VGA",
+   "MPN": "N81R",
+   "Features": "H.265+, H.264",
+   "Storage Capacity": "10 TB",
+   "Surveillance Technology": "Digital Video"
+  },
+  "shipping": 34.1,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/188875215268",
+  "title": "8 Channel 3K Lite H.265+ Security DVR Recorder, Hybrid 5-in-1, No HDD, CCTV Syst",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/188875215268",
+  "source": "ebay_uk",
+  "source_id": "v1|188875215268|0",
+  "category_id": "88754",
+  "aspects": {
+   "Compatible Brand": "Camera, Desktop, Smartphone, Tablet",
+   "Number of Cameras Included": "1",
+   "Items Included": "1X 3.2 ft/1 m Ethernet Cable, 1X 3K Lite DVR with",
+   "Brand": "Unbranded",
+   "Type": "Surveillance DVR Kits",
+   "Number of Channels": "8",
+   "Maximum Resolution": "10 TB",
+   "Model": "AU-DW81KD000-V3-OP",
+   "Connectivity": "HDMI, USB, VGA",
+   "Features": "Supports 8CH Analog and 2CH IP Cameras, Easy Remot",
+   "Surveillance Technology": "CCTV DVR with AI Human/Vehicle Detection for Surve"
+  },
+  "shipping": 34.1,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/800748372710",
+  "title": "8 Channel 3K Lite H.265+ Security DVR Recorder, Hybrid 5-in-1, No HDD, CCTV Syst",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/800748372710",
+  "source": "ebay_uk",
+  "source_id": "v1|800748372710|0",
+  "category_id": "88754",
+  "aspects": {
+   "Brand": "Unbranded",
+   "Compatible Brand": "ADT",
+   "Type": "Surveillance DVR Kits",
+   "Number of Channels": "8",
+   "Number of Zones": "1",
+   "Model": "Atomic Beam Cop Cam",
+   "Connectivity": "HDMI Standard",
+   "Features": "Motion/PIR Activated",
+   "Storage Capacity": "10TB",
+   "Surveillance Technology": "CCTV"
+  },
+  "shipping": 34.1,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/287266904342",
+  "title": "ASUS ROG ALLY/LENOVO GO 22TB Hard Drive RETRO Batocera \"All-in-one\" PLUG#Play",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/287266904342",
+  "source": "ebay_uk",
+  "source_id": "v1|287266904342|0",
+  "category_id": "139971",
+  "aspects": {
+   "Marke": "Markenlos",
+   "Speicherkapazität": "28 tb"
+  },
+  "shipping": 133.36,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/117424776305",
+  "title": "Annke 8 Channel 3K Lite H.265+ Security DVR Recorder Hybrid 5-in-1 NO HDD",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/117424776305",
+  "source": "ebay_uk",
+  "source_id": "v1|117424776305|0",
+  "category_id": "88754",
+  "aspects": {
+   "Brand": "ANNKE",
+   "Model": "AU-DW81KD000-V3-OP",
+   "Type": "Surveillance Camera",
+   "Compatible Brand": "Camera, Desktop, Smartphone, Tablet",
+   "Connectivity": "HDMI, USB, VGA",
+   "MPN": "AU-DW81KD000-V3-OP",
+   "Unit Quantity": "1",
+   "Item Height": "1.73 in",
+   "Item Weight": "3.3 lb",
+   "Item Width": "8.38 in",
+   "Number of Channels": "8",
+   "Memory Storage Capacity": "10 TB",
+   "Harddrive Size": "10 TB",
+   "Media Format Digital Video": "H.265+, H.264",
+   "Audio Input": "RCA",
+   "Video Input": "AHD, CVI, CVBS, IP Input",
+   "UPC": "786471557068"
+  },
+  "shipping": 34.24,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/189053068588",
+  "title": "Cisco HUSPR3216ADP301 Western Digital Ultrastar SN100 NVMe PCIe SSD 1.6TB 2.5",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/189053068588",
+  "source": "ebay_uk",
+  "source_id": "v1|189053068588|0",
+  "category_id": "175669",
+  "aspects": {
+   "Marke": "Cisco",
+   "Produktart": "Interne SSD",
+   "Eigenschaften": "Solid State",
+   "MPN": "UCS-SDHPCIE16TB, 16-100784-01, HUSPR3216ADP301",
+   "Schnittstelle": "PCIe Gen 3.0 x4"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/358900996033",
+  "title": "D4 VS07 12000 EMC D4-VS07-12000 005053214 005053215 12Gb NL SAS 12TB Hard Drives",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/358900996033",
+  "source": "ebay_uk",
+  "source_id": "v1|358900996033|0",
+  "category_id": "56083",
+  "aspects": {
+   "Compatible With": "Server",
+   "Color": "Silver",
+   "MPN": "005053214 005053215",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "EMC",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "1 Year",
+   "Model": "D4-VS07-12000",
+   "Storage Format": "HDD Only",
+   "Features": "Adaptive Memory Technology",
+   "Storage Capacity": "12 TB",
+   "Interface": "SAS",
+   "Cache": "128 MB"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/398247371475?var=666518457946",
+  "title": "Dell 10TB 12TB 16TB SAS 7.2K 12GB 0YF87J 9HXK6 024HF9 Original Hard Drive",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/398247371475?var=666518457946",
+  "source": "ebay_uk",
+  "source_id": "v1|398247371475|666518457946",
+  "category_id": "56083",
+  "aspects": {
+   "Capacity": "10TB",
+   "Compatible With": "PC",
+   "Color": "Silver",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "Dell",
+   "Form Factor": "3.5 in",
+   "Type": "Server HDD",
+   "Read Speed": "500MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "024HF9",
+   "Storage Format": "HDD Only",
+   "Storage Capacity": "16 TB",
+   "Interface": "SAS",
+   "Country of Origin": "China",
+   "Cache": "256 MB"
+  },
+  "shipping": 7.52,
+  "price": 200,
+  "listing_verdict": "unreadable",
+  "expect": {
+   "unreadable": [
+    "capacity",
+    "form_factor"
+   ]
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/336692381103",
+  "title": "EMC D3-VS07-12000 005053485 005053486 12TB 12Gb SAS Unity Hard Drives HDD",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/336692381103",
+  "source": "ebay_uk",
+  "source_id": "v1|336692381103|0",
+  "category_id": "56083",
+  "aspects": {
+   "Country of Origin": "Thailand",
+   "Color": "Silver",
+   "MPN": "005053485 005053486",
+   "Rotation Speed": "1000 RPM",
+   "Brand": "EMC",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Read Speed": "500MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "1 Year",
+   "Model": "005053485 005053486",
+   "Transfer Rate": "40 Mbps",
+   "Storage Format": "AIT/SAIT",
+   "Features": "Adaptive Memory Technology",
+   "Storage Capacity": "12 TB",
+   "Interface": "SAS",
+   "Product Line": "Barracuda",
+   "Cache": "128 MB"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/357877115510",
+  "title": "EMC D3-VS07-12000 Unity Storage HDD 005053485 005053486 12TB 7.2K SAS HARD DRIVE",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/357877115510",
+  "source": "ebay_uk",
+  "source_id": "v1|357877115510|0",
+  "category_id": "56083",
+  "aspects": {
+   "Country of Origin": "Thailand",
+   "Color": "Silver",
+   "MPN": "005053485 005053486",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "EMC",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Read Speed": "500MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "1 Year",
+   "Model": "005053485 005053486",
+   "Transfer Rate": "40 Mbps",
+   "Storage Format": "AIT/SAIT",
+   "Features": "Adaptive Memory Technology",
+   "Storage Capacity": "12 TB",
+   "Interface": "SAS",
+   "Product Line": "Barracuda",
+   "Cache": "128 MB"
+  },
+  "shipping": 7.52,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/185518116328?var=693350476868",
+  "title": "HARD DRIVE 3.5\" 1TB 2TB 3TB 4TB 6TB 14TB 12TB SATA HDD CCTV DESKTOP PC DVR lot",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/185518116328?var=693350476868",
+  "source": "ebay_uk",
+  "source_id": "v1|185518116328|693350476868",
+  "category_id": "56083",
+  "aspects": {
+   "Storage Capacity": "2TB",
+   "Brand": "Various",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "SATA Form Factor": "3.5\"",
+   "Interface": "SATA",
+   "Country of Origin": "China"
+  },
+  "shipping": 9.99,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": false,
+   "capacity_tb": 2
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/366437079924?var=636190446714",
+  "title": "HARD DRIVE 3.5\" 6TB 8TB 10TB 12TB 16TB SATA HDD CCTV DESKTOP PC DVR CCTV NAS",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/366437079924?var=636190446714",
+  "source": "ebay_uk",
+  "source_id": "v1|366437079924|636190446714",
+  "category_id": "56083",
+  "aspects": {
+   "CAPACITY": "6TB",
+   "Compatible With": "PC",
+   "Colour": "various",
+   "Rotation Speed": "5400 RPM",
+   "Brand": "Unbranded",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Unit Type": "kg",
+   "Read Speed": "535MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "3 Months",
+   "Model": "various",
+   "Transfer Rate": "150 Mbps",
+   "Storage Format": "HDD Only",
+   "Features": "Cloud Storage",
+   "Storage Capacity": "8 TB",
+   "Unit Quantity": "1",
+   "Interface": "SATA",
+   "Country of Origin": "Thailand",
+   "Product Line": "various",
+   "Cache": "8 MB"
+  },
+  "shipping": 25.0,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": false,
+   "capacity_tb": 8,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/317553977022?var=616107282909",
+  "title": "HARD DRIVE 3.5\" 6TB 8TB 10TB 12TB 16TB SATA HDD CCTV DESKTOP PC DVR CCTV NAS USE",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/317553977022?var=616107282909",
+  "source": "ebay_uk",
+  "source_id": "v1|317553977022|616107282909",
+  "category_id": "56083",
+  "aspects": {
+   "CAPACITY": "6TB",
+   "Compatible With": "PC",
+   "Colour": "various",
+   "Rotation Speed": "5400 RPM",
+   "Brand": "Unbranded",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Unit Type": "kg",
+   "Read Speed": "535MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "3 Months",
+   "Model": "various",
+   "Transfer Rate": "150 Mbps",
+   "Storage Format": "HDD Only",
+   "Features": "Cloud Storage",
+   "Storage Capacity": "8 TB",
+   "Unit Quantity": "1",
+   "Interface": "SATA",
+   "Country of Origin": "Thailand",
+   "Product Line": "various",
+   "Cache": "8 MB"
+  },
+  "shipping": 25.0,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": false,
+   "capacity_tb": 8,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/287599632303?var=589495746426",
+  "title": "HPE DL360 & DL380 Gen10 Plus Server 3.5\" (LFF) SATA 6G HDD Upgrade Options",
+  "condition": "refurbished",
+  "url": "https://www.ebay.co.uk/itm/287599632303?var=589495746426",
+  "source": "ebay_uk",
+  "source_id": "v1|287599632303|589495746426",
+  "category_id": "56083",
+  "aspects": {
+   "Hard Drives": "861681-B21 - HPE 2TB 6G SATA HDD",
+   "Compatible With": "HPE",
+   "MPN": "861686-B21, 861681-B21, 861683-B21, 861742-B21, 834028-B21, 881787-B21",
+   "Brand": "HPE",
+   "Form Factor": "3.5 in",
+   "Type": "Hard Drive",
+   "Unit Type": "Unit",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "HPE SATA HDD",
+   "Transfer Rate": "6G",
+   "Features": "Hot Swap",
+   "Storage Capacity": "12TB",
+   "Unit Quantity": "1",
+   "Interface": "SATA"
+  },
+  "shipping": 24.0,
+  "price": 200,
+  "listing_verdict": "unreadable",
+  "expect": {
+   "unreadable": [
+    "capacity"
+   ]
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/287578073818?var=589474381077",
+  "title": "HPE DL360 & DL380 Gen11 Server 3.5\" (LFF) SATA 6G HDD Upgrade Options",
+  "condition": "refurbished",
+  "url": "https://www.ebay.co.uk/itm/287578073818?var=589474381077",
+  "source": "ebay_uk",
+  "source_id": "v1|287578073818|589474381077",
+  "category_id": "56083",
+  "aspects": {
+   "Hard Drives": "861681-B21 - HPE 2TB 6G SATA HDD",
+   "Compatible With": "HPE",
+   "MPN": "861686-B21, 861681-B21, 861683-B21, 861742-B21, 834028-B21, 881787-B21",
+   "Brand": "HPE",
+   "Form Factor": "3.5 in",
+   "Type": "Hard Drive",
+   "Unit Type": "Unit",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "HPE SATA HDD",
+   "Transfer Rate": "6G",
+   "Features": "Hot Swap",
+   "Storage Capacity": "12TB",
+   "Unit Quantity": "1",
+   "Interface": "SATA"
+  },
+  "shipping": 24.0,
+  "price": 200,
+  "listing_verdict": "unreadable",
+  "expect": {
+   "unreadable": [
+    "capacity"
+   ]
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/285204504549",
+  "title": "HUH721010AL4200 006-0A90551 0J45401 Circuit Board Repair for HDD data recovery",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/285204504549",
+  "source": "ebay_uk",
+  "source_id": "v1|285204504549|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "HGST",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "HUH721010AL4200",
+   "Features": "Hot Swap",
+   "Storage Capacity": "10TB",
+   "Interface": "SATA III"
+  },
+  "shipping": 26.31,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/840008504643",
+  "title": "HUSPR3216ADP301 Cisco Western Digital Ultrastar SN100 NVMe PCIe 1.6TB 2.5 SSD",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/840008504643",
+  "source": "ebay_uk",
+  "source_id": "v1|840008504643|0",
+  "category_id": "175669",
+  "aspects": {
+   "Brand": "Cisco",
+   "Type": "Internal SSD",
+   "Features": "Solid State",
+   "MPN": "UCS-SDHPCIE16TB, 16-100784-01, HUSPR3216ADP301",
+   "Interface": "PCIe Gen 3.0 x4"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/189051323275",
+  "title": "HUSPR3216ADP301 Cisco Western Digital Ultrastar SN100 NVMe PCIe 1.6TB 2.5 SSD",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/189051323275",
+  "source": "ebay_uk",
+  "source_id": "v1|189051323275|0",
+  "category_id": "175669",
+  "aspects": {
+   "Brand": "Cisco",
+   "Type": "Internal SSD",
+   "Features": "Solid State",
+   "MPN": "UCS-SDHPCIE16TB, 16-100784-01, HUSPR3216ADP301",
+   "Interface": "PCIe Gen 3.0 x4"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/178568028949",
+  "title": "HUSPR3216ADP301 Cisco Western Digital Ultrastar SN100 NVMe PCIe 1.6TB 2.5 SSD",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/178568028949",
+  "source": "ebay_uk",
+  "source_id": "v1|178568028949|0",
+  "category_id": "175669",
+  "aspects": {
+   "Brand": "Cisco",
+   "Type": "Internal SSD",
+   "Features": "Solid State",
+   "MPN": "UCS-SDHPCIE16TB, 16-100784-01, HUSPR3216ADP301",
+   "Interface": "PCIe Gen 3.0 x4"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/206612528825",
+  "title": "HUSPR3216ADP301 Cisco Western Digital Ultrastar SN100 NVMe PCIe 1.6TB 2.5 SSD",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/206612528825",
+  "source": "ebay_uk",
+  "source_id": "v1|206612528825|0",
+  "category_id": "175669",
+  "aspects": {
+   "Brand": "Cisco",
+   "Type": "Internal SSD",
+   "Features": "Solid State",
+   "MPN": "UCS-SDHPCIE16TB, 16-100784-01, HUSPR3216ADP301",
+   "Interface": "PCIe Gen 3.0 x4"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/189062174087",
+  "title": "HUSPR3216ADP301 Cisco Western Digital Ultrastar SN100 Nvme Pcie 1.6TB 2.5 SSD",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/189062174087",
+  "source": "ebay_uk",
+  "source_id": "v1|189062174087|0",
+  "category_id": "175669",
+  "aspects": {
+   "Marque": "Cisco",
+   "Type": "SSD interne",
+   "Caractéristiques": "Ssd",
+   "Numéro de pièce fabricant": "UCS-SDHPCIE16TB, 16-100784-01, HUSPR3216ADP301",
+   "Interface": "PCIe génération 3.0 x4"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/318719562084",
+  "title": "Lenovo Storage 4XB7A14104 12TB SAS 01PG627 12Gb 3.5\" 7.2K HUH721212AL5204 DE HDD",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/318719562084",
+  "source": "ebay_uk",
+  "source_id": "v1|318719562084|0",
+  "category_id": "56083",
+  "aspects": {
+   "Non-Domestic Product": "No",
+   "Compatible With": "PC",
+   "Color": "Silver",
+   "Custom Bundle": "No",
+   "MPN": "4XB7A14104",
+   "Modified Item": "No",
+   "Rotation Speed": "1000 RPM",
+   "Brand": "Lenovo",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Read Speed": "500MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "1 Year",
+   "Model": "4XB7A14104",
+   "Transfer Rate": "40 Mbps",
+   "Storage Format": "AIT/SAIT",
+   "Features": "Hot Plug Support, Hot Swap",
+   "Storage Capacity": "12 TB",
+   "Interface": "SAS",
+   "Country of Origin": "China",
+   "Product Line": "Barracuda",
+   "Cache": "64 MB"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/336100473577",
+  "title": "Lenovo Storage 4XB7A14104 12TB SAS 01PG627 12Gb 3.5\" 7.2K HUH721212AL5204 DE HDD",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/336100473577",
+  "source": "ebay_uk",
+  "source_id": "v1|336100473577|0",
+  "category_id": "56083",
+  "aspects": {
+   "Country of Origin": "China",
+   "Brand": "Lenovo",
+   "Cache": "64 MB",
+   "Color": "Silver",
+   "Compatible With": "PC",
+   "Custom Bundle": "No",
+   "Drive Type(s) Supported": "HDD",
+   "Features": "Hot Plug Support, Hot Swap",
+   "Form Factor": "3.5 in",
+   "Interface": "SAS",
+   "Manufacturer Warranty": "1 Year",
+   "Model": "4XB7A14104",
+   "Modified Item": "No",
+   "MPN": "4XB7A14104",
+   "Non-Domestic Product": "No",
+   "Product Line": "Barracuda",
+   "Read Speed": "500MB/s",
+   "Rotation Speed": "1000 RPM",
+   "Storage Capacity": "12 TB",
+   "Storage Format": "AIT/SAIT",
+   "Transfer Rate": "40 Mbps",
+   "Type": "Internal Desktop Drive"
+  },
+  "shipping": 93.95,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/168595916159",
+  "title": "Lenovo V5000E V5000 02PX524 02YC072 12TB 12Gb SAS 3.5 Hard Drive HDD New",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/168595916159",
+  "source": "ebay_uk",
+  "source_id": "v1|168595916159|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "Lenovo",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "3 Years",
+   "Color": "Silver",
+   "Model": "02PX524 02YC072",
+   "MPN": "02PX524 02YC072",
+   "Storage Capacity": "12 TB",
+   "Interface": "SAS",
+   "Country of Origin": "China"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/128068265430",
+  "title": "NEW Seagate IronWolf Pro ST16000NT001 3.5\" SATA III 7200 rpm Internal Hard Drive",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/128068265430",
+  "source": "ebay_uk",
+  "source_id": "v1|128068265430|0",
+  "category_id": "56083",
+  "aspects": {
+   "Compatible With": "PC",
+   "Color": "Silver",
+   "Custom Bundle": "Yes",
+   "MPN": "ST16000NT001",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "Seagate",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Read Speed": "535MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "2 Years",
+   "Model": "ST16000NT001",
+   "Transfer Rate": "550 Mbps",
+   "Storage Format": "HDD Only",
+   "Features": "Low Noise Level",
+   "Storage Capacity": "16 TB",
+   "Interface": "SATA III",
+   "Country of Origin": "China",
+   "Product Line": "IronWolf",
+   "Cache": "256 MB"
+  },
+  "shipping": 41.34,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/318719829013",
+  "title": "New EMC D3-VS07-12000 005053485 005053486 12TB 12Gb SAS Unity Hard Drives HDD",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/318719829013",
+  "source": "ebay_uk",
+  "source_id": "v1|318719829013|0",
+  "category_id": "56083",
+  "aspects": {
+   "Color": "Silver",
+   "MPN": "005053485 005053486",
+   "Rotation Speed": "1000 RPM",
+   "Brand": "EMC",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Read Speed": "500MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "1 Year",
+   "Model": "005053485 005053486",
+   "Transfer Rate": "40 Mbps",
+   "Storage Format": "AIT/SAIT",
+   "Features": "Adaptive Memory Technology",
+   "Storage Capacity": "12 TB",
+   "Interface": "SAS",
+   "Country of Origin": "Thailand",
+   "Product Line": "Barracuda",
+   "Cache": "128 MB"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/395402079919",
+  "title": "New Seagate IronWolf Pro ST16000NT001 3.5\" SATA 7200 rpm internal Hard drive",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/395402079919",
+  "source": "ebay_uk",
+  "source_id": "v1|395402079919|0",
+  "category_id": "56083",
+  "aspects": {
+   "Country of Origin": "China",
+   "Compatible With": "PC",
+   "Color": "Silver",
+   "MPN": "ST16000NT001",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "Seagate",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Read Speed": "535MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "2 Years",
+   "Model": "ST16000NT001",
+   "Transfer Rate": "550 Mbps",
+   "Storage Format": "HDD Only",
+   "Features": "Low Noise Level",
+   "Storage Capacity": "16 TB",
+   "Interface": "SATA III",
+   "Product Line": "IronWolf Pro",
+   "Cache": "256 MB"
+  },
+  "shipping": 7.16,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/358537838698",
+  "title": "New12TB HPE 881779-B21 882397-001 3.5\" SAS 12Gb 7.2K LFF SC SERVER HDD Hard",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/358537838698",
+  "source": "ebay_uk",
+  "source_id": "v1|358537838698|0",
+  "category_id": "56083",
+  "aspects": {
+   "Compatible With": "PC",
+   "Color": "Silver",
+   "Custom Bundle": "No",
+   "MPN": "881779-B21, 882397-001",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "HPE",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Read Speed": "500MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "1 Year",
+   "Model": "881779-B21",
+   "Transfer Rate": "150 Mbps",
+   "Storage Format": "AIT/SAIT",
+   "Features": "Hot Plug Support, Hot Swap",
+   "Storage Capacity": "12 TB",
+   "Interface": "SAS",
+   "Country of Origin": "China",
+   "Product Line": "Barracuda",
+   "Cache": "256 MB"
+  },
+  "shipping": 9.77,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/358538123586",
+  "title": "NewEMC D3-VS07-12000 005053485 005053486 12TB 12Gb SAS Unity Hard Drives HDD",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/358538123586",
+  "source": "ebay_uk",
+  "source_id": "v1|358538123586|0",
+  "category_id": "56083",
+  "aspects": {
+   "Color": "Silver",
+   "MPN": "005053485 005053486",
+   "Rotation Speed": "1000 RPM",
+   "Brand": "EMC",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Read Speed": "500MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "1 Year",
+   "Model": "005053485 005053486",
+   "Transfer Rate": "40 Mbps",
+   "Storage Format": "AIT/SAIT",
+   "Features": "Adaptive Memory Technology",
+   "Storage Capacity": "12 TB",
+   "Interface": "SAS",
+   "Country of Origin": "Thailand",
+   "Product Line": "Barracuda",
+   "Cache": "128 MB"
+  },
+  "shipping": 9.77,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/358537827539",
+  "title": "NewLenovo Storage 4XB7A14104 12TB SAS 01PG627 12Gb 3.5\" 7.2K HUH721212AL5204 DE",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/358537827539",
+  "source": "ebay_uk",
+  "source_id": "v1|358537827539|0",
+  "category_id": "56083",
+  "aspects": {
+   "Non-Domestic Product": "No",
+   "Compatible With": "PC",
+   "Color": "Silver",
+   "Custom Bundle": "No",
+   "MPN": "4XB7A14104",
+   "Modified Item": "No",
+   "Rotation Speed": "1000 RPM",
+   "Brand": "Lenovo",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Read Speed": "500MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "1 Year",
+   "Model": "4XB7A14104",
+   "Transfer Rate": "40 Mbps",
+   "Storage Format": "AIT/SAIT",
+   "Features": "Hot Plug Support, Hot Swap",
+   "Storage Capacity": "12 TB",
+   "Interface": "SAS",
+   "Country of Origin": "China",
+   "Product Line": "Barracuda",
+   "Cache": "64 MB"
+  },
+  "shipping": 9.77,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/168312124291",
+  "title": "NewSeagate Exos X16 ST16000NM002G 16TB 512e SAS 12Gb 7200RPM 256MB Hard Drive",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/168312124291",
+  "source": "ebay_uk",
+  "source_id": "v1|168312124291|0",
+  "category_id": "56083",
+  "aspects": {
+   "Compatible With": "PC",
+   "Color": "Silver",
+   "MPN": "ST16000NM002G",
+   "Item Length": "5.7 in",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "Seagate",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Read Speed": "500MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "1 Year",
+   "Item Height": "1 in",
+   "Model": "ST16000NM002G",
+   "Transfer Rate": "261 Mbs",
+   "Storage Format": "HDD Only",
+   "Features": "Hot-Plug, SuperParity, Protection Information",
+   "Storage Capacity": "16 TB",
+   "Item Width": "4 in",
+   "Interface": "SAS",
+   "Country of Origin": "Thailand",
+   "Product Line": "Exos",
+   "Cache": "256 MB"
+  },
+  "shipping": 9.77,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/185518117642?var=693350956921",
+  "title": "PC 3.5 SATA Hard Drive 500GB 1TB 2TB 3TB 4TB 6TB 12TB CCTV PC Computer Wholesale",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/185518117642?var=693350956921",
+  "source": "ebay_uk",
+  "source_id": "v1|185518117642|693350956921",
+  "category_id": "56083",
+  "aspects": {
+   "Storage Capacity": "2TB",
+   "Model": "Various models",
+   "Custom Bundle": "No",
+   "Type": "Internal Desktop Drive",
+   "Non-Domestic Product": "No",
+   "Modified Item": "No",
+   "Brand": "Seagate Western Digital Hitachi etc",
+   "Country of Origin": "China"
+  },
+  "shipping": 9.99,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": false,
+   "capacity_tb": 2
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/276566899397",
+  "title": "ST14000NM001G 100833707 Circuit Board + FW for HDD data recovery",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/276566899397",
+  "source": "ebay_uk",
+  "source_id": "v1|276566899397|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "ST",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "ST14000NM001G",
+   "Features": "Hot Swap",
+   "Storage Capacity": "14TB",
+   "Interface": "SATA III"
+  },
+  "shipping": 26.31,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/357343297074",
+  "title": "ST16000NT001 Pro Seagate IronWolf 3.5\" 7200 rpm SATA III Internal Hard Drive",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/357343297074",
+  "source": "ebay_uk",
+  "source_id": "v1|357343297074|0",
+  "category_id": "56083",
+  "aspects": {
+   "Country of Origin": "China",
+   "Compatible With": "PC",
+   "Custom Bundle": "Yes",
+   "Color": "Silver",
+   "MPN": "ST16000NT001",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "Seagate",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Read Speed": "535MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "2 Years",
+   "Model": "ST16000NT001",
+   "Transfer Rate": "550 Mbps",
+   "Storage Format": "HDD Only",
+   "Features": "Low Noise Level",
+   "Storage Capacity": "16 TB",
+   "Interface": "SATA III",
+   "Product Line": "IronWolf",
+   "Cache": "256 MB"
+  },
+  "shipping": 9.77,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/276566901961",
+  "title": "ST16000VN001 100833707 Circuit Board + FW for HDD data recovery",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/276566901961",
+  "source": "ebay_uk",
+  "source_id": "v1|276566901961|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "ST",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "ST16000VN001",
+   "Features": "Hot Swap",
+   "Storage Capacity": "14TB",
+   "Interface": "SATA III"
+  },
+  "shipping": 26.31,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/276817739499",
+  "title": "ST16000VN001 100833707 Circuit Board + FW for HDD data recovery",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/276817739499",
+  "source": "ebay_uk",
+  "source_id": "v1|276817739499|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "ST",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "ST16000VN001",
+   "Features": "Hot Swap",
+   "Storage Capacity": "14TB",
+   "Interface": "SATA III"
+  },
+  "shipping": 26.31,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/398098477280",
+  "title": "Samsung 16CH Multi Security Recorder DVR SRD-1650DCN NO HDD",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/398098477280",
+  "source": "ebay_uk",
+  "source_id": "v1|398098477280|0",
+  "category_id": "11725",
+  "aspects": {
+   "Brand": "Samsung",
+   "Playable Media Format": "DVD-RW",
+   "Type": "DVR",
+   "Model": "SRD-1650DCN",
+   "Connectivity": "Composite Video RCA",
+   "MPN": "SRD-1650DCN",
+   "Features": "DVR/Hard Drive Recorder",
+   "Recordable Media Format": "DVD-RW",
+   "Storage Capacity": "10 TB"
+  },
+  "shipping": 48.79,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/318719981568",
+  "title": "Seagate Exos X16 ST16000NM002G 16TB 512e SAS 12Gb 7200RPM 256MB Hard Drive HDD",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/318719981568",
+  "source": "ebay_uk",
+  "source_id": "v1|318719981568|0",
+  "category_id": "56083",
+  "aspects": {
+   "Compatible With": "PC",
+   "Color": "Silver",
+   "MPN": "ST16000NM002G",
+   "Item Length": "5.7 in",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "Seagate",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Read Speed": "500MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "1 Year",
+   "Item Height": "1 in",
+   "Model": "ST16000NM002G",
+   "Transfer Rate": "261 Mbs",
+   "Storage Format": "HDD Only",
+   "Features": "Hot-Plug, SuperParity, Protection Information",
+   "Storage Capacity": "16 TB",
+   "Item Width": "4 in",
+   "Interface": "SAS",
+   "Country of Origin": "Thailand",
+   "Product Line": "Exos",
+   "Cache": "256 MB"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/397600830881",
+  "title": "Seagate Exos X24 ST20000NM007H 20TB 3.5\" LFF 12Gb SAS 7.2K 512e Hard Disk Drive",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/397600830881",
+  "source": "ebay_uk",
+  "source_id": "v1|397600830881|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "Seagate",
+   "MPN": "ST20000NM007H",
+   "GTIN": "763649175149",
+   "Type": "Hard Drives",
+   "Form Factor": "3.5 in",
+   "Storage Capacity": "20 TB",
+   "Model": "Seagate ST20000NM007H",
+   "Interface": "SAS",
+   "Rotation Speed": "7.2K  RPM",
+   "UPC": "763649175149"
+  },
+  "shipping": 222.07,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 20,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/920017434058",
+  "title": "Seagate IronWolf Pro ST16000NT001 3.5\" Serial ATA 16000GB 7200RPM Hard Drive",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/920017434058",
+  "source": "ebay_uk",
+  "source_id": "v1|920017434058|0",
+  "category_id": "56083",
+  "aspects": {
+   "Paese di origine": "Taiwan",
+   "EAN": "8719706432290"
+  },
+  "shipping": 22.75,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/227415352104",
+  "title": "Seagate ST12000NM0027 Exos X12 12TB 12Gb 4KN 7.2K 256MB SAS 3.5\" Hard Disk Drive",
+  "condition": "refurbished",
+  "url": "https://www.ebay.co.uk/itm/227415352104",
+  "source": "ebay_uk",
+  "source_id": "v1|227415352104|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "Seagate",
+   "Form Factor": "3.5 in",
+   "Type": "SERVER HDD",
+   "Manufacturer Warranty": "1 Year",
+   "Color": "Silver",
+   "MPN": "ST12000NM0027",
+   "Interface": "SAS",
+   "Country of Origin": "Thailand"
+  },
+  "shipping": 37.58,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/128068258444",
+  "title": "Seagate ST16000NT001 IronWolf Pro 3.5\" SATA III 7200 rpm Internal Hard Drive",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/128068258444",
+  "source": "ebay_uk",
+  "source_id": "v1|128068258444|0",
+  "category_id": "56083",
+  "aspects": {
+   "Country of Origin": "China",
+   "Compatible With": "PC",
+   "Custom Bundle": "Yes",
+   "Color": "Silver",
+   "MPN": "ST16000NT001",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "Seagate",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Read Speed": "535MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "2 Years",
+   "Model": "ST16000NT001",
+   "Transfer Rate": "550 Mbps",
+   "Storage Format": "HDD Only",
+   "Features": "Low Noise Level",
+   "Storage Capacity": "16 TB",
+   "Interface": "SATA III",
+   "Product Line": "IronWolf",
+   "Cache": "256 MB"
+  },
+  "shipping": 41.34,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 16,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/820127468348",
+  "title": "Synology HAS5300-12T - 12TB SAS Hard Drive HDD",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/820127468348",
+  "source": "ebay_uk",
+  "source_id": "v1|820127468348|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "Synology",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "Synology HAS5300-12T",
+   "MPN": "HAS5300-12T",
+   "Storage Capacity": "12 TB",
+   "Interface": "SAS"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "unreadable": [
+    "form_factor"
+   ]
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/178254243694",
+  "title": "Toshiba Enterprise MG Series 7200 ACC 22TB Internal Hard Drives 22TB NEW",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/178254243694",
+  "source": "ebay_uk",
+  "source_id": "v1|178254243694|0",
+  "category_id": "324",
+  "aspects": {
+   "Marca": "Rarewaves",
+   "Titolo videogioco": "22TB MG10AFA22TE Toshiba Enterprise MG Series 7200",
+   "Piattaforma": "Computing Memory & Storage",
+   "EAN": "4260557512760"
+  },
+  "shipping": 1.68,
+  "price": 200,
+  "listing_verdict": "unreadable",
+  "expect": {
+   "unreadable": [
+    "form_factor"
+   ]
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/358521244909",
+  "title": "V5000E V5000 New Lenovo 02PX524 02YC072 12TB 12Gb SAS 3.5 Hard Drive HDD",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/358521244909",
+  "source": "ebay_uk",
+  "source_id": "v1|358521244909|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "Lenovo",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Drive Type(s) Supported": "HDD",
+   "Manufacturer Warranty": "3 Years",
+   "Color": "Silver",
+   "Model": "02PX524 02YC072",
+   "MPN": "02PX524 02YC072",
+   "Storage Capacity": "12 TB",
+   "Interface": "SAS",
+   "Country of Origin": "China"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/226981884226",
+  "title": "Versatile Media Player with Dual 4K HDMI & 14TB HDD Support - Digital Perfection",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/226981884226",
+  "source": "ebay_uk",
+  "source_id": "v1|226981884226|0",
+  "category_id": "168058",
+  "aspects": {
+   "Compatible Devices": "Projector, Television",
+   "Controller Type": "Remote Control",
+   "Year Manufactured": "4K Media Player",
+   "Batteries": "1 Lithium Ion Batteries Required. (included)",
+   "Special Features": "Flat",
+   "Color Name": "Black",
+   "Audio/Video Outputs": "HDMI, AV, VGA, Stereo L/R audio output",
+   "Form Factor": "Tv Box",
+   "Unit Type": "lb",
+   "Connector Type": "Vga, Av, Micro Usb, Hdmi",
+   "Features": "4K, 4K@30Hz, HD video picture quality, remote control, IR remote control, aluminum alloy housing, multifunctionality, fast forward, fast backward, screen rotation, looping videos, digital signage applications, home theater compatibility",
+   "Unit Quantity": "1.3",
+   "Special Feature": "Flat",
+   "Playable Media Format": "MP4",
+   "Package Dimensions": "7.4 X 6.18 X 2.8 Inches",
+   "Color": "Black",
+   "Brand": "Unbranded",
+   "Type": "Digital/Analog",
+   "Maximum Resolution": "1080p",
+   "Model": "4K Media Player",
+   "Connectivity": "HDMI, VGA, AV",
+   "Item Weight": "1.3 Pounds",
+   "Connectivity Technology": "Vga, Hdmi",
+   "Resolution": "1080p",
+   "Country of Origin": "China"
+  },
+  "shipping": 17.46,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/920032569940",
+  "title": "WD Red Pro WD122KFBX 3.5\" 12000GB 7200RPM Serial ATA HDD Hard Drive",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/920032569940",
+  "source": "ebay_uk",
+  "source_id": "v1|920032569940|0",
+  "category_id": "56083",
+  "aspects": {
+   "MPN": "WD122KFBX",
+   "Tipo": "Disco rigido",
+   "Marca": "WD",
+   "Modello": "WD122KFBX",
+   "Paese di origine": "Taiwan",
+   "Capacità di archiviazione": "12.000GB",
+   "EAN": "0718037901282"
+  },
+  "shipping": 22.75,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/206606978050",
+  "title": "WD Ultrastar DC HC550 18TB 7.2K SAS 12Gbs 512MB 3.5\" HDD WUH721818AL5204 0F38353",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/206606978050",
+  "source": "ebay_uk",
+  "source_id": "v1|206606978050|0",
+  "category_id": "56083",
+  "aspects": {
+   "Color": "Silver",
+   "MPN": "0F38353",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "WD",
+   "Form Factor": "3.5 in",
+   "Type": "Hard Drive",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "WUH721818AL5204",
+   "Storage Format": "HDD Only",
+   "Storage Capacity": "18 TB",
+   "Interface": "SAS",
+   "Product Line": "WD Ultrastar DC HC550",
+   "Cache": "512 MB"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/178561136421",
+  "title": "WD Ultrastar DC HC550 18TB 7.2K SAS 12Gbs 512MB 3.5\" HDD WUH721818AL5204 0F38353",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/178561136421",
+  "source": "ebay_uk",
+  "source_id": "v1|178561136421|0",
+  "category_id": "56083",
+  "aspects": {
+   "Farbe": "Silber",
+   "MPN": "0F38353",
+   "Spindelgeschwindigkeit": "7200 U/min",
+   "Marke": "WD",
+   "Formfaktor": "3,5 Zoll",
+   "Produktart": "Festplatte",
+   "Antriebsart(s) Unterstützt": "HDD",
+   "Modell": "WUH721818AL5204",
+   "Speicherformat": "Nur Festplatte",
+   "Speicherkapazität": "18 TB",
+   "Schnittstelle": "SAS",
+   "Produktlinie": "WD Ultrastar DC HC550",
+   "Cache": "512 MB"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/178561136548",
+  "title": "WD Ultrastar DC HC550 18TB 7.2K SAS 12Gbs 512MB 3.5\" HDD WUH721818AL5204 0F38353",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/178561136548",
+  "source": "ebay_uk",
+  "source_id": "v1|178561136548|0",
+  "category_id": "56083",
+  "aspects": {
+   "Color": "Silver",
+   "MPN": "0F38353",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "WD",
+   "Form Factor": "3.5 in",
+   "Type": "Hard Drive",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "WUH721818AL5204",
+   "Storage Format": "HDD Only",
+   "Storage Capacity": "18 TB",
+   "Interface": "SAS",
+   "Product Line": "WD Ultrastar DC HC550",
+   "Cache": "512 MB"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/189051081893",
+  "title": "WD Ultrastar DC HC550 18TB 7.2K SAS 12Gbs 512MB 3.5\" HDD WUH721818AL5204 0F38353",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/189051081893",
+  "source": "ebay_uk",
+  "source_id": "v1|189051081893|0",
+  "category_id": "56083",
+  "aspects": {
+   "Color": "Silver",
+   "MPN": "0F38353",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "WD",
+   "Form Factor": "3.5 in",
+   "Type": "Hard Drive",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "WUH721818AL5204",
+   "Storage Format": "HDD Only",
+   "Storage Capacity": "18 TB",
+   "Interface": "SAS",
+   "Product Line": "WD Ultrastar DC HC550",
+   "Cache": "512 MB"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/189051322020",
+  "title": "WD Ultrastar DC HC550 18TB 7.2K SAS 12Gbs 512MB 3.5\" HDD WUH721818AL5204 0F38353",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/189051322020",
+  "source": "ebay_uk",
+  "source_id": "v1|189051322020|0",
+  "category_id": "56083",
+  "aspects": {
+   "Color": "Silver",
+   "MPN": "0F38353",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "WD",
+   "Form Factor": "3.5 in",
+   "Type": "Hard Drive",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "WUH721818AL5204",
+   "Storage Format": "HDD Only",
+   "Storage Capacity": "18 TB",
+   "Interface": "SAS",
+   "Product Line": "WD Ultrastar DC HC550",
+   "Cache": "512 MB"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/840008504595",
+  "title": "WD Ultrastar DC HC550 18TB SAS 12G 4Kn 7200RPM 3.5\" HDD 0F38314",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/840008504595",
+  "source": "ebay_uk",
+  "source_id": "v1|840008504595|0",
+  "category_id": "56083",
+  "aspects": {
+   "Farbe": "Silber",
+   "MPN": "0F38314, WUH721818AL4206",
+   "Spindelgeschwindigkeit": "7200 U/min",
+   "Marke": "Western Digital",
+   "Formfaktor": "3,5 Zoll",
+   "Produktart": "Interne Enterprise-Festplatte",
+   "Einheitstyp": "Einheit",
+   "Antriebsart(s) Unterstützt": "HDD",
+   "Modell": "WUH721818AL4206",
+   "Speicherkapazität": "18 TB",
+   "Einheit Anzahl": "1",
+   "Schnittstelle": "SAS / SAS 12 Gbit/s",
+   "Produktlinie": "Ultrastar DC HC550"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/880011387336",
+  "title": "WD Ultrastar DC HC550 18TB SAS 12G 4Kn 7200RPM HDD Internal 3.5\" 0F38314",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/880011387336",
+  "source": "ebay_uk",
+  "source_id": "v1|880011387336|0",
+  "category_id": "56083",
+  "aspects": {
+   "Color": "Plata",
+   "Código de artículo del fabricante": "0F38314, WUH721818AL4206",
+   "Velocidad de rotación": "7200 RPM",
+   "Marca": "Western Digital",
+   "Factor de forma": "8.9cm",
+   "Tipo": "Disco duro interno empresarial",
+   "Tipo de unidad": "Unidad",
+   "Tipo De Unidad(s) Compatible": "HDD",
+   "Modelo": "WUH721818AL4206",
+   "Capacidad de almacenamiento": "18 TB",
+   "Cantidad Unidad": "1",
+   "Interfaz": "SAS/SAS 12Gb/s",
+   "Línea De Productos": "Ultrastar DC HC550",
+   "EAN": "No aplicable"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/178561029840",
+  "title": "WD Ultrastar DC HC550 HDD Internal 18TB 7.2K SAS 12G 512MB 3.5\" WUH7218AL5204",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/178561029840",
+  "source": "ebay_uk",
+  "source_id": "v1|178561029840|0",
+  "category_id": "56083",
+  "aspects": {
+   "Couleur": "Argent",
+   "Numéro de pièce fabricant": "0F38353",
+   "Vitesse de rotation": "7200 tr/min",
+   "Marque": "WD",
+   "Facteur de forme": "8.9cm",
+   "Type": "Disque Dur",
+   "Lecteur Type(s) Supportée": "HDD",
+   "Modèle": "WUH721818AL5204",
+   "Format de stockage": "Disque dur seulement",
+   "Capacité de stockage": "18 To",
+   "Interface": "SAS",
+   "Gamme de produits": "WD Ultrastar DCHC550",
+   "Cache": "512 Mo"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/178561136423",
+  "title": "WD Ultrastar DC HC550 Internal HDD SAS 18TB 7200RPM 512MB 3.5 12Gbs Hard Drive",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/178561136423",
+  "source": "ebay_uk",
+  "source_id": "v1|178561136423|0",
+  "category_id": "56083",
+  "aspects": {
+   "Color": "Plata",
+   "Código de artículo del fabricante": "0F38353",
+   "Velocidad de rotación": "7200 RPM",
+   "Marca": "WD",
+   "Factor de forma": "8.9cm",
+   "Tipo": "Disco Duro",
+   "Tipo De Unidad(s) Compatible": "HDD",
+   "Modelo": "WUH721818AL5204",
+   "Formato de almacenamiento": "HDD solamente",
+   "Capacidad de almacenamiento": "18 TB",
+   "Interfaz": "SAS",
+   "Línea De Productos": "WD Ultrastar HC550",
+   "Caché": "512 megas",
+   "EAN": "No aplicable"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/840008504531",
+  "title": "WD Ultrastar DC HC550 WUH721818AL4206 18TB SAS 12G 4Kn 7200RPM HDD 0F38314",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/840008504531",
+  "source": "ebay_uk",
+  "source_id": "v1|840008504531|0",
+  "category_id": "56083",
+  "aspects": {
+   "Color": "Silver",
+   "MPN": "0F38314, WUH721818AL4206",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "Western Digital",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Enterprise Hard Drive",
+   "Unit Type": "Unit",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "WUH721818AL4206",
+   "Storage Capacity": "18 TB",
+   "Unit Quantity": "1",
+   "Interface": "SAS / SAS 12Gb/s",
+   "Product Line": "Ultrastar DC HC550"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/880006267489",
+  "title": "WD Ultrastar DC HC550 WUH721818AL4206 18TB SAS 12G 4Kn 7200RPM HDD 0F38314",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/880006267489",
+  "source": "ebay_uk",
+  "source_id": "v1|880006267489|0",
+  "category_id": "56083",
+  "aspects": {
+   "Color": "Silver",
+   "MPN": "0F38314, WUH721818AL4206",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "Western Digital",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Enterprise Hard Drive",
+   "Unit Type": "Unit",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "WUH721818AL4206",
+   "Storage Capacity": "18 TB",
+   "Unit Quantity": "1",
+   "Interface": "SAS / SAS 12Gb/s",
+   "Product Line": "Ultrastar DC HC550"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/840008504551",
+  "title": "WD Ultrastar DC HC550 WUH721818AL4206 18TB SAS 12G 4Kn 7200RPM HDD 0F38314",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/840008504551",
+  "source": "ebay_uk",
+  "source_id": "v1|840008504551|0",
+  "category_id": "56083",
+  "aspects": {
+   "Color": "Silver",
+   "MPN": "0F38314, WUH721818AL4206",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "Western Digital",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Enterprise Hard Drive",
+   "Unit Type": "Unit",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "WUH721818AL4206",
+   "Storage Capacity": "18 TB",
+   "Unit Quantity": "1",
+   "Interface": "SAS / SAS 12Gb/s",
+   "Product Line": "Ultrastar DC HC550"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/840008504735",
+  "title": "WD Ultrastar DC HC550 WUH721818AL4206 18TB SAS 12G 4Kn 7200RPM HDD 0F38314",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/840008504735",
+  "source": "ebay_uk",
+  "source_id": "v1|840008504735|0",
+  "category_id": "56083",
+  "aspects": {
+   "Color": "Silver",
+   "MPN": "0F38314, WUH721818AL4206",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "Western Digital",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Enterprise Hard Drive",
+   "Unit Type": "Unit",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "WUH721818AL4206",
+   "Storage Capacity": "18 TB",
+   "Unit Quantity": "1",
+   "Interface": "SAS / SAS 12Gb/s",
+   "Product Line": "Ultrastar DC HC550"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/278436049939",
+  "title": "WD Ultrastar DC HC555 WUH722020CLE6L4 3.5\" Serial ATA HDD 0B48724",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/278436049939",
+  "source": "ebay_uk",
+  "source_id": "v1|278436049939|0",
+  "category_id": "56083",
+  "aspects": {
+   "MPN": "0B48724",
+   "Tipo": "Disco rigido",
+   "Marca": "WD",
+   "Modello": "0B48724",
+   "Paese di origine": "Taiwan",
+   "Capacità di archiviazione": "13.000 GB - 25.000 GB",
+   "EAN": "0829686009516"
+  },
+  "shipping": 22.75,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 20,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/407267746722",
+  "title": "WD Ultrastar Dc Ha340 WUS721212BLE6L4 Hard Drive Data Center - Internal 0B47063",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/407267746722",
+  "source": "ebay_uk",
+  "source_id": "v1|407267746722|0",
+  "category_id": "56083",
+  "aspects": {
+   "MPN": "0B47063",
+   "Tipo": "Disco rigido",
+   "Marca": "WD",
+   "Modello": "0B47063",
+   "Paese di origine": "Taiwan",
+   "Capacità di archiviazione": "12.000GB",
+   "EAN": "0829686009318"
+  },
+  "shipping": 22.75,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/940000806577",
+  "title": "WD Ultrastar Hc555 SAS/s Hard Drive 3.5 8.9 cm Serial Hard Drive 0B47749",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/940000806577",
+  "source": "ebay_uk",
+  "source_id": "v1|940000806577|0",
+  "category_id": "56083",
+  "aspects": {
+   "MPN": "0B47749",
+   "Tipo": "Disco rigido",
+   "Marca": "WD",
+   "Modello": "0B47749",
+   "Paese di origine": "Taiwan",
+   "Capacità di archiviazione": "13.000 GB - 25.000 GB",
+   "EAN": "0829686009363"
+  },
+  "shipping": 22.75,
+  "price": 200,
+  "listing_verdict": "unreadable",
+  "expect": {
+   "unreadable": [
+    "capacity"
+   ]
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/276744663581",
+  "title": "WD100EDBZ-11B1HA0 004-0B41714 0F41493 Circuit Board Repair for HDD data recovery",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/276744663581",
+  "source": "ebay_uk",
+  "source_id": "v1|276744663581|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "WD",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "WD120EMAZ-11BLFA0",
+   "Features": "Hot Swap",
+   "Storage Capacity": "10 TB",
+   "Interface": "SATA III"
+  },
+  "shipping": 26.31,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/275761266191",
+  "title": "WD100EMAZ 0006-0B40829 0B40964 Circuit Board Repair for HDD data recovery",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/275761266191",
+  "source": "ebay_uk",
+  "source_id": "v1|275761266191|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "WD",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Model": "WD100EMAZ-00WJTA0",
+   "Features": "Hot Swap",
+   "Storage Capacity": "10 TB",
+   "Interface": "SATA III"
+  },
+  "shipping": 26.31,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/275761267829",
+  "title": "WD100EZAZ-11TDBA0 006-0A90561 0J45413 Circuit Board Repair for HDD data recovery",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/275761267829",
+  "source": "ebay_uk",
+  "source_id": "v1|275761267829|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "WD",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "WD100EZAZ-11TDBA0",
+   "Features": "Hot Swap",
+   "Storage Capacity": "10TB",
+   "Interface": "SATA III"
+  },
+  "shipping": 26.31,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/286176396991",
+  "title": "WD120EDAZ-11F3RA0 004-0B41714 0F41493 Circuit Board Repair for HDD data recovery",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/286176396991",
+  "source": "ebay_uk",
+  "source_id": "v1|286176396991|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "WD",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "WD120EMAZ-11BLFA0",
+   "Features": "Hot Swap",
+   "Storage Capacity": "12 TB",
+   "Interface": "SATA III"
+  },
+  "shipping": 26.31,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/286176395989",
+  "title": "WD120EMAZ-11BLFA0 004-0B41714 0F41493 Circuit Board Repair for HDD data recovery",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/286176395989",
+  "source": "ebay_uk",
+  "source_id": "v1|286176395989|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "WD",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "WD120EMAZ-11BLFA0",
+   "Features": "Hot Swap",
+   "Storage Capacity": "12 TB",
+   "Interface": "SATA III"
+  },
+  "shipping": 26.31,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/189060214431",
+  "title": "WUH721818ALE604 Western Digital DC HC550 18TB 3.5\" SATA 6Gb/s 3.5inch Hard Drive",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/189060214431",
+  "source": "ebay_uk",
+  "source_id": "v1|189060214431|0",
+  "category_id": "56083",
+  "aspects": {
+   "Compatible With": "Desktops, Servers, NAS",
+   "Recording Technology": "CMR",
+   "Color": "Silver",
+   "MPN": "0F38478",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "Western Digital",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Unit Type": "Unit",
+   "Read Speed": "262 MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "WUH721818ALE604",
+   "Transfer Rate": "6Gb/s",
+   "Storage Format": "HDD Only",
+   "Features": "Hot Plug Support",
+   "Storage Capacity": "18 TB",
+   "Unit Quantity": "1",
+   "Interface": "SATA III",
+   "Product Line": "Ultrastar DC HC550",
+   "Cache": "512MB"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/189060207967",
+  "title": "WUH721818ALE604 Western Digital DC HC550 18TB 3.5\" SATA 6Gb/s 3.5inch Hard Drive",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/189060207967",
+  "source": "ebay_uk",
+  "source_id": "v1|189060207967|0",
+  "category_id": "56083",
+  "aspects": {
+   "Compatible With": "Desktops, Servers, NAS",
+   "Recording Technology": "CMR",
+   "Color": "Silver",
+   "MPN": "0F38478",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "Western Digital",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Unit Type": "Unit",
+   "Read Speed": "262 MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "WUH721818ALE604",
+   "Transfer Rate": "6Gb/s",
+   "Storage Format": "HDD Only",
+   "Features": "Hot Plug Support",
+   "Storage Capacity": "18 TB",
+   "Unit Quantity": "1",
+   "Interface": "SATA III",
+   "Product Line": "Ultrastar DC HC550",
+   "Cache": "512MB"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/189060213424",
+  "title": "WUH721818ALE604 Western Digital DC HC550 18TB 3.5\" SATA 6Gb/s 3.5inch Hard Drive",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/189060213424",
+  "source": "ebay_uk",
+  "source_id": "v1|189060213424|0",
+  "category_id": "56083",
+  "aspects": {
+   "Compatible With": "Desktops, Servers, NAS",
+   "Recording Technology": "CMR",
+   "Color": "Silver",
+   "MPN": "0F38478",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "Western Digital",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Unit Type": "Unit",
+   "Read Speed": "262 MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "WUH721818ALE604",
+   "Transfer Rate": "6Gb/s",
+   "Storage Format": "HDD Only",
+   "Features": "Hot Plug Support",
+   "Storage Capacity": "18 TB",
+   "Unit Quantity": "1",
+   "Interface": "SATA III",
+   "Product Line": "Ultrastar DC HC550",
+   "Cache": "512MB"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/178567221763",
+  "title": "WUH721818ALE604 Western Digital DC HC550 18TB 3.5\" SATA 6Gb/s 3.5inch Hard Drive",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/178567221763",
+  "source": "ebay_uk",
+  "source_id": "v1|178567221763|0",
+  "category_id": "56083",
+  "aspects": {
+   "Compatible With": "Desktops, Servers, NAS",
+   "Recording Technology": "CMR",
+   "Color": "Silver",
+   "MPN": "0F38478",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "Western Digital",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Unit Type": "Unit",
+   "Read Speed": "262 MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "WUH721818ALE604",
+   "Transfer Rate": "6Gb/s",
+   "Storage Format": "HDD Only",
+   "Features": "Hot Plug Support",
+   "Storage Capacity": "18 TB",
+   "Unit Quantity": "1",
+   "Interface": "SATA III",
+   "Product Line": "Ultrastar DC HC550",
+   "Cache": "512MB"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/189051323477",
+  "title": "WUH721818ALE6L4 WD Ultrastar DC HC550 18TB 7.2K SATA 6Gb/s 512MB 3.5\" HDD",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/189051323477",
+  "source": "ebay_uk",
+  "source_id": "v1|189051323477|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "Western Digital",
+   "Form Factor": "3.5 in",
+   "Type": "Hard Drive",
+   "Storage Format": "HDD Only",
+   "MPN": "WUH721818ALE6L4, 0F38459",
+   "Storage Capacity": "18 TB",
+   "Interface": "SATA",
+   "Rotation Speed": "7200 RPM",
+   "Maximum Data Rate": "6Gbps"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/178567396401",
+  "title": "WUH7218ALE604 Western Digital DC HC550 18TB 3.5\" SATA 6Gb/S 8.9cm Hard Drive",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/178567396401",
+  "source": "ebay_uk",
+  "source_id": "v1|178567396401|0",
+  "category_id": "56083",
+  "aspects": {
+   "Compatible avec": "Ordinateurs De Bureau, Serveur, NAS",
+   "Enregistrement technologie": "CMR",
+   "Couleur": "Argent",
+   "Numéro de pièce fabricant": "0F38478",
+   "Vitesse de rotation": "7200 tr/min",
+   "Marque": "Western Digital",
+   "Facteur de forme": "8.9cm",
+   "Type": "Interne Bureau Lecteur",
+   "Type Unité": "Unité",
+   "Vitesse de lecture": "262 Mo/s",
+   "Lecteur Type(s) Supportée": "HDD",
+   "Modèle": "WUH721818ALE604",
+   "Taux de transfert": "6 Go/s",
+   "Format de stockage": "Disque dur seulement",
+   "Caractéristiques": "Remplaçable À Chaud Support",
+   "Capacité de stockage": "18 To",
+   "Quantité unitaire": "1",
+   "Interface": "SATA III",
+   "Gamme de produits": "Ultrastar DC HC550",
+   "Cache": "512 Mo"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/257771149667",
+  "title": "Western Digital Gold Datacenter 18TB Hard Drive, 512MB cache, SATA 6Gb WD181KRYZ",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/257771149667",
+  "source": "ebay_uk",
+  "source_id": "v1|257771149667|0",
+  "category_id": "56083",
+  "aspects": {
+   "Farbe": "Gold",
+   "Speicherkapazität": "6 GB",
+   "Cache": "512 MB",
+   "Herstellernummer": "WD181KRYZ",
+   "Marke": "Western Digital",
+   "Produktart": "3,5 Zoll Diskettenlaufwerk",
+   "Formfaktor": "3,5 Zoll",
+   "Produktlinie": "Ultrastar"
+  },
+  "shipping": 10.11,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/206617895839",
+  "title": "Western Digital Ultrastar DC HC550 HDD Internal 18TB 3.5\" SAS 12Gbps 7200RPM",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/206617895839",
+  "source": "ebay_uk",
+  "source_id": "v1|206617895839|0",
+  "category_id": "56083",
+  "aspects": {
+   "Couleur": "Argent",
+   "Numéro de pièce fabricant": "0F38314, WUH721818AL4206",
+   "Vitesse de rotation": "7200 tr/min",
+   "Marque": "Western Digital",
+   "Facteur de forme": "8.9cm",
+   "Type": "Disque dur interne d'entreprise",
+   "Type Unité": "Unité",
+   "Lecteur Type(s) Supportée": "HDD",
+   "Modèle": "WUH721818AL4206",
+   "Capacité de stockage": "18 To",
+   "Quantité unitaire": "1",
+   "Interface": "SAS / SAS 12 Go/s",
+   "Gamme de produits": "Ultrastar DC HC550"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/206562652792",
+  "title": "Western Digital Ultrastar Data Center HC555 HDD Hard Drives",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/206562652792",
+  "source": "ebay_uk",
+  "source_id": "v1|206562652792|0",
+  "category_id": "56083",
+  "aspects": {
+   "Compatible With": "PC",
+   "Color": "Silver",
+   "Rotation Speed": "7200 RPM",
+   "Brand": "Western Digital",
+   "Form Factor": "3.5 in",
+   "Type": "Internal Desktop Drive",
+   "Unit Type": "Unit",
+   "Read Speed": "1500MB/s",
+   "Drive Type(s) Supported": "HDD",
+   "Storage Format": "HDD Only",
+   "Storage Capacity": "12 TB",
+   "Unit Quantity": "1",
+   "Interface": "SATA III",
+   "Country of Origin": "Thailand",
+   "Product Line": "Ultrastar",
+   "Cache": "512 MB"
+  },
+  "shipping": 22.51,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/820136831786",
+  "title": "Western Digital Ultrastar HUH721212ALE600 12TB3.5\" SATA 6Gb/s 7200RPM Helium HDD",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/820136831786",
+  "source": "ebay_uk",
+  "source_id": "v1|820136831786|0",
+  "category_id": "56083",
+  "aspects": {
+   "Brand": "Western Digital",
+   "Type": "HDD"
+  },
+  "shipping": 0.0,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/237120659368",
+  "title": "Western Digital WD120EMFZ-11A6JA0 12TB HDD",
+  "condition": "used",
+  "url": "https://www.ebay.co.uk/itm/237120659368",
+  "source": "ebay_uk",
+  "source_id": "v1|237120659368|0",
+  "category_id": "56083",
+  "aspects": {
+   "Country of Manufacture": "Thailand",
+   "Taille de lecteur compatible": "HDD",
+   "Capacité de stockage": "12 To",
+   "Brand": "Western Digital",
+   "Form Factor": "3.5\"",
+   "Type": "Internal Desktop Drive",
+   "Marque": "Western Digital",
+   "Facteur de forme": "3,5\"",
+   "Drive Type(s) Supported": "HDD",
+   "Model": "WD120EMFZ-11A6JA0",
+   "Storage Format": "HDD Only",
+   "Storage Capacity": "12 TB",
+   "Country of Origin": "Thailand",
+   "Interface": "SATA III"
+  },
+  "shipping": 12.64,
+  "price": 200,
+  "listing_verdict": "qualifies",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live ebay) https://www.ebay.co.uk/itm/189060786613",
+  "title": "Western Digital WUH721818ALE604 Ultrastar DC HC550 18TB 3.5\" SATA 6Gb/s HDD",
+  "condition": "new",
+  "url": "https://www.ebay.co.uk/itm/189060786613",
+  "source": "ebay_uk",
+  "source_id": "v1|189060786613|0",
+  "category_id": "56083",
+  "aspects": {
+   "Kompatibel mit": "Desktops, Servers, NAS",
+   "Aufnehmen technologie": "CMR",
+   "Farbe": "Silber",
+   "MPN": "0F38478",
+   "Spindelgeschwindigkeit": "7200 U/min",
+   "Marke": "Western Digital",
+   "Formfaktor": "3,5 Zoll",
+   "Produktart": "Internes Desktop-Laufwerk",
+   "Einheitstyp": "Einheit",
+   "Lesegeschwindigkeit": "262 MB/s",
+   "Antriebsart(s) Unterstützt": "HDD",
+   "Modell": "WUH721818ALE604",
+   "Übertragungs Rate": "6 Gbit/s",
+   "Speicherformat": "Nur Festplatte",
+   "Eigenschaften": "Hot Stecker-unterstützung",
+   "Speicherkapazität": "18 TB",
+   "Einheit Anzahl": "1",
+   "Schnittstelle": "SATA III",
+   "Produktlinie": "Ultrastar DC HC550",
+   "Cache": "512 MB"
+  },
+  "shipping": null,
+  "price": 200,
+  "listing_verdict": "rejected",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 18,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/447749616",
+  "title": "36TB G-RAID G-Technology - Kun 1år 9mnd brukt!",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/447749616",
+  "source": "finn",
+  "source_id": "447749616",
+  "description": "Ønsker å selge høykvalitets svært lite brukt G-Technology G-RAID 36TB laget i solid aluminium med egen raid hardware kontroller. Kan brukes på både Mac og Windows! Brukt kun i 1 år 9 måneder. (ca. 12mnd aktiv bruk bare!) - Total kapasitet: 36TB - Enterprise Western Digital Ultrastar DC HC550 harddisker - Gjennomført full 8 timers test på begge harddiskene, 100% uten noen som helst feil eller anmerkninger. Info: - 2x Thunderbolt 2 ports (kan kjøre Daisy chain) - USB 3.0 port - Hardware built in: Raid 1, 0, JBOD (not software based) - Fungerer 100% både for Windows og MacOS, trenger bare å formattere den med riktig filsystem, eksempel: ExFat hvis Windows og MacOS eller APFS hvis en ønsker å ha kun MacOS. Den har fysisk kvalitets raid kontroller og kan konfigureres enkelt med noen få tastetrykk til følgende raid typer: ❯ RAID 0 (Striping): Standardinnstillingen som maksimerer ytelse og kapasitet ved å skrive data på tvers av begge diskene. Dette gir de høyeste overføringshastighetene, men ingen datasikkerhet ved diskfeil. ❯ RAID 1 (Mirroring): Speiler data på begge diskene for redundans. Dette halverer den tilgjengelige lagringskapasit",
+  "price": 18000,
+  "shipping": 0,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/474469788",
+  "title": "Kraftig og unik gaming-PC – i9 / RTX 2080 / 64GB RAM / 12TB lagring",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/474469788",
+  "source": "finn",
+  "source_id": "474469788",
+  "description": "Dette er ikke en typisk gaming-PC som forsvinner i mengden. Bygget er satt opp i et Thermaltake Core P3 Snow open-air kabinett med herdet glass, hvor komponentene er fullt synlige. Med RGB-belysning, vannkjøling og det åpne designet fungerer PC-en nesten like godt som et blikkfang i rommet som den gjør som gaming-maskin. Til tross for at noen av komponentene har noen år på baken, er dette fortsatt en meget kapabel PC til gaming, redigering, multitasking og generell tung bruk. Ytelse PC-en håndterer multiplayer- og konkurransespill svært godt og er fortsatt godt egnet dersom du ønsker smooth gameplay og høy FPS. Eldre og mindre krevende spill kan kjøres på høye/maks innstillinger, mens nyere og tyngre AAA-spill fortsatt kan spilles fint med mer realistiske medium–high innstillinger, avhengig av oppløsning og spill. Den passer derfor veldig godt for deg som ønsker en kraftig og komplett gaming-PC uten å betale prisen for en helt ny high-end maskin. Spesifikasjoner: CPU: Intel Core i9-9900K – 8 kjerner / 16 tråder GPU: MSI GeForce RTX 2080 Gaming X Trio 8GB Hovedkort: ASUS ROG STRIX Z390-E GAMING RAM: 64GB G.Skill Trident Z RGB DDR4-32",
+  "price": 8999,
+  "shipping": 0,
+  "listing_verdict": "rejected",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "(live finn) https://www.finn.no/recommerce/forsale/item/426686380",
+  "title": "SATA Harddisker for bærbare og stasjonære datamaskiner",
+  "condition": "used",
+  "url": "https://www.finn.no/recommerce/forsale/item/426686380",
+  "source": "finn",
+  "source_id": "426686380",
+  "description": "Lite brukt SATA Harddisker for bærbare og stasjonære datamaskiner (2,5\" og 3,5\" ) Alle testet og fungerer som de skal, 100% helse, uten dårlige sektorer. For laptoper PC, 2,5\" tommer: 1. HGST 750 Gb 2,5\" - 300 kr. 2. WD 500 GB 2,5\" Pris 250,- 3. Seagate 500 GB 2,5\" Pris 250,- 4.WD 500 GB 2,5\" Pris 250,- 5. Seagate Momentus 320 Gb. 2,5\" Pris 350,- 6. WD Scorpio Blue 320 Gb. (WD3200BPVT) 2,5\"- 180 kr. 7. WD 320 Gb. 2,5\" -180kr. For stasjonære PC, 3,5\" tommer: 8. Samsung 250 Gb 3,5\" - Pris 170 kr. 9. WD 250 Gb ( WD2500AAJB) 3,5\" - Pris 170 kr. 10. WD Caviar Blue 500 GB 3,5\"- Pris 370 Kr. 11. WD 1.0 TB 3,5\" Helt Nytt Pris 590 Kr 12. WD 1.0 TB 3,5\" Pris 450 Kr 13. WD 2.0 TB 3,5\" Helt Nytt Pris 690 Kr 14. Seagate Barracuda ( som nytt) 2.0 TB 3,5\" Pris 590 Kr ",
+  "price": 170,
+  "shipping": 0,
+  "listing_verdict": "unreadable",
+  "expect": {
+   "unreadable": [
+    "capacity",
+    "form_factor"
+   ]
+  }
+ },
+ {
+  "note": "bare SAS link speed is not capacity (synthetic)",
+  "title": "SAS 12GB HDD 3.5\"",
+  "condition": "used",
+  "expect": {
+   "unreadable": [
+    "capacity"
+   ]
+  }
+ },
+ {
+  "note": "GB capacity and bare SATA speed (synthetic)",
+  "title": "16000GB SATA 6Gb HDD",
+  "condition": "used",
+  "expect": {
+   "unreadable": [
+    "form_factor"
+   ]
+  }
+ },
+ {
+  "note": "short T capacity (synthetic)",
+  "title": "HAS5300-12T SAS HDD",
+  "condition": "used",
+  "expect": {
+   "unreadable": [
+    "form_factor"
+   ]
+  }
+ },
+ {
+  "note": "glued capacity and form factor (synthetic)",
+  "title": "12TB3.5\" SATA HDD",
+  "condition": "used",
+  "expect": {
+   "capacity_tb": 12,
+   "qualifies": true
+  }
+ },
+ {
+  "note": "Seagate capacity model fallback (synthetic)",
+  "title": "ST12000NM0027 SAS HDD",
+  "condition": "used",
+  "expect": {
+   "capacity_tb": 12,
+   "qualifies": true
+  }
+ },
+ {
+  "note": "HGST capacity model fallback (synthetic)",
+  "title": "HUH721212AL5204 SAS HDD",
+  "condition": "used",
+  "expect": {
+   "unreadable": [
+    "form_factor"
+   ]
+  }
+ },
+ {
+  "note": "one PCS still needs a form factor (synthetic)",
+  "title": "1Pcs 12TB SAS HDD",
+  "condition": "used",
+  "expect": {
+   "unreadable": [
+    "form_factor"
+   ]
+  }
+ },
+ {
+  "note": "SSDs are not Disks (synthetic)",
+  "title": "16TB 3.5\" SSD",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "a DVR is not a Disk (synthetic)",
+  "title": "Security DVR Recorder NO HDD",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "labels are not Disks (synthetic)",
+  "title": "HDD caddy labels 12TB",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "a PCB is not a Disk (synthetic)",
+  "title": "Circuit Board ST16000NM001G HDD",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "a media player is not a Disk (synthetic)",
+  "title": "Media Player Support 14TB HDD",
+  "condition": "used",
+  "expect": {
+   "ignored": true
+  }
+ },
+ {
+  "note": "variation capacity from aspects (synthetic)",
+  "category_id": "56083",
+  "title": "6TB 8TB 12TB HDD lot",
+  "condition": "used",
+  "aspects": {
+   "Storage Capacity": "8 TB"
+  },
+  "expect": {
+   "capacity_tb": 8,
+   "qualifies": false
+  }
+ },
+ {
+  "note": "conflicting variation aspects (synthetic)",
+  "category_id": "56083",
+  "title": "10TB 12TB 16TB HDD",
+  "condition": "used",
+  "aspects": {
+   "Capacity": "10TB",
+   "Storage Capacity": "16 TB"
+  },
+  "expect": {
+   "unreadable": [
+    "capacity",
+    "form_factor"
+   ]
+  }
+ },
+ {
+  "note": "HGST 100GB capacity code HUH728080ALE600",
+  "title": "HUH728080ALE600 HDD 3.5\"",
+  "condition": "used",
+  "expect": {
+   "qualifies": false,
+   "capacity_tb": 8,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "HGST 100GB capacity code HUS726060ALE610",
+  "title": "HUS726060ALE610 HDD 3.5\"",
+  "condition": "used",
+  "expect": {
+   "qualifies": false,
+   "capacity_tb": 6,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "HGST 100GB capacity code HUS724040ALE640",
+  "title": "HUS724040ALE640 HDD 3.5\"",
+  "condition": "used",
+  "expect": {
+   "qualifies": false,
+   "capacity_tb": 4,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "title form factor beats description cache size",
+  "title": "WD Gold 12TB 3.5\" HDD",
+  "condition": "used",
+  "description": "Brukt i NAS med 2.5\" SSD cache.",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
+  }
+ },
+ {
+  "note": "White Label names a drive, not a sticker",
+  "title": "WD 12TB White Label HDD 3.5\"",
+  "condition": "used",
+  "expect": {
+   "qualifies": true,
+   "capacity_tb": 12,
+   "form_factor": "3.5",
+   "count": 1
   }
  }
 ]

@@ -35,6 +35,7 @@ EBAY_SEARCH = {
 # cheapest qualifying Disks of each query only, at most once a day per Listing. The Browse quota is 5,000 calls a day,
 # searches and item calls share that quota; each query reads stock for at most 20 qualifying Listings
 EBAY_STOCK_LOOKUPS = 20
+EBAY_FACT_LOOKUPS = 20
 EBAY_STOCK_MAX_AGE_S = 24 * 3600
 # Rebuild IT (Asker) mirrors its web shop on finn.no and leaves sold-out ads up (a WD Gold 18TB ad from 2022, sold out
 # in the shop, 28 Sep 2026). Its finn ads are checked against the shop's stock, read at most once an hour, and ship

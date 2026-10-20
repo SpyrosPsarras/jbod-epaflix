@@ -25,12 +25,14 @@ class RuleCorpus(unittest.TestCase):
     def test_disks(self):
         for case in json.loads((CORPUS / "disks.json").read_text()):
             with self.subTest(case["note"]):
-                self.check(case, read_disk(case["title"], case["condition"]))
+                self.check(case, read_disk(case["title"], case["condition"],
+                                           category_id=case.get("category_id"), aspects=case.get("aspects")))
 
     def test_ram(self):
         for case in json.loads((CORPUS / "ram.json").read_text()):
             with self.subTest(case["note"]):
-                self.check(case, read_ram(case["title"], case["condition"]))
+                self.check(case, read_ram(case["title"], case["condition"], price=case.get("price"),
+                                          description=case.get("description"), aspects=case.get("aspects")))
 
     def test_price_per_unit_in_a_description(self):
         for text, price, expect in (

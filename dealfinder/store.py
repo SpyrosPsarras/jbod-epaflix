@@ -39,6 +39,7 @@ ALTER TABLE listings ADD COLUMN IF NOT EXISTS lat double precision;
 ALTER TABLE listings ADD COLUMN IF NOT EXISTS lon double precision;
 ALTER TABLE listings ADD COLUMN IF NOT EXISTS pickup_only boolean NOT NULL DEFAULT false;
 ALTER TABLE listings ADD COLUMN IF NOT EXISTS costs jsonb;
+ALTER TABLE listings ADD COLUMN IF NOT EXISTS item_cache jsonb;
 -- road km/minutes from home per rounded location (ticket #5)
 CREATE TABLE IF NOT EXISTS routes (
     lat numeric NOT NULL, lon numeric NOT NULL, km numeric NOT NULL, minutes numeric NOT NULL,
@@ -258,8 +259,8 @@ class Store:
             c.execute("""
                 INSERT INTO listings (source, source_id, kind, title, url, price, currency, shipping,
                                       condition, seller, facts, missing, qualifies, capacity_tb, landed_nok,
-                                      description, location, lat, lon, pickup_only, costs)
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                                      description, location, lat, lon, pickup_only, costs, item_cache)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                 ON CONFLICT (source, source_id) DO UPDATE SET
                     title = EXCLUDED.title, url = EXCLUDED.url, price = EXCLUDED.price,
                     currency = EXCLUDED.currency, shipping = EXCLUDED.shipping,
@@ -268,12 +269,14 @@ class Store:
                     capacity_tb = EXCLUDED.capacity_tb, landed_nok = EXCLUDED.landed_nok,
                     description = EXCLUDED.description, location = EXCLUDED.location, lat = EXCLUDED.lat,
                     lon = EXCLUDED.lon, pickup_only = EXCLUDED.pickup_only, costs = EXCLUDED.costs,
-                    last_seen = now()
+                    item_cache = coalesce(EXCLUDED.item_cache, listings.item_cache), last_seen = now()
             """, (listing.source, listing.source_id, kind, listing.title, listing.url, listing.price,
                   listing.currency, listing.shipping, listing.condition, listing.seller,
                   json.dumps(facts) if facts is not None else None, missing, qualifies, capacity_tb, landed,
                   listing.description, listing.location, listing.lat, listing.lon, listing.pickup_only,
-                  json.dumps(costs) if costs is not None else None))
+                  json.dumps(costs) if costs is not None else None,
+                  json.dumps({"read": listing.item_read, "details": listing.item_details})
+                  if listing.item_read is not None else None))
 
     def last_hunt(self):
         """The latest finished Hunt, successful or not."""
@@ -319,13 +322,17 @@ class Store:
                          landed_nok LIMIT %s
             """, (limit,)).fetchall()
 
-    def stock_read(self, source):
-        """[(source_id, read at, stock, extra shipping)] of the Disks whose stock `source` read; the Source skips
-        the ones read too long ago."""
+    def item_read(self, source):
         with self._conn() as c:
-            return [(r["source_id"], r["facts"]["stock_read"], r["facts"]["stock"], r["facts"]["extra_shipping"])
-                    for r in c.execute("SELECT source_id, facts FROM listings WHERE source = %s AND kind = 'disk' "
-                                       "AND facts->>'stock_read' IS NOT NULL", (source,))]
+            return [(r["source_id"], r["item"]["read"], r["item"]["details"])
+                    for r in c.execute("""
+                        SELECT source_id, coalesce(item_cache, jsonb_build_object(
+                            'read', facts->'stock_read',
+                            'details', jsonb_build_object('_stock', jsonb_build_array(
+                                facts->'stock', facts->'extra_shipping')))) AS item
+                        FROM listings WHERE source = %s
+                          AND (item_cache IS NOT NULL OR facts->>'stock_read' IS NOT NULL)
+                    """, (source,))]
 
     def unreadable(self, limit=200):
         with self._conn() as c:

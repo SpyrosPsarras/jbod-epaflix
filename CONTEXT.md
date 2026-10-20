@@ -7,7 +7,7 @@ Finds and ranks the cheapest compatible Disks and RAM for epaflix's Dell R730XD 
 ### What is bought
 
 **Disk**:
-A working, genuine 3.5" SATA or SAS hard drive of at least 12TB, of any class, including enterprise, NAS, desktop, surveillance or an unstated class. External USB enclosures and 2.5" disks do not qualify.
+A working, genuine 3.5" SATA or SAS hard drive of at least 12TB, of any class, including enterprise, NAS, desktop, surveillance or an unstated class. A recognized drive family in the title can establish form factor; capacity, generic disk words, a brand or other model numbers alone cannot. Descriptions never supply Disk facts. Only eBay Listings in Internal Hard Disk Drives, category 56083, may use item aspects to fill missing Disk facts. A structured Form Factor or Formfaktor aspect can fill form factor only when every title token identifies a single disk: known disk vocabulary, specifications or model and part numbers. Unknown words or numbers, system names such as Synology or NetApp, and counts above one leave the form factor Unreadable. The value must itself be an inch size, LFF/SFF or the metric equivalent, not a system shape such as Tower or Rackmount. External USB enclosures and 2.5" disks do not qualify.
 _Avoid_: Drive, HDD (alone)
 
 **RAM**:
@@ -17,7 +17,7 @@ _Avoid_: Part, component, add-on
 ### Where it comes from
 
 **Listing**:
-One offer for Disks or RAM on a Source, at one moment in time. A Disk Listing sells a whole lot at its stated price, or one Disk at a per-Disk price with any stated stock.
+One offer for Disks or RAM on a Source, at one moment in time. It sells a lot at its stated price, or one Disk or RAM stick at a per-unit price; stock never multiplies a per-unit price.
 _Avoid_: Ad, item, offer
 
 **Source**:
@@ -55,7 +55,7 @@ An extra 10% of the money paid to that seller, including price, shipping or Pick
 _Avoid_: Penalty, deduction, malus
 
 **Unreadable Listing**:
-A Listing missing a price or facts the rules need: Disk capacity, 3.5" form factor and condition, or RAM stick size, DDR generation and RDIMM/LRDIMM type. Shown under "Could not read", never ranked; a known disqualifying fact, such as a 10TB Disk, rejects it instead.
+A Listing missing a price or facts the rules need: Disk capacity, 3.5" form factor and condition, or RAM stick size, DDR generation and RDIMM/LRDIMM type. Disk facts come from the title and its model numbers, with eBay item aspects allowed only in Internal Hard Disk Drives, category 56083. Descriptions never supply Disk capacity, form factor, count or class; a Disk description can still state its per-unit price and stock. RAM may also use finn.no descriptions and eBay item aspects to fill missing facts. Contradictory RAM description facts or conflicting allowed aspects needed to fill a fact stay Unreadable. Unless priced per stick, RAM with no title count treats the title GB as the total; a description may split it into sticks only when count times stick size equals that total. Shown under "Could not read", never ranked; a known disqualifying fact, such as a 10TB Disk, rejects it instead. An eBay Listing without a shipping quote to Norway is rejected for every kind, not Unreadable.
 _Avoid_: Unknown, unparsed, bad listing
 
 **Gone Listing**:

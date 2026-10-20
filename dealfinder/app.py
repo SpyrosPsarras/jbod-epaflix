@@ -185,8 +185,8 @@ class App:
         self.router = router or OsrmRouter(self.store)
         self.sources, self.fx, self.pause = sources, fx, pause
         for source in sources:  # eBay stock read by an earlier pod counts against the same daily quota
-            if hasattr(source, "seed_stock"):
-                source.seed_stock(self.store.stock_read(source.name))
+            if hasattr(source, "seed_items"):
+                source.seed_items(self.store.item_read(source.name))
         additions = DISK_QUERY_ADDITIONS if disk_queries is None else {}
         disk_queries = DISK_QUERIES if disk_queries is None else disk_queries
         ram_queries = RAM_QUERIES if ram_queries is None else ram_queries
@@ -243,6 +243,8 @@ class App:
                 break
             counts = dict.fromkeys(KINDS, 0)
             try:
+                if hasattr(source, "start_hunt"):
+                    source.start_hunt()
                 work = [(r["query"], r["kind"]) for r in tracked if r["source"] in ("", source.name)]
                 for query, kind in work:
                     for listing in source.search(query, kind):
@@ -260,13 +262,18 @@ class App:
         """The rules' verdict on one Listing: None when it is not of that kind at all, else a dict with
         facts, missing, qualifies, capacity_tb, landed_nok and costs. Hunts save it; Search only shows it."""
         if kind == "disk":
-            facts = read_disk(listing.title, listing.condition)
+            facts = read_disk(listing.title, listing.condition,
+                              aspects=listing.aspects, category_id=listing.category_id)
         elif kind == "ram":
-            facts = read_ram(listing.title, listing.condition)
+            facts = read_ram(listing.title, listing.condition,
+                             description=listing.description, aspects=listing.aspects, price=listing.price)
         else:
             return None
         if facts is None:
             return None
+        if source.foreign and listing.shipping is None:
+            return {"facts": None, "missing": [], "qualifies": False, "capacity_tb": None,
+                    "landed_nok": None, "costs": None}
         if listing.price <= 0 and not isinstance(facts, Unreadable) and not facts.qualifies:
             # "make an offer", but a known fact already rules it out (DDR3 RAM): rejected
             return {"facts": asdict(facts), "missing": [], "qualifies": False, "capacity_tb": None,
@@ -277,7 +284,6 @@ class App:
             return {"facts": None, "missing": facts.missing, "qualifies": False, "capacity_tb": None,
                     "landed_nok": None, "costs": None}
         facts_json = asdict(facts)
-        # the readers see the title only; a price per unit stated in the description is applied here.
         unit = {"disk": "count", "ram": "sticks"}[kind]
         per_unit = priced_per_unit(listing.description, listing.price)
         if per_unit:
@@ -295,8 +301,6 @@ class App:
                 facts_json["count"] = 1
             stock = max(stock_in(listing.description), facts.count) if per_unit else listing.stock
             facts_json["stock"] = stock if facts_json["count"] == 1 else 1
-            if listing.stock_read:  # kept so a restart does not read eBay stock again (EbaySource.seed_stock)
-                facts_json["stock_read"], facts_json["extra_shipping"] = listing.stock_read, listing.extra_shipping
             if landed and facts_json["stock"] > 1:
                 more = replace(listing, shipping=listing.shipping if listing.extra_shipping is None
                                else listing.extra_shipping, lat=None, lon=None, pickup_only=False)
