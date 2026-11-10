@@ -1,13 +1,13 @@
 {
  "search": {
-  "q=exos+16tb&condition=1&condition=2": [],
-  "q=exos+16tb&condition=3&condition=4": [
+  "q=ddr4+ecc&condition=1&condition=2": [],
+  "q=ddr4+ecc&condition=3&condition=4": [
    {
-    "id": "477135306",
-    "heading": "2 stk Exos X16 12TB SATA disker",
-    "canonical_url": "https://www.finn.no/recommerce/forsale/item/477135306",
+    "id": "100000001",
+    "heading": "2 stk Samsung 32GB DDR4 ECC RDIMM",
+    "canonical_url": "https://www.finn.no/recommerce/forsale/item/100000001",
     "price": {
-     "amount": 5000,
+     "amount": 1500,
      "currency_code": "NOK",
      "price_unit": "NOK"
     },
@@ -25,8 +25,8 @@
     "trade_type": "Til salgs"
    }
   ],
-  "q=ultrastar+16tb&condition=1&condition=2": [],
-  "q=ultrastar+16tb&condition=3&condition=4": []
+  "q=rdimm&condition=1&condition=2": [],
+  "q=rdimm&condition=3&condition=4": []
  },
  "items": {}
 }

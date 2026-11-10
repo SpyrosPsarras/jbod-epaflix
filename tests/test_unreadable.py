@@ -3,40 +3,17 @@ import json
 import pathlib
 import tempfile
 import threading
-import time
 import unittest
 
 import pgserver
-import urllib.error
-import urllib.parse
 from unittest import mock
 
 from dealfinder.app import App
-from dealfinder.rules import Unreadable, read_disk, read_ram
+from dealfinder.rules import Unreadable, read_ram
 from dealfinder.sources import EbaySource, FinnSource, Listing
 
 
 class ReaderFacts(unittest.TestCase):
-    def test_disk_link_speeds_do_not_add_capacities(self):
-        for speed in ("12Gb", "12G", "12GB", "6Gb", "6Gb/s"):
-            with self.subTest(speed=speed):
-                facts = read_disk(f'12TB SAS {speed} HDD 3.5"', "used")
-                self.assertNotIsInstance(facts, Unreadable)
-                self.assertEqual(facts.capacity_tb, 12)
-                self.assertTrue(facts.qualifies)
-
-    def test_disk_capacity_spellings_and_model_fallback(self):
-        for title, capacity in [('HDD 12000GB 3.5"', 12), ('HDD 16000GB 3.5"', 16), ("HDD 12TB3.5\"", 12),
-                                ("HDD HAS5300-12T", 12), ("HDD ST16000NT001", 16),
-                                ("HDD ST16000NM002G", 16), ("HDD ST12000NM0027", 12),
-                                ("HDD WUH721818AL5204", 18), ("HDD WUH721816AL5204", 16),
-                                ("HDD WUS721212BLE6L4", 12), ("HDD HUH721212ALE600", 12),
-                                ("HDD WUH722020CLE6L4", 20), ("HDD ST16000NT001 10TB", 10)]:
-            with self.subTest(title=title):
-                facts = read_disk(title, "used", category_id="56083", aspects={"Form Factor": "3.5 in"})
-                self.assertNotIsInstance(facts, Unreadable)
-                self.assertEqual(facts.capacity_tb, capacity)
-
     def test_type_decoding_covers_registered_and_unbuffered_families(self):
         for model, expected in [("M393A2G40EB1", "RDIMM"), ("M386A8K40CM2", "LRDIMM"),
                                 ("HMA82GR7AFR8N", "RDIMM"), ("HMAA8GL7AMR4N", "LRDIMM"),
@@ -92,8 +69,6 @@ class ReaderFacts(unittest.TestCase):
                 self.assertIn(missing, facts.missing)
 
     def test_title_beats_aspects_and_part_number_beats_aspect_type(self):
-        facts = read_disk("12TB 3.5\" HDD", "used", category_id="56083", aspects={"Storage Capacity": "8 TB", "Form Factor": "2.5 in"})
-        self.assertTrue(facts.qualifies)
         facts = read_ram("16GB DDR4 RAM M393A2G40EB1", "used",
                          aspects={"Form Factor": "UDIMM", "Capacity per Module": "32GB", "Type": "DDR3"})
         self.assertEqual((facts.gb_per_stick, facts.ddr, facts.type), (16, 4, "RDIMM"))
@@ -103,25 +78,13 @@ class ReaderFacts(unittest.TestCase):
                          aspects={"MPN": "M393A2G40EB1", "RAM Form Factor": "UDIMM"})
         self.assertEqual(facts.type, "RDIMM")
         self.assertTrue(facts.qualifies)
-        facts = read_disk("SAS Hard Drive", "used",
-                          category_id="56083", aspects={"MPN": "ST16000NM002G", "Storage Capacity": "8 TB", "Form Factor": "3.5 in"})
-        self.assertEqual(facts.capacity_tb, 16)
-        self.assertTrue(facts.qualifies)
 
     def test_conflicting_aspects_and_variation_facts(self):
-        facts = read_disk("6TB 8TB 12TB HDD lot", "used", category_id="56083", aspects={"Storage Capacity": "8 TB"})
-        self.assertFalse(facts.qualifies)
-        self.assertEqual(facts.capacity_tb, 8)
-        self.assertIsInstance(read_disk("6TB 8TB 12TB HDD", "used",
-                              category_id="56083", aspects={"Storage Capacity": "16 TB", "Capacity": "10 TB"}), Unreadable)
         self.assertIsInstance(read_ram("DDR4 16GB RAM", "used",
                               aspects={"RAM Form Factor": "RDIMM", "Form Factor": "LRDIMM"}), Unreadable)
         facts = read_ram("Server RAM", "used", aspects={"Capacity per Module": "16 GB", "Number of Modules": "4",
                                                       "RAM Form Factor": "RDIMM", "Type": "DDR4"})
         self.assertEqual((facts.gb_per_stick, facts.sticks, facts.type, facts.ddr), (16, 4, "RDIMM", 4))
-
-    def test_a_capacity_alone_does_not_establish_a_hard_disk_form_factor(self):
-        self.assertIsInstance(read_disk("12TB storage", "used"), Unreadable)
 
     def test_description_count_conflicts_stay_unreadable(self):
         facts = read_ram("2x16GB DDR4 RDIMM RAM", "used", description="4x16GB DDR4 RDIMM RAM")
@@ -134,14 +97,9 @@ class ReaderFacts(unittest.TestCase):
 
     def test_conflicting_form_factors_in_one_aspect_stay_unreadable(self):
         self.assertIsInstance(
-            read_disk("HDD", "used", category_id="56083", aspects={"Storage Capacity": "12TB", "Form Factor": "2.5 in / 3.5 in"}),
-            Unreadable)
-        self.assertIsInstance(
             read_ram("DDR4 16GB RAM", "used", aspects={"RAM Form Factor": "RDIMM / LRDIMM"}), Unreadable)
 
     def test_aspects_reject_wrong_product_when_title_does_not_identify_one(self):
-        for product in ("SSD", "NVMe SSD", "DVR", "Stickers", "Caddy"):
-            self.assertIsNone(read_disk("Storage HDD 3.5\"", "used", category_id="56083", aspects={"Type": product}))
         for memory in ("UDIMM", "SODIMM"):
             self.assertIsNone(read_ram("16GB DDR4 RAM", "used", aspects={"RAM Form Factor": memory}))
         self.assertFalse(read_ram("16GB ECC RAM", "used", aspects={"Type": "DDR3", "Form Factor": "RDIMM"}).qualifies)
@@ -152,24 +110,22 @@ class CapturedListings(unittest.TestCase):
         app = object.__new__(App)
         app.fx, app.router = lambda _: 1, lambda *_: (0, 0)
         total = 0
-        for kind, file in [("disk", "disks.json"), ("ram", "ram.json")]:
-            for case in json.loads((pathlib.Path(__file__).parent / "corpus" / file).read_text()):
-                if "listing_verdict" not in case:
-                    continue
-                total += 1
-                with self.subTest(case["note"]):
-                    listing = Listing(case["source"], case["source_id"], case["title"], case["url"], case["price"],
-                                      "NOK", case["shipping"], "NOK", case["condition"], None,
-                                      description=case.get("description"), aspects=case.get("aspects"),
-                                      category_id=case.get("category_id"))
-                    source = type("Source", (), {"foreign": case["source"] == "ebay_uk"})()
-                    score = app._score(source, listing, kind)
-                    verdict = ("rejected" if score is None else "qualifies" if score["qualifies"]
-                               else "unreadable" if score["missing"] else "rejected")
-                    self.assertEqual(verdict, case["listing_verdict"])
-                    for field, value in case.get("listing_facts", {}).items():
-                        self.assertEqual(score["facts"][field], value)
-        self.assertEqual(total, 169)
+        for case in json.loads((pathlib.Path(__file__).parent / "corpus" / "ram.json").read_text()):
+            if "listing_verdict" not in case:
+                continue
+            total += 1
+            with self.subTest(case["note"]):
+                listing = Listing(case["source"], case["source_id"], case["title"], case["url"], case["price"],
+                                  "NOK", case["shipping"], "NOK", case["condition"], None,
+                                  description=case.get("description"), aspects=case.get("aspects"))
+                source = type("Source", (), {"foreign": case["source"] == "ebay_uk"})()
+                score = app._score(source, listing, "ram")
+                verdict = ("rejected" if score is None else "qualifies" if score["qualifies"]
+                           else "unreadable" if score["missing"] else "rejected")
+                self.assertEqual(verdict, case["listing_verdict"])
+                for field, value in case.get("listing_facts", {}).items():
+                    self.assertEqual(score["facts"][field], value)
+        self.assertEqual(total, 55)
 
 
     def test_finn_description_price_per_unit_keeps_one_ranked_stick(self):
@@ -188,19 +144,18 @@ class CapturedListings(unittest.TestCase):
 
     def test_no_shipping_is_rejected_even_when_the_product_facts_are_missing(self):
         app = object.__new__(App)
-        for kind, title in [("disk", "SAS HDD"), ("ram", "DDR4 RAM")]:
-            listing = Listing("ebay_uk", kind, title, "https://www.ebay.co.uk/item", 100, "GBP",
-                              None, None, "used", None)
-            score = app._score(type("Source", (), {"foreign": True})(), listing, kind)
-            self.assertEqual(score["missing"], [])
-            self.assertFalse(score["qualifies"])
+        listing = Listing("ebay_uk", "ram", "DDR4 RAM", "https://www.ebay.co.uk/item", 100, "GBP",
+                          None, None, "used", None)
+        score = app._score(type("Source", (), {"foreign": True})(), listing, "ram")
+        self.assertEqual(score["missing"], [])
+        self.assertFalse(score["qualifies"])
 
     def test_priced_rejection_retains_the_cost_problem(self):
         app = object.__new__(App)
         app.fx, app.router = lambda _: 1, lambda *_: (0, 0)
-        listing = Listing("finn", "small", "2TB HDD", "https://www.finn.no/small", 100, "NOK",
+        listing = Listing("finn", "ddr3", "16GB DDR3 ECC RDIMM", "https://www.finn.no/ddr3", 100, "NOK",
                           None, "NOK", "used", None, pickup_only=True)
-        score = app._score(type("Source", (), {"foreign": False})(), listing, "disk")
+        score = app._score(type("Source", (), {"foreign": False})(), listing, "ram")
         self.assertEqual(score["missing"], ["location"])
         self.assertFalse(score["qualifies"])
 
@@ -224,42 +179,12 @@ class SourceEnrichment(unittest.TestCase):
             return {"itemSummaries": [summary]}
         return EbaySource("id", "secret", fetch=fetch)
 
-    def test_disk_aspects_from_a_system_category_cannot_rank_a_system(self):
-        source = self.ebay("Synology DS918+ NAS 48TB", {
-            "categoryId": "175706",
-            "localizedAspects": [{"name": "Form Factor", "value": "3.5 in"}],
-            "estimatedAvailabilities": [{"estimatedAvailableQuantity": 4}],
-        })
-        listing, = source.search("hard drive")
-        app = object.__new__(App)
-        app.fx, app.router = lambda _: 1, lambda *_: (0, 0)
-        score = app._score(source, listing, "disk")
-        self.assertFalse(score["qualifies"])
-        self.assertEqual(score["missing"], ["form_factor"])
-        self.assertEqual((listing.stock, listing.stock_read), (1, None))
-        restarted = self.ebay("Synology DS918+ NAS 48TB", OSError("must use cache"))
-        restarted.seed_items([(listing.source_id, listing.item_read, listing.item_details)])
-        listing, = restarted.search("hard drive")
-        score = app._score(restarted, listing, "disk")
-        self.assertFalse(score["qualifies"])
-        self.assertEqual(score["missing"], ["form_factor"])
-        self.assertEqual(sum("/item/" in url for url in self.calls), 0)
-
     def test_unreadable_ram_gets_one_cached_item_call(self):
         source = self.ebay()
         for _ in range(2):
             listing, = source.search("ddr4", "ram")
             facts = read_ram(listing.title, listing.condition, aspects=listing.aspects)
             self.assertTrue(facts.qualifies)
-        self.assertEqual(sum("/item/" in url for url in self.calls), 1)
-
-    def test_newly_readable_disk_reuses_its_item_for_stock(self):
-        source = self.ebay("Hard Drive 3.5\"", {"categoryId": "56083",
-                                             "localizedAspects": [{"name": "Storage Capacity", "value": "16 TB"}],
-                                             "estimatedAvailabilities": [{"estimatedAvailableQuantity": 4}]})
-        listing, = source.search("hard drive")
-        self.assertTrue(read_disk(listing.title, listing.condition, category_id=listing.category_id, aspects=listing.aspects).qualifies)
-        self.assertEqual(listing.stock, 4)
         self.assertEqual(sum("/item/" in url for url in self.calls), 1)
 
     def test_extra_calls_are_bounded_across_queries_in_one_hunt(self):
@@ -330,8 +255,7 @@ class SourceEnrichment(unittest.TestCase):
                 pg = pgserver.get_server(tempfile.mkdtemp(), cleanup_mode="stop")
                 self.addCleanup(pg.cleanup)
                 source = self.ebay(details={"localizedAspects": aspects})
-                app = App(pg.get_uri(), [source], fx=lambda _: 1, disk_queries={},
-                          ram_queries={"ebay_uk": ["ddr4"]}, pause=0)
+                app = App(pg.get_uri(), [source], fx=lambda _: 1, ram_queries={"ebay_uk": ["ddr4"]}, pause=0)
                 self.addCleanup(app.store._pool.close)
                 app.hunt()
                 known = app.store.item_read("ebay_uk")
@@ -346,79 +270,10 @@ class SourceEnrichment(unittest.TestCase):
                 self.assertEqual(saved["item_cache"]["details"]["localizedAspects"], aspects)
                 calls = self.calls
                 restarted = App(pg.get_uri(), [EbaySource("id", "secret", fetch=source._fetch)], fx=lambda _: 1,
-                                disk_queries={}, ram_queries={"ebay_uk": ["ddr4"]}, pause=0)
+                                ram_queries={"ebay_uk": ["ddr4"]}, pause=0)
                 self.addCleanup(restarted.store._pool.close)
                 restarted.hunt()
                 self.assertEqual(sum("/item/" in url for url in calls), 1)
-
-    def test_persisted_stock_item_also_supplies_aspects_after_restart(self):
-        pg = pgserver.get_server(tempfile.mkdtemp(), cleanup_mode="stop")
-        self.addCleanup(pg.cleanup)
-        details = {"categoryId": "56083",
-                   "localizedAspects": [{"name": "Storage Capacity", "value": "16 TB"}],
-                   "estimatedAvailabilities": [{"estimatedAvailableQuantity": 4}]}
-        source = self.ebay("12TB HDD", details)
-        app = App(pg.get_uri(), [source], fx=lambda _: 1, disk_queries={"ebay_uk": ["hdd"]},
-                  ram_queries={}, pause=0)
-        self.addCleanup(app.store._pool.close)
-        app.hunt()
-        restarted_source = self.ebay("Hard Drive 3.5\"", details)
-        restarted = App(pg.get_uri(), [restarted_source], fx=lambda _: 1,
-                        disk_queries={"ebay_uk": ["hdd"]}, ram_queries={}, pause=0)
-        self.addCleanup(restarted.store._pool.close)
-        restarted.hunt()
-        with restarted.store._conn() as conn:
-            saved = conn.execute("SELECT facts, qualifies FROM listings").fetchone()
-        self.assertTrue(saved["qualifies"])
-        self.assertEqual((saved["facts"]["capacity_tb"], saved["facts"]["stock"]), (16, 4))
-        self.assertEqual(sum("/item/" in url for url in self.calls), 0)
-        self.assertEqual(restarted.store.item_read("ebay_uk")[0][2]["categoryId"], "56083")
-
-    def test_old_stock_persistence_seeds_the_same_item_cache(self):
-        pg = pgserver.get_server(tempfile.mkdtemp(), cleanup_mode="stop")
-        self.addCleanup(pg.cleanup)
-        source = self.ebay('12TB HDD 3.5"')
-        app = App(pg.get_uri(), [source], fx=lambda _: 1, disk_queries={"ebay_uk": ["hdd"]},
-                  ram_queries={}, pause=0)
-        self.addCleanup(app.store._pool.close)
-        app.hunt()
-        legacy = {"stock_read": time.time(), "stock": 4, "extra_shipping": 2}
-        with app.store._conn() as conn:
-            conn.execute("UPDATE listings SET item_cache = NULL, facts = facts || %s::jsonb",
-                         (json.dumps(legacy),))
-        restarted_source = self.ebay('12TB HDD 3.5"', OSError("must use persisted stock"))
-        restarted = App(pg.get_uri(), [restarted_source], fx=lambda _: 1,
-                        disk_queries={"ebay_uk": ["hdd"]}, ram_queries={}, pause=0)
-        self.addCleanup(restarted.store._pool.close)
-        listing, = restarted_source.search("hdd")
-        self.assertEqual((listing.stock, listing.extra_shipping), (4, 2))
-        self.assertEqual(sum("/item/" in url for url in self.calls), 0)
-
-    def test_finn_disk_description_fetching_keeps_baseline_unit_price_and_stock_rules(self):
-        for title, should_fetch in [('12TB HDD 3.5"', True), ('4x 12TB HDD 3.5"', True),
-                                    ('HDD 3.5"', False), ("12TB HDD", False)]:
-            with self.subTest(title=title):
-                doc = {"id": 1, "heading": title, "trade_type": "Til salgs", "price": {"amount": 1000},
-                       "flags": ["shipping_exists"]}
-                calls = []
-
-                def fetch(url):
-                    calls.append(url)
-                    if "/search?" in url:
-                        data = {"queries": [{"state": {"data": {"docs": [doc]}}}]}
-                        return "<script>" + base64.b64encode(json.dumps(data).encode()).decode() + "</script>"
-                    return '<section data-testid="description"><p>Selger 4 stk. Pris per stk.</p></section>'
-
-                listing, = FinnSource(fetch=fetch, pause=0).search("hdd")
-                self.assertEqual(sum("/item/" in url for url in calls), int(should_fetch))
-                if should_fetch:
-                    app = object.__new__(App)
-                    app.fx, app.router = lambda _: 1, lambda *_: (0, 0)
-                    score = app._score(type("Source", (), {"foreign": False})(), listing, "disk")
-                    self.assertTrue(score["qualifies"])
-                    self.assertEqual((score["facts"]["count"], score["facts"]["stock"]), (1, 4))
-                else:
-                    self.assertIsNone(listing.description)
 
     def test_finn_fetches_description_for_title_missing_type(self):
         doc = {"id": 1, "heading": "16GB DDR4 ECC RAM", "trade_type": "Til salgs", "price": {"amount": 1000},

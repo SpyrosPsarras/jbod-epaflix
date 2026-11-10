@@ -12,21 +12,47 @@ import unittest
 import urllib.error
 import urllib.parse
 import urllib.request
-from unittest import mock
 
 import pgserver
 
 from dealfinder.app import App, next_hunt_delay
 from dealfinder.config import PICKUP_NOK_PER_KM
 from dealfinder.costs import DailyFx, cost_breakdown
-from dealfinder.rules import Unreadable, read_disk
+from dealfinder.rules import read_ram
 from dealfinder.sources import EbaySource, FinnSource
 
 FIXTURES = pathlib.Path(__file__).parent / "fixtures"
-FIXTURE = json.loads((FIXTURES / "ebay_disk_search.json").read_text())
 FINN = json.loads((FIXTURES / "finn.json").read_text())
-FINN_DISK_QUERIES = ["exos 16tb", "ultrastar 16tb"]
+FINN_RAM_QUERIES = ["ddr4 ecc", "rdimm"]
 RATES = {"NOK": 1.0, "GBP": 12.59, "USD": 9.43, "EUR": 11.0}
+
+
+def _ebay_item(iid, title, price, ship, pct="99.8", score=5000):
+    it = {"itemId": iid, "title": title, "price": {"value": str(price), "currency": "GBP"}, "conditionId": "3000",
+          "itemWebUrl": f"https://www.ebay.co.uk/itm/{iid}", "seller": {"username": "s", "feedbackPercentage": pct,
+                                                                         "feedbackScore": score}}
+    if ship is not None:
+        it["shippingOptions"] = [{"shippingCost": {"value": str(ship), "currency": "GBP"}}]
+    return it
+
+
+# eBay RAM search results per query, in the Browse API's shape
+FIXTURE = {
+    "ddr4 ecc rdimm 32gb": {"itemSummaries": [
+        _ebay_item("v1|101|0", "Samsung 32GB DDR4 2400MHz ECC RDIMM M393A4K40BB1", 38.00, 4.50),
+        _ebay_item("v1|102|0", "SK Hynix 32GB DDR4 2666 ECC Registered RDIMM HMA84GR7AFR4N-VK", 41.00, 3.20),
+        _ebay_item("v1|103|0", "Micron 32GB DDR4-2933 ECC RDIMM MTA36ASF4G72PZ", 45.00, 0),
+        _ebay_item("v1|104|0", "Samsung 32GB DDR4 ECC RDIMM faulty", 10.00, 3.00),
+        {**_ebay_item("v1|105|0", "Samsung 32GB DDR4 2400 ECC RDIMM", 12.00, 3.00), "conditionId": "7000"},
+        _ebay_item("v1|106|0", "Corsair Vengeance 32GB DDR4 3200 desktop RAM", 50.00, 3.00),
+        _ebay_item("v1|107|0", "32GB DDR4 SODIMM laptop RAM", 30.00, 3.00),
+        _ebay_item("v1|108|0", "Samsung 32GB DDR4 ECC RDIMM", 20.00, None)]},
+    "ddr4 ecc rdimm 16gb": {"itemSummaries": [
+        _ebay_item("v1|201|0", "4x 16GB DDR4 2400 ECC RDIMM Samsung M393A2K40BB1", 85.00, 5.00),
+        _ebay_item("v1|202|0", "Hynix 16GB DDR4 2133 ECC REG HMA42GR7AFR4N-TF", 14.00, 2.50),
+        _ebay_item("v1|203|0", "Samsung 16GB 2Rx4 PC4-2400T-R ECC RDIMM", 16.00, 2.50, pct="96.0"),
+        _ebay_item("v1|204|0", "16GB DDR3 ECC RDIMM PC3-14900R", 6.00, 2.00)]},
+}
 
 
 def _fee(price):
@@ -40,20 +66,20 @@ def _shipped(price):
 
 # a qualifying Listing carrying hostile text, to prove the page escapes Source data
 HOSTILE = {"itemSummaries": [{
-    "itemId": "v1|hostile|0", "title": 'Seagate Exos X16 16TB 3.5" enterprise HDD <script>alert(1)</script>',
+    "itemId": "v1|hostile|0", "title": "Samsung 32GB DDR4 ECC RDIMM <script>alert(1)</script>",
     "price": {"value": "100.00", "currency": "GBP"},
     "shippingOptions": [{"shippingCost": {"value": "10.00", "currency": "GBP"}}],
     "conditionId": "3000", "itemWebUrl": "javascript:alert(1)", "seller": {"username": "x"}}]}
 
 # genuine-looking titles that the rules must keep off the page
-NEVER_RANKED = re.compile(r"elements|brake|compatible|suitable for|fits? for|for (toshiba|seagate)\b|pcb", re.I)
+NEVER_RANKED = re.compile(r"faulty|vengeance|sodimm|laptop|ddr3", re.I)
 
 
 def fake_fetch(url, headers=None, data=None):
     if "oauth2/token" in url:
         return {"access_token": "[REDACTED:Generic Password Field]", "expires_in": 7200}
     if "/item/" in url:
-        return {}  # a Disk's item page without stock: one disk
+        return {}  # an item page without aspects
     q = urllib.parse.parse_qs(urllib.parse.urlparse(url).query)["q"][0]
     return HOSTILE if q == "hostile" else FIXTURE.get(q, {"itemSummaries": []})
 
@@ -84,7 +110,7 @@ class HuntToPage(unittest.TestCase):
         cls.pg = pgserver.get_server(tempfile.mkdtemp(), cleanup_mode="stop")
         sources = [EbaySource("id", "secret", fetch=fake_fetch), FinnSource(fetch=fake_finn_fetch, pause=0)]
         cls.app = App(cls.pg.get_uri(), sources, fx=RATES.__getitem__,
-                      disk_queries={"ebay_uk": [*FIXTURE, "hostile"], "finn": FINN_DISK_QUERIES},
+                      ram_queries={"ebay_uk": [*FIXTURE, "hostile"], "finn": FINN_RAM_QUERIES},
                       pause=0, router=fake_router)
         cls.server = cls.app.make_server("127.0.0.1", 0)
         threading.Thread(target=cls.server.serve_forever, daemon=True).start()
@@ -104,8 +130,7 @@ class HuntToPage(unittest.TestCase):
     def rows(self):
         status, html = self.get("/")
         self.assertEqual(status, 200)
-        return [(i, float(n)) for i, n in re.findall(r'data-listing="([^"]+)" data-nok-per-tb="([\d.]+)"', html)]
-
+        return [(i, float(n)) for i, n in re.findall(r'data-ram="([^"]+)" data-nok-per-gb="([\d.]+)"', html)]
 
     def all_listings(self):
         return [it for v in FIXTURE.values() for it in v["itemSummaries"]]
@@ -115,25 +140,24 @@ class HuntToPage(unittest.TestCase):
         self.assertGreater(len(self.rows()), 5)
         self.assertNotIn('data-deal="1"', html)
 
-    def test_best_disks_sorted_by_nok_per_tb(self):
+    def test_best_ram_sorted_by_nok_per_gb(self):
         rows = self.rows()
         self.assertGreater(len(rows), 5)
         values = [n for _, n in rows]
         self.assertEqual(values, sorted(values))
 
-    def test_broken_external_relabelled_and_offtopic_listings_never_ranked(self):
+    def test_broken_and_offtopic_listings_never_ranked(self):
         shown = {i for i, _ in self.rows()}
         for it in self.all_listings():
             if it.get("conditionId") == "7000" or NEVER_RANKED.search(it["title"]):
                 self.assertNotIn(it["itemId"], shown, it["title"])
 
     def test_landed_cost_includes_shipping_vat_and_fx(self):
-        item = next(it for it in FIXTURE["exos 16tb"]["itemSummaries"]
-                    if it["title"].startswith("Seagate Exos X18") and it.get("conditionId") == "3000")
+        item = FIXTURE["ddr4 ecc rdimm 32gb"]["itemSummaries"][0]
         ship = float(item["shippingOptions"][0]["shippingCost"]["value"])
         landed = (float(item["price"]["value"]) + ship) * RATES["GBP"] * 1.25
         rows = dict(self.rows())
-        self.assertAlmostEqual(rows[item["itemId"]], round(landed / 16, 2), places=1)
+        self.assertAlmostEqual(rows[item["itemId"]], round(landed / 32, 2), places=1)
 
     def test_page_escapes_source_text_and_blocks_non_https_links(self):
         _, html = self.get("/")
@@ -144,7 +168,7 @@ class HuntToPage(unittest.TestCase):
     def test_metrics_count_qualified_and_unreadable(self):
         status, text = self.get("/metrics")
         self.assertEqual(status, 200)
-        qualified = re.search(r'dealfinder_listings\{source="ebay_uk",kind="disk",state="qualified"\} (\d+)', text)
+        qualified = re.search(r'dealfinder_listings\{source="ebay_uk",kind="ram",state="qualified"\} (\d+)', text)
         self.assertIsNotNone(qualified, text)
         self.assertGreater(int(qualified.group(1)), 5)
         self.assertIn('dealfinder_source_last_success_timestamp_seconds{source="ebay_uk"}', text)
@@ -202,16 +226,16 @@ class RebuildItStock(unittest.TestCase):
         def ad(i, heading, price, shop="Rebuild IT"):
             return {"id": i, "heading": heading, "trade_type": "Til salgs", "price": {"amount": price},
                     "organisation_name": shop, "coordinates": {"lat": 59.8, "lon": 10.4}}
-        docs = [ad(1, 'WD Gold Enterprise-Class 18TB 3.5" HDD', 3333),     # sold out in the shop
-                ad(2, "WUH721818ALE6L4  WD Ultrastar 18TB", 3499),         # in stock (one of two variants)
-                ad(3, "Seagate Exos 16TB", 800),                           # in stock, under the free-shipping total
-                ad(4, "Toshiba MG08 16TB", 3000),                          # not in the shop: kept
-                ad(5, 'WD Gold Enterprise-Class 18TB 3.5" HDD', 3333, None)]  # a private seller: untouched
+        docs = [ad(1, "Samsung 64GB DDR4 ECC LRDIMM M386A8K40BM1", 3333),     # sold out in the shop
+                ad(2, "M393A4K40BB1  Samsung 32GB DDR4 RDIMM", 3499),           # in stock (one of two variants)
+                ad(3, "Hynix 16GB DDR4 ECC RDIMM", 800),                        # in stock, under the free-shipping total
+                ad(4, "Micron 32GB DDR4 ECC RDIMM", 3000),                      # not in the shop: kept
+                ad(5, "Samsung 64GB DDR4 ECC LRDIMM M386A8K40BM1", 3333, None)]  # a private seller: untouched
         blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
-        shop = [{"title": 'WD Gold Enterprise-Class 18TB 3.5" HDD', "variants": [{"available": False}]},
-                {"title": 'WD Gold Enterprise-Class 18TB 3.5" HDD', "variants": [{"available": False}]},
-                {"title": "wuh721818ale6l4 wd ultrastar 18TB", "variants": [{"available": False}, {"available": True}]},
-                {"title": "Seagate Exos 16TB", "variants": [{"available": True}]}]
+        shop = [{"title": "Samsung 64GB DDR4 ECC LRDIMM M386A8K40BM1", "variants": [{"available": False}]},
+                {"title": "Samsung 64GB DDR4 ECC LRDIMM M386A8K40BM1", "variants": [{"available": False}]},
+                {"title": "m393a4k40bb1 samsung 32GB DDR4 RDIMM", "variants": [{"available": False}, {"available": True}]},
+                {"title": "Hynix 16GB DDR4 ECC RDIMM", "variants": [{"available": True}]}]
         pages = []
 
         def fetch(url):
@@ -221,25 +245,25 @@ class RebuildItStock(unittest.TestCase):
             return f"<script>{blob}</script>" if "/search?" in url else ""
 
         source = FinnSource(fetch=fetch, pause=0)
-        listings = {l.source_id: l for l in source.search("18tb", "ram")}
+        listings = {l.source_id: l for l in source.search("rdimm", "ram")}
         self.assertEqual(sorted(listings), ["2", "3", "4", "5"])
         self.assertEqual((listings["2"].shipping, listings["2"].pickup_only), (0.0, False))
         self.assertEqual((listings["3"].shipping, listings["3"].pickup_only), (None, False))  # Fiks ferdig estimate
         self.assertFalse(listings["4"].pickup_only)
         self.assertTrue(listings["5"].pickup_only)
-        source.search("16tb", "ram")
+        source.search("ddr4", "ram")
         self.assertEqual(len(pages), 2)  # page 1 and the empty page 2, read once for both searches
         # bought in the web shop: no Trygg betaling fee, shipped or not; a private seller shipping pays it
-        costs = {i: cost_breakdown(listings[i], lambda c: 1.0, False, lambda lat, lon: (120, 80), "disk")[0]
+        costs = {i: cost_breakdown(listings[i], lambda c: 1.0, False, lambda lat, lon: (120, 80), "ram")[0]
                  for i in ("2", "3")}
         self.assertEqual(costs["2"]["total"], 3499)
         self.assertEqual(costs["3"]["total"], 865)  # 800 + the 65 NOK shipping estimate
         listings["5"].shipping = 0.0
         self.assertEqual(cost_breakdown(listings["5"], lambda c: 1.0, False, lambda lat, lon: (120, 80),
-                                        "disk")[0]["finn_fee"], 228.98)  # 29 + 6% of 3,333
+                                        "ram")[0]["finn_fee"], 228.98)  # 29 + 6% of 3,333
 
     def test_unreadable_shop_drops_nothing(self):
-        doc = {"id": 1, "heading": "Exos 16TB", "trade_type": "Til salgs", "price": {"amount": 3000},
+        doc = {"id": 1, "heading": "Samsung 32GB DDR4 ECC RDIMM", "trade_type": "Til salgs", "price": {"amount": 3000},
                "organisation_name": "Rebuild IT"}
         blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": [doc]}}}]}).encode()).decode()
 
@@ -248,20 +272,20 @@ class RebuildItStock(unittest.TestCase):
                 raise urllib.error.URLError("down")
             return f"<script>{blob}</script>"
 
-        self.assertEqual([l.source_id for l in FinnSource(fetch=fetch, pause=0).search("exos", "ram")], ["1"])
+        self.assertEqual([l.source_id for l in FinnSource(fetch=fetch, pause=0).search("rdimm", "ram")], ["1"])
 
 
 class _BrokenSource:
     name, foreign = "broken", False
 
-    def search(self, query, kind="disk"):
+    def search(self, query, kind="ram"):
         raise RuntimeError("upstream page changed")
 
 
 class _EmptySource:
     name, foreign = "empty", False
 
-    def search(self, query, kind="disk"):
+    def search(self, query, kind="ram"):
         return []
 
 
@@ -272,7 +296,7 @@ class _GatedSource(_EmptySource):
     def __init__(self):
         self.gate = threading.Event()
 
-    def search(self, query, kind="disk"):
+    def search(self, query, kind="ram"):
         self.gate.wait(30)
         return []
 
@@ -289,7 +313,7 @@ class SourceFaults(unittest.TestCase):
         cls.pg = _pg()
         sources = [EbaySource("id", "secret", fetch=fake_fetch), _BrokenSource(), _EmptySource()]
         cls.app = App(cls.pg.get_uri(), sources, fx=RATES.__getitem__,
-                      disk_queries={"ebay_uk": list(FIXTURE), "broken": ["x"], "empty": ["x"]}, pause=0)
+                      ram_queries={"ebay_uk": list(FIXTURE), "broken": ["x"], "empty": ["x"]}, pause=0)
         cls.app.hunt()
 
     @classmethod
@@ -303,7 +327,7 @@ class SourceFaults(unittest.TestCase):
         self.assertNotIn('data-fault="ebay_uk"', page)
 
     def test_healthy_source_still_ranks(self):
-        self.assertGreater(len(re.findall(r'data-listing="[^"]+" data-nok-per-tb=', self.app.page())), 5)
+        self.assertGreater(len(re.findall(r'data-ram="[^"]+" data-nok-per-gb=', self.app.page())), 5)
 
     def test_hunt_records_start_end_and_per_source_result(self):
         last = self.app.store.last_hunt()
@@ -311,7 +335,7 @@ class SourceFaults(unittest.TestCase):
         self.assertEqual(sorted(last["detail"]), ["broken", "ebay_uk", "empty"])
         self.assertFalse(last["detail"]["broken"]["ok"])
         self.assertTrue(last["detail"]["ebay_uk"]["ok"])
-        self.assertGreater(last["detail"]["ebay_uk"]["disk"], 5)
+        self.assertGreater(last["detail"]["ebay_uk"]["ram"], 5)
 
     def test_metrics_show_source_faults_and_counts(self):
         text = self.app.metrics()
@@ -329,7 +353,7 @@ class HuntNowAndLock(unittest.TestCase):
     def setUpClass(cls):
         cls.pg = _pg()
         cls.source = _GatedSource()
-        cls.app = App(cls.pg.get_uri(), [cls.source], fx=RATES.__getitem__, disk_queries={"gated": ["x"]}, pause=0)
+        cls.app = App(cls.pg.get_uri(), [cls.source], fx=RATES.__getitem__, ram_queries={"gated": ["x"]}, pause=0)
         cls.server = cls.app.make_server("127.0.0.1", 0)
         threading.Thread(target=cls.server.serve_forever, daemon=True).start()
 
@@ -378,7 +402,7 @@ class Scheduler(unittest.TestCase):
     def test_a_first_start_does_not_hunt(self):
         pg = _pg()
         try:
-            app = App(pg.get_uri(), [_EmptySource()], fx=RATES.__getitem__, disk_queries={"empty": ["x"]}, pause=0)
+            app = App(pg.get_uri(), [_EmptySource()], fx=RATES.__getitem__, ram_queries={"empty": ["x"]}, pause=0)
             stop = threading.Event()
             worker = threading.Thread(target=app.run_scheduler, args=(stop,), kwargs={"interval": 60}, daemon=True)
             worker.start()
@@ -392,7 +416,7 @@ class Scheduler(unittest.TestCase):
     def test_a_restart_with_a_hunt_overdue_waits_one_interval(self):
         pg = _pg()
         try:
-            app = App(pg.get_uri(), [_EmptySource()], fx=RATES.__getitem__, disk_queries={"empty": ["x"]}, pause=0)
+            app = App(pg.get_uri(), [_EmptySource()], fx=RATES.__getitem__, ram_queries={"empty": ["x"]}, pause=0)
             app.hunt()
             with app.store._conn() as c:
                 c.execute("UPDATE hunts SET started = now() - interval '7 hours'")
@@ -422,7 +446,7 @@ class SchedulerSurvivesStoreErrors(unittest.TestCase):
     def test_scheduler_keeps_running_when_the_store_fails(self):
         pg = _pg()
         try:
-            app = App(pg.get_uri(), [_EmptySource()], fx=RATES.__getitem__, disk_queries={"empty": ["x"]}, pause=0)
+            app = App(pg.get_uri(), [_EmptySource()], fx=RATES.__getitem__, ram_queries={"empty": ["x"]}, pause=0)
             calls = []
 
             def flaky():
@@ -475,14 +499,14 @@ class EmptySourceKeepsItsLastGoodListings(unittest.TestCase):
                 q = urllib.parse.parse_qs(urllib.parse.urlparse(url).query)["q"][0]
                 return state["items"].get(q, {"itemSummaries": []})
             app = App(pg.get_uri(), [EbaySource("id", "secret", fetch=fetch)], fx=RATES.__getitem__,
-                      disk_queries={"ebay_uk": list(FIXTURE)}, pause=0)
+                      ram_queries={"ebay_uk": list(FIXTURE)}, pause=0)
             app.hunt()
-            before = len(re.findall("data-listing=", app.page()))
+            before = len(re.findall("data-ram=", app.page()))
             state["items"] = {}  # the Source now returns nothing
             app.hunt()
             page = app.page()
             self.assertIn('data-fault="ebay_uk"', page)
-            self.assertEqual(len(re.findall("data-listing=", page)), before)
+            self.assertEqual(len(re.findall("data-ram=", page)), before)
             self.assertGreater(before, 5)
         finally:
             pg.cleanup()
@@ -493,7 +517,7 @@ class EbayMalformedItem(unittest.TestCase):
         def fetch(url, headers=None, data=None):
             if "oauth2/token" in url:
                 return {"access_token": "t", "expires_in": 7200}
-            return {"itemSummaries": ["not-an-item", FIXTURE["exos 16tb"]["itemSummaries"][0]]}
+            return {"itemSummaries": ["not-an-item", FIXTURE["ddr4 ecc rdimm 32gb"]["itemSummaries"][0]]}
         self.assertEqual(len(EbaySource("id", "secret", fetch=fetch).search("q")), 1)
 
 
@@ -504,7 +528,7 @@ class PriceHistoryAndGone(unittest.TestCase):
         pg = _pg()
         try:
             items = [it for v in FIXTURE.values() for it in v["itemSummaries"]
-                     if (f := read_disk(it["title"], "used")) and not isinstance(f, Unreadable) and f.qualifies
+                     if getattr(read_ram(it["title"], "used"), "qualifies", False)
                      and it.get("conditionId") == "3000" and it.get("shippingOptions")]
             stays, drops, leaves = items[0], json.loads(json.dumps(items[1])), items[2]
             state = {"items": [stays, drops, leaves]}
@@ -514,7 +538,7 @@ class PriceHistoryAndGone(unittest.TestCase):
                     return {"access_token": "t", "expires_in": 7200}
                 return {"itemSummaries": state["items"]}
             app = App(pg.get_uri(), [EbaySource("id", "secret", fetch=fetch)], fx=RATES.__getitem__,
-                      disk_queries={"ebay_uk": ["q"]}, pause=0)
+                      ram_queries={"ebay_uk": ["q"]}, pause=0)
             app.hunt()
             old_price = float(drops["price"]["value"])
             drops["price"]["value"] = f"{old_price - 20:.2f}"
@@ -522,14 +546,14 @@ class PriceHistoryAndGone(unittest.TestCase):
             app.hunt()
 
             page = app.page()
-            row = lambda it: re.search(r'<tr data-listing="%s"[^>]*>.*?</tr>' % re.escape(htmllib.escape(it["itemId"])), page, re.S)
+            row = lambda it: re.search(r'<tr data-ram="%s"[^>]*>.*?</tr>' % re.escape(htmllib.escape(it["itemId"])), page, re.S)
             self.assertIn('data-drop="1"', row(drops).group(0))
             self.assertIn(f"seller price was {old_price:,.0f} GBP", row(drops).group(0))
             self.assertNotIn('data-drop="1"', row(stays).group(0))
             self.assertIn('data-gone="1"', row(leaves).group(0))
             self.assertIn("last seller price", row(leaves).group(0))
             # Gone rows sort after live ones
-            order = [m for m in re.findall(r'<tr data-listing="([^"]+)"', page)]
+            order = [m for m in re.findall(r'<tr data-ram="([^"]+)"', page)]
             self.assertEqual(order[-1], htmllib.escape(leaves["itemId"]))
 
             with app.store._conn() as c:
@@ -541,11 +565,11 @@ class PriceHistoryAndGone(unittest.TestCase):
             pg.cleanup()
 
 
-class SmrReclassification(unittest.TestCase):
-    def test_hunt_rejects_a_previously_qualifying_disk(self):
+class Reclassification(unittest.TestCase):
+    def test_hunt_rejects_a_previously_qualifying_listing(self):
         pg = _pg()
         try:
-            item = _ebay_item("v1|smr|0", "WD 14TB 3.5 SATA HDD", 100, 10)
+            item = _ebay_item("v1|ram|0", "Samsung 32GB DDR4 ECC RDIMM", 40, 3)
 
             def fetch(url, headers=None, data=None):
                 if "oauth2/token" in url:
@@ -555,10 +579,10 @@ class SmrReclassification(unittest.TestCase):
                 return {"itemSummaries": [item]}
 
             app = App(pg.get_uri(), [EbaySource("id", "secret", fetch=fetch)], fx=RATES.__getitem__,
-                      disk_queries={"ebay_uk": ["q"]}, ram_queries={}, pause=0)
+                      ram_queries={"ebay_uk": ["q"]}, pause=0)
             app.hunt()
-            self.assertIn(item["itemId"], {r["source_id"] for r in app.store.best_disks()})
-            item["title"] = "WD HSH721414ALE6M0 14TB 3.5 SATA HDD"
+            self.assertIn(item["itemId"], {r["source_id"] for r in app.store.best_ram()})
+            item["title"] = "Samsung 32GB DDR4 ECC RDIMM faulty"
 
             app.hunt()
 
@@ -566,12 +590,12 @@ class SmrReclassification(unittest.TestCase):
                 row = c.execute("SELECT qualifies, facts, missing FROM listings WHERE source_id = %s",
                                 (item["itemId"],)).fetchone()
             self.assertIs(row["qualifies"], False)
-            self.assertIs(row["facts"]["smr"], True)
+            self.assertIs(row["facts"]["working"], False)
             self.assertEqual(row["missing"], [])
-            self.assertNotIn(item["itemId"], {r["source_id"] for r in app.store.best_disks()})
-            self.assertNotIn('data-listing="v1|smr|0"', app.page())
-            search = app.search_page("q", "disk")
-            self.assertIn('data-result="v1|smr|0" data-qualifies="0"', search)
+            self.assertNotIn(item["itemId"], {r["source_id"] for r in app.store.best_ram()})
+            self.assertNotIn('data-ram="v1|ram|0"', app.page())
+            search = app.search_page("q", "ram")
+            self.assertIn('data-result="v1|ram|0" data-qualifies="0"', search)
             self.assertIn("Rejected by the rules", search)
         finally:
             pg.cleanup()
@@ -613,7 +637,7 @@ def _finn_app(docs, descriptions, router=fake_router):
         text = descriptions[url.rsplit("/", 1)[1]]
         return f'<section data-testid="description"><p>{htmllib.escape(text)}</p></section>'
     pg = _pg()
-    app = App(pg.get_uri(), [FinnSource(fetch=fetch, pause=0)], fx=RATES.__getitem__, disk_queries={"finn": ["12tb"]},
+    app = App(pg.get_uri(), [FinnSource(fetch=fetch, pause=0)], fx=RATES.__getitem__, ram_queries={"finn": ["rdimm"]},
               pause=0, router=router)
     return pg, app
 
@@ -626,8 +650,8 @@ def _doc(fid, heading, price, lat, lon, flags=()):
 
 class FinnCoordinatesAreValidated(unittest.TestCase):
     def test_bad_coordinates_become_unknown_place(self):
-        docs = [_doc(7, '12TB SATA HDD 3.5"', 5000, "abc", 10.7),
-                _doc(8, '12TB SATA HDD 3.5"', 5000, float("nan"), 10.7)]
+        docs = [_doc(7, "Samsung 32GB DDR4 ECC RDIMM", 5000, "abc", 10.7),
+                _doc(8, "Samsung 32GB DDR4 ECC RDIMM", 5000, float("nan"), 10.7)]
         pg, app = _finn_app(docs, {"7": "", "8": ""})
         try:
             app.hunt()
@@ -636,154 +660,6 @@ class FinnCoordinatesAreValidated(unittest.TestCase):
             self.assertEqual(unreadable, {"7": "location", "8": "location"})
         finally:
             pg.cleanup()
-
-
-def _ebay_item(iid, title, price, ship, pct="99.8", score=5000):
-    it = {"itemId": iid, "title": title, "price": {"value": str(price), "currency": "GBP"}, "conditionId": "3000",
-          "itemWebUrl": f"https://www.ebay.co.uk/itm/{iid}", "seller": {"username": "s", "feedbackPercentage": pct,
-                                                                         "feedbackScore": score}}
-    if ship is not None:
-        it["shippingOptions"] = [{"shippingCost": {"value": str(ship), "currency": "GBP"}}]
-    return it
-
-
-class EbayDiskStockEndToEnd(unittest.TestCase):
-    """Seam 1: an eBay Disk Listing with stock supplies several disks; the first unit pays the shipping,
-    each more pays the item's extra-unit shipping, or the full shipping again when eBay does not state it."""
-
-    @classmethod
-    def setUpClass(cls):
-        disk = 'Seagate Exos X16 16TB 3.5" SATA HDD'
-        # eBay sorts by price: the item-call budget (patched to 8) goes to the cheapest qualifying Disks only
-        items = ([_ebay_item("small", 'Seagate Exos 8TB 3.5" SATA HDD', 50, 20)]         # too small: no call
-                 + [_ebay_item(i, disk, 190, 20) for i in "BCDEF"]                          # singles: 210 each
-                 + [_ebay_item("A", disk, 200, 20),                                         # 220, then 205 each
-                    _ebay_item("G", disk, 400, 20),                                         # "more than 10", 3 a buyer
-                    _ebay_item("H", disk, 410, 20),                                         # item call fails
-                    _ebay_item("I", disk, 420, 20)])                                        # over the budget
-        ship = {"shippingCost": {"value": "20.00", "currency": "GBP"}}
-        cls.details = {
-            "A": {"estimatedAvailabilities": [{"estimatedAvailableQuantity": 10}],
-                  "shippingOptions": [{**ship, "additionalShippingCostPerUnit": {"value": "5.00", "currency": "GBP"}}]},
-            "G": {"estimatedAvailabilities": [{"availabilityThresholdType": "MORE_THAN", "availabilityThreshold": 10}],
-                  "quantityLimitPerBuyer": 3, "shippingOptions": [ship]},
-        }
-        cls.calls = []
-
-        def fetch(url, headers=None, data=None):
-            cls.calls.append(url)
-            if "oauth2/token" in url:
-                return {"access_token": "t", "expires_in": 7200}
-            if "/item/" in url:
-                iid = url.rsplit("/", 1)[1]
-                if iid == "H":
-                    raise urllib.error.HTTPError(url, 429, "Too Many Requests", None, None)
-                return cls.details.get(iid, {})
-            q = urllib.parse.parse_qs(urllib.parse.urlparse(url).query)
-            if q.get("category_ids") == ["11211"]:
-                return {"itemSummaries": [_ebay_item("M", 'Dell PowerEdge R730xd 12x 3.5" LFF', 400, 80)]}
-            return {"itemSummaries": items}
-
-        cls.pg = _pg()
-        with mock.patch("dealfinder.sources.EBAY_STOCK_LOOKUPS", 8):
-            cls.app = App(cls.pg.get_uri(), [EbaySource("id", "secret", fetch=fetch)], fx=RATES.__getitem__,
-                          disk_queries={"ebay_uk": ["exos 16tb"]}, pause=0,
-                          router=fake_router)
-            cls.app.hunt()
-        cls.page, cls.first_hunt = cls.app.page(), list(cls.calls)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.pg.cleanup()
-
-    def stored(self, iid):
-        with self.app.store._conn() as c:
-            return c.execute("SELECT facts, costs, landed_nok FROM listings WHERE source_id = %s", (iid,)).fetchone()
-
-
-    def test_more_than_is_its_threshold_capped_per_buyer_and_unknown_extra_shipping_is_charged_again(self):
-        g = self.stored("G")
-        self.assertEqual(g["facts"]["stock"], 3)
-        self.assertAlmostEqual(g["costs"]["extra_unit"], float(g["landed_nok"]), places=2)
-        self.assertEqual(self.stored("A")["facts"]["stock"], 10)
-        self.assertEqual(self.stored("B")["facts"]["stock"], 1)
-        self.assertNotIn("extra_unit", self.stored("B")["costs"])
-
-    def test_item_calls_go_to_the_cheapest_qualifying_disks_and_a_failed_one_counts_one_disk(self):
-        fetched = [u.rsplit("/", 1)[1] for u in self.first_hunt if "/item/" in u]
-        self.assertEqual(sorted(fetched), sorted("BCDEFAGH"))
-        self.assertEqual(self.stored("H")["facts"]["stock"], 1)
-        self.assertEqual(self.stored("I")["facts"]["stock"], 1)
-        self.assertIn('dealfinder_source_up{source="ebay_uk"} 1', self.app.metrics())
-
-    def test_stock_is_read_once_a_day(self):
-        self.calls.clear()
-        with mock.patch("dealfinder.sources.EBAY_STOCK_LOOKUPS", 8):
-            self.app.hunt()
-        self.assertEqual([u.rsplit("/", 1)[1] for u in self.calls if "/item/" in u], ["H"])  # only the failed one
-        self.assertEqual(self.stored("A")["facts"]["stock"], 10)
-
-    def test_a_new_pod_does_not_read_stock_again(self):
-        calls, fetch = [], self.app.sources[0]._fetch
-
-        def counting(url, headers=None, data=None):
-            calls.append(url)
-            return fetch(url, headers, data)
-        with mock.patch("dealfinder.sources.EBAY_STOCK_LOOKUPS", 8):
-            app = App(self.pg.get_uri(), [EbaySource("id", "secret", fetch=counting)], fx=RATES.__getitem__,
-                      disk_queries={"ebay_uk": ["exos 16tb"]}, pause=0,
-                      router=fake_router)
-            app.hunt()
-        self.assertEqual(sorted(u.rsplit("/", 1)[1] for u in calls if "/item/" in u), ["H"])
-        self.assertEqual(self.stored("A")["facts"]["stock"], 10)
-
-
-class FinnDiskLotsEndToEnd(unittest.TestCase):
-    """Seam 1: a title that names several disks ("4x 16TB") is one lot at its price; one priced per disk (title,
-    description, or under DISK_MIN_NOK_PER_TB) is one disk, sold up to the stock its text states."""
-
-    @classmethod
-    def setUpClass(cls):
-        ship = ["shipping_exists", "seller_pays_shipping"]
-        disks = [_doc(10, '4x Seagate Exos X16 16TB 3.5" SATA', 7000, 60.4, 5.5, ship),       # a lot: 1,750 a disk
-                 _doc(11, '4 stk Seagate Exos X16 16TB 3.5" SATA', 1900, 60.4, 5.5, ship),    # description: per disk
-                 _doc(12, '5 stk Seagate Exos X16 16TB 3.5" SATA', 1300, 60.4, 5.5, ship)]    # 16 NOK/TB: per disk
-        disks += [_doc(20 + i, 'Seagate Exos X16 16TB 3.5" SATA', 2000 + i, 60.4, 5.5, ship) for i in range(3)]
-        descriptions = {"10": "Fire disker, selges samlet.", "11": "Fire like disker. Pris per stk.",
-                        "12": "Fem disker."}
-
-        def fetch(url):
-            if "/search?" in url:
-                q = urllib.parse.parse_qs(url.split("?", 1)[1])
-                docs = disks if q["condition"] == ["3", "4"] else []
-                blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
-                return f"<script>{blob}</script>"
-            return f'<section data-testid="description"><p>{descriptions.get(url.rsplit("/", 1)[1], "")}</p></section>'
-
-        cls.pg = _pg()
-        cls.app = App(cls.pg.get_uri(), [FinnSource(fetch=fetch, pause=0)], fx=RATES.__getitem__,
-                      disk_queries={"finn": ["exos"]}, pause=0, router=fake_router)
-        cls.app.hunt()
-        cls.page = cls.app.page()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.pg.cleanup()
-
-
-    def test_best_disks_price_a_lot_per_disk_and_say_it_is_a_lot(self):
-        rows = dict(re.findall(r'data-listing="(\d+)" data-nok-per-tb="([\d.]+)"', self.page))
-        self.assertAlmostEqual(float(rows["10"]), round(_shipped(7000) / 64, 2), places=2)
-        self.assertAlmostEqual(float(rows["11"]), round(_shipped(1900) / 16, 2), places=2)
-        self.assertAlmostEqual(float(rows["12"]), round(_shipped(1300) / 16, 2), places=2)
-        self.assertIn("<td>4 &times; 16 TB</td>", self.page.split('data-listing="10"', 1)[1].split("</tr>", 1)[0])
-
-    def test_a_text_priced_per_disk_sells_its_stated_stock(self):
-        # "4 stk" priced per disk: 4 on sale, each after the first at its price + Trygg betaling (seller pays shipping)
-        with self.app.store._conn() as c:
-            row = c.execute("SELECT facts, costs FROM listings WHERE source_id = '11'").fetchone()
-        self.assertEqual((row["facts"]["count"], row["facts"]["stock"]), (1, 4))
-        self.assertAlmostEqual(row["costs"]["extra_unit"], _shipped(1900), places=2)
 
 
 class RamEndToEnd(unittest.TestCase):
@@ -823,7 +699,7 @@ class RamEndToEnd(unittest.TestCase):
 
         cls.pg = _pg()
         cls.app = App(cls.pg.get_uri(), [EbaySource("id", "secret", fetch=ebay), FinnSource(fetch=finn, pause=0)],
-                      fx=RATES.__getitem__, disk_queries={"ebay_uk": []}, ram_queries={"ebay_uk": ["ddr4 ecc rdimm 32gb"], "finn": ["rdimm"]},
+                      fx=RATES.__getitem__, ram_queries={"ebay_uk": ["ddr4 ecc rdimm 32gb"], "finn": ["rdimm"]},
                       pause=0, router=fake_router)
         cls.app.hunt()
         cls.page = cls.app.page()
@@ -878,7 +754,7 @@ class RamEndToEnd(unittest.TestCase):
         self.assertIn("<th>NOK per GB</th>", page)
         self.assertIn(f"<td>{_shipped(6000):,.0f}</td><td>{_shipped(6000) / 128:,.0f}</td>",
                       page.split('data-result="60"', 1)[1].split("</tr>", 1)[0])
-        self.assertIn('<option value="ram">RAM</option>', self.page)
+        self.assertIn('<input type="hidden" name="kind" value="ram">', self.page)
         self.assertIn('data-tracked="ram:rdimm"', self.page)
 
 
@@ -894,10 +770,9 @@ class FinnFeesAndPerUnitEndToEnd(unittest.TestCase):
                 _doc(83, "2x 32GB DDR4-2400 ECC RDIMM", 1000, *oslo),                              # pickup only
                 _doc(85, "128 GB (8 x 16 GB) Micron DDR4-2400 ECC RDIMM VLR", 5800, *oslo, free),   # live 477364211
                 _doc(86, "Kingston 16GB DDR4 2666 ECC RDIMM", 500, *oslo, fiks),                   # one stick
-                _doc(87, "2x 16GB DDR4-2400 ECC RDIMM", 700, *oslo)]                  # pickup only by flags
-        cls.docs = {"rdimm": rams, "ddr4 ecc": rams,
-                    "exos": [_doc(81, 'Seagate Exos X16 16TB 3.5" SATA', 2000, *oslo, fiks),
-                             _doc(84, '12TB SATA HDD 3.5"', 5000, 59.3, 10.2, fiks)]}
+                _doc(87, "2x 16GB DDR4-2400 ECC RDIMM", 700, *oslo),                 # pickup only by flags
+                _doc(84, "Samsung 32GB DDR4 ECC RDIMM", 5000, 59.3, 10.2, fiks)]    # near: a trip beats Fiks ferdig
+        cls.docs = {"rdimm": rams, "ddr4 ecc": rams}
         descriptions = {"80": "Bare 4 igjen 16Gb DDR4 2400 ECC RDIMN !!! Pris per srk.",
                         "85": "Kan også selges enkeltvis for 750kr per brikke. Spesifikasjoner per brikke: 16GB per modul.",
                         "87": "Gratis frakt i hele Norge."}
@@ -918,7 +793,7 @@ class FinnFeesAndPerUnitEndToEnd(unittest.TestCase):
 
         cls.pg = _pg()
         cls.app = App(cls.pg.get_uri(), [FinnSource(fetch=fetch, pause=0)], fx=RATES.__getitem__,
-                      disk_queries={"finn": ["exos"]}, ram_queries={"finn": ["rdimm", "ddr4 ecc"]}, pause=0,
+                      ram_queries={"finn": ["rdimm", "ddr4 ecc"]}, pause=0,
                       router=router)
         cls.app.hunt()
         cls.page = cls.app.page()
@@ -947,7 +822,7 @@ class FinnFeesAndPerUnitEndToEnd(unittest.TestCase):
         self.assertAlmostEqual(per_gb, _shipped(5800) / 128, places=1)
 
     def test_only_multi_unit_parts_are_read_once_across_queries(self):
-        self.assertEqual(sorted(self.fetched), ["80", "81", "83", "84", "85", "87"])
+        self.assertEqual(sorted(self.fetched), ["80", "83", "85", "87"])
 
     def test_a_part_offering_free_shipping_in_its_text_is_shipped(self):
         # pickup only by finn's flags, but "Gratis frakt" in the text: 700 + Trygg betaling, no trip
@@ -955,19 +830,15 @@ class FinnFeesAndPerUnitEndToEnd(unittest.TestCase):
         self.assertAlmostEqual(per_gb, _shipped(700) / 32, places=1)
         self.assertNotIn("pickup trip", self.row("ram", 87))
 
-    def test_disk_with_fiks_ferdig_pays_the_small_parcel_estimate_and_fee(self):
-        per_tb = float(re.search(r'data-listing="81" data-nok-per-tb="([\d.]+)"', self.page)[1])
-        self.assertAlmostEqual(per_tb, (2000 + 65 + _fee(2000)) / 16, places=1)
-
-
     def test_near_pickup_pays_the_trip_and_no_fee(self):
         # pickup only: 1,000 + trip 952, no Trygg betaling
         per_gb = float(re.search(r'data-ram="83" data-nok-per-gb="([\d.]+)"', self.page)[1])
         self.assertAlmostEqual(per_gb * 64, 1000 + 952, places=1)
         self.assertNotIn("Trygg betaling", self.row("ram", 83))
-        landed = next(float(r["landed_nok"]) for r in self.app.store.best_disks() if r["source_id"] == "84")
+        # Fiks ferdig is offered, but a 320 NOK trip is cheaper than 65 + Trygg betaling (est.) 329
+        landed = next(float(r["landed_nok"]) for r in self.app.store.best_ram() if r["source_id"] == "84")
         self.assertAlmostEqual(landed, 5320, places=2)
-        self.assertIn("pickup trip 320", self.row("listing", 84))
+        self.assertIn("pickup trip 320", self.row("ram", 84))
 
 
 class SearchAndTrack(unittest.TestCase):
@@ -976,22 +847,22 @@ class SearchAndTrack(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.queries = []
-        x20 = {"itemSummaries": [_ebay_item("v1|x20|0", 'Seagate Exos X20 20TB 3.5" SATA enterprise HDD', 250, 10)]}
+        lr64 = {"itemSummaries": [_ebay_item("v1|lr64|0", "Samsung 64GB DDR4 ECC LRDIMM M386A8K40BM1", 120, 5)]}
 
         def ebay(url, headers=None, data=None):
             if "oauth2/token" in url:
                 return {"access_token": "t", "expires_in": 7200}
             q = urllib.parse.parse_qs(urllib.parse.urlparse(url).query)["q"][0]
             cls.queries.append(("ebay_uk", q))
-            return x20 if q == "exos x20" else {"itemSummaries": []}
+            return lr64 if q == "samsung 64gb" else {"itemSummaries": []}
 
         def finn(url):
             if "/search?" not in url:
-                return ""  # a qualifying Disk's item page: no text
+                return ""  # an item page: no text
             q = urllib.parse.parse_qs(url.split("?", 1)[1])
             cls.queries.append(("finn", q["q"][0]))
-            docs = [_doc(99, 'Seagate Exos X20 20TB 3.5"', 3000, 59.9, 10.7, ["shipping_exists", "seller_pays_shipping"])]
-            docs = docs if q["q"] == ["exos x20"] and q["condition"] == ["3", "4"] else []
+            docs = [_doc(99, "Samsung 64GB DDR4 ECC LRDIMM", 3000, 59.9, 10.7, ["shipping_exists", "seller_pays_shipping"])]
+            docs = docs if q["q"] == ["samsung 64gb"] and q["condition"] == ["3", "4"] else []
             blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
             return f"<script>{blob}</script>"
 
@@ -1009,37 +880,35 @@ class SearchAndTrack(unittest.TestCase):
         cls.pg.cleanup()
 
     def test_search_track_then_hunt(self):
-        with urllib.request.urlopen(self.base + "/search?q=Exos+X20&kind=disk") as r:
+        with urllib.request.urlopen(self.base + "/search?q=Samsung+64GB&kind=ram") as r:
             page = r.read().decode()
         results = dict(re.findall(r'data-result="([^"]+)" data-qualifies="(\d)"', page))
-        self.assertEqual(results, {"v1|x20|0": "1", "99": "1"})  # both Sources, scored now
+        self.assertEqual(results, {"v1|lr64|0": "1", "99": "1"})  # both Sources, scored now
         self.assertEqual(self.app.store.last_hunt(), None)       # a Search is not a Hunt and saves nothing
 
-        req = urllib.request.Request(self.base + "/track", data=b"q=Exos+X20&kind=disk", method="POST")
+        req = urllib.request.Request(self.base + "/track", data=b"q=Samsung+64GB&kind=ram", method="POST")
         with urllib.request.urlopen(req) as r:
-            self.assertIn('data-tracked="disk:exos x20"', r.read().decode())
+            self.assertIn('data-tracked="ram:samsung 64gb"', r.read().decode())
 
         self.queries.clear()
         self.app.hunt()
-        self.assertIn(("ebay_uk", "exos x20"), self.queries)
-        self.assertIn(("finn", "exos x20"), self.queries)
-        shown = set(re.findall(r'data-listing="([^"]+)"', self.app.page()))
-        self.assertTrue({"v1|x20|0", "99"} <= shown)
+        self.assertIn(("ebay_uk", "samsung 64gb"), self.queries)
+        self.assertIn(("finn", "samsung 64gb"), self.queries)
+        shown = set(re.findall(r'data-ram="([^"]+)"', self.app.page()))
+        self.assertTrue({"v1|lr64|0", "99"} <= shown)
 
     def test_starting_set_is_seeded_once(self):
         tracked = {(r["query"], r["kind"]) for r in self.app.store.tracked()}
-        for q in ("exos 12tb", "wd purple 12tb", "barracuda 12tb", "exos 14tb", "exos 16tb"):
-            self.assertIn((q, "disk"), tracked)
         for q in ("ddr4 ecc rdimm 16gb", "ddr4 ecc rdimm 32gb", "ddr4 lrdimm 64gb", "ddr4 ecc", "rdimm"):
             self.assertIn((q, "ram"), tracked)
         before = len(self.app.store.tracked())
-        App(self.pg.get_uri(), self.sources, fx=RATES.__getitem__, disk_queries={"finn": ["other"]}, pause=0,
+        App(self.pg.get_uri(), self.sources, fx=RATES.__getitem__, ram_queries={"finn": ["other"]}, pause=0,
             router=fake_router)  # a restart must not re-seed
         self.assertEqual(len(self.app.store.tracked()), before)
 
     def test_bad_input_is_rejected(self):
-        for path in ("/search?q=&kind=disk", "/search?q=x&kind=car", "/search?q=x&kind=machine",
-                     "/search?q=x&kind=cpu", "/search?q=x&kind=heatsink"):
+        for path in ("/search?q=&kind=ram", "/search?q=x&kind=car", "/search?q=x&kind=disk",
+                     "/search?q=x&kind=machine", "/search?q=x&kind=cpu", "/search?q=x&kind=heatsink"):
             with self.assertRaises(urllib.error.HTTPError) as err:
                 urllib.request.urlopen(self.base + path)
             self.assertEqual(err.exception.code, 400)
@@ -1050,9 +919,13 @@ class SearchAndTrack(unittest.TestCase):
             conn.endheaders()
             self.assertEqual(conn.getresponse().status, 400, length)
             conn.close()
-        req = urllib.request.Request(self.base + "/track", data=b"q=a%00b&kind=disk", method="POST")
+        req = urllib.request.Request(self.base + "/track", data=b"q=x&kind=disk", method="POST")
+        with self.assertRaises(urllib.error.HTTPError) as err:
+            urllib.request.urlopen(req)
+        self.assertEqual(err.exception.code, 400)
+        req = urllib.request.Request(self.base + "/track", data=b"q=a%00b&kind=ram", method="POST")
         with urllib.request.urlopen(req) as r:
-            self.assertIn('data-tracked="disk:a b"', r.read().decode())
+            self.assertIn('data-tracked="ram:a b"', r.read().decode())
 
 
 class TrackedQuerySeeding(unittest.TestCase):
@@ -1061,14 +934,10 @@ class TrackedQuerySeeding(unittest.TestCase):
     def test_a_new_source_gets_its_starting_queries_on_an_already_seeded_database(self):
         pg = _pg()
         try:
-            App(pg.get_uri(), [], fx=RATES.__getitem__, disk_queries={"finn": ["exos"]}, ram_queries={"finn": []},
-                )
-            app = App(pg.get_uri(), [], fx=RATES.__getitem__, disk_queries={"finn": ["other"], "ebay_uk": ["x20"]},
-                      ram_queries={"finn": ["rdimm"]},
-                      )
+            App(pg.get_uri(), [], fx=RATES.__getitem__, ram_queries={"finn": ["rdimm"]})
+            app = App(pg.get_uri(), [], fx=RATES.__getitem__, ram_queries={"finn": ["other"], "ebay_uk": ["ddr4"]})
             got = {(r["query"], r["kind"], r["source"]) for r in app.store.tracked()}
-            self.assertEqual(got, {("exos", "disk", "finn"), ("x20", "disk", "ebay_uk"),
-                                   ("rdimm", "ram", "finn")})
+            self.assertEqual(got, {("rdimm", "ram", "finn"), ("ddr4", "ram", "ebay_uk")})
         finally:
             pg.cleanup()
 
@@ -1077,7 +946,7 @@ class TrackedQuerySeeding(unittest.TestCase):
         try:
             app = App(pg.get_uri(), [], fx=RATES.__getitem__)
             with app.store._conn() as c:
-                c.execute("INSERT INTO tracked_queries (query, kind, source) VALUES ('exos', 'disk', 'aliexpress')")
+                c.execute("INSERT INTO tracked_queries (query, kind, source) VALUES ('rdimm', 'ram', 'aliexpress')")
             app.store.migrate()
             self.assertNotIn("aliexpress", {r["source"] for r in app.store.tracked()})
         finally:
@@ -1089,24 +958,23 @@ class PriceHistory(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.disk_price = 1500
+        cls.price = 1500
         ship = ["shipping_exists", "seller_pays_shipping"]
 
         def fetch(url):
             if "/search?" in url:
                 q = urllib.parse.parse_qs(url.split("?", 1)[1])
-                disks = [_doc(10 + i, 'Seagate Exos X16 16TB 3.5" SATA', cls.disk_price + 100 * i, 60.4, 5.5, ship)
-                         for i in range(5)]
-                rams = [_doc(50, "4x 32GB DDR4-2400 ECC RDIMM", 2000, 60.4, 5.5, ship)]
-                docs = (rams if q["q"] == ["rdimm"] else disks) if q["condition"] == ["3", "4"] else []
+                kits = [_doc(10 + i, "4x 16GB DDR4-2400 ECC RDIMM", cls.price + 100 * i, 60.4, 5.5, ship)
+                        for i in range(5)]
+                kits.append(_doc(50, "4x 32GB DDR4-2400 ECC RDIMM", 2000, 60.4, 5.5, ship))
+                docs = kits if q["condition"] == ["3", "4"] else []
                 blob = base64.b64encode(json.dumps({"queries": [{"state": {"data": {"docs": docs}}}]}).encode()).decode()
                 return f"<script>{blob}</script>"
             return '<section data-testid="description"></section>'
 
         cls.pg = _pg()
         cls.app = App(cls.pg.get_uri(), [FinnSource(fetch=fetch, pause=0)], fx=RATES.__getitem__,
-                      disk_queries={"finn": ["exos"]}, ram_queries={"finn": ["rdimm"]}, pause=0,
-                      router=fake_router)
+                      ram_queries={"finn": ["rdimm"]}, pause=0, router=fake_router)
         cls.app.hunt()
         import psycopg
         with psycopg.connect(cls.pg.get_uri(), autocommit=True) as c:  # make Hunt 1 a week old
@@ -1115,7 +983,7 @@ class PriceHistory(unittest.TestCase):
             c.execute("UPDATE price_observations SET kind = NULL, units = NULL, "
                       "model = NULL")
         cls.app.store.migrate()
-        cls.disk_price = 1200  # every seller drops the price by 300 NOK
+        cls.price = 1200  # every 16 GB kit seller drops the price by 300 NOK
         cls.app.hunt()
         cls.page = cls.app.history_page()
         cls.main = cls.app.page()  # before any test changes the shared database
@@ -1128,13 +996,12 @@ class PriceHistory(unittest.TestCase):
         row = re.search(rf'<tr data-history="{re.escape(key)}">(.*?)</tr>', self.page).group(1)
         return re.findall(r"<td>([\d,]+) / ([\d,]+) <small>\((\d+)\)</small></td>", row), row
 
-    def test_disk_weeks_show_lowest_median_and_change(self):
-        (old, new), row = self.cells("16 TB|finn")
-        # 5 disks, 1,500..1,900 NOK, then 1,200..1,600; free shipping + Trygg betaling, finn has no VAT; per TB = / 16
-        self.assertEqual(old, (f"{_shipped(1500) / 16:,.0f}", f"{_shipped(1700) / 16:,.0f}", "5"))
-        self.assertEqual(new, (f"{_shipped(1200) / 16:,.0f}", f"{_shipped(1400) / 16:,.0f}", "5"))
+    def test_ram_weeks_show_lowest_median_and_change(self):
+        (old, new), row = self.cells("DDR4 RDIMM 16 GB|finn")
+        # 5 kits, 1,500..1,900 NOK, then 1,200..1,600; free shipping + Trygg betaling, finn has no VAT; per GB = / 64
+        self.assertEqual(old, (f"{_shipped(1500) / 64:,.0f}", f"{_shipped(1700) / 64:,.0f}", "5"))
+        self.assertEqual(new, (f"{_shipped(1200) / 64:,.0f}", f"{_shipped(1400) / 64:,.0f}", "5"))
         self.assertIn(f"{(_shipped(1400) / _shipped(1700) - 1) * 100:+.0f}%", row)
-
 
     def test_parts_have_weekly_rows_per_unit_including_old_hunts(self):
         for key, landed, units in (("DDR4 RDIMM 32 GB|finn", _shipped(2000), 128),):
@@ -1143,34 +1010,34 @@ class PriceHistory(unittest.TestCase):
             self.assertEqual(new, old, key)
 
     def test_listings_under_the_lowest_price_of_earlier_weeks_are_deals(self):
-        # 16 TB: 1,500..1,900 last week, 1,200..1,600 now. Last week's low is 1,500 (per TB, shipped); this week's own
-        # prices are not history, or the low would be 1,200 and nothing would beat it
+        # 4x 16 GB: 1,500..1,900 last week, 1,200..1,600 now. Last week's low is 1,500 (per GB, shipped); this week's
+        # own prices are not history, or the low would be 1,200 and nothing would beat it
         page = self.main
-        rows = dict(re.findall(r'<tr data-listing="(\d+)"([^>]*)>', page))
+        rows = dict(re.findall(r'<tr data-ram="(\d+)"([^>]*)>', page))
         self.assertEqual({i for i, attrs in rows.items() if 'data-deal="1"' in attrs}, {"10", "11", "12"})  # 1,200..1,400
         self.assertIn('data-drop="1" class="deal" data-deal="1"', rows["10"])  # a drop and a deal both show
-        self.assertIn(f"That's a deal: under the lowest price of earlier weeks ({_shipped(1500) / 16:,.0f} NOK per TB)",
+        self.assertIn(f"That's a deal: under the lowest price of earlier weeks ({_shipped(1500) / 64:,.0f} NOK per GB)",
                       page)
-        # one RAM Listing is too little history for a deal price
+        # one 32 GB Listing is too little history for a deal price
         self.assertEqual(page.count('data-deal="1"'), 3)
 
     def test_a_listing_that_stops_qualifying_keeps_its_history(self):
         import psycopg
         with psycopg.connect(self.pg.get_uri(), autocommit=True) as c:  # e.g. now "make an offer"
-            c.execute("UPDATE listings SET qualifies = false, capacity_tb = NULL, facts = NULL WHERE source_id = '10'")
-        page = self.app.history_page()  # rendered after the change; used to raise on a NULL capacity
-        row = re.search(r'<tr data-history="16 TB\|finn">(.*?)</tr>', page).group(1)
+            c.execute("UPDATE listings SET qualifies = false, facts = NULL WHERE source_id = '10'")
+        page = self.app.history_page()  # rendered after the change
+        row = re.search(r'<tr data-history="DDR4 RDIMM 16 GB\|finn">(.*?)</tr>', page).group(1)
         self.assertEqual(re.findall(r"<small>\((\d+)\)</small>", row), ["5", "5"])
         self.assertNotIn('data-history="None', page)
 
     def test_every_page_is_dark(self):
-        for html in (self.page, self.app.page(), self.app.search_page("exos", "disk")):
+        for html in (self.page, self.app.page(), self.app.search_page("rdimm", "ram")):
             self.assertIn('<meta name="color-scheme" content="dark">', html)
             self.assertIn("background:#121212", html)
 
     def test_sections_are_tabs_with_sticky_headers(self):
-        for html, labels in ((self.page, ["Disks, NOK per TB", "RAM, NOK per GB"]),
-                             (self.app.page(), ["Best Disks", "Best RAM", "Could not read"])):
+        for html, labels in ((self.page, ["RAM, NOK per GB"]),
+                             (self.app.page(), ["Best RAM", "Could not read"])):
             self.assertEqual(re.findall(r'<label for="tab\d">([^<]+)</label>', html), labels)
             self.assertEqual(html.count("<section>"), len(labels))
             self.assertEqual(html.count('name="tab" id="tab0" checked'), 1)

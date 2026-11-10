@@ -6,11 +6,10 @@ import urllib.request
 import pgserver
 
 from dealfinder.app import App
-from dealfinder.store import Store
 from dealfinder.sources import EbaySource, Listing
 
 
-class DiskRamScope(unittest.TestCase):
+class RamScope(unittest.TestCase):
     def setUp(self):
         self.pg = pgserver.get_server(tempfile.mkdtemp(), cleanup_mode="stop")
         self.addCleanup(self.pg.cleanup)
@@ -20,37 +19,16 @@ class DiskRamScope(unittest.TestCase):
         self.addCleanup(app.store._pool.close)
         return app
 
-    def test_existing_queries_gain_new_defaults_once_without_restoring_removed_queries(self):
-        store = Store(self.pg.get_uri())
-        self.addCleanup(store._pool.close)
-        store.migrate()
-        store.seed_tracked([("exos 14tb", "disk", "ebay_uk"), ("exos 16tb", "disk", "ebay_uk"),
-                            ("exos", "disk", "finn")])
-        with store._conn() as c:
-            c.execute("DELETE FROM tracked_queries WHERE query = 'exos 14tb'")
-        app = self.app()
-        queries = {(r["query"], r["source"]) for r in app.store.tracked()}
-        for query, source in (("exos 12tb", "ebay_uk"), ("wd purple 12tb", "ebay_uk"),
-                              ("barracuda 12tb", "ebay_uk"), ("12tb", "finn"), ("purple", "finn")):
-            self.assertIn((query, source), queries)
-        self.assertNotIn(("exos 14tb", "ebay_uk"), queries)
-        with store._conn() as c:
-            c.execute("DELETE FROM tracked_queries WHERE query = 'wd purple 12tb'")
-        self.app()
-        self.assertNotIn("wd purple 12tb", [r["query"] for r in store.tracked()])
-
     def test_old_kinds_are_not_hunted_shown_or_counted(self):
         class Source:
             name = "finn"
             foreign = False
 
             def search(self, query, kind):
-                if kind not in ("disk", "ram"):
+                if kind != "ram":
                     raise AssertionError(kind)
-                if kind == "disk":
-                    return [Listing("finn", "current", '12TB SATA HDD 3.5"', "https://www.finn.no/current",
-                                    2000, "NOK", 0, "NOK", "used", None)]
-                return []
+                return [Listing("finn", "current", "Samsung 32GB DDR4 ECC RDIMM", "https://www.finn.no/current",
+                                2000, "NOK", 0, "NOK", "used", None)]
 
         app = self.app()
         app.sources = [Source()]
@@ -71,24 +49,49 @@ class DiskRamScope(unittest.TestCase):
         for text in ('kind="machine"', 'kind="cpu"', 'kind="heatsink"', "dealfinder_best_build", "dealfinder_builds_hidden"):
             self.assertNotIn(text, app.metrics())
 
-    def test_purple_lot_is_ranked_per_12tb_disk(self):
+    def test_old_disk_rows_are_kept_but_not_hunted_shown_counted_or_ranked(self):
+        searched = []
+
         class Source:
             name = "finn"
             foreign = False
 
             def search(self, query, kind):
-                if kind != "disk":
-                    return []
-                return [Listing("finn", "purple", "60 TB lagring | 5x 12TB Western Digital Purple disker | WD121PURZ",
-                                "https://www.finn.no/purple", 10500, "NOK", 0, "NOK", "used", None)]
+                searched.append((query, kind))
+                return [Listing("finn", "ram", "Samsung 32GB DDR4 ECC RDIMM", "https://www.finn.no/ram",
+                                2000, "NOK", 0, "NOK", "used", None)]
 
-        app = self.app()
-        app.sources = [Source()]
+        app = App(self.pg.get_uri(), [Source()], fx=lambda _: 1, ram_queries={"finn": ["rdimm"]}, pause=0)
+        self.addCleanup(app.store._pool.close)
+        with app.store._conn() as c:
+            c.execute("INSERT INTO tracked_queries (query, kind) VALUES ('exos', 'disk')")
+            c.execute("INSERT INTO listings (source, source_id, kind, title, url, price, currency, facts, missing, "
+                      "qualifies, capacity_tb, landed_nok) VALUES "
+                      "('finn', 'disk-ranked', 'disk', 'old ranked disk', 'https://www.finn.no/1', 2000, 'NOK', "
+                      "'{\"count\": 1}', '{}', true, 16, 2000), "
+                      "('finn', 'disk-unread', 'disk', 'old unreadable disk', 'https://www.finn.no/2', 2000, 'NOK', "
+                      "NULL, ARRAY['capacity'], false, NULL, NULL)")
+            for i in range(5):  # enough earlier-week Disk history for a deal price, were Disks still ranked
+                c.execute("INSERT INTO price_observations (source, source_id, hunt_id, price, currency, seen_at, kind, "
+                          "landed_nok, capacity_tb, units) VALUES ('finn', %s, 0, 1000, 'NOK', "
+                          "now() - interval '8 days', 'disk', 1000, 16, 1)", (f"disk-{i}",))
         app.hunt()
-        row, = app.store.best_disks()
-        self.assertEqual(row["count"], 5)
-        self.assertEqual(row["capacity_tb"], 12)
-        self.assertAlmostEqual(float(row["nok_per_tb"]), 185.98, places=2)
+        with app.store._conn() as c:
+            c.execute("UPDATE listings SET last_seen = now()")
+            self.assertEqual(c.execute("SELECT count(*) AS n FROM listings WHERE kind = 'disk'").fetchone()["n"], 2)
+            self.assertEqual(c.execute("SELECT count(*) AS n FROM tracked_queries WHERE kind = 'disk'")
+                             .fetchone()["n"], 1)
+        self.assertEqual(searched, [("rdimm", "ram")])
+        self.assertEqual({r["kind"] for r in app.store.tracked()}, {"ram"})
+        self.assertEqual({k for k, _ in app.store.deal_prices()}, set())
+        self.assertEqual(app.store.unreadable(), [])
+        self.assertEqual({r["kind"] for r in app.store.counts()}, {"ram"})
+        page, history, metrics = app.page(), app.history_page(), app.metrics()
+        self.assertIn('data-ram="ram"', page)
+        for text in ("old ranked disk", "old unreadable disk", "Disks", "data-tracked=\"disk:", "NOK per TB"):
+            self.assertNotIn(text, page)
+        self.assertNotIn("TB", history)
+        self.assertNotIn('kind="disk"', metrics)
 
     def test_bought_stops_all_hunts_and_survives_restart(self):
         class Source:
@@ -128,7 +131,7 @@ class DiskRamScope(unittest.TestCase):
         self.assertIn("Hunting has stopped for good", app.page())
         self.assertNotIn("old machine", app.page())
 
-    def test_disk_pickup_rules_keep_near_and_shipped_but_reject_far_or_unknown_places(self):
+    def test_pickup_rules_keep_near_and_shipped_but_reject_far_or_unknown_places(self):
         app = self.app()
         app.router = lambda lat, lon: (100, 90) if lat < 60 else (600, 500)
         source = type("Source", (), {"foreign": False})()
@@ -138,26 +141,26 @@ class DiskRamScope(unittest.TestCase):
                 (None, True, None, False, ["location"], None),
                 (63, False, 0, True, [], 2149)):
             with self.subTest(lat=lat, pickup=pickup):
-                listing = Listing("finn", "disk", '12TB SATA HDD 3.5"', "https://www.finn.no/disk",
+                listing = Listing("finn", "ram", "Samsung 32GB DDR4 ECC RDIMM", "https://www.finn.no/ram",
                                   2000, "NOK", shipping, "NOK", "used", None,
                                   lat=lat, lon=10 if lat is not None else None, pickup_only=pickup)
-                scored = app._score(source, listing, "disk")
+                scored = app._score(source, listing, "ram")
                 self.assertEqual(scored["qualifies"], qualifies)
                 self.assertEqual(scored["missing"], missing)
                 self.assertEqual(scored["landed_nok"], landed)
 
-    def test_weak_and_unknown_ebay_sellers_keep_the_surcharge_on_disks(self):
+    def test_weak_and_unknown_ebay_sellers_pay_the_surcharge(self):
         app = self.app()
         for seller, expected in (({"feedbackPercentage": "99", "feedbackScore": 500}, 1500),
                                  ({"feedbackPercentage": "97", "feedbackScore": 500}, 1650),
                                  ({"feedbackPercentage": "99", "feedbackScore": 10}, 1650), ({}, 1650)):
             with self.subTest(seller=seller):
                 source = EbaySource("id", "secret")
-                listing = source._listing({"itemId": "disk", "title": '12TB SAS HDD 3.5"',
+                listing = source._listing({"itemId": "ram", "title": "Samsung 32GB DDR4 ECC RDIMM",
                                            "price": {"value": "100", "currency": "GBP"},
                                            "shippingOptions": [{"shippingCost": {"value": "20", "currency": "GBP"}}],
                                            "conditionId": "3000", "seller": seller})
                 app.fx = lambda _: 10
-                scored = app._score(source, listing, "disk")
+                scored = app._score(source, listing, "ram")
                 self.assertTrue(scored["qualifies"])
                 self.assertEqual(scored["landed_nok"], expected)

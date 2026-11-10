@@ -2,122 +2,12 @@
 import re
 from dataclasses import dataclass
 
-from .config import MIN_DISK_TB
-
-# model families, written once and reused by the form-factor and class rules
-_ENTERPRISE_FAMILY = (r"\bexos\b(?!-)|\bultrastar\b|\bhc5\d\d\b|\bmg\d\d|\bwuh72|\bst\d{4,5}(nm|ne|nt)|\bwd\s?gold\b"
-                      r"|\bironwolf\s?pro\b|\bred\s?pro\b")
-_NAS_FAMILY = r"\bironwolf\b|\bred\s?plus\b|\bwd\s?red\b|\bst\d{4,5}vn"
-
-_TB = re.compile(r"(?<![\d.,])(\d{1,2}(?:[.,]\d)?)\s?tb(?=\b|[23][.,]5)", re.I)
-_SHORT_TB = re.compile(r"(?<![\w.,])(\d{1,2})\s?t\b", re.I)
-_GB = re.compile(r"(?<![\d.,])(\d{2,5})\s?gb\b(?!\s?/\s?s)", re.I)  # "12Gb/s" is a link speed, not a size
-_DISK_MODEL = re.compile(r"\bst(\d{4,5})(?:nm|nt|ne|vn)\w*|\b[wh]u[hs]72(\d{2})(\d{2})\w*", re.I)
-_NOT_DISK = re.compile(
-    r"\bssd\b|\bnvme\b|\bsolid[ -]state\b|\bcircuit\s+board\b|\bstickers?\b|\blabels?\s+for\b"
-    r"|\bcadd(?:y|ies)\b.*\blabels?\b"
-    r"|\b(?:dvr|nvr|security)\s+(?:recorder|kits?)\b|\bno\s+hdd\b|\bmedia\s+player\b"
-    r"|\bgaming[ -]?pc\b|\bg-raid\b|\brog\s+ally\b|\blenovo\s+go\b", re.I)
-_DISK_WORD = re.compile(r"\bhdd\b|hard\s?(disk|drive)|harddisk|festplatte|\bdisk\b", re.I)
-_SMR = re.compile(r"\b(?:[hd]m[ _-])?smr\b|\bhost[ _-]*(?:managed|aware)\b|\bzoned\b", re.I)
-_NOT_SMR = re.compile(r"\bcmr\b|\b(?:non|not|no|ikke)[ -]+smr\b|\bsmr[ -]+free\b", re.I)
-_SMR_MODEL = re.compile(r"\bhsh72\w*|\bhc620\b", re.I)
-_QUANTITY = re.compile(r"\blot\b|\b[2-9]\d?\s?x\s|\b\d+\s?(pcs|pieces|stk)\b", re.I)
-_FF_35 = re.compile(r"(?<![\d.,])3[.,]5(?!\d)|\blff\b|8[.,]9\s?cm", re.I)
-_FF_25 = re.compile(r"(?<![\d.,])2[.,]5(?!\d)(?!\s?(gbe?|gbit|g\b|l\b))|\bsff\b", re.I)
-_ASPECT_FF_35 = re.compile(r'3[.,]5\s*(?:["″]|in|inch(?:es)?|tommer|zoll)|lff|8[.,]9\s*cm', re.I)
-_ASPECT_FF_25 = re.compile(r'2[.,]5\s*(?:["″]|in|inch(?:es)?|tommer|zoll)|sff|6[.,]35\s*cm', re.I)
-_SINGLE_DISK_WORDS = frozenset("""
-    seagate wd western digital hgst hitachi toshiba dell hp hpe lenovo ibm emc
-    exos ultrastar dc gold ironwolf ironwolfpro red redpro redplus plus pro purple skyhawk barracuda
-    hdd hard drive drives disk disc harddisk harddisker internal enterprise datacenter data center nas
-    sata sas nl nearline helium hot swap plug new used refurbished renewed tested working recertified
-    sealed bulk oem pull pulled grade a b cache unity storage newemc
-    d4 vs07 12000 005053214 005053215 005053485 005053486
-""".split())
-_SINGLE_DISK_SPEC = re.compile(
-    r"\d{1,2}(?:[.,]\d)?t(?:b)?|\d{2,5}gb|(?:6|12|24)(?:g|gb(?:ps|/s)?|gbit(?:/s)?)"
-    r"|(?:5400|5900|7200|10000|15000)(?:rpm)?|(?:5[.,]4|7[.,]2|10|15)k|\d+mb"
-    r"|512e|4kn|3[.,]5|lff|20(?:1[5-9]|2\d|30)|\d{1,3}%|gen\d|sata(?:[123]|i{1,3})|sas3"
-    r"|1(?:pcs|stk|x)|x1")
-_SINGLE_DISK_MODEL = re.compile(
-    r"(?=[a-z0-9/-]{5,}$)(?:st\d{4,5}[a-z]{2}\d+[a-z0-9]*|[wh]u[hs]72\d{4}[a-z0-9]+"
-    r"|wd\d{2,}[a-z0-9]+(?:[-/][a-z0-9]+)*|mg\d{2}[a-z0-9]+|has\d{4}-\d{2}t"
-    r"|d[34]-vs\d{2}-\d{5}|0[a-z0-9]*[a-z][a-z0-9]*|4xb\d[a-z]\d+|\d+(?:[-/]\d+)+)")
-_FAMILY_35 = re.compile(rf"{_ENTERPRISE_FAMILY}|{_NAS_FAMILY}|\bpurple\b|\bskyhawk\b|\bbarracuda\b", re.I)
-_EXTERNAL = re.compile(r"\bexternal\b|\bextern\w*|\busb\b|\belements\b|my\s?book|expansion\s?desktop|one\s?touch", re.I)
-_ENTERPRISE = re.compile(rf"{_ENTERPRISE_FAMILY}|\benterprise\b|data\s?cent(er|re)", re.I)
-_NAS = re.compile(rf"{_NAS_FAMILY}|\bnas\b", re.I)
-_DESKTOP = re.compile(r"barracuda|\bdesktop\b|wd\s?blue|\bpurple\b|skyhawk", re.I)
-# relabel phrasing: nobody sells a genuine drive "for" its own maker ("for Dell/Lenovo" OEM drives stay genuine)
-_NON_GENUINE = re.compile(
-    r"\bcompatible\b|suitable\s+for|\bfits?\s+for\b|\bfor\s+(seagate|toshiba|wd|western\s+digital|hgst)\b", re.I)
-_ACCESSORY = re.compile(
-    r"\bpcb\b|\b(controller|logic)\s+board\b|\b(caddy|caddies|tray|sled|carrier|bracket|adapter|cable|enclosure)\s+(for|fits?)\b"
-    r"|\bempty\s+box\b|\bbox\s+only\b", re.I)
 _FAULTY = re.compile(r"faulty|defekt|defect|\bparts\b|spares|broken|\bdead\b|not\s+working|\bdoa\b", re.I)
-
-CONDITIONS = ("new", "refurbished", "used", "for_parts")
 
 
 @dataclass
 class Unreadable:
     missing: list
-
-
-@dataclass
-class DiskFacts:
-    capacity_tb: float | None
-    form_factor: str | None
-    disk_class: str | None
-    working: bool
-    genuine: bool
-    count: int = 1  # disks this one Listing sells as one lot, at its one price ("4x 16TB")
-    smr: bool = False
-
-    @property
-    def qualifies(self):
-        return (self.capacity_tb is not None and self.capacity_tb >= MIN_DISK_TB and self.form_factor == "3.5"
-                and self.working and self.genuine and not self.smr)
-
-
-def _disk_class(title):
-    for name, rx in (("external", _EXTERNAL), ("enterprise", _ENTERPRISE), ("nas", _NAS), ("desktop", _DESKTOP)):
-        if rx.search(title):
-            return name
-    return None
-
-
-def _form_factor(title):
-    has35, has25 = bool(_FF_35.search(title)), bool(_FF_25.search(title))
-    if has35 != has25:
-        return "3.5" if has35 else "2.5"
-    if not has35 and _FAMILY_35.search(title):
-        return "3.5"
-    return None
-
-
-def _disk_sizes(text):
-    sizes = {float(m.replace(",", ".")) for m in _TB.findall(text)} | set(map(float, _SHORT_TB.findall(text)))
-    sizes |= {int(m) / 1000 for m in _GB.findall(text)
-              if int(m) not in (12, 24) or not re.search(r"sas|sata|serial\s+ata", text, re.I)}
-    lot = _DISKS_X.search(text)
-    if lot and sizes == {float(lot[2].replace(",", ".")), int(lot[1]) * float(lot[2].replace(",", "."))}:
-        sizes = {float(lot[2].replace(",", "."))}
-    return sizes
-
-
-def _model_sizes(text):
-    sizes = set()
-    for gb, family, capacity in _DISK_MODEL.findall(text):
-        if gb:
-            sizes.add(int(gb) / 1000)
-        elif family == capacity and capacity in ("40", "60", "80"):
-            sizes.add(int(capacity) / 10)
-        elif (family == capacity and int(capacity) in range(10, 25, 2)
-              or (family, capacity) == ("18", "16")):
-            sizes.add(int(capacity))
-    return sizes
 
 
 def _aspect_values(aspects, *names):
@@ -127,100 +17,6 @@ def _aspect_values(aspects, *names):
 
 def _one(values):
     return next(iter(values)) if len(values) == 1 else None
-
-
-def _single_disk_title(title):
-    count = _DISKS_X.search(title) or _STICK_COUNT.search(title)
-    if count and int(next(value for value in count.groups() if value)) > 1:
-        return False
-    text = re.sub(r"\b(\d+(?:[.,]\d+)?)\s+(tb|t|gb|g|mb|rpm|gbit|gbps|pcs|stk|x)\b",
-                  r"\1\2", title.casefold())
-    text = re.sub(r"\b(sata|sas|gen|x)\s+(iii|ii|i|\d)\b", r"\1\2", text)
-    tokens = re.findall(r"\w+(?:[.,/-]\w+)*%?", text)
-    return bool(tokens) and all(
-        token in _SINGLE_DISK_WORDS or _SINGLE_DISK_SPEC.fullmatch(token) or _SINGLE_DISK_MODEL.fullmatch(token)
-        or all(part in _SINGLE_DISK_WORDS or _SINGLE_DISK_SPEC.fullmatch(part) or _SINGLE_DISK_MODEL.fullmatch(part)
-               for part in re.split(r"[.,/-]", token))
-        for token in tokens)
-
-
-def read_disk(title, condition, aspects=None, category_id=None):
-    """Facts for a Disk Listing, Unreadable when a required fact is missing, None when it is not a disk at all.
-
-    `condition` is the Source's normalised condition: one of CONDITIONS, or None when the Source did not say.
-    """
-    if category_id != "56083":
-        aspects = None
-    smr = any(_SMR_MODEL.search(text) or _SMR.search(text) and not _NOT_SMR.search(text)
-              for text in [title, *_aspect_values(aspects)])
-    sizes = _disk_sizes(title)
-    if _NOT_DISK.search(title) or _ACCESSORY.search(title):
-        return None
-    if not sizes:
-        sizes = _model_sizes(title)
-    if not sizes and not _DISK_WORD.search(title):
-        return None  # a family word alone is not a disk ("Exos" riflescopes and backpacks)
-    disk_class = _disk_class(title)
-    # an external USB enclosure is rejected on class alone; its bay size is irrelevant
-    form_factor = "external" if disk_class == "external" else _form_factor(title)
-    type_text = " ".join(_aspect_values(aspects, "type"))
-    if _NOT_DISK.search(type_text) or re.search(r"\b(?:dvr|nvr|caddy|enclosure)\b", type_text, re.I):
-        return None
-    conflicts = []
-    if not sizes:
-        sizes = _model_sizes(" ".join(_aspect_values(aspects, "mpn", "model")))
-    variation = len(sizes) > 1
-    aspect_sizes = set().union(*(_disk_sizes(v) for v in _aspect_values(aspects)))
-    if len(sizes) != 1 and aspect_sizes:
-        sizes = aspect_sizes
-        if len(aspect_sizes) > 1 and max(aspect_sizes) >= MIN_DISK_TB:
-            conflicts.append("capacity")
-    missing = []
-    if len(sizes) != 1:
-        missing.append("capacity")
-    if form_factor is None and _single_disk_title(title):
-        aspect_factors = {name for v in _aspect_values(aspects, "form factor", "formfaktor")
-                          for name, rx in (("3.5", _ASPECT_FF_35), ("2.5", _ASPECT_FF_25)) if rx.fullmatch(v.strip())}
-        form_factor = _one(aspect_factors)
-        if len(aspect_factors) > 1:
-            conflicts.append("form_factor")
-    if form_factor is None:
-        missing.append("form_factor")
-    if condition not in CONDITIONS:
-        missing.append("condition")
-    count = _disk_count(title)
-    title_count = _DISKS_X.search(title) or _STICK_COUNT.search(title)
-    if (count == 1 and _QUANTITY.search(title) and not _PER_UNIT.search(title)
-            and not title_count and not (variation and len(aspect_sizes) == 1)):
-        missing.append("quantity")  # names several disks, but not how many the price buys ("lot", "10 stk på lager")
-    too_small = bool(sizes) and max(sizes) < MIN_DISK_TB
-    # a known disqualifying fact decides it: rejected, not "could not read"
-    ruled_out = (smr or too_small or form_factor in ("2.5", "external")
-                 or bool(_NON_GENUINE.search(title)) or condition == "for_parts" or bool(_FAULTY.search(title)))
-    if conflicts and not (too_small or smr):
-        return Unreadable(list(dict.fromkeys(conflicts + missing)))
-    if missing and not ruled_out:
-        return Unreadable(missing)
-    capacity = (max(sizes) if too_small or len(sizes) != 1 else next(iter(sizes))) if sizes else None
-    return DiskFacts(
-        capacity_tb=capacity if capacity is None or not float(capacity).is_integer() else int(capacity),
-        form_factor=form_factor,
-        disk_class=disk_class,
-        working=condition != "for_parts" and not _FAULTY.search(title),
-        genuine=not _NON_GENUINE.search(title),
-        count=count,
-        smr=smr,
-    )
-
-
-# "4x 16TB", "4 x Exos", "4 stk", "lot of 4"; not stock on hand ("10 stk på lager", "har 12 stk"): see _STICK_COUNT
-_DISKS_X = re.compile(r"(?<![\w.,])(\d{1,2})\s?[x×*]\s?(\d{1,2}(?:[.,]\d)?)\s?tb\b", re.I)
-
-
-def _disk_count(title):
-    """Disks one Listing sells as a lot: 1 when priced per disk, else the title's count, else 1."""
-    m = not _PER_UNIT.search(title) and (_DISKS_X.search(title) or _STICK_COUNT.search(title))
-    return max(1, int(next(g for g in m.groups() if g))) if m else 1
 
 
 _DELL_MODEL = re.compile(r"\b([rt])(\d)(\d)(\d)(\d)?\s?(xd2|xd|xs|xa|xr)?\b", re.I)
@@ -280,19 +76,6 @@ def priced_per_unit(description, price):
     return any(m["pris"] or int(re.sub(r"\D", "", m["amount"])) == price
                for m in _PRICED_UNIT.finditer(description or ""))
 
-
-# units on sale in a description that prices one ("Selger 4 stk. Pris per stk", "har 5 stk", "3 disker igjen").
-# ponytail: the first count wins, so "2 stk caddies følger med" reads as 2 disks; the owner checks the stated stock before buying
-_STOCK = re.compile(r"(?<![\w.,])(\d{1,2})\s?(?:stk|stykk(?:er)?|pcs|pieces|disker|igjen)\b", re.I)
-
-
-def stock_in(description):
-    """Units a description priced per unit says are on sale; 1 when it does not say."""
-    m = _STOCK.search(description or "")
-    return max(1, int(m[1])) if m else 1
-
-
-# ---- RAM ------------------------------------------------------------------------------------------------------
 
 _RAM_TEXT = re.compile(r"dimm|\bram\b|minne|memory|\bddr[2-5]|\bpc[2-5]l?-|registered|registrert", re.I)
 # desktop, laptop, NAS or unbuffered memory, or a whole computer: not a server RAM Listing

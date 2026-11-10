@@ -12,9 +12,9 @@ import urllib.request
 from dataclasses import dataclass
 from html.parser import HTMLParser
 
-from .config import (EBAY_FACT_LOOKUPS, EBAY_SEARCH, EBAY_STOCK_LOOKUPS, EBAY_STOCK_MAX_AGE_S,
-                     REBUILDIT_FREE_SHIPPING_NOK, REBUILDIT_MAX_AGE_S, SOURCE_PAUSE_S, WEAK_SELLER)
-from .rules import Unreadable, read_disk, read_ram
+from .config import (EBAY_FACT_LOOKUPS, EBAY_ITEM_MAX_AGE_S, EBAY_SEARCH, REBUILDIT_FREE_SHIPPING_NOK,
+                     REBUILDIT_MAX_AGE_S, SOURCE_PAUSE_S, WEAK_SELLER)
+from .rules import Unreadable, read_ram
 
 log = logging.getLogger("dealfinder.sources")
 
@@ -31,7 +31,7 @@ class Listing:
     currency: str
     shipping: float | None  # None = unknown
     shipping_currency: str | None
-    condition: str | None   # one of rules.CONDITIONS, None = the Source did not say
+    condition: str | None   # "new", "refurbished", "used" or "for_parts"; None = the Source did not say
     seller: str | None
     description: str | None = None  # full listing text, fetched only where the rules need it
     location: str | None = None
@@ -39,13 +39,9 @@ class Listing:
     lon: float | None = None
     pickup_only: bool = False
     risk: str | None = None  # a config.RISK key the Source attaches (weak or unrated seller)
-    stock: int = 1  # units a buyer can take at this price; eBay Disks read it, a finn Disk's text may state it
-    extra_shipping: float | None = None  # shipping per unit after the first, shipping currency; None = unknown
-    stock_read: float | None = None  # epoch seconds eBay stock was read, kept so a restart does not read it again
     aspects: dict | None = None
     item_read: float | None = None
     item_details: dict | None = None
-    category_id: str | None = None
 
 
 def _get(url, headers=None, data=None):
@@ -147,8 +143,6 @@ class FinnSource:
     _search_url = "https://www.finn.no/recommerce/forsale/search"
     _buckets = (("new", ("1", "2")), ("used", ("3", "4")))  # 1 Helt ny, 2 Som ny, 3 Pent brukt, 4 Godt brukt
 
-    _UNIT_FIELD = {"disk": (read_disk, "count"), "ram": (read_ram, "sticks")}
-
     def __init__(self, fetch=http_text, pause=SOURCE_PAUSE_S):
         self._fetch, self._pause = fetch, pause
         self._descriptions = {}
@@ -191,7 +185,7 @@ class FinnSource:
                     listing.shipping = 0.0
         return kept
 
-    def search(self, query, kind="disk"):
+    def search(self, query, kind="ram"):
         listings, seen = [], set()
         for condition, codes in self._buckets:
             time.sleep(self._pause)
@@ -206,11 +200,9 @@ class FinnSource:
                     seen.add(listing.source_id)
                     listings.append(listing)
         listings = self._rebuildit(listings)
-        read, unit = self._UNIT_FIELD.get(kind, (None, None))
         for listing in listings:
-            if read and (getattr(facts := read(listing.title, listing.condition), unit, 1) > 1  # None/Unreadable: 1
-                         or kind == "ram" and isinstance(facts, Unreadable)
-                         or kind == "disk" and getattr(facts, "qualifies", False)):
+            if (getattr(facts := read_ram(listing.title, listing.condition), "sticks", 1) > 1  # None/Unreadable: 1
+                    or isinstance(facts, Unreadable)):
                 if listing.source_id not in self._descriptions:
                     if len(self._descriptions) > 5000:  # ponytail: crude bound; texts are refetched after a reset
                         self._descriptions.clear()
@@ -296,21 +288,20 @@ class EbaySource:
 
     def _read_item(self, listing):
         cached = self._items.get(listing.source_id)
-        if cached and time.time() - cached[0] < EBAY_STOCK_MAX_AGE_S and "_stock" not in cached[1]:
+        if cached and time.time() - cached[0] < EBAY_ITEM_MAX_AGE_S:
             return cached[1]
         item = self._fetch(self._item_url + urllib.parse.quote(listing.source_id), self._headers())
         if not isinstance(item, dict):
             raise ValueError("eBay item is not an object")
         if len(self._items) > 5000:
             self._items.clear()
-        item = {k: v for k, v in item.items() if k in (
-            "categoryId", "localizedAspects", "estimatedAvailabilities", "quantityLimitPerBuyer", "shippingOptions")}
+        item = {k: v for k, v in item.items() if k == "localizedAspects"}
         self._items[listing.source_id] = (time.time(), item)
         return item
 
     def _aspects(self, listing):
         cached = self._items.get(listing.source_id)
-        fresh = cached and time.time() - cached[0] < EBAY_STOCK_MAX_AGE_S and "_stock" not in cached[1]
+        fresh = cached and time.time() - cached[0] < EBAY_ITEM_MAX_AGE_S
         remaining = getattr(self._hunt, "fact_lookups", EBAY_FACT_LOOKUPS)
         if not fresh and not remaining:
             return None
@@ -318,7 +309,6 @@ class EbaySource:
             self._hunt.fact_lookups = remaining - 1
         try:
             item = self._read_item(listing)
-            listing.category_id = item.get("categoryId")
             aspects = {}
             for aspect in item.get("localizedAspects") or []:
                 name, value = aspect["name"], aspect["value"]
@@ -342,7 +332,7 @@ class EbaySource:
         return {"Authorization": "Bearer " + self._auth(), "X-EBAY-C-MARKETPLACE-ID": "EBAY_GB",
                 "X-EBAY-C-ENDUSERCTX": "contextualLocation=country%3DNO"}  # shipping costs quoted to Norway
 
-    def search(self, query, kind="disk"):
+    def search(self, query, kind="ram"):
         """The kind picks the category and price range."""
         category, (low, high) = EBAY_SEARCH[kind]
         params = {"q": query, "sort": "price", "limit": "100",
@@ -350,60 +340,23 @@ class EbaySource:
         if category:
             params["category_ids"] = category
         r = self._fetch(f"{self._search_url}?{urllib.parse.urlencode(params)}", self._headers())
-        listings, lookups = [], EBAY_STOCK_LOOKUPS if kind == "disk" else 0
+        listings = []
         for it in r.get("itemSummaries", []):
             try:
                 listing = self._listing(it)
             except (AttributeError, KeyError, TypeError, ValueError):  # one malformed item must not drop the Source
                 log.warning("skipping malformed eBay item %s", it.get("itemId") if isinstance(it, dict) else it)
                 continue
-            read = read_disk if kind == "disk" else read_ram
-            facts = read(listing.title, listing.condition)
-            if isinstance(facts, Unreadable) and listing.shipping is not None:
+            if isinstance(read_ram(listing.title, listing.condition), Unreadable) and listing.shipping is not None:
                 listing.aspects = self._aspects(listing)
-                if kind == "disk":
-                    facts = read_disk(listing.title, listing.condition, aspects=listing.aspects,
-                                      category_id=listing.category_id)
-                else:
-                    facts = read_ram(listing.title, listing.condition, aspects=listing.aspects)
-            # results come cheapest first: only the cheapest Disks that can be ranked are worth an item call
-            if kind == "disk" and lookups and listing.shipping is not None and getattr(facts, "qualifies", False):
-                lookups -= 1
-                listing.stock_read, listing.stock, listing.extra_shipping = self._read_stock(listing)
             cached = self._items.get(listing.source_id)
-            if cached and time.time() - cached[0] < EBAY_STOCK_MAX_AGE_S:
+            if cached and time.time() - cached[0] < EBAY_ITEM_MAX_AGE_S:
                 listing.item_read, listing.item_details = cached
             listings.append(listing)
         return listings
 
     def seed_items(self, known):
         self._items.update((sid, (at, details)) for sid, at, details in known)
-
-    def _read_stock(self, listing):
-        """(read at, units one buyer can take, shipping per unit after the first or None) of a Disk, from its eBay item
-        endpoint; (None, 1, None) when it cannot be read, so a dead Listing never ends the Source.
-
-        ponytail: stock is read at most once a day, so a Disk that sells out in between still counts; the owner
-        checks the stock before buying. "More than 10" counts as 10.
-        """
-        cached = self._items.get(listing.source_id)
-        if cached and time.time() - cached[0] < EBAY_STOCK_MAX_AGE_S and "_stock" in cached[1]:
-            return cached[0], *cached[1]["_stock"]
-        try:
-            item = self._read_item(listing)
-            a = (item.get("estimatedAvailabilities") or [{}])[0]
-            n = a.get("estimatedAvailableQuantity")
-            if n is None and a.get("availabilityThresholdType") == "MORE_THAN":
-                n = a.get("availabilityThreshold")
-            stock = max(1, min(int(n or 1), int(item.get("quantityLimitPerBuyer") or 99), 99))  # untrusted numbers
-            more = (item.get("shippingOptions") or [{}])[0].get("additionalShippingCostPerUnit") or {}
-            same = "value" in more and more.get("currency") == listing.shipping_currency
-            extra = float(more["value"]) if same else None
-            extra = extra if extra is not None and math.isfinite(extra) and extra >= 0 else None  # untrusted
-        except (OSError, http.client.HTTPException, AttributeError, KeyError, TypeError, ValueError) as exc:
-            log.warning("eBay item %s stock unavailable: %s", listing.source_id, exc)
-            return None, 1, None
-        return self._items[listing.source_id][0], stock, extra
 
     def _listing(self, it):
         ship = ((it.get("shippingOptions") or [{}])[0]).get("shippingCost") or {}

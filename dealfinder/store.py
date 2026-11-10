@@ -4,7 +4,7 @@ import json
 from psycopg.rows import dict_row
 from psycopg_pool import ConnectionPool
 
-from .config import DISK_QUERY_UPDATE, GONE_DAYS, HISTORY_WEEKS
+from .config import GONE_DAYS, HISTORY_WEEKS
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS listings (
@@ -89,7 +89,6 @@ ALTER TABLE price_observations ADD COLUMN IF NOT EXISTS units numeric;
 -- a removed Source
 DELETE FROM tracked_queries WHERE source = 'aliexpress';
 DELETE FROM listings WHERE source = 'aliexpress';
-CREATE TABLE IF NOT EXISTS query_updates (name text PRIMARY KEY);
 """
 
 
@@ -98,7 +97,7 @@ CREATE TABLE IF NOT EXISTS query_updates (name text PRIMARY KEY);
 # the Listings from its last good Hunt, and the banner says so (ticket #7).
 _SOURCE_OK = """
     h.finished IS NOT NULL AND (s.value->>'ok')::boolean
-    AND coalesce((s.value->>'disk')::int, 0) + coalesce((s.value->>'ram')::int, 0) > 0
+    AND coalesce((s.value->>'ram')::int, 0) > 0
 """
 _FRESH = f"""
 WITH fresh AS (
@@ -124,12 +123,9 @@ _RANKED_WHERE = f"""
 """
 
 
-def _history_key(kind, facts):
-    """(group key, units) of a qualifying Listing on the price history page. A Disk groups by capacity instead; its
-    units are the disks of a lot."""
-    if kind == "ram":
-        return f"DDR{facts['ddr']} {facts['type']} {facts['gb_per_stick']} GB", facts["gb_per_stick"] * facts["sticks"]
-    return None, facts.get("count", 1)
+def _history_key(facts):
+    """(group key, units) of a qualifying RAM Listing on the price history page."""
+    return f"DDR{facts['ddr']} {facts['type']} {facts['gb_per_stick']} GB", facts["gb_per_stick"] * facts["sticks"]
 
 
 class Store:
@@ -155,10 +151,10 @@ class Store:
             c.cursor().executemany(
                 "UPDATE price_observations SET kind = %s, model = %s, units = %s "
                 "WHERE source = %s AND source_id = %s AND hunt_id = %s",
-                [(r["kind"], *_history_key(r["kind"], r["facts"]), r["source"], r["source_id"], r["hunt_id"])
+                [(r["kind"], *_history_key(r["facts"]), r["source"], r["source_id"], r["hunt_id"])
                  for r in old])
             c.execute("""UPDATE price_observations o SET kind = l.kind FROM listings l
-                         WHERE o.kind IS NULL AND l.kind IN ('disk', 'ram')
+                         WHERE o.kind IS NULL AND l.kind = 'ram'
                            AND l.source = o.source AND l.source_id = o.source_id""")
 
     def start_hunt(self):
@@ -170,14 +166,11 @@ class Store:
             c.execute("UPDATE hunts SET finished = now(), ok = %s, detail = %s WHERE id = %s",
                       (ok, json.dumps(detail), hunt_id))
 
-    def seed_tracked(self, rows, additions=()):
-        """Seed empty (kind, Source) groups, plus the 12TB/all-class additions once per database."""
+    def seed_tracked(self, rows):
+        """Seed empty (kind, Source) groups."""
         with self._conn() as c, c.transaction():
             have = {(r["kind"], r["source"]) for r in c.execute("SELECT DISTINCT kind, source FROM tracked_queries")}
             seed = [row for row in rows if (row[1], row[2]) not in have]
-            if additions and c.execute("INSERT INTO query_updates VALUES (%s) "
-                                       "ON CONFLICT DO NOTHING RETURNING name", (DISK_QUERY_UPDATE,)).fetchone():
-                seed.extend(additions)
             c.cursor().executemany("INSERT INTO tracked_queries (query, kind, source) VALUES (%s, %s, %s) "
                                    "ON CONFLICT DO NOTHING", seed)
 
@@ -189,10 +182,10 @@ class Store:
     def tracked(self):
         with self._conn() as c:
             return c.execute("SELECT query, kind, source FROM tracked_queries "
-                             "WHERE kind IN ('disk', 'ram') ORDER BY added, query").fetchall()
+                             "WHERE kind = 'ram' ORDER BY added, query").fetchall()
 
     def history(self):
-        """Weekly lowest and median Landed NOK per TB for Disks and per GB for RAM."""
+        """Weekly lowest and median Landed NOK per GB for RAM."""
         since = f"now() - interval '{int(HISTORY_WEEKS)} weeks'"
         def weekly(kind, key, value):  # each Listing once per week, at its lowest price, grouped by `key`
             return c.execute(f"""
@@ -206,27 +199,22 @@ class Store:
                 GROUP BY 1, 2, 3
             """, (kind,)).fetchall()
         with self._conn() as c:
-            return {"disk": weekly("disk", "capacity_tb::float", "landed_nok / (capacity_tb * coalesce(units, 1))"),
-                    "ram": weekly("ram", "model", "landed_nok / units")}
+            return {"ram": weekly("ram", "model", "landed_nok / units")}
 
     def deal_prices(self, min_listings=5):
         """{(kind, key): the lowest per-unit Landed cost of its earlier weeks}: the price a live Listing must beat to
         be a deal. Per unit as on the history page, all Sources pooled, the HISTORY_WEEKS weeks before the current
         week; a group seen in fewer than `min_listings` Listings in those weeks has no deal price. The key is the
-        capacity in TB for a Disk, else the history key (_history_key)."""
+        history key (_history_key)."""
         with self._conn() as c:
             rows = c.execute(f"""
-                SELECT kind, model, capacity_tb::float AS cap,
-                       min(landed_nok / CASE kind WHEN 'disk' THEN capacity_tb * coalesce(units, 1)
-                                                  ELSE units END)::float AS low
+                SELECT kind, model, min(landed_nok / units)::float AS low
                 FROM price_observations
-                WHERE kind IN ('disk', 'ram') AND landed_nok IS NOT NULL AND seen_at > now() - interval '{int(HISTORY_WEEKS)} weeks'
-                  AND seen_at < date_trunc('week', now())
-                  AND CASE kind WHEN 'disk' THEN capacity_tb IS NOT NULL ELSE model IS NOT NULL AND
-                                                 units IS NOT NULL END
-                GROUP BY 1, 2, 3 HAVING count(DISTINCT source || '|' || source_id) >= %s
+                WHERE kind = 'ram' AND landed_nok IS NOT NULL AND seen_at > now() - interval '{int(HISTORY_WEEKS)} weeks'
+                  AND seen_at < date_trunc('week', now()) AND model IS NOT NULL AND units IS NOT NULL
+                GROUP BY 1, 2 HAVING count(DISTINCT source || '|' || source_id) >= %s
             """, (min_listings,)).fetchall()
-        return {(r["kind"], r["cap"] if r["kind"] == "disk" else r["model"]): r["low"] for r in rows}
+        return {(r["kind"], r["model"]): r["low"] for r in rows}
 
     def record_purchase(self):
         with self._conn() as c:
@@ -245,34 +233,32 @@ class Store:
         with self._conn() as c:
             c.execute("INSERT INTO routes VALUES (%s, %s, %s, %s) ON CONFLICT DO NOTHING", (lat, lon, km, minutes))
 
-    def save_listing(self, listing, kind, facts, missing, qualifies, capacity_tb, landed, hunt_id, costs=None):
+    def save_listing(self, listing, kind, facts, missing, qualifies, landed, hunt_id, costs=None):
         with self._conn() as c:
             c.execute("""
                 INSERT INTO price_observations (source, source_id, hunt_id, price, currency, kind, landed_nok,
-                                                capacity_tb, model, units)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                                                model, units)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                 ON CONFLICT (source, source_id, hunt_id) DO UPDATE SET price = EXCLUDED.price, kind = EXCLUDED.kind,
-                    landed_nok = EXCLUDED.landed_nok, capacity_tb = EXCLUDED.capacity_tb, model = EXCLUDED.model,
-                    units = EXCLUDED.units
+                    landed_nok = EXCLUDED.landed_nok, model = EXCLUDED.model, units = EXCLUDED.units
             """, (listing.source, listing.source_id, hunt_id, listing.price, listing.currency, kind,
-                  *((landed, capacity_tb, *_history_key(kind, facts)) if qualifies else (None, None, None, None))))
+                  *((landed, *_history_key(facts)) if qualifies else (None, None, None))))
             c.execute("""
                 INSERT INTO listings (source, source_id, kind, title, url, price, currency, shipping,
-                                      condition, seller, facts, missing, qualifies, capacity_tb, landed_nok,
+                                      condition, seller, facts, missing, qualifies, landed_nok,
                                       description, location, lat, lon, pickup_only, costs, item_cache)
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                 ON CONFLICT (source, source_id) DO UPDATE SET
                     title = EXCLUDED.title, url = EXCLUDED.url, price = EXCLUDED.price,
                     currency = EXCLUDED.currency, shipping = EXCLUDED.shipping,
                     condition = EXCLUDED.condition, seller = EXCLUDED.seller, facts = EXCLUDED.facts,
-                    missing = EXCLUDED.missing, qualifies = EXCLUDED.qualifies,
-                    capacity_tb = EXCLUDED.capacity_tb, landed_nok = EXCLUDED.landed_nok,
+                    missing = EXCLUDED.missing, qualifies = EXCLUDED.qualifies, landed_nok = EXCLUDED.landed_nok,
                     description = EXCLUDED.description, location = EXCLUDED.location, lat = EXCLUDED.lat,
                     lon = EXCLUDED.lon, pickup_only = EXCLUDED.pickup_only, costs = EXCLUDED.costs,
                     item_cache = coalesce(EXCLUDED.item_cache, listings.item_cache), last_seen = now()
             """, (listing.source, listing.source_id, kind, listing.title, listing.url, listing.price,
                   listing.currency, listing.shipping, listing.condition, listing.seller,
-                  json.dumps(facts) if facts is not None else None, missing, qualifies, capacity_tb, landed,
+                  json.dumps(facts) if facts is not None else None, missing, qualifies, landed,
                   listing.description, listing.location, listing.lat, listing.lon, listing.pickup_only,
                   json.dumps(costs) if costs is not None else None,
                   json.dumps({"read": listing.item_read, "details": listing.item_details})
@@ -298,18 +284,6 @@ class Store:
                 WHERE {_SOURCE_OK}
                 GROUP BY 1""")}
 
-    def best_disks(self, limit=100):
-        with self._conn() as c:
-            return c.execute(_FRESH + f"""
-                SELECT l.source, l.source_id, title, url, capacity_tb, condition, landed_nok, location, pickup_only,
-                       round(landed_nok / (capacity_tb * coalesce((facts->>'count')::numeric, 1)), 2) AS nok_per_tb,
-                       (facts->>'count')::int AS count, l.price, l.currency, p.prev_price, l.costs,
-                       l.last_seen < f.since AS gone, l.last_seen
-                FROM listings l JOIN fresh f ON f.source = l.source {_PREV}
-                WHERE kind = 'disk' AND {_RANKED_WHERE}
-                ORDER BY gone, nok_per_tb, landed_nok LIMIT %s
-            """, (limit,)).fetchall()
-
     def best_ram(self, limit=50):
         """RAM ranked by Landed NOK per GB."""
         with self._conn() as c:
@@ -326,21 +300,17 @@ class Store:
         with self._conn() as c:
             return [(r["source_id"], r["item"]["read"], r["item"]["details"])
                     for r in c.execute("""
-                        SELECT source_id, coalesce(item_cache, jsonb_build_object(
-                            'read', facts->'stock_read',
-                            'details', jsonb_build_object('_stock', jsonb_build_array(
-                                facts->'stock', facts->'extra_shipping')))) AS item
-                        FROM listings WHERE source = %s
-                          AND (item_cache IS NOT NULL OR facts->>'stock_read' IS NOT NULL)
+                        SELECT source_id, item_cache AS item
+                        FROM listings WHERE source = %s AND kind = 'ram' AND item_cache IS NOT NULL
                     """, (source,))]
 
     def unreadable(self, limit=200):
         with self._conn() as c:
             return c.execute(_FRESH + """
-                SELECT l.source, source_id, kind, title, url, missing
+                SELECT l.source, source_id, title, url, missing
                 FROM listings l JOIN fresh f ON f.source = l.source
-                WHERE kind IN ('disk', 'ram') AND cardinality(missing) > 0 AND last_seen >= f.since
-                ORDER BY kind DESC, l.source, title LIMIT %s
+                WHERE kind = 'ram' AND cardinality(missing) > 0 AND last_seen >= f.since
+                ORDER BY l.source, title LIMIT %s
             """, (limit,)).fetchall()
 
     def counts(self):
@@ -352,5 +322,5 @@ class Store:
                             ELSE 'rejected' END AS state,
                        count(*) AS n
                 FROM listings l JOIN fresh f ON f.source = l.source
-                WHERE kind IN ('disk', 'ram') AND last_seen >= f.since GROUP BY 1, 2, 3
+                WHERE kind = 'ram' AND last_seen >= f.since GROUP BY 1, 2, 3
             """).fetchall()
